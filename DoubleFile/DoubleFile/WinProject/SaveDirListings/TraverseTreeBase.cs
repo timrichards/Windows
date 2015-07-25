@@ -55,7 +55,7 @@ namespace DoubleFile
 
                 var listFilePaths = new List<Tuple<string, ulong>> { };
 
-                MBoxStatic.Assert(99939, 0 == LengthRead);
+                Util.Assert(99939, 0 == LengthRead);
                 LengthRead = 0;
 
                 while (0 < stackDirs.Count)
@@ -169,21 +169,21 @@ namespace DoubleFile
                             ? "Path Length: " + strFullPath.Length
                             : null;
 
-                        MBoxStatic.Assert(1306.7308m, bHasLength == (0 < nDirLength));
+                        Util.Assert(1306.7308m, bHasLength == (0 < nDirLength));
 
                         var di = new Win32FindFileStatic.FileData(winDir);
 
                         if (strFullPath.EndsWith(@":\"))                            // root directory
                         {
-                            MBoxStatic.Assert(1306.7302m, false == di.IsValid);     // yes, yes...
-                            MBoxStatic.Assert(1306.7303m, 3 == strFullPath.Length);
+                            Util.Assert(1306.7302m, false == di.IsValid);     // yes, yes...
+                            Util.Assert(1306.7303m, 3 == strFullPath.Length);
 
                             fs.WriteLine(FormatString(strDir: strFullPath, nLength: nDirLength,
                                 strError1: strError1, strError2: strError2_Dir));
                         }
                         else
                         {
-                            MBoxStatic.Assert(1306.7304m, di.IsValid);
+                            Util.Assert(1306.7304m, di.IsValid);
 
                             fs.WriteLine(FormatString(strDir: strFullPath, dtCreated: di.CreationTime,
                                 strAttributes: ((int)di.Attributes).ToString("X"),

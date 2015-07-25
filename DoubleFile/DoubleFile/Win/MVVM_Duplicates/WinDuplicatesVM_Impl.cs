@@ -24,7 +24,7 @@ namespace DoubleFile
         internal WinDuplicatesVM()
         {
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
-            _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.Subscribe(LV_FilesVM_SelectedFileChanged));
+            _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.LocalSubscribe(LV_FilesVM_SelectedFileChanged));
 
             var lastSelectedFile = LV_FilesVM.LastSelectedFile;
 
@@ -88,7 +88,7 @@ namespace DoubleFile
 
                 if (10 <= nCheck)
                 {
-                    MBoxStatic.Assert(99905, false);
+                    Util.Assert(99905, false);
                     return;     // from method
                 }
             }
@@ -160,7 +160,7 @@ namespace DoubleFile
         {
             if (null == _selectedItem)
             {
-                MBoxStatic.Assert(99901, false);    // binding should dim the button
+                Util.Assert(99901, false);    // binding should dim the button
                 return;
             }
 

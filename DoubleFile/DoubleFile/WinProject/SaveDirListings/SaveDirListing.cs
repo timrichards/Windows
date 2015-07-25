@@ -47,7 +47,7 @@ namespace DoubleFile
             {
                 if (null == _saveDirListingsStatus)
                 {
-                    MBoxStatic.Assert(99870, false);
+                    Util.Assert(99870, false);
                     return;
                 }
 
@@ -164,7 +164,7 @@ namespace DoubleFile
                 WriteLine(strModel);
                 WriteLine(strSerial);
                 WriteLine(nSize);
-                MBoxStatic.Assert(99941, nCount == knDriveInfoItems);
+                Util.Assert(99941, nCount == knDriveInfoItems);
                 fs.WriteLine(("" + sb).Trim());
             }
 
@@ -180,7 +180,7 @@ namespace DoubleFile
                 double nProgressDenominator = lsFilePaths.Count;  // double preserves mantissa
 
                 using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
-                    .Subscribe(x => StatusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator)))
+                    .LocalSubscribe(x => StatusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator)))
                 {
                     var lsFileHandles = new ConcurrentBag<Tuple<string, ulong, SafeFileHandle, string>> { };
                     var blockUntilAllFilesOpened = new LocalDispatcherFrame(99883);
@@ -371,7 +371,7 @@ namespace DoubleFile
                         {
                             // virtually never: file emptied after being catalogued
                             lsRet.Clear();
-                            MBoxStatic.Assert(99945, false == bFilled);
+                            Util.Assert(99945, false == bFilled);
                         }
 
                         if (false == bFilled)
@@ -381,9 +381,9 @@ namespace DoubleFile
 
                         if (desiredPos > fs.Position)
                         {
-                            MBoxStatic.Assert(99931, knBigBuffLength == fs.Position);
+                            Util.Assert(99931, knBigBuffLength == fs.Position);
                             desiredPos += (4096 - (desiredPos & 4095));       // align to block boundary if possible
-                            MBoxStatic.Assert(99914, 0 == (desiredPos & 4095));
+                            Util.Assert(99914, 0 == (desiredPos & 4095));
                             fs.Position = desiredPos;
                         }
 
@@ -417,7 +417,7 @@ namespace DoubleFile
                 var bMoreToRead = fs.Position < fs.Length;
                 
                 if (bMoreToRead)
-                    MBoxStatic.Assert(99926, nRead == nBufferSize);
+                    Util.Assert(99926, nRead == nBufferSize);
 
                 return bMoreToRead;
             }
@@ -432,13 +432,13 @@ namespace DoubleFile
                 if ((0 == tuple.Item2) ||       // empty file
                     (null != tuple.Item3))      // bad file handle, with error string
                 {
-                    MBoxStatic.Assert(99911, 0 == nCount);
+                    Util.Assert(99911, 0 == nCount);
                     return retval;
                 }
 
                 if (0 == nCount)
                 {
-                    MBoxStatic.Assert(99932, false);
+                    Util.Assert(99932, false);
                     return retval;
                 }
 
@@ -456,7 +456,7 @@ namespace DoubleFile
                     foreach (var buffer in lsBuffer.Skip(1))
                         nSize += buffer.Count;
 
-                    MBoxStatic.Assert(99909, 1048576 >= nSize);
+                    Util.Assert(99909, 1048576 >= nSize);
 
                     var hashArray = new byte[nSize];
                     var nIx = 0;

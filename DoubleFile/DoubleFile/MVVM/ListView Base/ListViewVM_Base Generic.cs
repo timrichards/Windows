@@ -31,7 +31,7 @@ namespace DoubleFile
             if (null == other)
                 return false;
 
-            MBoxStatic.Assert(99992, (false == ReferenceEquals(this, other)));
+            Util.Assert(99992, (false == ReferenceEquals(this, other)));
 
             if (Items.Count != other.Items.Count)
                 return false;
@@ -44,7 +44,7 @@ namespace DoubleFile
 
                 foreach (var otherItem in other[item.SearchValue])
                 {
-                    MBoxStatic.Assert(99991, (false == ReferenceEquals(item, otherItem)));
+                    Util.Assert(99991, (false == ReferenceEquals(item, otherItem)));
 
                     if ((false == lsMatched.Contains(otherItem)) &&
                         item.LocalEquals(otherItem))

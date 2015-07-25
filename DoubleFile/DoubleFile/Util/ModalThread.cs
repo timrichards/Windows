@@ -64,7 +64,8 @@ namespace DoubleFile
 
             var retVal = default(T);
 
-            if (_thread.IsAlive)
+            if ((_thread.IsAlive) ||
+                (null == MainWindow.WithMainWindow(w => w)))
             {
                 var prevTopWindow = Statics.TopWindow;
                 var darkWindow = new DarkWindow(Statics.TopWindow);
@@ -78,8 +79,10 @@ namespace DoubleFile
                 if (false == darkWindow.LocalIsClosed)      // happens with system dialogs
                     darkWindow.Close();
 
-                Statics.TopWindow = prevTopWindow;
+                Statics.TopWindow = Util.AssertNutNull(99774, prevTopWindow);
+                Statics.TopWindow?.Activate();
                 _dtLastDarken = DateTime.Now;
+                RepeatedOuterCheckForLockup();
                 return retVal;
             }
 
@@ -92,7 +95,7 @@ namespace DoubleFile
             }));
 
             using (Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Timestamp()
-                .Subscribe(x => Util.UIthread(99798, () =>
+                .LocalSubscribe(x => Util.UIthread(99798, () =>
                 RepeatedOuterCheckForLockup())))
                 _blockingFrame.PushFrameToTrue();
 
@@ -111,7 +114,7 @@ namespace DoubleFile
 
             var strStuckFrames = LocalDispatcherFrame.ClearFrames();
 
-            MBoxStatic.Assert(nLocation, false, strStuckFrames);
+            Util.Assert(nLocation, false, strStuckFrames);
         }
 
         static IEnumerable<NativeWindow>
@@ -189,10 +192,10 @@ namespace DoubleFile
                 var darkDialog = new DarkWindow(mainWindow) { Content = new Grid() };
 
                 Observable.FromEventPattern(darkDialog, "SourceInitialized")
-                    .Subscribe(x => darkDialog.ShowActivated = false);
+                    .LocalSubscribe(x => darkDialog.ShowActivated = false);
 
                 Observable.FromEventPattern(darkDialog, "ContentRendered")
-                    .Subscribe(x =>
+                    .LocalSubscribe(x =>
                 {
                     NativeMethods.SetWindowPos(fakeBaseWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
 
@@ -209,7 +212,7 @@ namespace DoubleFile
                 var nWindowCount = 0;
 
                 using (Observable.Timer(TimeSpan.FromMilliseconds(250), TimeSpan.FromSeconds(1)).Timestamp()
-                    .Subscribe(x => Util.UIthread(99871, () =>
+                    .LocalSubscribe(x => Util.UIthread(99871, () =>
                     Step3_RepeatedInnerCheckForLockup(darkDialog, ref nWindowCount))))
                     darkDialog.ShowDialog();
             }
@@ -364,7 +367,7 @@ namespace DoubleFile
 
                 var strStuckFrames = LocalDispatcherFrame.ClearFrames();
 
-                MBoxStatic.Assert(99885, false, strStuckFrames);
+                Util.Assert(99885, false, strStuckFrames);
             }
             else
             {
@@ -382,7 +385,7 @@ namespace DoubleFile
                 .FirstOnlyAssert(dialog =>
             {
                 Observable.FromEventPattern(dialog, "Closed")
-                    .Subscribe(y =>
+                    .LocalSubscribe(y =>
                 {
                     if ((null == darkDialog) || darkDialog.LocalIsClosing || darkDialog.LocalIsClosed)
                         return;     // from lambda
@@ -437,7 +440,7 @@ namespace DoubleFile
                 .SetWindowPos(nativeModalWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
 
             Util.WriteLine("Modal window got stuck behind dark window.");
-            MBoxStatic.Assert(99802, nativeModalWindow.Equals(NativeTopWindow()));
+            Util.Assert(99802, nativeModalWindow.Equals(NativeTopWindow()));
         }
 
         static Thread

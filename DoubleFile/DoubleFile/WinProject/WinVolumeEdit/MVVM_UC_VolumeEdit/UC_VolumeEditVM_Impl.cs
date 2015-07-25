@@ -29,7 +29,7 @@ namespace DoubleFile
             }
             else
             {
-                MBoxStatic.Assert(99927, false);
+                Util.Assert(99927, false);
             }
         }
 

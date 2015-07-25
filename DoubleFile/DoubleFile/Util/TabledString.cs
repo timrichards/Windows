@@ -83,7 +83,7 @@ namespace DoubleFile
         {
             var t = TypedArrayBase.tA[new T().Type];
 
-            MBoxStatic.Assert(99934, 0 < t.RefCount);
+            Util.Assert(99934, 0 < t.RefCount);
             --t.RefCount;
 
             if (0 >= t.RefCount)
@@ -99,17 +99,17 @@ namespace DoubleFile
 
             if (null == t.Strings)
             {
-                MBoxStatic.Assert(99915, t.Generating);
+                Util.Assert(99915, t.Generating);
                 t.DictStrings = new ConcurrentDictionary<string, int>(nThreads, 16384);
                 t.DictStringsRev = new ConcurrentDictionary<int, string>(nThreads, 16384);
                 return;
             }
 
-            MBoxStatic.Assert(99921, false == t.Generating);
-            MBoxStatic.Assert(99920, null == t.DictStrings);
-            MBoxStatic.Assert(99919, null == t.DictStringsRev);
-            MBoxStatic.Assert(99918, t.IndexGenerator == t.Strings.Length);
-            MBoxStatic.Assert(99916, 1 < t.RefCount);
+            Util.Assert(99921, false == t.Generating);
+            Util.Assert(99920, null == t.DictStrings);
+            Util.Assert(99919, null == t.DictStringsRev);
+            Util.Assert(99918, t.IndexGenerator == t.Strings.Length);
+            Util.Assert(99916, 1 < t.RefCount);
 
             t.DictStrings = new ConcurrentDictionary<string, int>(nThreads, t.Strings.Length);
             t.DictStringsRev = new ConcurrentDictionary<int, string>(nThreads, t.Strings.Length);
@@ -135,7 +135,7 @@ namespace DoubleFile
             var nCount = t.DictStrings.Count;
 
             t.DictPathParts = null;
-            MBoxStatic.Assert(99922, t.IndexGenerator == nCount);
+            Util.Assert(99922, t.IndexGenerator == nCount);
 
             var sortedStrings = new SortedDictionary<string, int>(t.DictStrings);
 
@@ -179,7 +179,7 @@ namespace DoubleFile
                 return 0;
 
             if (false == t.Generating)
-                MBoxStatic.Assert(99917, false);
+                Util.Assert(99917, false);
 
             lock (t.DictStrings)
             lock (t.DictStringsRev)
@@ -238,7 +238,7 @@ namespace DoubleFile
                 if (null == t)
                     throw new NullReferenceException();
 
-                MBoxStatic.Assert(99985, t.Generating);
+                Util.Assert(99985, t.Generating);
 
                 lock (t.DictPathParts)
                 {
@@ -261,7 +261,7 @@ namespace DoubleFile
 
             foreach (var s in strDir.Split('\\'))
             {
-                // MBoxStatic.Assert(99880, false == string.IsNullOrWhiteSpace(s));
+                // Util.Assert(99880, false == string.IsNullOrWhiteSpace(s));
                 // Acceptable: search results dir
                 // if (false == string.IsNullOrWhiteSpace(s))
                 if (string.IsNullOrWhiteSpace(s))
@@ -307,7 +307,7 @@ namespace DoubleFile
                     }
                     else
                     {
-                        MBoxStatic.Assert(99788, false);
+                        Util.Assert(99788, false);
                         return -2;
                     }
                 }

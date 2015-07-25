@@ -98,8 +98,8 @@ namespace DoubleFile
             revClut[Red] = nIx++;
             revClut[SteelBlue] = nIx++;
             _revCLUT = revClut;
-            MBoxStatic.Assert(99957, nIx == _knNumColors);
-            MBoxStatic.Assert(99910, 0 == CLUT_Shift >> 4);          // 16 bits, not _knNumColors
+            Util.Assert(99957, nIx == _knNumColors);
+            Util.Assert(99910, 0 == CLUT_Shift >> 4);          // 16 bits, not _knNumColors
         }
 
         const int

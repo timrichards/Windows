@@ -130,7 +130,7 @@ namespace DoubleFile
         {
             if (null == _selectedItem)
             {
-                MBoxStatic.Assert(99899, false);    // binding should dim the button
+                Util.Assert(99899, false);    // binding should dim the button
                 return;
             }
 
@@ -149,7 +149,7 @@ namespace DoubleFile
             }
             catch (Exception ex)
             {
-                MBoxStatic.Assert(99942, false, ex.GetBaseException().Message);
+                Util.Assert(99942, false, ex.GetBaseException().Message);
                 _searchType2?.EndThread();
                 _searchType2 = null;
                 _dictResults = null;
@@ -168,7 +168,7 @@ namespace DoubleFile
             }
             catch (NullReferenceException)
             {
-                MBoxStatic.Assert(99875, _bDisposed);
+                Util.Assert(99875, _bDisposed);
             }
         }
 
@@ -208,7 +208,7 @@ namespace DoubleFile
                     if ((ex is ArgumentNullException) ||
                         (ex is NullReferenceException))
                     {
-                        MBoxStatic.Assert(99878, _bDisposed);
+                        Util.Assert(99878, _bDisposed);
                         _dictResults = null;
                         return;
                     }

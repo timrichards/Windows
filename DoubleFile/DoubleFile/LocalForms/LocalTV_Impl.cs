@@ -32,7 +32,7 @@ namespace DoubleFile
                 }
                 else
                 {
-                    MBoxStatic.Assert(99954, false);
+                    Util.Assert(99954, false);
                     return false;
                 }
             }
@@ -152,7 +152,7 @@ namespace DoubleFile
             var nProgress = 0d;
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
-                .Subscribe(x => WinProgress.WithWinProgress(w => w.SetProgress(_ksFolderTreeKey, (3 + nProgress) / 4))))
+                .LocalSubscribe(x => WinProgress.WithWinProgress(w => w.SetProgress(_ksFolderTreeKey, (3 + nProgress) / 4))))
             {
                 _allNodes = new List<LocalTreeNode> { };
 

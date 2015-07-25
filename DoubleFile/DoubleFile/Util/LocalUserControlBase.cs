@@ -75,7 +75,7 @@ namespace DoubleFile
             };
 
             Observable.FromEventPattern(window, "Loaded")
-                .Subscribe(x =>
+                .LocalSubscribe(x =>
             {
                 content.LocalNavigatedTo();
                 content.LocalFragmentNavigation(_strFragment);
@@ -83,7 +83,7 @@ namespace DoubleFile
             });
 
             Observable.FromEventPattern(window, "Closed")
-                .Subscribe(x =>
+                .LocalSubscribe(x =>
             {
                 content.LocalNavigatedFrom();
                 content.LocalWindowClosed();

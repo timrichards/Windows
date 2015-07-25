@@ -41,12 +41,12 @@ namespace DoubleFile
             var bMouseDown = false;
 
             _lsDisposable.Add(Observable.FromEventPattern(this, "MouseDown")
-                .Subscribe(x => bMouseDown = true));
+                .LocalSubscribe(x => bMouseDown = true));
 
             _lsDisposable.Add(Observable.FromEventPattern<MouseEventArgs>(this, "MouseUp")
-                .Subscribe(args => { if (bMouseDown) { bMouseDown = false; form_tmapUserCtl_MouseUp(args.EventArgs.Location); } }));
+                .LocalSubscribe(args => { if (bMouseDown) { bMouseDown = false; form_tmapUserCtl_MouseUp(args.EventArgs.Location); } }));
 
-            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.Subscribe(initiatorTuple =>
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(initiatorTuple =>
             {
                 if (LV_TreeListChildrenVM.kChildSelectedOnNext == initiatorTuple.Item2)
                     return;
@@ -58,8 +58,8 @@ namespace DoubleFile
                 _bTreeSelect = false;
             }));
 
-            _lsDisposable.Add(LV_TreeListChildrenVM.TreeListChildSelected.Subscribe(LV_TreeListChildrenVM_TreeListChildSelected));
-            _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.Subscribe(LV_FilesVM_SelectedFileChanged));
+            _lsDisposable.Add(LV_TreeListChildrenVM.TreeListChildSelected.LocalSubscribe(LV_TreeListChildrenVM_TreeListChildSelected));
+            _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.LocalSubscribe(LV_FilesVM_SelectedFileChanged));
         }
 
         protected override void OnLoad(EventArgs e)
@@ -67,7 +67,7 @@ namespace DoubleFile
             base.OnLoad(e);
 
             _lsDisposable.Add(Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(33)).Timestamp()    // 30 FPS
-                .Subscribe(x =>
+                .LocalSubscribe(x =>
             {
                 if (Rectangle.Empty == _rectCenter)
                     return;         // from lambda
@@ -78,7 +78,7 @@ namespace DoubleFile
                     Invalidate(_rectCenter);
             }));
 
-            _lsDisposable.Add(TreeMapVM.TreeNodeCallback.Subscribe(TreeMapVM_TreeNodeCallback));
+            _lsDisposable.Add(TreeMapVM.TreeNodeCallback.LocalSubscribe(TreeMapVM_TreeNodeCallback));
         }
 
         void InvalidatePushRef(Action action)
@@ -188,7 +188,7 @@ namespace DoubleFile
 
                     if (null == nodeDatum)      // added 2/13/15
                     {
-                        MBoxStatic.Assert(99967, false);
+                        Util.Assert(99967, false);
                         return;     // from lambda
                     }
 
@@ -223,7 +223,7 @@ namespace DoubleFile
                     }
                 }
 
-                MBoxStatic.Assert(99882,
+                Util.Assert(99882,
                     (null == _prevNode) ||
                     (false == TreeMapVM.TreeNode.IsChildOf(_prevNode)));
 
@@ -239,7 +239,7 @@ namespace DoubleFile
 
                 if (null == nodeDatum_A)      // added 2/13/15
                 {
-                    MBoxStatic.Assert(99923, false);
+                    Util.Assert(99923, false);
                     return;
                 }
 
@@ -368,7 +368,7 @@ namespace DoubleFile
 
                 if (null == nodeDatum)      // added 2/13/15
                 {
-                    MBoxStatic.Assert(99966, false);
+                    Util.Assert(99966, false);
                     return null;
                 }
 
@@ -451,7 +451,7 @@ namespace DoubleFile
                 lsFiles.Add(Tuple.Create(asFileLine[0], nLength));
             }
 
-            MBoxStatic.Assert(1301.2313m, nLengthDebug == nodeDatum.Length);
+            Util.Assert(1301.2313m, nLengthDebug == nodeDatum.Length);
 
             ulong nTotalLength = 0;
             var lsNodes = new List<LocalTreeMapFileNode>();
@@ -473,7 +473,7 @@ namespace DoubleFile
             if (0 == nTotalLength)
                 return null;
 
-            MBoxStatic.Assert(1302.3301m, nTotalLength == parent.NodeDatum.Length);
+            Util.Assert(1302.3301m, nTotalLength == parent.NodeDatum.Length);
 
             return new LocalTreeMapFileListNode(parent, lsNodes)
             {
@@ -507,7 +507,7 @@ namespace DoubleFile
 
             if (null == nodeDatum)      // added 2/13/15
             {
-                MBoxStatic.Assert(99965, false);
+                Util.Assert(99965, false);
                 return;
             }
 
@@ -639,7 +639,7 @@ namespace DoubleFile
                    if (null != LocalOwner)
                        LocalOwner.Title = treeNode.Text;
                }
-               catch (ArgumentException) { MBoxStatic.Assert(99979, false); }
+               catch (ArgumentException) { Util.Assert(99979, false); }
             });
 
             _selChildNode = null;
@@ -701,7 +701,7 @@ namespace DoubleFile
 
             if (null == nodeDatum)      // added 2/13/15
             {
-                MBoxStatic.Assert(99963, false);
+                Util.Assert(99963, false);
                 return null;
             }
 
@@ -734,14 +734,14 @@ namespace DoubleFile
                 bool bStart = false)
             {
 #if (DEBUG)
-                MBoxStatic.Assert(1302.3303m, rc.Width >= 0);
-                MBoxStatic.Assert(1302.3304m, rc.Height >= 0);
+                Util.Assert(1302.3303m, rc.Width >= 0);
+                Util.Assert(1302.3304m, rc.Height >= 0);
 #endif
                 var nodeDatum = item.NodeDatum;
 
                 if (null == nodeDatum)      // added 2/13/15
                 {
-                    MBoxStatic.Assert(99962, false);
+                    Util.Assert(99962, false);
                     return;
                 }
 
@@ -995,7 +995,7 @@ namespace DoubleFile
                     for (var i = 0; i < row.ChildrenPerRow; i++, c++)
                     {
                         var child = lsChildren[c];
-                        MBoxStatic.Assert(1302.3305m, anChildWidth[c] >= 0);
+                        Util.Assert(1302.3305m, anChildWidth[c] >= 0);
                         var fRight = left + anChildWidth[c] * width;
                         var right = (int)fRight;
 
@@ -1058,16 +1058,16 @@ namespace DoubleFile
                 const double kdMinProportion = 0.4;
                 var nCount = listChildren.Count;
 
-                MBoxStatic.Assert(1302.3308m, kdMinProportion < 1);
+                Util.Assert(1302.3308m, kdMinProportion < 1);
 
-                MBoxStatic.Assert(1302.3309m, nextChild < nCount);
-                MBoxStatic.Assert(1302.33101m, width >= 1d);
+                Util.Assert(1302.3309m, nextChild < nCount);
+                Util.Assert(1302.33101m, width >= 1d);
 
                 var nodeDatum = parent.NodeDatum;
 
                 if (null == nodeDatum)      // added 2/13/15
                 {
-                    MBoxStatic.Assert(99961, false);
+                    Util.Assert(99961, false);
                     return 0;
                 }
 
@@ -1081,8 +1081,8 @@ namespace DoubleFile
                     var childSize = listChildren[i].NodeDatum.TotalLength;
                     sizeUsed += childSize;
                     var virtualRowHeight = sizeUsed / mySize;
-                    MBoxStatic.Assert(1302.3311m, virtualRowHeight > 0);
-                    MBoxStatic.Assert(1302.3312m, virtualRowHeight <= 1);
+                    Util.Assert(1302.3311m, virtualRowHeight > 0);
+                    Util.Assert(1302.3312m, virtualRowHeight <= 1);
 
                     // Rectangle(mySize)    = width * 1d
                     // Rectangle(childSize) = childWidth * virtualRowHeight
@@ -1092,7 +1092,7 @@ namespace DoubleFile
 
                     if (childWidth / virtualRowHeight < kdMinProportion)
                     {
-                        MBoxStatic.Assert(1302.3313m, i > nextChild); // because width >= 1 and _minProportion < 1.
+                        Util.Assert(1302.3313m, i > nextChild); // because width >= 1 and _minProportion < 1.
                         // For the first child we have:
                         // childWidth / rowHeight
                         // = childSize / mySize * width / rowHeight / rowHeight
@@ -1105,7 +1105,7 @@ namespace DoubleFile
                     rowHeight = virtualRowHeight;
                 }
 
-                MBoxStatic.Assert(1302.3314m, i > nextChild);
+                Util.Assert(1302.3314m, i > nextChild);
 
                 // Now i-1 is the last child used
                 // and rowHeight is the height of the row.
@@ -1121,13 +1121,13 @@ namespace DoubleFile
 
                     if (null == nodeDatum_A)      // added 2/13/15
                     {
-                        MBoxStatic.Assert(99960, false);
+                        Util.Assert(99960, false);
                         return 0;
                     }
 
                     var childSize = (double)nodeDatum_A.TotalLength;
                     var cw = childSize / rowSize;
-                    MBoxStatic.Assert(1302.3315m, cw >= 0);
+                    Util.Assert(1302.3315m, cw >= 0);
                     anChildWidth[nextChild + i] = cw;
                 }
 

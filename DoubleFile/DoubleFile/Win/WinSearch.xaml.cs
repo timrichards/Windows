@@ -30,7 +30,7 @@ namespace DoubleFile
             // Notify new vm of existing text in search box
             // One-shot: no need to dispose
             Observable.Timer(TimeSpan.FromMilliseconds(100)).Timestamp()
-                .Subscribe(x => Util.UIthread(99791, () =>
+                .LocalSubscribe(x => Util.UIthread(99791, () =>
             {
                 formEdit_search.Text = strText;
                 formEdit_search.CaretIndex = int.MaxValue;

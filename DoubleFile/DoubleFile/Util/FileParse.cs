@@ -131,7 +131,7 @@ namespace DoubleFile
                 {
                     case 1:
                     {
-                        MBoxStatic.Assert(99952, ksHeader01 == strLine);
+                        Util.Assert(99952, ksHeader01 == strLine);
                         file_out.WriteLine(FormatLine(ksLineType_Version, nLineNo, ksHeader));
                         continue;
                     }
@@ -150,7 +150,7 @@ namespace DoubleFile
 
                     case 4:
                     {
-                        MBoxStatic.Assert(99951, ksDrive01 == strLine);
+                        Util.Assert(99951, ksDrive01 == strLine);
                         file_out.WriteLine(FormatLine(ksLineType_Comment, nLineNo, ksVolume));
 
                         var astrInfoLineTypes = new string[knDriveInfoItems]
@@ -170,7 +170,7 @@ namespace DoubleFile
 
                             if (null == strLine)
                             {
-                                MBoxStatic.Assert(99950, false);
+                                Util.Assert(99950, false);
                                 return;
                             }
 
@@ -260,7 +260,7 @@ namespace DoubleFile
                 
                 if (false == strDir.Contains(@":\"))
                 {
-                    MBoxStatic.Assert(99949, false);        // all that's left is directories
+                    Util.Assert(99949, false);        // all that's left is directories
                     continue;
                 }
 
@@ -312,7 +312,7 @@ namespace DoubleFile
             {
                 strError1 += " Trailing whitespace";
 
-                MBoxStatic.Assert(99948, (false == string.IsNullOrWhiteSpace(strDir)) ||
+                Util.Assert(99948, (false == string.IsNullOrWhiteSpace(strDir)) ||
                     (false == string.IsNullOrWhiteSpace(strFile)));
 
                 bDbgCheck = true;
@@ -330,7 +330,7 @@ namespace DoubleFile
                 DateTime dtParse = DateTime.MinValue;
 
                 if (strArray[knColLength01].Contains("Trailing whitespace") && DateTime.TryParse(strArray[1], out dtParse))
-                    MBoxStatic.Assert(99947, false);
+                    Util.Assert(99947, false);
 #endif
             }
 
@@ -404,7 +404,7 @@ namespace DoubleFile
 
             if (3 > astr.Length)
             {
-                MBoxStatic.Assert(99946, false);
+                Util.Assert(99946, false);
                 return null;
             }
 

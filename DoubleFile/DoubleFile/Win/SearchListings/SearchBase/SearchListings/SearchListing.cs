@@ -121,7 +121,7 @@ namespace DoubleFile
                             searchResultDir.StrDir = PathBuilder.FactoryCreateOrFind(strDir, Cancel: Abort);
 
                             var a = searchResultDir.StrDir.PathParts;
-                            MBoxStatic.Assert(99789, -1 != a[a.Length - 1]);  // a will never and b will always end with a -1.
+                            Util.Assert(99789, -1 != a[a.Length - 1]);  // a will never and b will always end with a -1.
 
                             listResults.Add(searchResultDir, false);
                             searchResultDir = null;
@@ -146,7 +146,7 @@ namespace DoubleFile
                             searchResultDir.StrDir = PathBuilder.FactoryCreateOrFind(strDir + '\\', Cancel: Abort);
 
                             var b = searchResultDir.StrDir.PathParts;
-                            MBoxStatic.Assert(99787, -1 == b[b.Length - 1]);  // a will never and b will always end with a -1.
+                            Util.Assert(99787, -1 == b[b.Length - 1]);  // a will never and b will always end with a -1.
 
                             listResults.Add(searchResultDir, false);
                             searchResultDir = null;
@@ -164,9 +164,9 @@ namespace DoubleFile
                     }
 
                     if (null != searchResultDir)
-                        MBoxStatic.Assert(1307.8301m, null == searchResultDir.StrDir);
+                        Util.Assert(1307.8301m, null == searchResultDir.StrDir);
                     else
-                        MBoxStatic.Assert(1307.8302m, null == searchResultDir);
+                        Util.Assert(1307.8302m, null == searchResultDir);
 
                     if (0 < listResults.Count)
                         StatusCallback(new SearchResults(_strSearch, _volStrings, listResults.Keys), bFirst: bFirst);
@@ -177,7 +177,7 @@ namespace DoubleFile
             {
                 if (null == _callbackWR)
                 {
-                    MBoxStatic.Assert(99862, false);
+                    Util.Assert(99862, false);
                     return;
                 }
 
@@ -187,7 +187,7 @@ namespace DoubleFile
 
                 if (null == searchStatus)
                 {
-                    MBoxStatic.Assert(99861, false);
+                    Util.Assert(99861, false);
                     return;
                 }
 

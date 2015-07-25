@@ -24,7 +24,7 @@ namespace DoubleFile
                 .Select(tuple => 
             {
                 if (this[tuple.Item2].Any())
-                    MBoxStatic.Assert(99955, false);
+                    Util.Assert(99955, false);
 
                 return new LVitem_ProgressVM(this, new[] { tuple.Item1, tuple.Item2 });
             }));
@@ -33,7 +33,7 @@ namespace DoubleFile
         internal LV_ProgressVM()
         {
             _lsDisposables.Add(Observable.Timer(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500)).Timestamp()
-                .Subscribe(x =>
+                .LocalSubscribe(x =>
             {
                 foreach (var lvItem in ItemsCast.ToArray())
                     lvItem.TimerTick();

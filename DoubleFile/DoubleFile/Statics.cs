@@ -19,7 +19,11 @@ namespace DoubleFile
         SaveDirListings _saveDirListings;
 
         static internal ILocalWindow
-            TopWindow { get { return _wr.Get(s => s._topWindow); } set { _wr.Get(s => s._topWindow = value); } }
+            TopWindow
+        {
+            get { return _wr.Get(s => s._topWindow); }
+            set { _wr.Get(s => { Util.Assert(99775, null != value); return s._topWindow = value; }); }
+        }
         ILocalWindow _topWindow;
 
         static public bool
@@ -34,7 +38,7 @@ namespace DoubleFile
         {
             if (_wr.Get(s => true))
             {
-                MBoxStatic.Assert(99776, false);
+                Util.Assert(99776, false);
                 return;
             }
 

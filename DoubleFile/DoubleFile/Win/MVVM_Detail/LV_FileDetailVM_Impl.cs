@@ -10,10 +10,10 @@ namespace DoubleFile
         internal LV_FileDetailVM()
         {
             Icmd_Copy = new RelayCommand(Copy, () => false == string.IsNullOrWhiteSpace(LocalPath));
-            _lsDisposable.Add(WinDuplicatesVM.UpdateFileDetail.Subscribe(WinDuplicatesVM_UpdateFileDetail));
-            _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.Subscribe(LV_FilesVM_SelectedFileChanged));
+            _lsDisposable.Add(WinDuplicatesVM.UpdateFileDetail.LocalSubscribe(WinDuplicatesVM_UpdateFileDetail));
+            _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.LocalSubscribe(LV_FilesVM_SelectedFileChanged));
 
-            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.Subscribe(initiatorTuple =>
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(initiatorTuple =>
             {
                 var tuple = initiatorTuple.Item1;
 

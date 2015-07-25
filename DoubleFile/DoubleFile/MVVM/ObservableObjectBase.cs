@@ -29,7 +29,7 @@ namespace DoubleFile
                 if (this.ThrowOnInvalidPropertyName)
                     throw new Exception(msg);
                 else
-                    MBoxStatic.Assert(99781, false, msg);
+                    Util.Assert(99781, false, msg);
             }
         }
 
@@ -51,7 +51,7 @@ namespace DoubleFile
         /// <param name="propertyName">Property name to update. Is case-sensitive.</param>
         public virtual bool RaisePropertyChanged([CallerMemberName]string propertyName = null)
         {
-            MBoxStatic.Assert(99944, null != propertyName);
+            Util.Assert(99944, null != propertyName);
             return OnPropertyChanged(propertyName);
         }
 

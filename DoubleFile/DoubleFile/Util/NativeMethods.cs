@@ -12,7 +12,7 @@ namespace DoubleFile
     internal class NativeWindow : IEquatable<NativeWindow>
     {
         static public implicit operator IntPtr(NativeWindow h) { return h.hwnd; }
-        static public implicit operator NativeWindow(Window w) { return new NativeWindow { hwnd = new WindowInteropHelper(w).Handle }; }
+        static public implicit operator NativeWindow(Window w) { return new NativeWindow { hwnd = (null != w) ? new WindowInteropHelper(w).Handle : (IntPtr)0xBAD00 + nDeadRefCount++ }; }
         static public implicit operator NativeWindow(IntPtr hwnd) { return new NativeWindow { hwnd = hwnd }; }
 
         // can't override == and != operator because of the implicit operator IntPtr above
@@ -22,6 +22,7 @@ namespace DoubleFile
         }
 
         IntPtr hwnd = IntPtr.Zero;
+        static int nDeadRefCount = 0;
     }
 
     static class NativeMethods
@@ -38,7 +39,7 @@ namespace DoubleFile
             var retVal = action();
             var strGetLastError = new Win32Exception(Marshal.GetLastWin32Error()).Message;
 
-            MBoxStatic.Assert(nAssertLoc,
+            Util.Assert(nAssertLoc,
                 (false == bAssert) ||
                 (false == errorValue.Equals(retVal)));
             

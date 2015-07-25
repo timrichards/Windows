@@ -18,7 +18,7 @@ namespace DoubleFile
             var enumerator = source.GetEnumerator();    // GetEnumerator() is only used here in ExtensionMethodsStatic 3x 7/6/15
 
             if (enumerator.MoveNext())
-                MBoxStatic.Assert(99903, false == enumerator.MoveNext());
+                Util.Assert(99903, false == enumerator.MoveNext());
 #endif
             return retVal;
         }
@@ -37,7 +37,7 @@ namespace DoubleFile
             var enumerator = source.GetEnumerator();    // GetEnumerator() is only used here in ExtensionMethodsStatic 3x 7/6/15
 
             if (enumerator.MoveNext())
-                MBoxStatic.Assert(99953, false == enumerator.MoveNext());
+                Util.Assert(99953, false == enumerator.MoveNext());
 #endif
             return bRetVal;
         }
@@ -70,7 +70,7 @@ namespace DoubleFile
         {
             if (source is ICollection<T>)
             {
-                MBoxStatic.Assert(99890, false, bTraceOnly: true);
+                Util.Assert(99890, false, bTraceOnly: true);
                 return ((ICollection<T>)source).Count == nDesiredElements;
             }
 
@@ -84,11 +84,27 @@ namespace DoubleFile
 
             return false == ie.MoveNext();
         }
-      
+
+        static public IDisposable LocalSubscribe<T>(this IObservable<T> source, Action<T> onNext)
+        {
+            return
+                source.Subscribe(t =>
+            {
+                try
+                {
+                    onNext(t);
+                }
+                catch (Exception e)
+                {
+                    MBoxStatic.ShowDialog(e.GetBaseException().Message, "LocalSubscribe Exception");
+                }
+            });
+        }
+
         static readonly IDictionary<int, Tuple<DateTime, WeakReference>> _lsSubjects = new Dictionary<int, Tuple<DateTime, WeakReference>>();
         static public void LocalOnNext<T>(this LocalSubject<T> subject, T value, int nOnNextAssertLoc, int nInitiator = 0)
         {
-            MBoxStatic.Assert(nOnNextAssertLoc, 0 <= nInitiator);
+            Util.Assert(nOnNextAssertLoc, 0 <= nInitiator);
 
             if (0 == nInitiator)
                 nInitiator = nOnNextAssertLoc;
@@ -106,7 +122,7 @@ namespace DoubleFile
             else if ((nOnNextAssertLoc < 99830) ||      // 99830 block is reserved: do not alert LocalOnNext
                 (nOnNextAssertLoc >= 99840))
             {
-                MBoxStatic.Assert(nOnNextAssertLoc, false);
+                Util.Assert(nOnNextAssertLoc, false);
             }
         }
 
@@ -160,7 +176,7 @@ namespace DoubleFile
             var nRet = DateTime.MinValue;
 
             if (false == DateTime.TryParse(str, out nRet))
-                MBoxStatic.Assert(99925, false);
+                Util.Assert(99925, false);
 
             return nRet;
         }
@@ -170,7 +186,7 @@ namespace DoubleFile
             var nRet = 0;
 
             if (false == int.TryParse(str, out nRet))
-                MBoxStatic.Assert(99930, false);
+                Util.Assert(99930, false);
 
             return nRet;
         }
@@ -180,7 +196,7 @@ namespace DoubleFile
             var nRet = 0UL;
 
             if (false == ulong.TryParse(str, out nRet))
-                MBoxStatic.Assert(99929, false);
+                Util.Assert(99929, false);
 
             return nRet;
         }

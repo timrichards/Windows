@@ -35,7 +35,7 @@ namespace DoubleFile
 
                 default:
                 {
-                    MBoxStatic.Assert(99784, false);
+                    Util.Assert(99784, false);
                     return;
                 }
             }
@@ -43,7 +43,7 @@ namespace DoubleFile
             if (localLVVM.Items.Any())
                 Add(localLVVM.ItemsCast);
 
-            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.Subscribe(TreeSelect_FolderDetailUpdated));
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(TreeSelect_FolderDetailUpdated));
 
             var folderDetail = LocalTV.TreeSelect_FolderDetail;
 
@@ -75,7 +75,7 @@ namespace DoubleFile
         {
             if (null == _selectedItem)
             {
-                MBoxStatic.Assert(99783, false);    // binding should dim the button
+                Util.Assert(99783, false);    // binding should dim the button
                 return;
             }
 

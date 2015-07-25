@@ -11,7 +11,7 @@ namespace DoubleFile
         : base(nTotalLength, nFilesInSubdirs, nDirsWithFiles,
               folderScore[0], folderScore[1], folderScore[2])
         {
-            MBoxStatic.Assert(99902, 3 == folderScore.Length);
+            Util.Assert(99902, 3 == folderScore.Length);
         }
     }
 }

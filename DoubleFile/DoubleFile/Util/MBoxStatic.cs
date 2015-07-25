@@ -9,8 +9,8 @@ namespace DoubleFile
 #if ((false == DEBUG) || LOCALMBOX)
         static bool _bAssertUp = false;
 #endif
-        static public bool Assert(decimal nLocation, bool bCondition, string strError_in = null,
-            bool bTraceOnly = false)
+        static internal bool
+            Assert(decimal nLocation, bool bCondition, string strError_in, bool bTraceOnly)
         {
             if (bCondition)
                 return true;
@@ -53,16 +53,18 @@ namespace DoubleFile
 #endif
         }
 
-        static internal void Restart()
-        {
-            _restart = true;
-            Kill();
-        }
-
-        static internal void Kill()
+        static internal void
+            Kill()
         {
             _messageBox?.Close();
             _messageBox = null;
+        }
+
+        static internal void
+            Restart()
+        {
+            _restart = true;
+            Kill();
         }
 
         // make MessageBox modal from a worker thread
@@ -70,7 +72,11 @@ namespace DoubleFile
             ShowDialog(string strMessage, string strTitle = null, MessageBoxButton? buttons = null, ILocalWindow owner = null)
         {
             if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
+            {
+                MessageBox.Show("Application shutting down, but there's a message (next...)");
+                MessageBox.Show(strMessage, strTitle, buttons ?? MessageBoxButton.OK);
                 return MessageBoxResult.None;
+            }
 
             if (null == owner)
             {
@@ -81,7 +87,7 @@ namespace DoubleFile
             } 
 
             if (owner?.LocalIsClosed ?? false)
-                return MessageBoxResult.None;
+                owner = null;
 
             var msgBoxRet = MessageBoxResult.None;
             

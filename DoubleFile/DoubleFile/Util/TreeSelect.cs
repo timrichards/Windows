@@ -111,7 +111,7 @@ namespace DoubleFile
                 if ((0 == (nodeDatum?.LineNo ?? 0)) ||
                     (null == rootNodeDatum))
                 {
-                    MBoxStatic.Assert(99779, false);
+                    Util.Assert(99779, false);
                     return null;     // from lambda
                 }
 
@@ -145,7 +145,7 @@ namespace DoubleFile
 
             if (0 == (nodeDatum?.LineNo ?? 0))
             {
-                MBoxStatic.Assert(99777, false);
+                Util.Assert(99777, false);
                 FolderDetailUpdatedOnNext(new FolderDetailUpdated(lieDetail, null), nInitiator);
                 return;
             }
@@ -196,7 +196,7 @@ namespace DoubleFile
                 .Split(new[] { "\r\n", "\n" },
                 StringSplitOptions.None);
 
-            MBoxStatic.Assert(1301.2314m,
+            Util.Assert(1301.2314m,
                 new[] { 7, 8, 10, kanDIviewOrder.Length }
                 .Contains(arrDriveInfo.Length));
 

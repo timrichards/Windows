@@ -14,7 +14,7 @@ namespace DoubleFile
         {
             var nRet = StrDir.CompareTo(((SearchResultsDir)other).StrDir);
 
-            MBoxStatic.Assert(99790, 0 != nRet);
+            Util.Assert(99790, 0 != nRet);
             return nRet;
         }
     }

@@ -39,7 +39,7 @@ namespace DoubleFile
                     return false;   // from lambda
                 }
 
-                MBoxStatic.Assert(99792, false);
+                Util.Assert(99792, false);
                 w.Abort().Close();
                 return false;       // from lambda
             });
@@ -55,23 +55,23 @@ namespace DoubleFile
             Width = rc.Width;
 
             Observable.FromEventPattern(this, "SourceInitialized")
-                .Subscribe(x => ResizeMode = ResizeMode.NoResize);
+                .LocalSubscribe(x => ResizeMode = ResizeMode.NoResize);
 
             Observable.FromEventPattern(this, "Loaded")
-                .Subscribe(x => formLV_Progress.DataContext = _lv);
+                .LocalSubscribe(x => formLV_Progress.DataContext = _lv);
 
             Observable.FromEventPattern(this, "ContentRendered")
-                .Subscribe(x =>
+                .LocalSubscribe(x =>
             {
                 MinHeight = MaxHeight = ActualHeight;
                 initClient(this);
             });
 
             Observable.FromEventPattern(formBtn_Cancel, "Click")
-                .Subscribe(x => base.Close());
+                .LocalSubscribe(x => base.Close());
 
             Observable.FromEventPattern<CancelEventArgs>(this, "Closing")
-                .Subscribe(args => Window_Closing(args.EventArgs));
+                .LocalSubscribe(args => Window_Closing(args.EventArgs));
 
             _lv.Add(astrBigLabels.Zip(astrSmallKeyLabels, (a, b) => Tuple.Create(a, b)));
         }
@@ -83,7 +83,7 @@ namespace DoubleFile
                 _lv[strPath]
                 .FirstOnlyAssert(lvItem => lvItem.Progress = nProgress - double.Epsilon))
             {
-                MBoxStatic.Assert(99969, false);
+                Util.Assert(99969, false);
             }
 
             return this;
@@ -107,7 +107,7 @@ namespace DoubleFile
                 }
             }))
             {
-                MBoxStatic.Assert(99968, false);
+                Util.Assert(99968, false);
             }
 
             return this;
@@ -117,7 +117,7 @@ namespace DoubleFile
             SetError(string strSmallKeyLabel, string strError)
         {
             if (false == _lv[strSmallKeyLabel].FirstOnlyAssert(lvItem => lvItem.SetError(strError)))
-                MBoxStatic.Assert(99956, false);
+                Util.Assert(99956, false);
 
             return this;
         }

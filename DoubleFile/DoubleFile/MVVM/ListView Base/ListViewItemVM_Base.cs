@@ -20,7 +20,7 @@ namespace DoubleFile
                     return;
                 }
 
-                MBoxStatic.Assert(99996, value.Count <= NumCols);
+                Util.Assert(99996, value.Count <= NumCols);
 
                 var nTack = NumCols - value.Count;
 
@@ -29,7 +29,7 @@ namespace DoubleFile
                     ? value
                     : value.Concat(new string[nTack]).ToList();
 
-                MBoxStatic.Assert(99995, _subItems.Count == NumCols);
+                Util.Assert(99995, _subItems.Count == NumCols);
 
                 foreach (var propName in PropNames)
                     RaisePropertyChanged(propName);
@@ -130,7 +130,7 @@ namespace DoubleFile
                 return;
 
             _subItems[nCol] = s;
-            MBoxStatic.Assert(99937, null != propertyName);
+            Util.Assert(99937, null != propertyName);
             RaisePropertyChanged(propertyName);
             RaiseColumnWidth(propertyName);
         }

@@ -55,10 +55,10 @@ namespace DoubleFile
                 });
 
                 _winOwnerClosedObserver = Observable.FromEventPattern(winOwner, "Closed")
-                    .Subscribe(argsA => CloseTooltip());
+                    .LocalSubscribe(argsA => CloseTooltip());
 
                 Observable.FromEventPattern<SizeChangedEventArgs>(_winTooltip, "SizeChanged")
-                    .Subscribe(argsA => _winTooltip.WinTooltip_SizeChanged(argsA.EventArgs.NewSize));
+                    .LocalSubscribe(argsA => _winTooltip.WinTooltip_SizeChanged(argsA.EventArgs.NewSize));
             });
         }
 
@@ -84,7 +84,7 @@ namespace DoubleFile
             Util.UIthread(99807, () => _winTooltip.Tag = tag);
             _winTooltip._closingCallback = args.closingCallback;
             _winTooltip._clickCallback = args.clickCallback;
-            MBoxStatic.Assert(99964, null != tag);
+            Util.Assert(99964, null != tag);
         }
 
         static internal void CloseTooltip()
@@ -120,15 +120,15 @@ namespace DoubleFile
             Background = Brushes.LightYellow;
 
             Observable.FromEventPattern(this, "Loaded")
-                .Subscribe(x => ++formTextBlock_folder.FontSize);
+                .LocalSubscribe(x => ++formTextBlock_folder.FontSize);
 
             var bMouseDown = false;
 
             Observable.FromEventPattern(this, "MouseDown")
-                .Subscribe(x => bMouseDown = true);
+                .LocalSubscribe(x => bMouseDown = true);
 
             Observable.FromEventPattern(this, "MouseUp")
-                .Subscribe(x => { if (bMouseDown) _clickCallback?.Invoke(); bMouseDown = false; });
+                .LocalSubscribe(x => { if (bMouseDown) _clickCallback?.Invoke(); bMouseDown = false; });
         }
 
         void WinTooltip_SizeChanged(Size newSize)

@@ -41,7 +41,7 @@ namespace DoubleFile
 
             if (null == _callbackWR)
             {
-                MBoxStatic.Assert(99860, false);
+                Util.Assert(99860, false);
                 return;
             }
 
@@ -51,7 +51,7 @@ namespace DoubleFile
 
             if (null == searchStatus)
             {
-                MBoxStatic.Assert(99859, false);
+                Util.Assert(99859, false);
                 return;
             }
 

@@ -64,7 +64,7 @@ namespace DoubleFile
             var bAlreadyInProject = ItemsCast.Any(item =>
                 (item.ListingFile.ToLower() == s) &&
                 (lvCurrentItem != item) &&
-                (MBoxStatic.Assert(99855, null != item)));
+                (Util.Assert(99855, null != item)));
 
             if (bAlreadyInProject &&
                 (false == bQuiet))
@@ -145,7 +145,7 @@ namespace DoubleFile
             // making sure that LVitem_ProjectVM doesn't get interpreted as ListViewItemVM_Base
             // bQuiet is always explicitly named, so renamed it here to be sure
             // the signature remains the same which makes it a valid new: hiding the base method
-            MBoxStatic.Assert(99936, false);
+            Util.Assert(99936, false);
         }
 
         internal bool Add(LVitem_ProjectVM lvItem, bool bQuiet = false)
@@ -267,7 +267,7 @@ namespace DoubleFile
                     if (strLine.StartsWith(FileParse.ksLineType_Start))
                     {
                         // already past the header: nothing left to replace.
-                        MBoxStatic.Assert(99989, false);
+                        Util.Assert(99989, false);
                         sbOut.AppendLine(strLine);
                         break;
                     }
@@ -278,7 +278,7 @@ namespace DoubleFile
                     {
                         var astr = ("" + sbLine).Split('\t').ToList();
 
-                        MBoxStatic.Assert(1308.9312m, 3 == astr.Count);
+                        Util.Assert(1308.9312m, 3 == astr.Count);
 
                         while (3 > astr.Count)
                             astr.Add("");
@@ -321,7 +321,7 @@ namespace DoubleFile
                 }
                 else
                 {
-                    MBoxStatic.Assert(99988, false == File.Exists(lvItem_Orig.ListingFile));
+                    Util.Assert(99988, false == File.Exists(lvItem_Orig.ListingFile));
 
                     try
                     {
@@ -353,7 +353,7 @@ namespace DoubleFile
                 bDriveLetter_Todo = false;
             }
 
-            MBoxStatic.Assert(99987, (false == (bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo || bDriveLetter_Todo)));
+            Util.Assert(99987, (false == (bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo || bDriveLetter_Todo)));
             return true;
         }
     }

@@ -31,7 +31,7 @@ namespace DoubleFile
             {
                 if (false == _bFolderListLinkCheck)
                 {
-                    MBoxStatic.Assert(99886, 3 == WinFolderList.FolderListFragments.Count);
+                    Util.Assert(99886, 3 == WinFolderList.FolderListFragments.Count);
                     _bFolderListLinkCheck = true;
                 }
 
@@ -47,7 +47,7 @@ namespace DoubleFile
             {
                 if (false == _bFormsLV_LinkCheck)
                 {
-                    MBoxStatic.Assert(99782, 3 == WinFormsLV.FolderListFragments.Count);
+                    Util.Assert(99782, 3 == WinFormsLV.FolderListFragments.Count);
                     _bFormsLV_LinkCheck = true;
                 }
 
@@ -79,10 +79,10 @@ namespace DoubleFile
             InitializeComponent();
 
             Observable.FromEventPattern(this, "Loaded")
-                .Subscribe(Window_Loaded);
+                .LocalSubscribe(Window_Loaded);
 
             Observable.FromEventPattern<CancelEventArgs>(this, "Closing")
-                .Subscribe(args => MainWindow_Closing(args.EventArgs));
+                .LocalSubscribe(args => MainWindow_Closing(args.EventArgs));
 
             MenuLinkGroups.Add(new LinkGroup { DisplayName="Welcome", Links =
             {
@@ -154,7 +154,7 @@ namespace DoubleFile
             {
                 if (mainWindow?.LocalIsClosed ?? true)
                 {
-                    MBoxStatic.Assert(99856, false);
+                    Util.Assert(99856, false);
                     return default(T);      // from lambda
                 }
 
@@ -181,9 +181,9 @@ namespace DoubleFile
         {
 #if (DEBUG)
             //#warning DEBUG is defined.
-            MBoxStatic.Assert(99998, Debugger.IsAttached, "Debugger is not attached!");
+            Util.Assert(99998, Debugger.IsAttached, "Debugger is not attached!");
 #else
-            if (MBoxStatic.Assert(99997, (System.Diagnostics.Debugger.IsAttached == false), "Debugger is attached but DEBUG is not defined.") == false)
+            if (Util.Assert(99997, (System.Diagnostics.Debugger.IsAttached == false), "Debugger is attached but DEBUG is not defined.") == false)
                 return;
 
             var arrArgs = AppDomain.CurrentDomain.SetupInformation.ActivationArguments?.ActivationData;
@@ -192,7 +192,7 @@ namespace DoubleFile
             if (null == arrArgs)                
                 return;
 
-            if (false == MBoxStatic.Assert(1308.93165m, 0 < arrArgs.Length))
+            if (false == Util.Assert(1308.93165m, 0 < arrArgs.Length))
                 return;
 
             var strFile = arrArgs[0];

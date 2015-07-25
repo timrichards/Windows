@@ -16,7 +16,7 @@ namespace DoubleFile
 
             internal ulong
                 Size
-            { get { MBoxStatic.Assert(99928, 0 <= _Size); return (ulong)_Size; } }
+            { get { Util.Assert(99928, 0 <= _Size); return (ulong)_Size; } }
             readonly long _Size;
 
             internal readonly bool IsValid = false;

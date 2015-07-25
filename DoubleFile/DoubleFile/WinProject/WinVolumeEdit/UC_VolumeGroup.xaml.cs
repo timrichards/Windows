@@ -17,7 +17,7 @@ namespace DoubleFile
             InitializeComponent();
 
             Observable.FromEventPattern(this, "Loaded")
-                .Subscribe(x =>
+                .LocalSubscribe(x =>
             {
                 if (IsWinVolumeGroup)
                 {

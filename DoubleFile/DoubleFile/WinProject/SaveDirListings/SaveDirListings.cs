@@ -80,7 +80,7 @@ namespace DoubleFile
 
             if (null == _saveDirListingsStatus)
             {
-                MBoxStatic.Assert(99873, false);
+                Util.Assert(99873, false);
                 return;
             }
 

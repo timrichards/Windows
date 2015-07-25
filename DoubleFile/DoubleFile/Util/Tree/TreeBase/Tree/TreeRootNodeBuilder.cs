@@ -22,7 +22,7 @@ namespace DoubleFile
                 : base(base_in)
             {
                 _volStrings = volStrings;
-                MBoxStatic.Assert(1301.2301m, _callbackWR != null);
+                Util.Assert(1301.2301m, _callbackWR != null);
             }
 
             DetailsDatum TreeSubnodeDetails(LocalTreeNode treeNode)
@@ -47,7 +47,7 @@ namespace DoubleFile
 
                 if (0 == (nodeDatum?.LineNo ?? 0))
                 {
-                    MBoxStatic.Assert(99778, false);
+                    Util.Assert(99778, false);
                     return datum;
                 }
 
@@ -105,7 +105,7 @@ namespace DoubleFile
 
                 if (_volStrings.CanLoad == false)
                 {
-                    MBoxStatic.Assert(1301.2307m, false);    // guaranteed by caller
+                    Util.Assert(1301.2307m, false);    // guaranteed by caller
                     return;
                 }
 
@@ -187,7 +187,7 @@ namespace DoubleFile
                     {
                         if (null != _dictDriveInfo.TryGetValue(_volStrings.ListingFile))
                         {
-                            MBoxStatic.Assert(1301.2308m, false);
+                            Util.Assert(1301.2308m, false);
                             _dictDriveInfo.Remove(_volStrings.ListingFile);
                         }
 
@@ -229,7 +229,7 @@ namespace DoubleFile
 
                         if (null == fileKeyTuple)
                         {
-                            MBoxStatic.Assert(99912, false);
+                            Util.Assert(99912, false);
                             Abort();
                             return;
                         }
@@ -298,7 +298,7 @@ namespace DoubleFile
                 if (nScannedLength != nTotalLength)
                 {
                     Util.WriteLine("" + nTotalLength);
-                    MBoxStatic.Assert(1301.23101m, false, "nScannedLength != nTotalLength\n" + _volStrings.ListingFile, bTraceOnly: true);
+                    Util.Assert(1301.23101m, false, "nScannedLength != nTotalLength\n" + _volStrings.ListingFile, bTraceOnly: true);
                 }
 
                 Util.WriteLine(_volStrings.ListingFile + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");
@@ -309,7 +309,7 @@ namespace DoubleFile
             {
                 if (null == _callbackWR)
                 {
-                    MBoxStatic.Assert(99867, false);
+                    Util.Assert(99867, false);
                     return;
                 }
 
@@ -319,7 +319,7 @@ namespace DoubleFile
 
                 if (null == treeStatus)
                 {
-                    MBoxStatic.Assert(99866, false);
+                    Util.Assert(99866, false);
                     return;
                 }
 

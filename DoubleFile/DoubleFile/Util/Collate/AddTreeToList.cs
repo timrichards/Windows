@@ -31,7 +31,7 @@ namespace DoubleFile
             {
                 if (treeNode_in == null)
                 {
-                    MBoxStatic.Assert(1305.6302m, false);
+                    Util.Assert(1305.6302m, false);
                     return;
                 }
 
@@ -45,7 +45,7 @@ namespace DoubleFile
 
                     if (null == nodeDatum)
                     {
-                        MBoxStatic.Assert(1305.6303m, false);
+                        Util.Assert(1305.6303m, false);
                         continue;
                     }
 

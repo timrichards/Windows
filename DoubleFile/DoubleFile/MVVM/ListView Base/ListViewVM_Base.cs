@@ -56,7 +56,7 @@ namespace DoubleFile
                     // When there are too many items you get UI thread lockup.
                     // One-shot: no need to dispose
                     Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()
-                        .Subscribe(x => blockingFrame.Continue = false);
+                        .LocalSubscribe(x => blockingFrame.Continue = false);
 
                     blockingFrame.PushFrameToTrue();
                     dt = DateTime.Now;
@@ -76,7 +76,7 @@ namespace DoubleFile
             if (0 < _items.Count)
                 _items[0].RaiseColumnWidths();
             else
-                MBoxStatic.Assert(99993, false);
+                Util.Assert(99993, false);
         }
     }
 }

@@ -8,8 +8,8 @@ namespace DoubleFile
     {
         internal LV_FilesVM()
         {
-            _lsDisposable.Add(TreeSelect.FileListUpdated.Observable.Subscribe(TreeSelect_FileListUpdated));
-            _lsDisposable.Add(UC_TreeMap.SelectedFile.Subscribe(UC_TreeMap_SelectedFile));
+            _lsDisposable.Add(TreeSelect.FileListUpdated.Observable.LocalSubscribe(TreeSelect_FileListUpdated));
+            _lsDisposable.Add(UC_TreeMap.SelectedFile.LocalSubscribe(UC_TreeMap_SelectedFile));
 
             var fileList = LocalTV.TreeSelect_FileList;
 

@@ -8,7 +8,7 @@ namespace DoubleFile
     {
         internal LV_VolumeDetailVM()
         {
-            _lsDisposable.Add(TreeSelect.VolumeDetailUpdated.Observable.Subscribe(VolumeDetailUpdated));
+            _lsDisposable.Add(TreeSelect.VolumeDetailUpdated.Observable.LocalSubscribe(VolumeDetailUpdated));
 
             var volumeDetail = LocalTV.TreeSelect_VolumeDetail;
 

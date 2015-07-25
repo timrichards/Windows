@@ -34,17 +34,17 @@ namespace VolTreeMap
             Statics.AppActivated = true;      // Application_Activated() seemed to work but jic
 
             Observable.FromEventPattern(this, "Activated")
-                .Subscribe(x => Application_Activated());
+                .LocalSubscribe(x => Application_Activated());
 
             Observable.FromEventPattern(this, "Deactivated")
-                .Subscribe(x => { Statics.AppActivated = false; DeactivateDidOccurOnNext(); });
+                .LocalSubscribe(x => { Statics.AppActivated = false; DeactivateDidOccurOnNext(); });
 
 #if (false == DEBUG)
             Observable.FromEventPattern<System.Windows.Threading.DispatcherUnhandledExceptionEventArgs>(this, "DispatcherUnhandledException")
-                .Subscribe(args =>
+                .LocalSubscribe(args =>
             {
                 args.EventArgs.Handled = true;
-                MBoxStatic.Assert(-1, false, args.EventArgs.Exception.Message);
+                Util.Assert(-1, false, args.EventArgs.Exception.Message);
             });
 #endif
             ShutdownMode = ShutdownMode.OnMainWindowClose;

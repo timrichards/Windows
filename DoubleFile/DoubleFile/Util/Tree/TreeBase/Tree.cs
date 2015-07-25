@@ -72,7 +72,7 @@ namespace DoubleFile
 
             if (null == _callbackWR)
             {
-                MBoxStatic.Assert(99865, false);
+                Util.Assert(99865, false);
                 return;
             }
 
@@ -82,7 +82,7 @@ namespace DoubleFile
 
             if (null == treeStatus)
             {
-                MBoxStatic.Assert(99864, false);
+                Util.Assert(99864, false);
                 return;
             }
 

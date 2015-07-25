@@ -11,6 +11,19 @@ namespace DoubleFile
 {
     partial class Util : FileParse
     {
+        static internal bool
+            Assert(decimal nLocation, bool bCondition, string strError_in = null, bool bTraceOnly = false)
+        {
+            return MBoxStatic.Assert(nLocation, bCondition, strError_in, bTraceOnly);
+        }
+
+        static internal T
+            AssertNutNull<T>(decimal nLocation, T t, string strError_in = null, bool bTraceOnly = false)
+        {
+            Assert(nLocation, null != t, strError_in, bTraceOnly);
+            return t;
+        }
+
         static internal void
             Block(int nMilliseconds) { Block(new TimeSpan(0, 0, 0, 0, nMilliseconds)); }
         static internal void
@@ -43,11 +56,11 @@ namespace DoubleFile
             }
             catch (ArgumentException)
             {
-                MBoxStatic.Assert(99933, false);
+                Util.Assert(99933, false);
             }
             catch (FormatException)
             {
-                MBoxStatic.Assert(99933, false);
+                Util.Assert(99933, false);
             }
 
             var str = "";
@@ -129,10 +142,10 @@ namespace DoubleFile
 
             // One-shot: no need to dispose
             Observable.Timer(TimeSpan.FromMilliseconds(250)).Timestamp()
-                .Subscribe(x => cts.Cancel());
+                .LocalSubscribe(x => cts.Cancel());
 
             Observable.Timer(TimeSpan.FromMilliseconds(500)).Timestamp()
-                .Subscribe(x => thread.Abort());
+                .LocalSubscribe(x => thread.Abort());
         }
 
         static internal void

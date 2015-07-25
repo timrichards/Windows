@@ -8,7 +8,6 @@ namespace DoubleFile
 {
     abstract public class LocalWindowBase : Window, ILocalWindow
     {
-        internal bool LocalDidOpen { get; private set; }
         internal bool LocalIsClosing { get; private set; }
         public bool LocalIsClosed { get; private set; } = true;
 
@@ -58,7 +57,7 @@ namespace DoubleFile
             // system file dialogs isn't going away...
 
             Observable.FromEventPattern(this, "SourceInitialized")
-                .Subscribe(x =>
+                .LocalSubscribe(x =>
                 HwndSource
                     .FromHwnd((NativeWindow)this)
                     .AddHook(WndProc));
@@ -70,7 +69,7 @@ namespace DoubleFile
             var prevTopWindow = Statics.TopWindow;
 
             Observable.FromEventPattern(this, "Activated")
-                .Subscribe(x =>
+                .LocalSubscribe(x =>
             {
                 var bCanFlashWindow = App.CanFlashWindow_ResetsIt;     // querying it resets it
                 var topWindow = Statics.TopWindow;
@@ -95,24 +94,21 @@ namespace DoubleFile
                     prevTopWindow =
                         (Statics.TopWindow is ExtraWindow)
                         ? Statics.TopWindow
-                        : MainWindow.WithMainWindow(w => w);
+                        : MainWindow.WithMainWindow(w => w)
+                        ?? prevTopWindow;
 
                     Statics.TopWindow = this;
                 }
             });
 
             Observable.FromEventPattern(this, "Loaded")
-                .Subscribe(x =>
-            {
-                LocalDidOpen = true;
-                LocalIsClosed = false;
-            });
+                .LocalSubscribe(x => LocalIsClosed = false);
 
             Observable.FromEventPattern(this, "Closing")
-                .Subscribe(x => LocalIsClosing = true);
+                .LocalSubscribe(x => LocalIsClosing = true);
 
             Observable.FromEventPattern(this, "Closed")
-                .Subscribe(x =>
+                .LocalSubscribe(x =>
             {
                 LocalIsClosed = true;
 
@@ -125,7 +121,8 @@ namespace DoubleFile
                 Statics.TopWindow =
                     (false == prevTopWindow.LocalIsClosed)
                     ? prevTopWindow
-                    : MainWindow.WithMainWindow(w => w);
+                    : MainWindow.WithMainWindow(w => w)
+                    ?? Statics.TopWindow;
             });
 
             ShowActivated = true;
@@ -176,7 +173,7 @@ namespace DoubleFile
 
             if (this is IModalWindow)
             {
-                MBoxStatic.Assert(99796, false);
+                Util.Assert(99796, false);
                 return this;
             }
 
@@ -199,13 +196,13 @@ namespace DoubleFile
             if ((false == this is IModalWindow) &&
                 (false == this is IDarkWindow)) // IDarkWindow will start both modal and modeless; will never be modern window.
             {
-                MBoxStatic.Assert(99795, false);
+                Util.Assert(99795, false);
                 return null;
             }
 
             if (me.LocalIsClosed)
             {
-                MBoxStatic.Assert(99981, false);
+                Util.Assert(99981, false);
                 return null;
             }
 
@@ -219,7 +216,7 @@ namespace DoubleFile
             Owner = (Window)me;
 
             Observable.FromEventPattern(this, "Closed")
-                .Subscribe(x =>
+                .LocalSubscribe(x =>
             {
                 me.Activate();
                 GoModeless();
@@ -248,7 +245,7 @@ namespace DoubleFile
             if (false == LocalIsClosed)
                 Util.UIthread(99842, base.Close);
             else
-                MBoxStatic.Assert(99805, false, bTraceOnly: true);
+                Util.Assert(99805, false, bTraceOnly: true);
 
             return this;
         }

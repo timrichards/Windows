@@ -66,7 +66,7 @@ namespace DoubleFile
             {
                 if (null == treeNode)
                 {
-                    MBoxStatic.Assert(99780, false);
+                    Util.Assert(99780, false);
                     return;
                 }
 

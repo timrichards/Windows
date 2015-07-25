@@ -44,16 +44,16 @@ namespace DoubleFile
                     return _allListingsHashV2.Value;
 
                 // 7/1/15 DoThreadFactory() is now synchronous so TreeRootNodeBuilder can use folder scorer
-                MBoxStatic.Assert(99906, false);
+                Util.Assert(99906, false);
 
                 if (null == _LVprojectVM)
                 {
-                    MBoxStatic.Assert(99959, false);
+                    Util.Assert(99959, false);
                     Util.Block(1000);
 
                     if (null == _LVprojectVM)
                     {
-                        MBoxStatic.Assert(99938, false);
+                        Util.Assert(99938, false);
                         return false;
                     }
                 }
@@ -160,7 +160,7 @@ namespace DoubleFile
             var nFolderCount2 = 1;
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
-                .Subscribe(x => StatusCallback(nProgress: nProgress/(double) nLVitems)))
+                .LocalSubscribe(x => StatusCallback(nProgress: nProgress/(double) nLVitems)))
             Util.ParallelForEach(
                 _LVprojectVM.ItemsCast
                 .Where(lvItem => lvItem.CanLoad), new ParallelOptions{ CancellationToken = cts.Token }, lvItem =>
@@ -225,8 +225,8 @@ namespace DoubleFile
                     SetLVitemProjectVM(ref lookup, nLVitem);
                     SetLineNumber(ref lookup, tuple.Item1);
 #if (DEBUG)
-                    MBoxStatic.Assert(99907, _dictItemNumberToLV[GetLVitemProjectVM(lookup)] == lvItem);
-                    MBoxStatic.Assert(99908, GetLineNumber(lookup) == tuple.Item1);
+                    Util.Assert(99907, _dictItemNumberToLV[GetLVitemProjectVM(lookup)] == lvItem);
+                    Util.Assert(99908, GetLineNumber(lookup) == tuple.Item1);
 #endif
                     Insert(dictV1pt0, keyv1pt0, lookup, ref nFolderCount1pt0);
 
@@ -258,8 +258,8 @@ namespace DoubleFile
                     new[] { ++nFolderScorer, nFolderCount - nFolderScorer },
                     kvp.Value.AsEnumerable()));
 
-            MBoxStatic.Assert(99895, 1 == nFolderCount - nFolderScorer, bTraceOnly: true);
-            MBoxStatic.Assert(99896, _dictFiles.Count == nFolderCount - 1, bTraceOnly: true);
+            Util.Assert(99895, 1 == nFolderCount - nFolderScorer, bTraceOnly: true);
+            Util.Assert(99896, _dictFiles.Count == nFolderCount - 1, bTraceOnly: true);
             Util.WriteLine("_DictFiles " + (DateTime.Now - dt).TotalMilliseconds + " ms");   // 650 ms 
 
             // Skip enumerating AllListingsHashV2 when possible: not important, but it'd be a small extra step
@@ -267,7 +267,7 @@ namespace DoubleFile
             if (null == _allListingsHashV2)
                 _allListingsHashV2 = (false == _bListingFileWithOnlyHashV1pt0);
             else
-                MBoxStatic.Assert(99958, _bListingFileWithOnlyHashV1pt0 != AllListingsHashV2);
+                Util.Assert(99958, _bListingFileWithOnlyHashV1pt0 != AllListingsHashV2);
 
             StatusCallback(bDone: true);
             _callbackWR = null;
@@ -302,7 +302,7 @@ namespace DoubleFile
         {
             if (null == _callbackWR)
             {
-                MBoxStatic.Assert(99869, false);
+                Util.Assert(99869, false);
                 return;
             }
 
@@ -312,7 +312,7 @@ namespace DoubleFile
 
             if (null == createFileDictStatus)
             {
-                MBoxStatic.Assert(99868, false);
+                Util.Assert(99868, false);
                 return;
             }
 

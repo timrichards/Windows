@@ -31,7 +31,7 @@ namespace DoubleFile
 
             if (false == (Statics.SaveDirListings?.IsAborted ?? true))
             {
-                MBoxStatic.Assert(99940, false);
+                Util.Assert(99940, false);
                 Statics.SaveDirListings.EndThread();
             }
 
@@ -55,7 +55,7 @@ namespace DoubleFile
 
             if (winProgress.LocalIsClosed)
             {
-                MBoxStatic.Assert(99804,
+                Util.Assert(99804,
                     (Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                     (sdl?.IsAborted ?? true));
 

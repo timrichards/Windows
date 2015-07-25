@@ -35,11 +35,11 @@ namespace DoubleFile
             }
             catch (ArgumentException)
             {
-                MBoxStatic.Assert(99935, false);
+                Util.Assert(99935, false);
             }
             catch (FormatException)
             {
-                MBoxStatic.Assert(99935, false);
+                Util.Assert(99935, false);
             }
 
             return null;

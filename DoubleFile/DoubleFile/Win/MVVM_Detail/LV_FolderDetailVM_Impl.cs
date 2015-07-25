@@ -8,7 +8,7 @@ namespace DoubleFile
     {
         internal LV_FolderDetailVM()
         {
-            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.Subscribe(TreeSelect_FolderDetailUpdated));
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(TreeSelect_FolderDetailUpdated));
 
             var folderDetail = LocalTV.TreeSelect_FolderDetail;
 

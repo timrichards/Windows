@@ -71,10 +71,10 @@ namespace DoubleFile
             };
 
             _lsDisposable.Add(Observable.FromEventPattern<DataReceivedEventArgs>(_process, "OutputDataReceived")
-                .Subscribe(args => { Util.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); }));
+                .LocalSubscribe(args => { Util.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); }));
 
             _lsDisposable.Add(Observable.FromEventPattern<DataReceivedEventArgs>(_process, "ErrorDataReceived")
-                .Subscribe(args => { Util.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); }));
+                .LocalSubscribe(args => { Util.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); }));
 
             _process.EnableRaisingEvents = true;
             _lsDisposable.Add(_process);
@@ -126,7 +126,7 @@ namespace DoubleFile
 
             if (null == openListingFilesWR)
             {
-                MBoxStatic.Assert(99863, false);
+                Util.Assert(99863, false);
                 return false;
             }
 
@@ -136,7 +136,7 @@ namespace DoubleFile
 
             if (null == openListingFiles)
             {
-                MBoxStatic.Assert(99874, false);
+                Util.Assert(99874, false);
                 return false;
             }
 
@@ -354,7 +354,7 @@ namespace DoubleFile
             _process.StartInfo.Arguments = strArguments;
             
             Observable.FromEventPattern(_process, "Exited")
-                .Subscribe(x => onExit());
+                .LocalSubscribe(x => onExit());
 
             (new WinProgress(new[] { _status }, new[] { strProjectFileNoPath }, x =>
             {
@@ -432,7 +432,7 @@ namespace DoubleFile
 
             // One-shot: no need to dispose
             Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()
-                .Subscribe(x => MBoxStatic.ShowDialog(strError, "Error " + strMode + " Project"));
+                .LocalSubscribe(x => MBoxStatic.ShowDialog(strError, "Error " + strMode + " Project"));
 
             return true;
         }

@@ -41,7 +41,7 @@ namespace DoubleFile
 
                     case MessageBoxButton.YesNoCancel:
                     {
-                        MBoxStatic.Assert(99943, false);
+                        Util.Assert(99943, false);
                         break;
                     }
                 }
@@ -54,7 +54,7 @@ namespace DoubleFile
             if (false ==
                 DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
             {
-                MBoxStatic.Assert(99990, false);
+                Util.Assert(99990, false);
             }
         }
 
@@ -93,16 +93,16 @@ namespace DoubleFile
             Width = rc.Width;
 
             Observable.FromEventPattern(this, "SourceInitialized")
-                .Subscribe(x => ResizeMode = ResizeMode.NoResize);
+                .LocalSubscribe(x => ResizeMode = ResizeMode.NoResize);
 
             Observable.FromEventPattern(this, "ContentRendered")
-                .Subscribe(x => Win32Screen.FlashWindow(this, Once: true));
+                .LocalSubscribe(x => Win32Screen.FlashWindow(this, Once: true));
 
             Observable.FromEventPattern(formBtn_OK, "Click")
-                .Subscribe(x => BtnOK_Click());
+                .LocalSubscribe(x => BtnOK_Click());
 
             Observable.FromEventPattern(formBtn_Cancel, "Click")
-                .Subscribe(x => CloseIfSimulatingModal());
+                .LocalSubscribe(x => CloseIfSimulatingModal());
 
             Message = strMessage;
 
@@ -142,6 +142,12 @@ namespace DoubleFile
                 base.ShowDialog();
             else
                 ((Window)this).ShowDialog();
+
+            if (false == IsLoaded)
+            {
+                MessageBox.Show("The local message box could not open to display the following message (next...)");
+                _Result = MessageBox.Show(Message, Title, _buttons);
+            }
 
             return _Result;
         }

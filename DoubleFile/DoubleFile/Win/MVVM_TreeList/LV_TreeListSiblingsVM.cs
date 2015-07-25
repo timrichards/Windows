@@ -48,7 +48,7 @@ namespace DoubleFile
         internal LV_TreeListSiblingsVM(LV_TreeListChildrenVM lvChildrenVM)
         {
             _lvChildrenVM = lvChildrenVM;
-            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.Subscribe(TreeSelect_FolderDetailUpdated));
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(TreeSelect_FolderDetailUpdated));
 
             var folderDetail = LocalTV.TreeSelect_FolderDetail;
 

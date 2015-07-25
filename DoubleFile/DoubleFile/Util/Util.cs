@@ -201,7 +201,7 @@ namespace DoubleFile
         static internal void WriteLine(string str = null)
         {
 #if (DEBUG)
-            System.Console.WriteLine(str);
+            Console.WriteLine(str);
 #endif
         }
     }

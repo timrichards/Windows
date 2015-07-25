@@ -150,10 +150,7 @@ namespace DoubleFile
             catch (Exception ex)
             {
                 MBoxStatic.Assert(99942, false, ex.GetBaseException().Message);
-
-                if (null != _searchType2)
-                    _searchType2.EndThread();
-
+                _searchType2?.EndThread();
                 _searchType2 = null;
                 _dictResults = null;
                 Dispose();

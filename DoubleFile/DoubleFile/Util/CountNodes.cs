@@ -23,7 +23,8 @@ namespace DoubleFile
                 ++nCount;
             }
             while (bNextNode &&
-                (null != (treeNode = treeNode.NextNode)));
+                (null !=
+                (treeNode = treeNode.NextNode)));
 
             return nCount;
         }

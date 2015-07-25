@@ -249,9 +249,7 @@ namespace DoubleFile
             }
             catch (NullReferenceException)
             {
-                if (null != Cancel)
-                    Cancel();
-
+                Cancel?.Invoke();
                 return null;
             }
         }

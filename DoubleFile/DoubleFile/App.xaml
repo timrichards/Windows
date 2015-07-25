@@ -1,8 +1,6 @@
 ﻿<Application x:Class="DoubleFile.App"
             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:DoubleFile"
-             xmlns:controls="clr-namespace:FirstFloor.ModernUI.Windows.Controls;assembly=FirstFloor.ModernUI"
             StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary Source="/DoubleFile;component/Assets/MergeDictionaries.xaml" />

@@ -4,12 +4,12 @@ using System.Windows;
 
 namespace DoubleFile
 {
-    static class MBoxStatic
+    public static class MBoxStatic
     {
 #if ((false == DEBUG) || LOCALMBOX)
         static bool _bAssertUp = false;
 #endif
-        static internal bool Assert(decimal nLocation, bool bCondition, string strError_in = null,
+        static public bool Assert(decimal nLocation, bool bCondition, string strError_in = null,
             bool bTraceOnly = false)
         {
             if (bCondition)

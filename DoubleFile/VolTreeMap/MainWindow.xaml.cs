@@ -18,6 +18,7 @@ namespace VolTreeMap
             Init();
             Init = null;
             InitializeComponent();
+            MBoxStatic.Assert(0, false);
         }
     }
 }

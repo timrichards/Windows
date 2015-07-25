@@ -197,7 +197,8 @@ namespace DoubleFile
                     bVolumeView = rootNodeDatum?.VolumeView ?? false;
 
                     if ((false == bVolumeView) &&
-                        (null != (nodeRet = FindMapNode(nodeDatum.TreeMapFiles, pt))))
+                        (null !=
+                        (nodeRet = FindMapNode(nodeDatum.TreeMapFiles, pt))))
                     {
                         bFilesHere = true;
                         return;     // from lambda

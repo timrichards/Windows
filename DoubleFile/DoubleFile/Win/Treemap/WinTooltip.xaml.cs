@@ -84,7 +84,6 @@ namespace DoubleFile
             Util.UIthread(99807, () => _winTooltip.Tag = tag);
             _winTooltip._closingCallback = args.closingCallback;
             _winTooltip._clickCallback = args.clickCallback;
-
             MBoxStatic.Assert(99964, null != tag);
         }
 

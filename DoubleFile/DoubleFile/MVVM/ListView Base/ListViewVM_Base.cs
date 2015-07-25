@@ -43,11 +43,8 @@ namespace DoubleFile
 
             foreach (var item in ieItems)
             {
-                if ((null != Cancel) &&
-                    Cancel())
-                {
+                if (Cancel?.Invoke() ?? false)
                     return;
-                }
 
                 Add(item, bQuiet: true);
 

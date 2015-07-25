@@ -11,7 +11,7 @@ namespace DoubleFile
         internal virtual string
             Text { get { return _text; } set { _text = value; } } TabledString<Tabled_Folders> _text = null;
         internal LocalTreeNode
-            FirstNode => ((null != Nodes) && (0 < Nodes.Count)) ? Nodes[0] : null;
+            FirstNode => (0 < (Nodes?.Count ?? 0)) ? Nodes[0] : null;
         public virtual LocalTreeNode
             NextNode { get; protected set; }
         public virtual LocalTreeNode

@@ -65,7 +65,7 @@ namespace DoubleFile
             AllowsTransparency = true;
 
             Owner =
-                ((null != owner) && (false == owner.LocalIsClosed))
+                (false == (owner?.LocalIsClosed ?? true))
                 ? (Window)owner
                 : Application.Current.MainWindow;
 

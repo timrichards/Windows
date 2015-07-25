@@ -5,14 +5,6 @@
             xmlns:controls="clr-namespace:FirstFloor.ModernUI.Windows.Controls;assembly=FirstFloor.ModernUI"
             StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/ModernUI.xaml" />
-                <ResourceDictionary Source="/DoubleFile;component/Assets/LocalBlankWindow.xaml" />
-                <ResourceDictionary Source="/DoubleFile;component/Assets/LocalMUIdark.xaml" />
-                <ResourceDictionary Source="/DoubleFile;component/Assets/Strings.xaml" />
-                <ResourceDictionary Source="/DoubleFile;component/Assets/LocalStyles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+        <ResourceDictionary Source="/DoubleFile;component/Assets/MergeDictionaries.xaml" />
     </Application.Resources>
 </Application>

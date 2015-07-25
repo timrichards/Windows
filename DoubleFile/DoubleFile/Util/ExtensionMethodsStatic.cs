@@ -10,31 +10,6 @@ namespace DoubleFile
     static public partial class ExtensionMethodsStatic
     {
         static internal T As<T>(this object o) where T: class { return  (o is T) ? (T)o : null; }  // 20x faster than as p. 123
-      
-        static readonly IDictionary<int, Tuple<DateTime, WeakReference>> _lsSubjects = new Dictionary<int, Tuple<DateTime, WeakReference>>();
-        static public void LocalOnNext<T>(this LocalSubject<T> subject, T value, int nOnNextAssertLoc, int nInitiator = 0)
-        {
-            MBoxStatic.Assert(nOnNextAssertLoc, 0 <= nInitiator);
-
-            if (0 == nInitiator)
-                nInitiator = nOnNextAssertLoc;
-
-            var o = _lsSubjects.TryGetValue(nOnNextAssertLoc);
-            var oldValue = o?.Item2?.Target ?? default(T);
-
-            if ((null == o) ||
-                (false == (oldValue?.Equals(value) ?? false)) ||
-                (DateTime.Now - o.Item1) > TimeSpan.FromMilliseconds(100))
-            {
-                _lsSubjects[nOnNextAssertLoc] = Tuple.Create(DateTime.Now, new WeakReference(value));
-                Util.ThreadMake(() => subject.OnNext(Tuple.Create(value, nInitiator)));
-            }
-            else if ((nOnNextAssertLoc < 99830) ||      // 99830 block is reserved: do not alert LocalOnNext
-                (nOnNextAssertLoc >= 99840))
-            {
-                MBoxStatic.Assert(nOnNextAssertLoc, false);
-            }
-        }
 
         static internal T FirstOnlyAssert<T>(this IEnumerable<T> source)
         {
@@ -77,6 +52,20 @@ namespace DoubleFile
                 action(item);
         }
 
+        static internal TMember
+            Get<THolder, TMember>(this WeakReference<THolder> wr, Func<THolder, TMember> getValue)
+            where THolder : class
+        {
+            THolder holder = null;
+
+            wr.TryGetTarget(out holder);
+
+            return
+                (null != holder)
+                ? getValue(holder)
+                : default(TMember);
+        }
+
         static internal bool HasExactly<T>(this IEnumerable<T> source, int nDesiredElements)    // 1 reference on 7/6/15
         {
             if (source is ICollection<T>)
@@ -94,6 +83,31 @@ namespace DoubleFile
             }
 
             return false == ie.MoveNext();
+        }
+      
+        static readonly IDictionary<int, Tuple<DateTime, WeakReference>> _lsSubjects = new Dictionary<int, Tuple<DateTime, WeakReference>>();
+        static public void LocalOnNext<T>(this LocalSubject<T> subject, T value, int nOnNextAssertLoc, int nInitiator = 0)
+        {
+            MBoxStatic.Assert(nOnNextAssertLoc, 0 <= nInitiator);
+
+            if (0 == nInitiator)
+                nInitiator = nOnNextAssertLoc;
+
+            var o = _lsSubjects.TryGetValue(nOnNextAssertLoc);
+            var oldValue = o?.Item2?.Target ?? default(T);
+
+            if ((null == o) ||
+                (false == (oldValue?.Equals(value) ?? false)) ||
+                (DateTime.Now - o.Item1) > TimeSpan.FromMilliseconds(100))
+            {
+                _lsSubjects[nOnNextAssertLoc] = Tuple.Create(DateTime.Now, new WeakReference(value));
+                Util.ThreadMake(() => subject.OnNext(Tuple.Create(value, nInitiator)));
+            }
+            else if ((nOnNextAssertLoc < 99830) ||      // 99830 block is reserved: do not alert LocalOnNext
+                (nOnNextAssertLoc >= 99840))
+            {
+                MBoxStatic.Assert(nOnNextAssertLoc, false);
+            }
         }
 
         static internal string ToPrintString(this object source)
@@ -194,20 +208,6 @@ namespace DoubleFile
             window.Width = r.Width;
             window.Height = r.Height;
             return window;
-        }
-
-        static internal TMember
-            Get<THolder, TMember>(this WeakReference<THolder> wr, Func<THolder, TMember> getValue)
-            where THolder : class
-        {
-            THolder holder = null;
-
-            wr.TryGetTarget(out holder);
-
-            return
-                (null != holder)
-                ? getValue(holder)
-                : default(TMember);
         }
     }
 }

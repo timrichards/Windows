@@ -99,10 +99,7 @@ namespace DoubleFile
                 var newVolume = new WinVolumeNew { LVitemVolumeTemp = new LVitem_ProjectVM(lvItemVolumeTemp) };
 
                 if (false == (newVolume.ShowDialog() ?? false))
-                {
-                    // user canceled
-                    break;
-                }
+                    break;      // user canceled
 
                 lvItemVolumeTemp = new LVitem_ProjectVM(newVolume.LVitemVolumeTemp);
 
@@ -170,8 +167,7 @@ namespace DoubleFile
 
             Util.ParallelForEach(ieFiles, new ParallelOptions { CancellationToken = cts.Token }, strFilename =>
             {
-                if ((null != userCanceled) &&
-                    userCanceled())
+                if (userCanceled?.Invoke() ?? false)
                 {
                     cts.Cancel();
                     return;   // from lambda
@@ -201,11 +197,8 @@ namespace DoubleFile
                 }
             });
 
-            if ((null != userCanceled) &&
-                userCanceled())
-            {
+            if (userCanceled?.Invoke() ?? false)
                 return false;
-            }
 
             var bOpenedFiles = false;
 
@@ -218,11 +211,8 @@ namespace DoubleFile
                     .OrderBy(lvItem => lvItem.SourcePath)
                     .Aggregate(false, (current, lvItem) =>
                 {
-                    if ((null != userCanceled) &&
-                        userCanceled())
-                    {
+                    if (userCanceled?.Invoke() ?? false)
                         return false;   // from lambda
-                    }
 
                     bool bAdded = false;
 

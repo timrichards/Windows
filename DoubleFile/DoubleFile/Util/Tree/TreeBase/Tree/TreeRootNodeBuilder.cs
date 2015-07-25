@@ -29,21 +29,19 @@ namespace DoubleFile
             {
                 var datum = new DetailsDatum();
 
-                if (false ==
-                    (treeNode.Nodes?.All(node =>
+                if (null != treeNode.Nodes)
                 {
-                    if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
-                        _bThreadAbort)
+                    foreach (var node in treeNode.Nodes)
                     {
-                        return false;       // from lambda
-                    }
+                        if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
+                            _bThreadAbort)
+                        {
+                            return datum;
+                        }
 
-                    datum += TreeSubnodeDetails(node);
-                    return true;            // from lambda
-                }) ?? true))
-                {
-                    return datum;
-                };
+                        datum += TreeSubnodeDetails(node);
+                    }
+                }
 
                 var nodeDatum = treeNode.NodeDatum;
 

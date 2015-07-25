@@ -64,10 +64,14 @@ namespace DoubleFile
             WindowStyle = WindowStyle.None;
             AllowsTransparency = true;
 
+            var bMainWindowLoaded = Application.Current?.MainWindow?.IsLoaded ?? false;
+
             Owner =
                 (false == (owner?.LocalIsClosed ?? true))
                 ? (Window)owner
-                : Application.Current.MainWindow;
+                : bMainWindowLoaded
+                ? Application.Current.MainWindow
+                : null;
 
             // use-case: assert before main window shown
             var rc =

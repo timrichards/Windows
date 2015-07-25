@@ -84,7 +84,7 @@ namespace DoubleFile
             Observable.FromEventPattern<CancelEventArgs>(this, "Closing")
                 .Subscribe(args => MainWindow_Closing(args.EventArgs));
 
-            MenuLinkGroups.Add(new LinkGroup { DisplayName="Explore", Links =
+            MenuLinkGroups.Add(new LinkGroup { DisplayName="Welcome", Links =
             {
                 new MyLink("View project", "/WinProject/WinProject.xaml"),
                 new MyLink("Introduction", "/Introduction.xaml")

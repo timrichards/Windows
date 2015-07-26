@@ -6,6 +6,25 @@ namespace DoubleFile
 {
     public class Statics
     {
+        static internal LocalUserControlBase
+            CurrentPage
+        {
+            get { return _wr.Get(s => s._currentPage); }
+            set
+            {
+                _wr.Get(s =>
+                {
+                    if (value == s._currentPage)
+                        return s;   // from lambda
+
+                    s._currentPage = value;
+                    MainWindow.WithMainWindowA(mainWindow => mainWindow.UpdateTitleLinks());
+                    return s;       // from lambda
+                });
+            }
+        }
+        LocalUserControlBase _currentPage;
+
         static internal LV_ProjectVM
             LVprojectVM { get { return _wr.Get(s => s._lvProjectVM); } set { _wr.Get(s => s._lvProjectVM = value); } }
         LV_ProjectVM _lvProjectVM;

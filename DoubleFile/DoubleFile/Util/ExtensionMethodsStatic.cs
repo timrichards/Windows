@@ -7,7 +7,51 @@ using System.Windows;
 
 namespace DoubleFile
 {
-    static public partial class ExtensionMethodsStatic
+    static public class ExtensionMethodsStatic_Public
+    {
+        static public IDisposable LocalSubscribe<T>(this IObservable<T> source, Action<T> onNext)
+        {
+            return
+                source.Subscribe(t =>
+            {
+                try
+                {
+                    onNext(t);
+                }
+                catch (Exception e)
+                {
+                    Util.Assert(99771, false, e.GetBaseException().Message);
+                }
+            });
+        }
+
+        static readonly IDictionary<int, Tuple<DateTime, WeakReference>> _lsSubjects = new Dictionary<int, Tuple<DateTime, WeakReference>>();
+        static public void LocalOnNext<T>(this LocalSubject<T> subject, T value, int nOnNextAssertLoc, int nInitiator = 0)
+        {
+            Util.Assert(nOnNextAssertLoc, 0 <= nInitiator);
+
+            if (0 == nInitiator)
+                nInitiator = nOnNextAssertLoc;
+
+            var o = _lsSubjects.TryGetValue(nOnNextAssertLoc);
+            var oldValue = o?.Item2?.Target ?? default(T);
+
+            if ((null == o) ||
+                (false == (oldValue?.Equals(value) ?? false)) ||
+                (DateTime.Now - o.Item1) > TimeSpan.FromMilliseconds(100))
+            {
+                _lsSubjects[nOnNextAssertLoc] = Tuple.Create(DateTime.Now, new WeakReference(value));
+                Util.ThreadMake(() => subject.OnNext(Tuple.Create(value, nInitiator)));
+            }
+            else if ((nOnNextAssertLoc < 99830) ||      // 99830 block is reserved: do not alert LocalOnNext
+                (nOnNextAssertLoc >= 99840))
+            {
+                Util.Assert(nOnNextAssertLoc, false);
+            }
+        }
+    }
+
+    static class ExtensionMethodsStatic
     {
         static internal T As<T>(this object o) where T: class => (o is T) ? (T)o : null;  // 20x faster than as p. 123
 
@@ -83,47 +127,6 @@ namespace DoubleFile
             }
 
             return false == ie.MoveNext();
-        }
-
-        static public IDisposable LocalSubscribe<T>(this IObservable<T> source, Action<T> onNext)
-        {
-            return
-                source.Subscribe(t =>
-            {
-                try
-                {
-                    onNext(t);
-                }
-                catch (Exception e)
-                {
-                    Util.Assert(99771, false, e.GetBaseException().Message);
-                }
-            });
-        }
-
-        static readonly IDictionary<int, Tuple<DateTime, WeakReference>> _lsSubjects = new Dictionary<int, Tuple<DateTime, WeakReference>>();
-        static public void LocalOnNext<T>(this LocalSubject<T> subject, T value, int nOnNextAssertLoc, int nInitiator = 0)
-        {
-            Util.Assert(nOnNextAssertLoc, 0 <= nInitiator);
-
-            if (0 == nInitiator)
-                nInitiator = nOnNextAssertLoc;
-
-            var o = _lsSubjects.TryGetValue(nOnNextAssertLoc);
-            var oldValue = o?.Item2?.Target ?? default(T);
-
-            if ((null == o) ||
-                (false == (oldValue?.Equals(value) ?? false)) ||
-                (DateTime.Now - o.Item1) > TimeSpan.FromMilliseconds(100))
-            {
-                _lsSubjects[nOnNextAssertLoc] = Tuple.Create(DateTime.Now, new WeakReference(value));
-                Util.ThreadMake(() => subject.OnNext(Tuple.Create(value, nInitiator)));
-            }
-            else if ((nOnNextAssertLoc < 99830) ||      // 99830 block is reserved: do not alert LocalOnNext
-                (nOnNextAssertLoc >= 99840))
-            {
-                Util.Assert(nOnNextAssertLoc, false);
-            }
         }
 
         static internal string ToPrintString(this object source)

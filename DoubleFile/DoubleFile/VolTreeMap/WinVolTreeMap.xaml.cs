@@ -1,7 +1,5 @@
 ﻿using FirstFloor.ModernUI.Windows.Controls;
 using System;
-using System.Reactive.Linq;
-using System.Windows;
 
 namespace DoubleFile
 {

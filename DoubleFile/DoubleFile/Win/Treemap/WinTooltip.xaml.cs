@@ -89,11 +89,17 @@ namespace DoubleFile
 
         static internal void CloseTooltip()
         {
+            if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
+                return;
+
             if (_bClosingTooltip)
                 return;
 
-            if (null != _winTooltip)
-                Util.UIthread(99773, () => _winTooltip.Tag = null);
+            Util.UIthread(99773, () =>
+            {
+                if (null != _winTooltip)
+                    _winTooltip.Tag = null;
+            });
 
             _bClosingTooltip = true;
 

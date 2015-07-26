@@ -4,7 +4,7 @@ using System.Windows;
 
 namespace DoubleFile
 {
-    public static class MBoxStatic
+    static class MBoxStatic
     {
 #if ((false == DEBUG) || LOCALMBOX)
         static bool _bAssertUp = false;

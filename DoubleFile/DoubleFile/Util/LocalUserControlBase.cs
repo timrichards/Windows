@@ -28,7 +28,7 @@ namespace DoubleFile
 
         public void OnNavigatedTo(NavigationEventArgs e)
         {
-            MainWindow.CurrentPage = this;
+            Statics.CurrentPage = this;
             LocalNavigatedTo();
         }
         virtual protected void LocalNavigatedTo() { }
@@ -43,19 +43,20 @@ namespace DoubleFile
             if ("/WinProject/WinProject.xaml" == strSource)
                 return;
 
-            if (null == MainWindow.WithMainWindow(w => w))
-                return;
-
-            var bSaveListings = false;
-
-            if (MainWindow.SaveListingsFakeKey == strSource)
-                bSaveListings = true;
-
-            if ((false == WinProject.OKtoNavigate_BuildExplorer(bSaveListings)) ||
-                bSaveListings)
+            // use-case: VolTreeMap project shares assembly
+            if (null != MainWindow.WithMainWindow(w => w))
             {
-                e.Cancel = true;
-                return;
+                var bSaveListings = false;
+
+                if (MainWindow.SaveListingsFakeKey == strSource)
+                    bSaveListings = true;
+
+                if ((false == WinProject.OKtoNavigate_BuildExplorer(bSaveListings)) ||
+                    bSaveListings)
+                {
+                    e.Cancel = true;
+                    return;
+                }
             }
 
             if (MainWindow.AdvancedFakeKey == strSource)
@@ -68,7 +69,7 @@ namespace DoubleFile
             if (MainWindow.ExtraWindowFakeKey != strSource)
                 return;
 
-            var page = MainWindow.CurrentPage;
+            var page = Statics.CurrentPage;
             var content = (LocalUserControlBase)Activator.CreateInstance(page.GetType());
 
             var window = new ExtraWindow

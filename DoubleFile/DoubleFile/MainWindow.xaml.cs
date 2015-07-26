@@ -91,23 +91,6 @@ namespace DoubleFile
             }});
         }
 
-        static internal LocalUserControlBase
-            CurrentPage
-        {
-            get { return WithMainWindow(mainWindow => mainWindow._currentPage); }
-            set
-            {
-                WithMainWindowA(mainWindow =>
-                {
-                    if (value == mainWindow._currentPage)
-                        return;     // from lambda
-
-                    mainWindow._currentPage = value;
-                    mainWindow.UpdateTitleLinks();
-                });
-            }
-        }
-
         internal void UpdateTitleLinks(bool? bListingsToSave = null)
         {
             TitleLinks = new LinkCollection();
@@ -118,10 +101,12 @@ namespace DoubleFile
             if (_bListingsToSave)
                 TitleLinks.Add(_saveListingsLink);
 
-            if (_currentPage is WinProject)
+            var currentPage = Statics.CurrentPage;
+
+            if (currentPage is WinProject)
                 return;
 
-            if (_currentPage is Introduction)
+            if (currentPage is Introduction)
                 return;
 
             TitleLinks.Add(_extraWindowLink);
@@ -298,8 +283,6 @@ namespace DoubleFile
             }}
         };
 
-        LocalUserControlBase
-            _currentPage = null;
         bool
             _bListingsToSave = false;
         static readonly WeakReference<MainWindow>

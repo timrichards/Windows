@@ -9,7 +9,7 @@ using System.Windows.Interop;
 
 namespace DoubleFile
 {
-    internal class NativeWindow : IEquatable<NativeWindow>
+    internal class NativeWindow : IEquatable<NativeWindow>, IWin32Window, System.Windows.Forms.IWin32Window
     {
         static public implicit operator
             IntPtr(NativeWindow h) => h.hwnd;
@@ -20,6 +20,8 @@ namespace DoubleFile
 
         static public implicit operator
             NativeWindow(IntPtr hwnd) => new NativeWindow { hwnd = hwnd };
+
+        public IntPtr Handle => hwnd;
 
         // can't override == and != operator because of the implicit operator IntPtr above
         public bool Equals(NativeWindow other) => hwnd == other?.hwnd;

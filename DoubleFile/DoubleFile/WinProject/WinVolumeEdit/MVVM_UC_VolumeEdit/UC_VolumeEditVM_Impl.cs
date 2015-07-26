@@ -13,7 +13,7 @@ namespace DoubleFile
                 Description = "Source path of the directory for which a listing file is to be created."
             };
 
-            if (DialogResult.OK == ModalThread.Go(x => dlg.ShowDialog()))
+            if (DialogResult.OK == ModalThread.Go(darkWindow => dlg.ShowDialog(((NativeWindow)(Window)darkWindow))))
                 FromSourcePathDlg(dlg.SelectedPath);
         }
 

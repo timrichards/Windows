@@ -1,5 +1,7 @@
 ﻿using FirstFloor.ModernUI.Windows.Controls;
 using System;
+using System.Windows;
+using System.Windows.Forms;
 
 namespace DoubleFile
 {
@@ -15,28 +17,16 @@ namespace DoubleFile
 
         protected override void LocalNavigatedTo()
         {
-            string strSourcePath = null;
+            var dlg = new FolderBrowserDialog { Description = "Select the path to browse." };
 
-            new UC_VolumeEditVM
-            {
-                FromSourcePathDlg = str => strSourcePath = str,
-
-                DriveModel_CurrentText = () => null,
-                DriveSerial_CurrentText = () => null,
-                FromListingFileDlg = str => { },
-                FromProbe = (x, y) => { },
-                ListingFile_CurrentText = () => null,
-                SourcePath_CurrentText = () => null,
-            }
-                .EditSourcePath();
-
-            if (null == strSourcePath)
+            if (DialogResult.OK !=
+                ModalThread.Go(darkWindow => dlg.ShowDialog(((NativeWindow)(Window)darkWindow))))
             {
                 Dispatcher.InvokeShutdown();
                 return;
             }
 
-            Statics.LVprojectVM = new LV_ProjectVM { new LVitem_ProjectVM { SourcePath = strSourcePath } };
+            Statics.LVprojectVM = new LV_ProjectVM { new LVitem_ProjectVM { SourcePath = dlg.SelectedPath } };
             SaveDirListings.Hash = false;
             SaveListingsProcess.Go(Statics.LVprojectVM);
             LocalTV.FactoryCreate(Statics.LVprojectVM);

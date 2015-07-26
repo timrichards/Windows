@@ -49,7 +49,7 @@ namespace DoubleFile
             WindowStyle = WindowStyle.None;
             AllowsTransparency = true;
 
-            var rc = MainWindow.WithMainWindow(Win32Screen.GetWindowRect);
+            var rc = Win32Screen.GetWindowRect(Application.Current.MainWindow);
 
             Left = rc.Left;
             Width = rc.Width;

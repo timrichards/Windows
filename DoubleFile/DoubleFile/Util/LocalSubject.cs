@@ -5,15 +5,10 @@ namespace DoubleFile
 {
     public class LocalSubject<T> : ISubject<Tuple<T, int>>
     {
-        public void OnCompleted() { _subject.OnCompleted(); }
-        public void OnError(Exception error) { _subject.OnError(error); }
-        public void OnNext(Tuple<T, int> value) { _subject.OnNext(value); }
-
-        public IDisposable Subscribe(IObserver<Tuple<T, int>> observer)
-        {
-            Util.Assert(99772, false, "Use LocalSubscribe");
-            return _subject.Subscribe(observer);
-        }
+        public void OnCompleted() => _subject.OnCompleted();
+        public void OnError(Exception e) => Util.Assert(99772, false, e.GetBaseException().Message);
+        public void OnNext(Tuple<T, int> value) => _subject.OnNext(value);
+        public IDisposable Subscribe(IObserver<Tuple<T, int>> observer) => _subject.Subscribe(observer);
 
         Subject<Tuple<T, int>>
             _subject = new Subject<Tuple<T, int>>();

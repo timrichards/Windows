@@ -44,7 +44,7 @@ namespace VolTreeMap
                 .LocalSubscribe(args =>
             {
                 args.EventArgs.Handled = true;
-                Util.Assert(-1, false, args.EventArgs.Exception.Message);
+                UtilPublic.Assert(-1, false, args.EventArgs.Exception.Message);
             });
 #endif
             ShutdownMode = ShutdownMode.OnMainWindowClose;

@@ -43,18 +43,22 @@ namespace DoubleFile
     class TabledString<T> : IComparable
         where T : TypedArrayBase, new()
     {
-        static public implicit operator TabledString<T>(string value) { return (null == value) ? null : new TabledString<T> { nIndex = Set(value) }; }
-        static public implicit operator string(TabledString<T> value) { return (null == value) ? null : Get(value.nIndex); }
-        public int CompareTo(object obj) { return ("" + Get(nIndex)).CompareTo(Get(((TabledString<T>)obj).nIndex)); }
+        static public implicit operator
+            TabledString<T>(string value) => (null == value) ? null : new TabledString<T> { nIndex = Set(value) };
 
-        internal bool Contains(TabledString<T> ustr) { return Get(nIndex).Contains(Get(ustr.nIndex)); }
-        internal bool Contains(char ch) { return Get(nIndex).Contains(ch); }
-        internal bool EndsWith(string str) { return Get(nIndex).EndsWith(str); }
-        internal string[] Split(char ch) { return Get(nIndex).Split(ch); }
-        internal string[] Split(string[] arrStr, StringSplitOptions opts) { return Get(nIndex).Split(arrStr, opts); }
-        internal bool StartsWith(string str) { return Get(nIndex).StartsWith(str); }
-        internal TabledString<T> ToLower() { return Get(nIndex).ToLower(); }
-        static internal TabledString<T> Empty { get { return ""; } }
+        static public implicit operator
+            string(TabledString<T> value) => (null == value) ? null : Get(value.nIndex);
+
+        public int CompareTo(object obj) => ("" + Get(nIndex)).CompareTo(Get(((TabledString<T>)obj).nIndex));
+
+        internal bool Contains(TabledString<T> ustr) => Get(nIndex).Contains(Get(ustr.nIndex));
+        internal bool Contains(char ch) => Get(nIndex).Contains(ch);
+        internal bool EndsWith(string str) => Get(nIndex).EndsWith(str);
+        internal string[] Split(char ch) => Get(nIndex).Split(ch);
+        internal string[] Split(string[] arrStr, StringSplitOptions opts) => Get(nIndex).Split(arrStr, opts);
+        internal bool StartsWith(string str) => Get(nIndex).StartsWith(str);
+        internal TabledString<T> ToLower() => Get(nIndex).ToLower();
+        static internal TabledString<T> Empty  => "";
 
         static internal void Reinitialize()
         {

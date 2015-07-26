@@ -141,7 +141,7 @@ namespace DoubleFile
         abstract internal int
             NumCols { get; }
         virtual protected int
-            SearchCol { get { return 0; } }
+            SearchCol => 0;
 
         string[] PropNames
         {

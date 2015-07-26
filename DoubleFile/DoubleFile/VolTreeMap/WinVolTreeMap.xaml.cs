@@ -13,10 +13,10 @@ namespace DoubleFile
             InitializeComponent();
 
             Observable.FromEventPattern(this, "SizeChanged")
-                .LocalSubscribe(x => { _ucTreeMap?.ClearSelection(); });
+                .LocalSubscribe(x => _ucTreeMap?.ClearSelection());
 
             Observable.FromEventPattern(form_slider, "LostMouseCapture")
-                .LocalSubscribe(x => { _ucTreeMap?.TreeMapVM.LostMouseCapture(); });
+                .LocalSubscribe(x => _ucTreeMap?.TreeMapVM.LostMouseCapture());
         }
 
         protected override void LocalNavigatedTo()
@@ -36,8 +36,13 @@ namespace DoubleFile
             }
                 .EditSourcePath();
 
-            Statics.LVprojectVM = new LV_ProjectVM { new LVitem_ProjectVM { SourcePath = strSourcePath } };
+            if (null == strSourcePath)
+            {
+                Dispatcher.InvokeShutdown();
+                return;
+            }
 
+            Statics.LVprojectVM = new LV_ProjectVM { new LVitem_ProjectVM { SourcePath = strSourcePath } };
             SaveDirListings.Hash = false;
             SaveListingsProcess.Go(Statics.LVprojectVM);
             LocalTV.FactoryCreate(Statics.LVprojectVM);

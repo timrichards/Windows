@@ -11,15 +11,17 @@ namespace DoubleFile
 {
     internal class NativeWindow : IEquatable<NativeWindow>
     {
-        static public implicit operator IntPtr(NativeWindow h) { return h.hwnd; }
-        static public implicit operator NativeWindow(Window w) { return new NativeWindow { hwnd = (null != w) ? new WindowInteropHelper(w).Handle : (IntPtr)0xBAD00 + nBadCount++ }; }
-        static public implicit operator NativeWindow(IntPtr hwnd) { return new NativeWindow { hwnd = hwnd }; }
+        static public implicit operator IntPtr(NativeWindow h) =>
+            h.hwnd;
+
+        static public implicit operator NativeWindow(Window w) =>
+            new NativeWindow { hwnd = (null != w) ? new WindowInteropHelper(w).Handle : (IntPtr)0xBAD00 + nBadCount++ };
+
+        static public implicit operator NativeWindow(IntPtr hwnd) =>
+            new NativeWindow { hwnd = hwnd };
 
         // can't override == and != operator because of the implicit operator IntPtr above
-        public bool Equals(NativeWindow other)
-        {
-            return hwnd == other?.hwnd;
-        }
+        public bool Equals(NativeWindow other) => hwnd == other?.hwnd;
 
         IntPtr hwnd = IntPtr.Zero;
         static int nBadCount = 0;
@@ -68,17 +70,18 @@ namespace DoubleFile
         [DllImport("user32.dll")]
         static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint dwFlags);
         static internal IntPtr
-            MonitorFromWindow(NativeWindow w, uint dwFlags) { return MonitorFromWindow((IntPtr)w, dwFlags); }
+            MonitorFromWindow(NativeWindow w, uint dwFlags) => MonitorFromWindow((IntPtr)w, dwFlags);
 
         [DllImport("user32.dll", SetLastError = true)]
         static internal extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
         //static internal bool
-        //    GetWindowRect(NativeWindow w, out RECT lpRect) { return GetWindowRect((IntPtr)w, out lpRect); }
+        //    GetWindowRect(NativeWindow w, out RECT lpRect) => GetWindowRect((IntPtr)w, out lpRect);
 
         [DllImport("user32.dll", SetLastError = true)]
         static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, int uFlags);
         static internal bool
-            SetWindowPos(NativeWindow w, NativeWindow insertAfter, int X, int Y, int cx, int cy, int uFlags) { return SetWindowPos((IntPtr)w, (IntPtr)insertAfter, X, Y, cx, cy, uFlags); }
+            SetWindowPos(NativeWindow w, NativeWindow insertAfter, int X, int Y, int cx, int cy, int uFlags) =>
+            SetWindowPos((IntPtr)w, (IntPtr)insertAfter, X, Y, cx, cy, uFlags);
 
         internal const int OPEN_EXISTING = 3;
         internal const int FILE_FLAG_RANDOM_ACCESS = 0x10000000;
@@ -164,12 +167,12 @@ namespace DoubleFile
         [DllImport("user32.dll")]
         static extern int GetWindowLong(IntPtr hWnd, int nIndex);
         static internal int
-            GetWindowLong(NativeWindow w, int nIndex) { return GetWindowLong((IntPtr)w, nIndex); }
+            GetWindowLong(NativeWindow w, int nIndex) => GetWindowLong((IntPtr)w, nIndex);
 
         [DllImport("user32.dll")]
         static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
         static internal int
-            SetWindowLong(NativeWindow w, int nIndex, int dwNewLong) { return SetWindowLong((IntPtr)w, nIndex, dwNewLong); }
+            SetWindowLong(NativeWindow w, int nIndex, int dwNewLong) => SetWindowLong((IntPtr)w, nIndex, dwNewLong);
 
         internal const UInt32 FLASHW_ALL = 3;
 
@@ -191,12 +194,12 @@ namespace DoubleFile
         [DllImport("user32.dll")]
         static extern IntPtr GetTopWindow(IntPtr hWnd);
         static internal NativeWindow
-            GetTopWindow(NativeWindow w) { return GetTopWindow((IntPtr)w); }
+            GetTopWindow(NativeWindow w) => GetTopWindow((IntPtr)w);
 
         [DllImport("user32.dll")]
         static extern bool BringWindowToTop(IntPtr hWnd);
         static internal void
-            BringWindowToTop(NativeWindow w) { BringWindowToTop((IntPtr)w); }
+            BringWindowToTop(NativeWindow w) => BringWindowToTop((IntPtr)w);
 
         internal const uint GW_HWNDNEXT = 2;
         internal const uint GW_OWNER = 4;
@@ -204,6 +207,6 @@ namespace DoubleFile
         [DllImport("User32")]
         static extern IntPtr GetWindow(IntPtr hWnd, uint wCmd);
         static internal NativeWindow
-            GetWindow(NativeWindow w, uint wCmd) { return GetWindow((IntPtr)w, wCmd); }
+            GetWindow(NativeWindow w, uint wCmd) => GetWindow((IntPtr)w, wCmd);
     }
 }

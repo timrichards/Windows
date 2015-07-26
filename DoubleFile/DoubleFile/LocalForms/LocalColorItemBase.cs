@@ -30,10 +30,7 @@ namespace DoubleFile
             }
         }
 
-        internal Brush Background
-        {
-            get { return UtilColor.ARGBtoBrush(BackColor); } 
-        }
+        internal Brush Background => UtilColor.ARGBtoBrush(BackColor);
 
         internal LocalColorItemBase()
         {

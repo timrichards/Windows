@@ -11,12 +11,9 @@ namespace DoubleFile
             _listExpanded = new Dictionary<TreeViewItemVM, bool>();
 
         static internal ObservableCollection<TreeViewItemVM>
-            FactoryCreate()
-        {
-            return
-                new TreeViewVM(LocalTV.RootNodes)
-                ._Items;
-        }
+            FactoryCreate() =>
+            new TreeViewVM(LocalTV.RootNodes)
+            ._Items;
 
         TreeViewVM(IEnumerable<LocalTreeNode> rootNodes)
         {

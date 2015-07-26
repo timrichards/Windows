@@ -40,9 +40,9 @@ namespace DoubleFile
                 IsEnabled = false;
             }
 
-            internal new DarkWindow Show() { ((Window)this).Show(); return this; }              // Darkens ExtraWindows and WinTooltip
-            internal new void ShowDialog() { base.ShowDialog(MainWindow.WithMainWindow(w => w)); }  // then modally darkens MainWindow
-            internal new void GoModeless() { base.GoModeless(); }
+            internal new DarkWindow Show() { ((Window)this).Show(); return this; }                  // Darkens ExtraWindows and WinTooltip
+            internal new void ShowDialog() => base.ShowDialog(MainWindow.WithMainWindow(w => w));   // then modally darkens MainWindow
+            internal new void GoModeless() => base.GoModeless();
         }
 
         internal static T

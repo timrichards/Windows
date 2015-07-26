@@ -9,7 +9,7 @@ namespace DoubleFile
 {
     static public partial class ExtensionMethodsStatic
     {
-        static internal T As<T>(this object o) where T: class { return  (o is T) ? (T)o : null; }  // 20x faster than as p. 123
+        static internal T As<T>(this object o) where T: class => (o is T) ? (T)o : null;  // 20x faster than as p. 123
 
         static internal T FirstOnlyAssert<T>(this IEnumerable<T> source)
         {

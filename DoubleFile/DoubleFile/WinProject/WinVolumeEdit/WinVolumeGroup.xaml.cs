@@ -22,7 +22,7 @@ namespace DoubleFile
                 .LocalSubscribe(x => { LocalDialogResult = true; CloseIfSimulatingModal(); });
 
             Observable.FromEventPattern(formBtn_Cancel, "Click")
-                .LocalSubscribe(x => { CloseIfSimulatingModal(); });
+                .LocalSubscribe(x => CloseIfSimulatingModal());
         }
     }
 }

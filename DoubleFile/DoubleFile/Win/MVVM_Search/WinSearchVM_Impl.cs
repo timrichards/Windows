@@ -13,7 +13,7 @@ namespace DoubleFile
         static internal IObservable<Tuple<Tuple<LVitem_ProjectVM, string, string>, int>>
             GoToFile => _goToFile;
         static readonly LocalSubject<Tuple<LVitem_ProjectVM, string, string>> _goToFile = new LocalSubject<Tuple<LVitem_ProjectVM, string, string>>();
-        static void GoToFileOnNext(Tuple<LVitem_ProjectVM, string, string> value) { _goToFile.LocalOnNext(value, 99982); }
+        static void GoToFileOnNext(Tuple<LVitem_ProjectVM, string, string> value) => _goToFile.LocalOnNext(value, 99982);
 
         internal WinSearchVM Init()
         {
@@ -229,9 +229,6 @@ namespace DoubleFile
                 return;
 
             Util.UIthread(99809, () => Add(lsLVitems, Cancel: () => _bDisposed));
-
-            if (_bDisposed)
-                return;
         }
 
         SearchListings

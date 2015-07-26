@@ -15,8 +15,7 @@ namespace DoubleFile
             internal readonly DateTime LastWriteTimeUtc;
 
             internal ulong
-                Size
-            { get { Util.Assert(99928, 0 <= _Size); return (ulong)_Size; } }
+                Size { get { Util.Assert(99928, 0 <= _Size); return (ulong)_Size; } }
             readonly long _Size;
 
             internal readonly bool IsValid = false;

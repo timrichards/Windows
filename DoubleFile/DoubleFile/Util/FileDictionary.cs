@@ -28,15 +28,18 @@ namespace DoubleFile
             // ProjectFile.OnSavingProject -= Serialize;
         }
 
-        internal void Clear()
+        internal void
+            Clear()
         {
             _dictFiles = null;
             _bListingFileWithOnlyHashV1pt0 = false;
         }
 
-        internal bool IsEmpty => null == _dictFiles;
+        internal bool
+            IsEmpty => null == _dictFiles;
 
-        internal bool AllListingsHashV2
+        internal bool
+            AllListingsHashV2
         {
             get
             {
@@ -68,7 +71,8 @@ namespace DoubleFile
         }
         bool? _allListingsHashV2 = null;
 
-        internal uint[] GetFolderScorer(FileKeyTuple fileKeyTuple)
+        internal uint[]
+            GetFolderScorer(FileKeyTuple fileKeyTuple)
         {
             var tuple = _dictFiles.TryGetValue(fileKeyTuple);
 
@@ -80,7 +84,8 @@ namespace DoubleFile
                 : new[] { 0U, 0U, 0U };     // empty file
         }
 
-        internal IReadOnlyList<DuplicateStruct> GetDuplicates(string[] asFileLine)
+        internal IReadOnlyList<DuplicateStruct>
+            GetDuplicates(string[] asFileLine)
         {
             var nHashColumn =
                 _bListingFileWithOnlyHashV1pt0
@@ -107,7 +112,8 @@ namespace DoubleFile
                 .ToList();
         }
 
-        internal FileDictionary DoThreadFactory(LV_ProjectVM lvProjectVM, WeakReference<ICreateFileDictStatus> callbackWR)
+        internal FileDictionary
+            DoThreadFactory(LV_ProjectVM lvProjectVM, WeakReference<ICreateFileDictStatus> callbackWR)
         {
             _LVprojectVM = lvProjectVM;
             _callbackWR = callbackWR;
@@ -119,15 +125,17 @@ namespace DoubleFile
             return this;
         }
 
-        internal void Abort()
+        internal void
+            Abort()
         {
             _blockingFrame.Continue = false;
             IsAborted = true;
             _thread?.Abort();
         }
-
-        internal bool IsAborted { get; private set; }
-        internal void ResetAbortFlag() { IsAborted = false; }
+        internal bool
+            IsAborted { get; private set; }
+        internal void
+            ResetAbortFlag() => IsAborted = false;
 
         void Go()
         {

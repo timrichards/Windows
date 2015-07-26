@@ -17,7 +17,7 @@ namespace DoubleFile
         static internal IObservable<Tuple<string, int>>
             SelectedFile => _selectedFile;
         static readonly LocalSubject<string> _selectedFile = new LocalSubject<string>();
-        static void SelectedFileOnNext(string value, int nInitiator) { _selectedFile.LocalOnNext(value, 99841, nInitiator); }
+        static void SelectedFileOnNext(string value, int nInitiator) => _selectedFile.LocalOnNext(value, 99841, nInitiator);
 
         internal const int
             kSelRectAndTooltip = 99983;
@@ -44,7 +44,7 @@ namespace DoubleFile
                 .LocalSubscribe(x => bMouseDown = true));
 
             _lsDisposable.Add(Observable.FromEventPattern<MouseEventArgs>(this, "MouseUp")
-                .LocalSubscribe(args => { if (bMouseDown) { bMouseDown = false; form_tmapUserCtl_MouseUp(args.EventArgs.Location); } }));
+                .LocalSubscribe(args => { if (bMouseDown) form_tmapUserCtl_MouseUp(args.EventArgs.Location); bMouseDown = false; }));
 
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(initiatorTuple =>
             {
@@ -1152,9 +1152,9 @@ namespace DoubleFile
         abstract class
             RenderAction { internal Rectangle rc; internal abstract void Stroke(Graphics g); }
         class
-            FillRectangle : RenderAction { internal Brush Brush; internal override void Stroke(Graphics g) { g.FillRectangle(Brush, rc); } }
+            FillRectangle : RenderAction { internal Brush Brush; internal override void Stroke(Graphics g) => g.FillRectangle(Brush, rc); }
         class
-            DrawRectangle : RenderAction { static readonly Pen Pen = new Pen(Color.Black, 2); internal override void Stroke(Graphics g) { g.DrawRectangle(Pen, rc); } }
+            DrawRectangle : RenderAction { static readonly Pen Pen = new Pen(Color.Black, 2); internal override void Stroke(Graphics g) => g.DrawRectangle(Pen, rc); }
 
         BufferedGraphics
             _bg = null;

@@ -14,12 +14,12 @@ namespace DoubleFile
         static internal IObservable<Tuple<Tuple<LVitem_ProjectVM, string, string>, int>>
             GoToFile => _goToFile;
         static readonly LocalSubject<Tuple<LVitem_ProjectVM, string, string>> _goToFile = new LocalSubject<Tuple<LVitem_ProjectVM, string, string>>();
-        static void GoToFileOnNext(Tuple<LVitem_ProjectVM, string, string> value) { _goToFile.LocalOnNext(value, 99848); }
+        static void GoToFileOnNext(Tuple<LVitem_ProjectVM, string, string> value) => _goToFile.LocalOnNext(value, 99848);
 
         static internal IObservable<Tuple<Tuple<IReadOnlyCollection<string>, LocalTreeNode>, int>>
             UpdateFileDetail => _updateFileDetail;
         static readonly LocalSubject<Tuple<IReadOnlyCollection<string>, LocalTreeNode>> _updateFileDetail = new LocalSubject<Tuple<IReadOnlyCollection<string>, LocalTreeNode>>();
-        static void UpdateFileDetailOnNext(Tuple<IReadOnlyCollection<string>, LocalTreeNode> value, int nInitiator) { _updateFileDetail.LocalOnNext(value, 99847, nInitiator); }
+        static void UpdateFileDetailOnNext(Tuple<IReadOnlyCollection<string>, LocalTreeNode> value, int nInitiator) => _updateFileDetail.LocalOnNext(value, 99847, nInitiator);
 
         internal WinDuplicatesVM()
         {

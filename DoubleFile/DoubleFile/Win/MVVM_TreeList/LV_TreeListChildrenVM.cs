@@ -7,12 +7,12 @@ namespace DoubleFile
     class LV_TreeListChildrenVM : SliderVM_Base<LVitem_TreeListVM>
     {
         public ICommand Icmd_GoTo { get; }
-        internal override void GoTo(LocalTreeNode treeNode) { treeNode.GoToFile(null); }
+        internal override void GoTo(LocalTreeNode treeNode) => treeNode.GoToFile(null);
 
         static internal IObservable<Tuple<LocalTreeNode, int>>
             TreeListChildSelected => _treeListChildSelected;
         static readonly LocalSubject<LocalTreeNode> _treeListChildSelected = new LocalSubject<LocalTreeNode>();
-        static void TreeListChildSelectedOnNext(LocalTreeNode value) { _treeListChildSelected.LocalOnNext(value, kChildSelectedOnNext); }
+        static void TreeListChildSelectedOnNext(LocalTreeNode value) => _treeListChildSelected.LocalOnNext(value, kChildSelectedOnNext);
         internal const int kChildSelectedOnNext = 99854;
 
         internal LV_TreeListChildrenVM()

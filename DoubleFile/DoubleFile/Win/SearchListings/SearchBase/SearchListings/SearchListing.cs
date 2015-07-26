@@ -85,13 +85,13 @@ namespace DoubleFile
                         string strMatchDir = null;
                         string strMatchFile = null;
 
-                        if (bDir) { strMatchDir = arrLine[2].TrimEnd('\\'); }
-                        if (bFile) { strMatchFile = arrLine[3]; }
+                        if (bDir) strMatchDir = arrLine[2].TrimEnd('\\');
+                        if (bFile) strMatchFile = arrLine[3];
 
                         if (false == _bCaseSensitive)
                         {
-                            if (bDir) { strMatchDir = strMatchDir.ToLower(); }
-                            if (bFile) { strMatchFile = strMatchFile.ToLower(); }
+                            if (bDir) strMatchDir = strMatchDir.ToLower();
+                            if (bFile) strMatchFile = strMatchFile.ToLower();
                         }
 
                         // strMatchDir gets set to just the folder name after this, but first check the full path
@@ -111,7 +111,7 @@ namespace DoubleFile
 
                         string strDir = null;
 
-                        if (bDir) { strDir = arrLine[2].TrimEnd('\\'); }
+                        if (bDir) strDir = arrLine[2].TrimEnd('\\');
 
                         if (bDir &&
                             (null != searchResultDir))

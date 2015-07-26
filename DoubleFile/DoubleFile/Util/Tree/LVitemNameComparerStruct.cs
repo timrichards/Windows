@@ -43,9 +43,11 @@ namespace DoubleFile
 
         static internal void SetTopItem(LocalLVVM lv1, LocalLVVM lv2)
         {
-            if (lv1.TopItem == null) { return; }
-            if (lv1.TopItem.Index > 0) { return; }
-            if (lv2.TopItem == null) { return; }
+            if ((0 < (lv1.TopItem?.Index ?? 1)) ||
+                (null == lv2.TopItem))
+            {
+                return;
+            }
 
             var lv2Count = lv2.Items?.Count ?? 0;
             var lv1Count = lv1.Items?.Count ?? 0;

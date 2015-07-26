@@ -12,20 +12,15 @@ namespace DoubleFile
     public partial class UtilPublic
     {
         static public bool
-            Assert(decimal nLocation, bool bCondition, string strError_in = null, bool bTraceOnly = false)
-        {
-            return Util.Assert(nLocation, bCondition, strError_in, bTraceOnly);
-        }
-
+            Assert(decimal nLocation, bool bCondition, string strError_in = null, bool bTraceOnly = false) =>
+            Util.Assert(nLocation, bCondition, strError_in, bTraceOnly);
     }
 
     partial class Util : FileParse
     {
         static internal bool
-            Assert(decimal nLocation, bool bCondition, string strError_in = null, bool bTraceOnly = false)
-        {
-            return MBoxStatic.Assert(nLocation, bCondition, strError_in, bTraceOnly);
-        }
+            Assert(decimal nLocation, bool bCondition, string strError_in = null, bool bTraceOnly = false) =>
+            MBoxStatic.Assert(nLocation, bCondition, strError_in, bTraceOnly);
 
         static internal T
             AssertNutNull<T>(decimal nLocation, T t, string strError_in = null, bool bTraceOnly = false)
@@ -35,7 +30,7 @@ namespace DoubleFile
         }
 
         static internal void
-            Block(int nMilliseconds) { Block(new TimeSpan(0, 0, 0, 0, nMilliseconds)); }
+            Block(int nMilliseconds) => Block(new TimeSpan(0, 0, 0, 0, nMilliseconds));
         static internal void
             Block(TimeSpan napTime)
         {
@@ -51,9 +46,9 @@ namespace DoubleFile
         }
 
         static internal void
-            Closure(Action action) { action(); }
+            Closure(Action action) => action();
         static internal T
-            Closure<T>(Func<T> action) { return action(); }
+            Closure<T>(Func<T> action) => action();
 
         static internal string
             DecodeAttributes(string strAttr)
@@ -96,10 +91,8 @@ namespace DoubleFile
         }
 
         static internal string
-            FormatSize(string in_str, bool bBytes = false)
-        {
-            return FormatSize((in_str ?? "0").ToUlong(), bBytes);
-        }
+            FormatSize(string in_str, bool bBytes = false) =>
+            FormatSize((in_str ?? "0").ToUlong(), bBytes);
 
         static internal string
             FormatSize(ulong nLength, bool bBytes = false, bool bNoDecimal = false)
@@ -130,13 +123,7 @@ namespace DoubleFile
         }
 
         static internal string
-            Localized(string key)
-        {
-            if (null == App.Current)
-                return null;
-
-            return "" + App.Current.Resources[key];
-        }
+            Localized(string key) => App.Current?.Resources[key].ToString();
 
         static internal void
             LocalDispose(IEnumerable<IDisposable> ieDisposable)

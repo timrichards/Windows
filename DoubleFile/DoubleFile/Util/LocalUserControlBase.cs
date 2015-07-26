@@ -23,7 +23,7 @@ namespace DoubleFile
         virtual protected void LocalFragmentNavigation(string strFragment) { }
         string _strFragment = null;
 
-        public void OnNavigatedFrom(NavigationEventArgs e) { LocalNavigatedFrom(); }
+        public void OnNavigatedFrom(NavigationEventArgs e) => LocalNavigatedFrom();
         virtual protected void LocalNavigatedFrom() { }
 
         public void OnNavigatedTo(NavigationEventArgs e)

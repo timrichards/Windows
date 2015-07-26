@@ -12,7 +12,7 @@ namespace DoubleFile
             InitializeComponent();
 
             Observable.FromEventPattern(form_slider, "LostMouseCapture")
-                .LocalSubscribe(x => { _lvTreeListChildrenVM?.LostMouseCapture(); });
+                .LocalSubscribe(x => _lvTreeListChildrenVM?.LostMouseCapture());
         }
 
         protected override void LocalNavigatedTo()

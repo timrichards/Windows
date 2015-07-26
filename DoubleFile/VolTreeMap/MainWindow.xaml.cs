@@ -19,7 +19,7 @@ namespace VolTreeMap
         }
 
         static Action Init = null;
-        static void InitForMainWindowOnly(Action init) { Init = init; }
+        static void InitForMainWindowOnly(Action init) => Init = init;
         public
             MainWindow()
             : base(InitForMainWindowOnly)

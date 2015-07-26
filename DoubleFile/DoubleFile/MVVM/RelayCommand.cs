@@ -50,10 +50,7 @@ namespace DoubleFile
         #region ICommand Members
 
         [DebuggerStepThrough]
-        public bool CanExecute(object o)
-        {
-            return _canExecute == null || _canExecute();
-        }
+        public bool CanExecute(object o) => _canExecute == null || _canExecute();
 
         public event EventHandler CanExecuteChanged
         {
@@ -61,10 +58,7 @@ namespace DoubleFile
             remove { CommandManager.RequerySuggested -= value; }
         }
 
-        public void Execute(object o)
-        {
-            _execute();
-        }
+        public void Execute(object o) => _execute();
 
         #endregion // ICommand Members
     }

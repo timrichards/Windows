@@ -16,19 +16,17 @@ namespace DoubleFile
     [StructLayout(LayoutKind.Sequential)]
     struct RECT
     {
-        internal int Width { get { return Right - Left; } }
-        internal int Height { get { return Bottom - Top; } }
+        internal int Width => Right - Left;
+        internal int Height => Bottom - Top;
 
-        static public implicit operator Rect(RECT value)
+        static public implicit operator Rect(RECT value) =>
+            new Rect
         {
-            return new Rect
-            {
-                X = value.Left,
-                Y = value.Top,
-                Width = value.Width,
-                Height = value.Height
-            };
-        }
+            X = value.Left,
+            Y = value.Top,
+            Width = value.Width,
+            Height = value.Height
+        };
 
         /// <summary>
         /// The x-coordinate of the upper-left corner of the rectangle.

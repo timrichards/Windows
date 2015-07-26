@@ -35,8 +35,7 @@ namespace DoubleFile
             protected void WriteDirectoryListing(TextWriter fs,
                 Tuple<IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>>, IReadOnlyDictionary<string, string>> tuple)
             {
-                if (null != tuple)
-                    ImplementationDetails(fs, tuple);
+                ImplementationDetails(fs, tuple);
             }
 
             /// <summary>

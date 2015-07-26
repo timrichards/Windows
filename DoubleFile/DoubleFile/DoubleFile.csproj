@@ -221,6 +221,9 @@
     <Compile Include="Util\Win32Screen\RECT.cs" />
     <Compile Include="Util\Win32Screen\SWP.cs" />
     <Compile Include="Util\Win32Screen\Win32Screen.cs" />
+    <Compile Include="VolTreeMap\WinVolTreeMap.xaml.cs">
+      <DependentUpon>WinVolTreeMap.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Win\MVVM_FormsLV\WinFormsLVVM_Impl.cs" />
     <Compile Include="Win\MVVM_FormsLV\WinFormsLVVM.cs" />
     <Compile Include="Win\MVVM_FolderList\LVitem_FolderListVM.cs" />
@@ -483,6 +486,10 @@
     <Page Include="Assets\WinVolumeEdit.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="VolTreeMap\WinVolTreeMap.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Win\WinFormsLV.xaml">
       <Generator>MSBuild:Compile</Generator>

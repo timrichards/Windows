@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DoubleFile
+﻿namespace DoubleFile
 {
     /// <summary>
     /// Interaction logic for WinDuplicates.xaml

@@ -154,20 +154,20 @@ namespace DoubleFile
                     var strBuilder = new StringBuilder();
                     var nIx = -1;
 
-                    foreach (var strArray
+                    foreach (var asLine
                         in ieDriveInfo
                         .Select(strLine => strLine.Split('\t')))
                     {
                         ++nIx;
 
-                        if (3 < strArray.Length)
-                            strBuilder.Append(strArray[2]);
-                        else if (2 < strArray.Length)
-                            strBuilder.Append(FileParse.kasDIlabels[nIx]);
+                        if (3 < asLine.Length)
+                            strBuilder.Append(asLine[2]);
+                        else if (2 < asLine.Length)
+                            strBuilder.Append(kasDIlabels[nIx]);
                         else
                             continue;
 
-                        var s = strArray[strArray.Length - 1];
+                        var s = asLine[asLine.Length - 1];
 
                         strBuilder.AppendLine('\t' + s);
 

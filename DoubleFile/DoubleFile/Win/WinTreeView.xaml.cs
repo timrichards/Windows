@@ -1,7 +1,4 @@
-﻿using System.Reactive.Linq;
-using System.Linq;
-
-namespace DoubleFile
+﻿namespace DoubleFile
 {
     /// <summary>
     /// Interaction logic for WinTreeView.xaml

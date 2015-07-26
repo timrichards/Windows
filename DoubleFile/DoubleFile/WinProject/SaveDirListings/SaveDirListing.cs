@@ -11,13 +11,14 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Microsoft.Win32.SafeHandles;
-using System.Windows.Threading;
 using System.Windows;
 
 namespace DoubleFile
 {
     partial class SaveDirListings
     {
+        static internal bool Hash = true;
+
         class SaveDirListing : TraverseTreeBase
         {
             internal SaveDirListing(LVitem_ProjectVM volStrings, ISaveDirListingsStatus saveDirListingsStatus)
@@ -89,7 +90,7 @@ namespace DoubleFile
                         fs.WriteLine(FormatString(nHeader: 0));
                         fs.WriteLine(FormatString(nHeader: 1));
                         fs.WriteLine(ksStart01 + " " + DateTime.Now);
-                        WriteDirectoryListing(fs, HashAllFiles(GetFileList()));
+                        WriteDirectoryListing(fs, Hash ? HashAllFiles(GetFileList()) : null);
                         fs.WriteLine(ksEnd01 + " " + DateTime.Now);
                         fs.WriteLine();
                         fs.WriteLine(ksErrorsLoc01);

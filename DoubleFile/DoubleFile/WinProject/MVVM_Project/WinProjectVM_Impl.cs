@@ -148,10 +148,8 @@ namespace DoubleFile
                 .ShowDialog();
         }
 
-        internal bool OpenListingFiles(
-            IEnumerable<string> ieFiles,
-            bool bClearItems = false,
-            Func<bool> userCanceled = null)
+        internal bool
+            OpenListingFiles(IEnumerable<string> ieFiles, bool bClearItems = false, Func<bool> userCanceled = null)
         {
             var sbBadFiles = new StringBuilder();
             var bMultiBad = true;

@@ -6,9 +6,9 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinTreeMap.xaml
     /// </summary>
-    public partial class WinTreeMap
+    public partial class WinVolTreeMap
     {
-        public WinTreeMap()
+        public WinVolTreeMap()
         {
             InitializeComponent();
 
@@ -21,6 +21,39 @@ namespace DoubleFile
 
         protected override void LocalNavigatedTo()
         {
+            do
+            {
+                string strSourcePath = null;
+
+                new UC_VolumeEditVM
+                {
+                    FromSourcePathDlg = str => strSourcePath = str,
+
+                    DriveModel_CurrentText = () => null,
+                    DriveSerial_CurrentText = () => null,
+                    FromListingFileDlg = str => { },
+                    FromProbe = (x, y) => { },
+                    ListingFile_CurrentText = () => null,
+                    SourcePath_CurrentText = () => null,
+                }
+                    .EditSourcePath();
+
+                Statics.LVprojectVM = new LV_ProjectVM();
+
+                Statics.LVprojectVM.Add(new LVitem_ProjectVM
+                {
+                    SourcePath = strSourcePath
+                },
+                    bQuiet: true);
+
+                SaveDirListings.Hash = false;
+                SaveListingsProcess.Go(Statics.LVprojectVM);
+            }
+                while
+                (false ==
+                ((0 < Statics.LVprojectVM.CanLoadCount) &&
+                LocalTV.FactoryCreate(Statics.LVprojectVM)));
+
             _host.Child =
                 _ucTreeMap =
                 new UC_TreeMap()

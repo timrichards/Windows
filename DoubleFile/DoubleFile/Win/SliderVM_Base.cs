@@ -1,7 +1,4 @@
-﻿using System;
-using System.Reactive.Linq;
-
-namespace DoubleFile
+﻿namespace DoubleFile
 {
     abstract class SliderVM_Base<T> : ListViewVM_Base<T>
         where T : ListViewItemVM_Base

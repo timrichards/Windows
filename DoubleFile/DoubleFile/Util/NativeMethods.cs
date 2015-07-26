@@ -11,14 +11,15 @@ namespace DoubleFile
 {
     internal class NativeWindow : IEquatable<NativeWindow>
     {
-        static public implicit operator IntPtr(NativeWindow h) =>
-            h.hwnd;
+        static public implicit operator
+            IntPtr(NativeWindow h) => h.hwnd;
 
-        static public implicit operator NativeWindow(Window w) =>
+        static public implicit operator
+            NativeWindow(Window w) =>
             new NativeWindow { hwnd = (null != w) ? new WindowInteropHelper(w).Handle : (IntPtr)0xBAD00 + nBadCount++ };
 
-        static public implicit operator NativeWindow(IntPtr hwnd) =>
-            new NativeWindow { hwnd = hwnd };
+        static public implicit operator
+            NativeWindow(IntPtr hwnd) => new NativeWindow { hwnd = hwnd };
 
         // can't override == and != operator because of the implicit operator IntPtr above
         public bool Equals(NativeWindow other) => hwnd == other?.hwnd;

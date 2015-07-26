@@ -123,7 +123,7 @@ namespace DoubleFile
         }
 
         static internal string
-            Localized(string key) => App.Current?.Resources[key].ToString();
+            Localized(string key) => App.Current?.Resources[key]?.ToString();
 
         static internal void
             LocalDispose(IEnumerable<IDisposable> ieDisposable)

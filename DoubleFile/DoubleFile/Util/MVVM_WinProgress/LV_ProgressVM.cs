@@ -40,10 +40,7 @@ namespace DoubleFile
             }));
         }
 
-        public void Dispose()
-        {
-            Util.LocalDispose(_lsDisposables);
-        }
+        public void Dispose() => Util.LocalDispose(_lsDisposables);
 
         List<IDisposable>
             _lsDisposables = new List<IDisposable>();

@@ -22,7 +22,7 @@ namespace DoubleFile
             TopWindow
         {
             get { return _wr.Get(s => s._topWindow); }
-            set { _wr.Get(s => { Util.Assert(99775, null != value); return s._topWindow = value; }); }
+            set { _wr.Get(s => s._topWindow = Util.AssertNutNull(99775, value)); }
         }
         ILocalWindow _topWindow;
 

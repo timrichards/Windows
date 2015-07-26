@@ -12,7 +12,7 @@ namespace DoubleFile
     internal class NativeWindow : IEquatable<NativeWindow>
     {
         static public implicit operator IntPtr(NativeWindow h) { return h.hwnd; }
-        static public implicit operator NativeWindow(Window w) { return new NativeWindow { hwnd = (null != w) ? new WindowInteropHelper(w).Handle : (IntPtr)0xBAD00 + nDeadRefCount++ }; }
+        static public implicit operator NativeWindow(Window w) { return new NativeWindow { hwnd = (null != w) ? new WindowInteropHelper(w).Handle : (IntPtr)0xBAD00 + nBadCount++ }; }
         static public implicit operator NativeWindow(IntPtr hwnd) { return new NativeWindow { hwnd = hwnd }; }
 
         // can't override == and != operator because of the implicit operator IntPtr above
@@ -22,7 +22,7 @@ namespace DoubleFile
         }
 
         IntPtr hwnd = IntPtr.Zero;
-        static int nDeadRefCount = 0;
+        static int nBadCount = 0;
     }
 
     static class NativeMethods

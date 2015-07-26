@@ -1,7 +1,6 @@
 ﻿<local:LocalModernWindowBase x:Class="DoubleFile.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:mui="http://firstfloorsoftware.com/ModernUI"
         xmlns:local="clr-namespace:DoubleFile"
         Icon="/DoubleFile;component/Assets/ic_people_black_18dp.png"
         ContentSource="/WinProject/WinProject.xaml"

@@ -43,6 +43,9 @@ namespace DoubleFile
             if ("/WinProject/WinProject.xaml" == strSource)
                 return;
 
+            if (null == MainWindow.WithMainWindow(w => w))
+                return;
+
             var bSaveListings = false;
 
             if (MainWindow.SaveListingsFakeKey == strSource)

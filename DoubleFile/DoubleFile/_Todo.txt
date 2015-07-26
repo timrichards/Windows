@@ -5,6 +5,7 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- tooltip stays up when moving app window
 - do you want to cancel saving project doesn't close when done - could be the same for saving files.
 - background progress: saving project doesn't have to tie up the app.
 - Could remove ?? true: false != null

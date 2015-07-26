@@ -84,7 +84,7 @@ namespace DoubleFile
             Util.UIthread(99807, () => _winTooltip.Tag = tag);
             _winTooltip._closingCallback = args.closingCallback;
             _winTooltip._clickCallback = args.clickCallback;
-            Util.Assert(99964, null != tag);
+            Util.AssertNutNull(99964, tag);
         }
 
         static internal void CloseTooltip()

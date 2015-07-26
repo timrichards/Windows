@@ -32,7 +32,7 @@ namespace DoubleFile
 
         internal LV_ProgressVM()
         {
-            _lsDisposables.Add(Observable.Timer(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500)).Timestamp()
+            _lsDisposable.Add(Observable.Timer(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500)).Timestamp()
                 .LocalSubscribe(x =>
             {
                 foreach (var lvItem in ItemsCast.ToArray())
@@ -40,9 +40,9 @@ namespace DoubleFile
             }));
         }
 
-        public void Dispose() => Util.LocalDispose(_lsDisposables);
+        public void Dispose() => Util.LocalDispose(_lsDisposable);
 
         List<IDisposable>
-            _lsDisposables = new List<IDisposable>();
+            _lsDisposable = new List<IDisposable>();
     }
 }

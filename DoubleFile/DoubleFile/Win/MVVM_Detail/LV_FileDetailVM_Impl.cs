@@ -31,15 +31,9 @@ namespace DoubleFile
                 LV_FilesVM_SelectedFileChanged(Tuple.Create(lastSelectedFile, 0));
         }
 
-        public void Dispose()
-        {
-            Util.LocalDispose(_lsDisposable);
-        }
+        public void Dispose() => Util.LocalDispose(_lsDisposable);
 
-        void Copy()
-        {
-            Clipboard.SetText(LocalPath);
-        }
+        void Copy() => Clipboard.SetText(LocalPath);
 
         void LV_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyCollection<string>, LocalTreeNode>, int> initiatorTuple)
         {

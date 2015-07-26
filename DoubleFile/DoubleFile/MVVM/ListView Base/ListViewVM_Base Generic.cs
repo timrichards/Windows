@@ -1,12 +1,16 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace DoubleFile
 {
-    abstract class ListViewVM_Base<T> : ListViewVM_Base
+    abstract class ListViewVM_Base<T> : ListViewVM_Base, IEnumerable<T>
         where T : ListViewItemVM_Base
     {
+        public IEnumerator<T> GetEnumerator() => ItemsCast?.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => ItemsCast?.GetEnumerator();
+
         // covariant cast of each el to iterator type so can't be collectively cast to ICollection<T> even with .Cast<T>
         internal Func<IEnumerable<T>>
             SelectedItems = () => DesignModeOK(new T[] { });

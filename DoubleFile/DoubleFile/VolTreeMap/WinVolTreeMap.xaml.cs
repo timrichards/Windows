@@ -36,13 +36,7 @@ namespace DoubleFile
             }
                 .EditSourcePath();
 
-            Statics.LVprojectVM = new LV_ProjectVM();
-
-            Statics.LVprojectVM.Add(new LVitem_ProjectVM
-            {
-                SourcePath = strSourcePath
-            },
-                bQuiet: true);
+            Statics.LVprojectVM = new LV_ProjectVM { new LVitem_ProjectVM { SourcePath = strSourcePath } };
 
             SaveDirListings.Hash = false;
             SaveListingsProcess.Go(Statics.LVprojectVM);

@@ -563,10 +563,8 @@ namespace DoubleFile
             RenderA(treeNode, nInitiator: 0);
         }
 
-        void TreeMapVM_TreeNodeCallback(Tuple<LocalTreeNode, int> initiatorTuple)
-        {
+        void TreeMapVM_TreeNodeCallback(Tuple<LocalTreeNode, int> initiatorTuple) =>
             Util.UIthread(99825, () => RenderA(initiatorTuple.Item1, initiatorTuple.Item2));
-        }
 
         void RenderA(LocalTreeNode treeNode, int nInitiator)
         {

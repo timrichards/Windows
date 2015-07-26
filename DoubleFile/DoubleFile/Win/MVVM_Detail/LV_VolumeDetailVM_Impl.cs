@@ -31,10 +31,7 @@ namespace DoubleFile
                 Add(tuple.ieDetail.Select(ieLine => new LVitem_VolumeDetailVM(ieLine.ToList()))));
         }
 
-        public void Dispose()
-        {
-            Util.LocalDispose(_lsDisposable);
-        }
+        public void Dispose() => Util.LocalDispose(_lsDisposable);
 
         List<IDisposable>
             _lsDisposable = new List<IDisposable>();

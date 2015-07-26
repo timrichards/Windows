@@ -73,10 +73,7 @@ namespace DoubleFile
             return this;
         }
 
-        public void Dispose()
-        {
-            Util.LocalDispose(_lsDisposable);
-        }
+        public void Dispose() => Util.LocalDispose(_lsDisposable);
 
         void TreeSelect_FolderDetailUpdated(Tuple<TreeSelect.FolderDetailUpdated, int> initiatorTuple)
         {

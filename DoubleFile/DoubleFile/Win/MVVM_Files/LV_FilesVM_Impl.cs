@@ -19,10 +19,7 @@ namespace DoubleFile
             _wr.SetTarget(this);
         }
 
-        public void Dispose()
-        {
-            Util.LocalDispose(_lsDisposable);
-        }
+        public void Dispose() => Util.LocalDispose(_lsDisposable);
 
         void TreeSelect_FileListUpdated(Tuple<TreeSelect.FileListUpdated, int> initiatorTuple)
         {

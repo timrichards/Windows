@@ -31,7 +31,7 @@ namespace DoubleFile
             TabledString<Tabled_Files>.DropRef();
         }
 
-        bool IsSearchEnabled() { return IsEditBoxNonEmpty() && (null == _searchType2); }
+        bool IsSearchEnabled() => IsEditBoxNonEmpty() && (null == _searchType2);
 
         void SearchFolders()
         {

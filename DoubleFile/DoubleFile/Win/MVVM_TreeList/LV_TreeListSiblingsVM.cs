@@ -56,10 +56,7 @@ namespace DoubleFile
                 TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, 0));
         }
 
-        public void Dispose()
-        {
-            Util.LocalDispose(_lsDisposable);
-        }
+        public void Dispose() => Util.LocalDispose(_lsDisposable);
 
         void TreeSelect_FolderDetailUpdated(Tuple<TreeSelect.FolderDetailUpdated, int> initiatorTuple)
         {

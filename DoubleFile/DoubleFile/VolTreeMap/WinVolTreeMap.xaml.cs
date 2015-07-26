@@ -31,6 +31,7 @@ namespace DoubleFile
             SaveListingsProcess.Go(Statics.LVprojectVM);
             LocalTV.FactoryCreate(Statics.LVprojectVM);
             new BBCodeBlock().LinkNavigator.Navigate(new Uri("/DoubleFile;component/Win/WinTreeMap.xaml", UriKind.Relative), this);
+            LVitem_FilesVM.ShowDuplicates = false;
         }
     }
 }

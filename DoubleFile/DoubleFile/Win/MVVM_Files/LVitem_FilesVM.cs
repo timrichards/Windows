@@ -5,6 +5,8 @@ namespace DoubleFile
 {
     class LVitem_FilesVM : ListViewItemVM_Base
     {
+        static internal bool ShowDuplicates = true;     // use-case: VolTreeMap project
+
         public string Filename => FileLine[0];
         public string Created => FileLine[1];
         public DateTime CreatedRaw => ("" + Created).ToDateTime();
@@ -21,6 +23,9 @@ namespace DoubleFile
             get { return _SameVolume; }
             internal set
             {
+                if (false == ShowDuplicates)
+                    return;     // from lambda
+
                 _SameVolume = value;
                 RaisePropertyChanged("SameVolume");
             }
@@ -28,14 +33,15 @@ namespace DoubleFile
         bool _SameVolume = false;
 
         public bool SolitaryAndNonEmpty =>
+            ShowDuplicates &&
             (0 == DuplicatesRaw) &&
                 ((FileLine.Length <= FileParse.knColLengthLV) ||                    // doesn't happen
                 string.IsNullOrWhiteSpace(FileLine[FileParse.knColLengthLV]) ||     // doesn't happen
                 (0 < ("" + FileLine[FileParse.knColLengthLV]).ToUlong()));
 
         public string Duplicates =>
-            ((0 != DuplicatesRaw) ? "" + DuplicatesRaw : "") +
-            (_SameVolume ? " all on the same volume." : "");
+            ((ShowDuplicates && (0 != DuplicatesRaw))
+            ? "" + DuplicatesRaw : "") + (_SameVolume ? " all on the same volume." : "");
         public int DuplicatesRaw { get; internal set; }
 
         internal override int NumCols => NumCols_;

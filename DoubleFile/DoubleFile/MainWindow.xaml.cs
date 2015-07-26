@@ -60,8 +60,9 @@ namespace DoubleFile
         internal const string SaveListingsFakeKey = "/SaveListings.xaml";
         static readonly Link _saveListingsLink = new MyLink("Save listings", SaveListingsFakeKey);
 
+        // use-case for public: VolTreeMap project
         internal const string ExtraWindowFakeKey = "/ExtraWindow.xaml";
-        static readonly Link _extraWindowLink = new MyLink("Extra window", ExtraWindowFakeKey);
+        public static readonly Link _extraWindowLink = new MyLink("Extra window", ExtraWindowFakeKey);
 
         internal const string AdvancedFakeKey = "/Advanced.xaml";
         static readonly Link _advancedLink = new MyLink("Advanced", AdvancedFakeKey);

@@ -240,12 +240,13 @@ namespace DoubleFile
         static internal NativeWindow
             GetWindow(NativeWindow w, uint wCmd) => GetWindow((IntPtr)w, wCmd);
 
-        internal static IEnumerable<NativeWindow> EnumerateWindowsWithTitleOf(string title)
+        internal static IList<NativeWindow> GetAllWindowsWithTitleOf(string title)
         {
             var searchData = new SearchData { Title = title };
+            _lsRet = new List<NativeWindow>();
 
             EnumWindows(EnumProcTitleAll, ref searchData);
-            yield return searchData.hWnd;
+            return _lsRet;
         }
 
         static bool EnumProcTitleAll(IntPtr hWnd, ref SearchData searchData)
@@ -255,21 +256,13 @@ namespace DoubleFile
             GetWindowText(hWnd, sb, sb.Capacity);
 
             if (sb.ToString().StartsWith(searchData.Title))
-            {
-                searchData.hWnd = hWnd;
-                return true;    // Found the wnd, keep enumerating though
-            }
+                _lsRet.Add(hWnd);    // Found the wnd, keep enumerating though
 
-            searchData.hWnd = IntPtr.Zero;
             return true;
         }
 
-        public class SearchData
-        {
-            public string Title;
-            public IntPtr hWnd;
-        }
-
+        static IList<NativeWindow> _lsRet = null;
+        public class SearchData { public string Title; }
         private delegate bool EnumWindowsProc(IntPtr hWnd, ref SearchData data);
 
         [DllImport("user32.dll")]

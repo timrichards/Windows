@@ -300,29 +300,36 @@ namespace DoubleFile
                 return;
             }
 
-            if (GetNativeWindowsTopDown(Application.Current.Windows.OfType<Window>())
-                .First().Window is IDarkWindow)
-            {
-                if (null != NativeWindow.TitleMatcher.CurrentDialogText)
-                {
-                    var systemDialogs =
-                        NativeMethods
-                        .EnumerateWindowsWithTitleOf(NativeWindow.TitleMatcher.CurrentDialogText)
-                        .ToList();
-
-                    if (1 == systemDialogs.Count)
-                        return;
-                }
-
-                Abort_ClearOut(99769);
-            }
-
             var lsNativeModalWindows = 
                 Application.Current.Windows
                 .OfType<IModalWindow>()
                 .Where(w => false == w.LocalIsClosed)
                 .Select(w => (NativeWindow)(Window)w)
                 .ToList();
+
+            if (GetNativeWindowsTopDown(Application.Current.Windows.OfType<Window>())
+                .First().Window is IDarkWindow)
+            {
+                if (null != NativeWindow.TitleMatcher.CurrentDialogText)
+                {
+                    foreach (var systemDialog in
+                        NativeMethods
+                        .GetAllWindowsWithTitleOf(NativeWindow.TitleMatcher.CurrentDialogText))
+                    {
+                        var owner =
+                            NativeMethods.GetWindow(
+                            NativeMethods.GetWindow(systemDialog, NativeMethods.GW_OWNER),NativeMethods.GW_OWNER);
+
+                        if (owner.Equals(Application.Current.MainWindow))
+                            return;     // use case: system dialogs off the main window
+
+                        if (lsNativeModalWindows.Contains(owner))
+                            return;     // use case: system dialogs off edit/new listing file dlg
+                    }
+                }
+
+                Abort_ClearOut(99769);
+            }
 
             if (lsNativeModalWindows.Contains(NativeTopWindow()))
                 return;     // use-case: all IModalWindows: New/Edit Listing File; Group; WinProgress; LocalMbox

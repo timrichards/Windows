@@ -47,7 +47,7 @@ namespace DoubleFile
                 Title = "Save Listing File"
             };
 
-            if (ModalThread.Go(darkWindow => dlg.ShowDialog((Window)darkWindow), dlg.GetType().Name) ?? false)
+            if (ModalThread.Go(darkWindow => dlg.ShowDialog((Window)darkWindow), dlg.Title) ?? false)
                 FromListingFileDlg(dlg.FileName);
         }
     }

@@ -28,10 +28,8 @@ namespace DoubleFile
                 Observable = new LocalSubject<FileListUpdated>();
         }
         static void
-            FileListUpdatedOnNext(FileListUpdated value, int nInitiator)
-        {
+            FileListUpdatedOnNext(FileListUpdated value, int nInitiator) =>
             ((LocalSubject<FileListUpdated>)FileListUpdated.Observable).LocalOnNext(value, 99846, nInitiator);
-        }
 
         internal class FolderDetailUpdated
         {
@@ -48,10 +46,8 @@ namespace DoubleFile
                 Observable = new LocalSubject<FolderDetailUpdated>();
         }
         static void
-            FolderDetailUpdatedOnNext(FolderDetailUpdated value, int nInitiator)
-        {
+            FolderDetailUpdatedOnNext(FolderDetailUpdated value, int nInitiator) =>
             ((LocalSubject<FolderDetailUpdated>)FolderDetailUpdated.Observable).LocalOnNext(value, 99845, nInitiator);
-        }
 
         internal class VolumeDetailUpdated
         {
@@ -68,10 +64,8 @@ namespace DoubleFile
                 Observable = new LocalSubject<VolumeDetailUpdated>();
         }
         static void
-            VolumeDetailUpdatedOnNext(VolumeDetailUpdated value, int nInitiator)
-        {
+            VolumeDetailUpdatedOnNext(VolumeDetailUpdated value, int nInitiator) =>
             ((LocalSubject<VolumeDetailUpdated>)VolumeDetailUpdated.Observable).LocalOnNext(value, 99844, nInitiator);
-        }
 
         static internal bool DoThreadFactory(LocalTreeNode treeNode, int nInitiator, string strFile = null,
             bool bCompareMode = false, bool bSecondComparePane = false)

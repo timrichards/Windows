@@ -38,8 +38,45 @@ namespace DoubleFile
             }
 
             internal new DarkWindow Show() { ((Window)this).Show(); return this; }                  // Darkens ExtraWindows and WinTooltip
-            internal new void ShowDialog() => base.ShowDialog(MainWindow.WithMainWindow(w => w));   // then modally darkens MainWindow
+            internal new void ShowDialog() => base.ShowDialog((ILocalWindow)Application.Current.MainWindow);      // then modally darkens MainWindow
             internal new void GoModeless() => base.GoModeless();
+        }
+
+        class Push : IDisposable
+        {
+            internal Push(string dlgTitle)
+            {
+                _titleMatcher = new NativeWindow.TitleMatcher(dlgTitle);
+
+                if (1 < ++_nRefCount)
+                    return;
+
+                Util.Assert(99767, null == _lockupTimer);
+
+                _lockupTimer = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Timestamp()
+                    .LocalSubscribe(99738, x => Util.UIthread(99798, () =>
+                    RepeatedOuterCheckForLockup()));
+            }
+
+            public void Dispose()
+            {
+                Util.AssertNotNull(99679, _titleMatcher)?
+                    .Dispose();
+
+                if (0 < --_nRefCount)
+                    return;
+
+                Util.AssertNotNull(99768, _lockupTimer)?
+                    .Dispose();
+
+                _lockupTimer = null;
+            }
+
+            static internal void AssertAllClear() => Util.Assert(99770, 0 == _nRefCount);
+
+            NativeWindow.TitleMatcher _titleMatcher = null;
+            static int _nRefCount = 0;
+            static IDisposable _lockupTimer = null;
         }
 
         internal static T
@@ -61,8 +98,7 @@ namespace DoubleFile
 
             var retVal = default(T);
 
-            if ((_thread.IsAlive) ||
-                (null == MainWindow.WithMainWindow(w => w)))    // use-case: VolTreeMap project
+            if (_thread.IsAlive)    // use-case: VolTreeMap project
             {
                 var prevTopWindow = Statics.TopWindow;
                 var darkWindow = new DarkWindow((Window)Statics.TopWindow);
@@ -71,10 +107,8 @@ namespace DoubleFile
                     .SetRect(darkWindow.Rect)
                     .Show();
 
-                Push();
-                using (new NativeWindow.TitleMatcher(dlgTitle))
+                using (new Push(dlgTitle))
                     retVal = showDialog(darkWindow);
-                Pop();
 
                 if (false == darkWindow.LocalIsClosed)      // happens with system dialogs
                     darkWindow.Close();
@@ -93,37 +127,12 @@ namespace DoubleFile
                 _blockingFrame.Continue = false;
             }));
 
-            Push();
-            using (new NativeWindow.TitleMatcher(dlgTitle))
+            using (new Push(dlgTitle))
                 _blockingFrame.PushFrameToTrue();
-            Pop();
-            Util.Assert(99770, 0 == _nRefCount);
+
+            Push.AssertAllClear();
             return retVal;
         }
-
-        static void Push()
-        {
-            if (1 < ++_nRefCount)
-                return;
-
-            Util.Assert(99767, null == _lockupTimer);
-
-            _lockupTimer = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Timestamp()
-                .LocalSubscribe(99738, x => Util.UIthread(99798, () =>
-                RepeatedOuterCheckForLockup()));
-        }
-        static void Pop()
-        {
-            if (0 < --_nRefCount)
-                return;
-
-            Util.AssertNotNull(99768, _lockupTimer)?
-                .Dispose();
-
-            _lockupTimer = null;
-        }
-        static int _nRefCount = 0;
-        static IDisposable _lockupTimer = null;
 
         static void
             Abort_ClearOut(decimal nLocation)

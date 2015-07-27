@@ -49,7 +49,7 @@ namespace DoubleFile
                     CurrentDialogText = dlgTitle;
             }
 
-            public void Dispose() { CurrentDialogText = null; }
+            public void Dispose() => CurrentDialogText = null;
 
             internal static string CurrentDialogText;
 

@@ -44,14 +44,21 @@ namespace DoubleFile
 
         class Push : IDisposable
         {
-            internal readonly NativeWindow.TitleMatcher
-                TitleMatcher = null;
+            internal readonly string CurrentDialogText = null;
 
             internal Push(string dlgTitle)
             {
-                TitleMatcher = new NativeWindow.TitleMatcher(dlgTitle);
                 _prevPush = _wr.Get(p => p);
                 _wr.SetTarget(this);
+
+                if (null == dlgTitle)
+                {
+                    CurrentDialogText = null;
+                    return;
+                }
+
+                if (false == dictDialogTitles.TryGetValue(dlgTitle, out CurrentDialogText))
+                    CurrentDialogText = dlgTitle;
 
                 if (1 < ++_nRefCount)
                     return;
@@ -65,9 +72,6 @@ namespace DoubleFile
 
             public void Dispose()
             {
-                Util.AssertNotNull(99679, TitleMatcher)?
-                    .Dispose();
-
                 _wr.SetTarget(_prevPush);
 
                 if (0 < --_nRefCount)
@@ -87,6 +91,11 @@ namespace DoubleFile
 
             static int _nRefCount = 0;
             static IDisposable _lockupTimer = null;
+
+            static IReadOnlyDictionary<string, string> dictDialogTitles = new Dictionary<string, string>
+            {
+                { "FolderBrowserDialog", "Browse For Folder" }
+            };
         }
 
         internal static T
@@ -337,7 +346,7 @@ namespace DoubleFile
                 .Select(w => (NativeWindow)(Window)w)
                 .ToList();
 
-            var currentDialogText = Push.WithPush(p => p)?.TitleMatcher.CurrentDialogText;
+            var currentDialogText = Push.WithPush(p => p)?.CurrentDialogText;
 
             if (null != currentDialogText)
             {

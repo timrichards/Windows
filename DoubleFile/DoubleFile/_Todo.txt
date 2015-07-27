@@ -6,7 +6,6 @@
 - fix slider in tree list
 
 - When VolTreeMap exits it will crash any other copies of it up
-- CurrentDialogText is static: doesn't support stacking
 - can't move main window when there's an extra window - even when it's closed
 	- sometimes can't move extra window (suspect new topwindow setting)
 - tooltip stays up when moving app window
@@ -151,6 +150,8 @@ Specific code areas:
 - Fast long-path large fetch native directory listings
 - Fast 1 MB sample faux checksum per file on your drive (512K from head; 512K from tail)
 The main purpose of Double File is to allow you to pack up your drive and go: transition from one computer to another; or put a new drive or operating system in. Copy the files you use then let the rest just sit in storage. Drive capacities and speeds are increasing. This drive has nothing better to do than serve as backup; to maintain environment state. Plug it back in and be right where you were when you left it. But wait - what's actually on those drives, and are they backed up? Out of sight, out of mind: that's where Double File comes in. Catalog them, then have them curated for you on your current setup as they sit in storage: safe from transitional hazards. Plan well, then act: reuse the drives after making a plan.
+
+99679
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
 99678 next low assert

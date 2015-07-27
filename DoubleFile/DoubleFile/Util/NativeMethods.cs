@@ -34,30 +34,6 @@ namespace DoubleFile
         public bool Equals(NativeWindow other) => Handle == other?.Handle;
 
         static int nBadCount = 0;
-
-        internal class TitleMatcher : IDisposable
-        {
-            internal TitleMatcher(string dlgTitle)
-            {
-                if (null == dlgTitle)
-                {
-                    CurrentDialogText = null;
-                    return;
-                }
-
-                if (false == dictDialogTitles.TryGetValue(dlgTitle, out CurrentDialogText))
-                    CurrentDialogText = dlgTitle;
-            }
-
-            public void Dispose() => CurrentDialogText = null;
-
-            internal string CurrentDialogText;
-
-            static IReadOnlyDictionary<string, string> dictDialogTitles = new Dictionary<string, string>
-            {
-                { "FolderBrowserDialog", "Browse For Folder" }
-            };
-        }
     }
 
     static class NativeMethods

@@ -44,9 +44,14 @@ namespace DoubleFile
 
         class Push : IDisposable
         {
+            internal readonly NativeWindow.TitleMatcher
+                TitleMatcher = null;
+
             internal Push(string dlgTitle)
             {
-                _titleMatcher = new NativeWindow.TitleMatcher(dlgTitle);
+                TitleMatcher = new NativeWindow.TitleMatcher(dlgTitle);
+                _prevPush = _wr.Get(p => p);
+                _wr.SetTarget(this);
 
                 if (1 < ++_nRefCount)
                     return;
@@ -60,8 +65,10 @@ namespace DoubleFile
 
             public void Dispose()
             {
-                Util.AssertNotNull(99679, _titleMatcher)?
+                Util.AssertNotNull(99679, TitleMatcher)?
                     .Dispose();
+
+                _wr.SetTarget(_prevPush);
 
                 if (0 < --_nRefCount)
                     return;
@@ -74,7 +81,10 @@ namespace DoubleFile
 
             static internal void AssertAllClear() => Util.Assert(99770, 0 == _nRefCount);
 
-            NativeWindow.TitleMatcher _titleMatcher = null;
+            static internal T WithPush<T>(Func<Push, T> doSomethingWith) => _wr.Get(p => doSomethingWith(p));
+            static WeakReference<Push> _wr = new WeakReference<Push>(null);
+            Push _prevPush;
+
             static int _nRefCount = 0;
             static IDisposable _lockupTimer = null;
         }
@@ -327,11 +337,13 @@ namespace DoubleFile
                 .Select(w => (NativeWindow)(Window)w)
                 .ToList();
 
-            if (null != NativeWindow.TitleMatcher.CurrentDialogText)
+            var currentDialogText = Push.WithPush(p => p)?.TitleMatcher.CurrentDialogText;
+
+            if (null != currentDialogText)
             {
                 foreach (var systemDialog in
                     NativeMethods
-                    .GetAllWindowsWithTitleOf(NativeWindow.TitleMatcher.CurrentDialogText))
+                    .GetAllWindowsWithTitleOf(currentDialogText))
                 {
                     var owner =
                         NativeMethods.GetWindow(

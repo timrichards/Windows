@@ -51,7 +51,7 @@ namespace DoubleFile
 
             public void Dispose() => CurrentDialogText = null;
 
-            internal static string CurrentDialogText;
+            internal string CurrentDialogText;
 
             static IReadOnlyDictionary<string, string> dictDialogTitles = new Dictionary<string, string>
             {

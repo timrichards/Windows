@@ -9,7 +9,7 @@ namespace DoubleFile
 {
     static public class ExtensionMethodsStatic_Public
     {
-        static public IDisposable LocalSubscribe<T>(this IObservable<T> source, Action<T> onNext)
+        static public IDisposable LocalSubscribe<T>(this IObservable<T> source, decimal nLocation, Action<T> onNext)
         {
             return
                 source.Subscribe(t =>
@@ -20,7 +20,7 @@ namespace DoubleFile
                 }
                 catch (Exception e)
                 {
-                    Util.Assert(99771, false, e.GetBaseException().Message);
+                    Util.Assert(nLocation, false, e.GetBaseException().Message);
                 }
             });
         }
@@ -222,6 +222,9 @@ namespace DoubleFile
 
         static internal T SetRect<T>(this T window, Rect r) where T : Window
         {
+            if (null == window)
+                return window;
+
             window.Left = r.X;
             window.Top = r.Y;
             window.Width = r.Width;

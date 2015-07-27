@@ -24,7 +24,7 @@ namespace DoubleFile
         internal WinDuplicatesVM()
         {
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
-            _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.LocalSubscribe(LV_FilesVM_SelectedFileChanged));
+            _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.LocalSubscribe(99704, LV_FilesVM_SelectedFileChanged));
 
             var lastSelectedFile = LV_FilesVM.LastSelectedFile;
 

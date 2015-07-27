@@ -41,12 +41,12 @@ namespace DoubleFile
             var bMouseDown = false;
 
             _lsDisposable.Add(Observable.FromEventPattern(this, "MouseDown")
-                .LocalSubscribe(x => bMouseDown = true));
+                .LocalSubscribe(99698, x => bMouseDown = true));
 
             _lsDisposable.Add(Observable.FromEventPattern<MouseEventArgs>(this, "MouseUp")
-                .LocalSubscribe(args => { if (bMouseDown) form_tmapUserCtl_MouseUp(args.EventArgs.Location); bMouseDown = false; }));
+                .LocalSubscribe(99697, args => { if (bMouseDown) form_tmapUserCtl_MouseUp(args.EventArgs.Location); bMouseDown = false; }));
 
-            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(initiatorTuple =>
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99696, initiatorTuple =>
             {
                 if (LV_TreeListChildrenVM.kChildSelectedOnNext == initiatorTuple.Item2)
                     return;
@@ -58,8 +58,8 @@ namespace DoubleFile
                 _bTreeSelect = false;
             }));
 
-            _lsDisposable.Add(LV_TreeListChildrenVM.TreeListChildSelected.LocalSubscribe(LV_TreeListChildrenVM_TreeListChildSelected));
-            _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.LocalSubscribe(LV_FilesVM_SelectedFileChanged));
+            _lsDisposable.Add(LV_TreeListChildrenVM.TreeListChildSelected.LocalSubscribe(99695, LV_TreeListChildrenVM_TreeListChildSelected));
+            _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.LocalSubscribe(99694, LV_FilesVM_SelectedFileChanged));
         }
 
         protected override void OnLoad(EventArgs e)
@@ -67,7 +67,7 @@ namespace DoubleFile
             base.OnLoad(e);
 
             _lsDisposable.Add(Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(33)).Timestamp()    // 30 FPS
-                .LocalSubscribe(x =>
+                .LocalSubscribe(99693, x =>
             {
                 if (Rectangle.Empty == _rectCenter)
                     return;         // from lambda
@@ -78,7 +78,7 @@ namespace DoubleFile
                     Invalidate(_rectCenter);
             }));
 
-            _lsDisposable.Add(TreeMapVM.TreeNodeCallback.LocalSubscribe(TreeMapVM_TreeNodeCallback));
+            _lsDisposable.Add(TreeMapVM.TreeNodeCallback.LocalSubscribe(99692, TreeMapVM_TreeNodeCallback));
         }
 
         void InvalidatePushRef(Action action)

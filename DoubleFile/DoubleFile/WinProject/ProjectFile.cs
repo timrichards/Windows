@@ -71,10 +71,10 @@ namespace DoubleFile
             };
 
             _lsDisposable.Add(Observable.FromEventPattern<DataReceivedEventArgs>(_process, "OutputDataReceived")
-                .LocalSubscribe(args => { Util.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); }));
+                .LocalSubscribe(99725, args => { Util.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); }));
 
             _lsDisposable.Add(Observable.FromEventPattern<DataReceivedEventArgs>(_process, "ErrorDataReceived")
-                .LocalSubscribe(args => { Util.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); }));
+                .LocalSubscribe(99724, args => { Util.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); }));
 
             _process.EnableRaisingEvents = true;
             _lsDisposable.Add(_process);
@@ -354,7 +354,7 @@ namespace DoubleFile
             _process.StartInfo.Arguments = strArguments;
             
             Observable.FromEventPattern(_process, "Exited")
-                .LocalSubscribe(x => onExit());
+                .LocalSubscribe(99723, x => onExit());
 
             (new WinProgress(new[] { _status }, new[] { strProjectFileNoPath }, x =>
             {
@@ -432,7 +432,7 @@ namespace DoubleFile
 
             // One-shot: no need to dispose
             Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()
-                .LocalSubscribe(x => MBoxStatic.ShowDialog(strError, "Error " + strMode + " Project"));
+                .LocalSubscribe(99722, x => MBoxStatic.ShowDialog(strError, "Error " + strMode + " Project"));
 
             return true;
         }

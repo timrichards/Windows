@@ -43,7 +43,7 @@ namespace DoubleFile
             if (localLVVM.Items.Any())
                 Add(localLVVM.ItemsCast);
 
-            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(TreeSelect_FolderDetailUpdated));
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99700, TreeSelect_FolderDetailUpdated));
 
             var folderDetail = LocalTV.TreeSelect_FolderDetail;
 

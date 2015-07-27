@@ -78,12 +78,13 @@ namespace DoubleFile
             Init();
             Init = null;
             InitializeComponent();
+            //Util.Assert(0, false);      // test ability to assert from the primordial soup
 
             Observable.FromEventPattern(this, "Loaded")
-                .LocalSubscribe(Window_Loaded);
+                .LocalSubscribe(99760, Window_Loaded);
 
             Observable.FromEventPattern<CancelEventArgs>(this, "Closing")
-                .LocalSubscribe(args => MainWindow_Closing(args.EventArgs));
+                .LocalSubscribe(99759, args => MainWindow_Closing(args.EventArgs));
 
             MenuLinkGroups.Add(new LinkGroup { DisplayName="Welcome", Links =
             {

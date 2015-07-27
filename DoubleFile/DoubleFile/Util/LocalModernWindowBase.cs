@@ -58,7 +58,7 @@ namespace DoubleFile
             // system file dialogs isn't going away...
 
             Observable.FromEventPattern(this, "SourceInitialized")
-                .LocalSubscribe(x =>
+                .LocalSubscribe(99752, x =>
                 HwndSource
                     .FromHwnd((NativeWindow)this)
                     .AddHook(WndProc));
@@ -70,7 +70,7 @@ namespace DoubleFile
             var prevTopWindow = Statics.TopWindow;
 
             Observable.FromEventPattern(this, "Activated")
-                .LocalSubscribe(x =>
+                .LocalSubscribe(99751, x =>
             {
                 var bCanFlashWindow = App.CanFlashWindow_ResetsIt;     // querying it resets it
                 var topWindow = Statics.TopWindow;
@@ -103,13 +103,13 @@ namespace DoubleFile
             });
 
             Observable.FromEventPattern(this, "Loaded")
-                .LocalSubscribe(x => LocalIsClosed = false);
+                .LocalSubscribe(99750, x => LocalIsClosed = false);
 
             Observable.FromEventPattern(this, "Closing")
-                .LocalSubscribe(x => LocalIsClosing = true);
+                .LocalSubscribe(99749, x => LocalIsClosing = true);
 
             Observable.FromEventPattern(this, "Closed")
-                .LocalSubscribe(x =>
+                .LocalSubscribe(99748, x =>
             {
                 LocalIsClosed = true;
 
@@ -217,7 +217,7 @@ namespace DoubleFile
             Owner = (Window)me;
 
             Observable.FromEventPattern(this, "Closed")
-                .LocalSubscribe(x =>
+                .LocalSubscribe(99747, x =>
             {
                 me.Activate();
                 GoModeless();

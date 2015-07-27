@@ -168,7 +168,7 @@ namespace DoubleFile
             var nFolderCount2 = 1;
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
-                .LocalSubscribe(x => StatusCallback(nProgress: nProgress/(double) nLVitems)))
+                .LocalSubscribe(99757, x => StatusCallback(nProgress: nProgress/(double) nLVitems)))
             Util.ParallelForEach(
                 _LVprojectVM.ItemsCast
                 .Where(lvItem => lvItem.CanLoad), new ParallelOptions{ CancellationToken = cts.Token }, lvItem =>

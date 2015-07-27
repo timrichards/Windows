@@ -33,10 +33,10 @@ namespace DoubleFile
             Statics.AppActivated = true;      // Application_Activated() seemed to work but jic
 
             Observable.FromEventPattern(this, "Activated")
-                .LocalSubscribe(x => Application_Activated());
+                .LocalSubscribe(99771, x => Application_Activated());
 
             Observable.FromEventPattern(this, "Deactivated")
-                .LocalSubscribe(x => { Statics.AppActivated = false; DeactivateDidOccurOnNext(); });
+                .LocalSubscribe(99769, x => { Statics.AppActivated = false; DeactivateDidOccurOnNext(); });
 
 #if (false == DEBUG)
             Observable.FromEventPattern<System.Windows.Threading.DispatcherUnhandledExceptionEventArgs>(this, "DispatcherUnhandledException")

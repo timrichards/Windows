@@ -607,7 +607,7 @@ namespace DoubleFile
                 if (null != _dictIgnoreNodes.TryGetValue(treeNode))
                     continue;
 
-                Util.AssertNutNull(1305.6312m, lvItem);
+                Util.AssertNotNull(1305.6312m, lvItem);
                 _dictIgnoreNodes.Add(treeNode, lvItem);
 
                 if (0 < (treeNode.Nodes?.Count ?? 0))

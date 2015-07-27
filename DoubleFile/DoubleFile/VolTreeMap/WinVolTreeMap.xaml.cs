@@ -33,7 +33,21 @@ namespace DoubleFile
             Statics.LVprojectVM = new LV_ProjectVM { new LVitem_ProjectVM { SourcePath = dlg.SelectedPath } };
             SaveDirListings.Hash = false;
             SaveListingsProcess.Go(Statics.LVprojectVM);
+
+            if (0 == Statics.LVprojectVM.CanLoadCount)
+            {
+                Dispatcher.InvokeShutdown();
+                return;
+            }
+
             LocalTV.FactoryCreate(Statics.LVprojectVM);
+
+            if (null == LocalTV.TopNode)
+            {
+                Dispatcher.InvokeShutdown();
+                return;
+            }
+
             new BBCodeBlock().LinkNavigator.Navigate(new Uri("/DoubleFile;component/Win/WinTreeMap.xaml", UriKind.Relative), this);
             LVitem_FilesVM.ShowDuplicates = false;
         }

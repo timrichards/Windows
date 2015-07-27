@@ -16,7 +16,7 @@ namespace DoubleFile
             MBoxStatic.Assert(nLocation, bCondition, strError_in, bTraceOnly);
 
         static internal T
-            AssertNutNull<T>(decimal nLocation, T t, string strError_in = null, bool bTraceOnly = false)
+            AssertNotNull<T>(decimal nLocation, T t, string strError_in = null, bool bTraceOnly = false)
         {
             Assert(nLocation, null != t, strError_in, bTraceOnly);
             return t;
@@ -132,10 +132,10 @@ namespace DoubleFile
 
             // One-shot: no need to dispose
             Observable.Timer(TimeSpan.FromMilliseconds(250)).Timestamp()
-                .LocalSubscribe(x => cts.Cancel());
+                .LocalSubscribe(99732, x => cts.Cancel());
 
             Observable.Timer(TimeSpan.FromMilliseconds(500)).Timestamp()
-                .LocalSubscribe(x => thread.Abort());
+                .LocalSubscribe(99731, x => thread.Abort());
         }
 
         static internal void

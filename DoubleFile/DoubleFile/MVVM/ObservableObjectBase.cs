@@ -50,7 +50,7 @@ namespace DoubleFile
         /// </summary>
         /// <param name="propertyName">Property name to update. Is case-sensitive.</param>
         public virtual bool RaisePropertyChanged([CallerMemberName]string propertyName = null) =>
-            OnPropertyChanged(Util.AssertNutNull(99944, propertyName));
+            OnPropertyChanged(Util.AssertNotNull(99944, propertyName));
 
         /// <summary>
         /// Raised when a property on this object has a new value.

@@ -130,7 +130,7 @@ namespace DoubleFile
                 return;
 
             _subItems[nCol] = s;
-            Util.AssertNutNull(99937, propertyName);
+            Util.AssertNotNull(99937, propertyName);
             RaisePropertyChanged(propertyName);
             RaiseColumnWidth(propertyName);
         }

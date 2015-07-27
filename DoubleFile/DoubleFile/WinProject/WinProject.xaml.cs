@@ -21,7 +21,7 @@ namespace DoubleFile
 
             DataContext = new WinProjectVM(Statics.LVprojectVM);
             _weakReference.SetTarget(this);
-            LV_ProjectVM.Modified.LocalSubscribe(x => Reset());
+            LV_ProjectVM.Modified.LocalSubscribe(99720, x => Reset());
         }
 
         static internal bool OKtoNavigate_BuildExplorer(bool bSaveListings)

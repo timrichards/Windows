@@ -55,23 +55,23 @@ namespace DoubleFile
             Width = rc.Width;
 
             Observable.FromEventPattern(this, "SourceInitialized")
-                .LocalSubscribe(x => ResizeMode = ResizeMode.NoResize);
+                .LocalSubscribe(99730, x => ResizeMode = ResizeMode.NoResize);
 
             Observable.FromEventPattern(this, "Loaded")
-                .LocalSubscribe(x => formLV_Progress.DataContext = _lv);
+                .LocalSubscribe(99729, x => formLV_Progress.DataContext = _lv);
 
             Observable.FromEventPattern(this, "ContentRendered")
-                .LocalSubscribe(x =>
+                .LocalSubscribe(99728, x =>
             {
                 MinHeight = MaxHeight = ActualHeight;
                 initClient(this);
             });
 
             Observable.FromEventPattern(formBtn_Cancel, "Click")
-                .LocalSubscribe(x => base.Close());
+                .LocalSubscribe(99727, x => base.Close());
 
             Observable.FromEventPattern<CancelEventArgs>(this, "Closing")
-                .LocalSubscribe(args => Window_Closing(args.EventArgs));
+                .LocalSubscribe(99726, args => Window_Closing(args.EventArgs));
 
             _lv.Add(astrBigLabels.Zip(astrSmallKeyLabels, (a, b) => Tuple.Create(a, b)));
         }

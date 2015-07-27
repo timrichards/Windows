@@ -76,11 +76,16 @@ namespace DoubleFile
 
             var bMainWindowLoaded = Application.Current?.MainWindow?.IsLoaded ?? false;
 
-            Owner =
+            var winOwner =
                 (false == (owner?.LocalIsClosed ?? true))
                 ? (Window)owner
                 : bMainWindowLoaded
                 ? Application.Current.MainWindow
+                : null;
+
+            Owner =
+                winOwner?.IsLoaded ?? false
+                ? winOwner
                 : null;
 
             // use-case: assert before main window shown
@@ -93,16 +98,16 @@ namespace DoubleFile
             Width = rc.Width;
 
             Observable.FromEventPattern(this, "SourceInitialized")
-                .LocalSubscribe(x => ResizeMode = ResizeMode.NoResize);
+                .LocalSubscribe(99756, x => ResizeMode = ResizeMode.NoResize);
 
             Observable.FromEventPattern(this, "ContentRendered")
-                .LocalSubscribe(x => Win32Screen.FlashWindow(this, Once: true));
+                .LocalSubscribe(99755, x => Win32Screen.FlashWindow(this, Once: true));
 
             Observable.FromEventPattern(formBtn_OK, "Click")
-                .LocalSubscribe(x => BtnOK_Click());
+                .LocalSubscribe(99754, x => BtnOK_Click());
 
             Observable.FromEventPattern(formBtn_Cancel, "Click")
-                .LocalSubscribe(x => CloseIfSimulatingModal());
+                .LocalSubscribe(99753, x => CloseIfSimulatingModal());
 
             Message = strMessage;
 
@@ -138,7 +143,7 @@ namespace DoubleFile
             }
 
             // use-case: assert before main window shown
-            if (null != MainWindow.WithMainWindow(w => w))
+            if (false != (Application.Current.MainWindow?.IsLoaded ?? false))
                 base.ShowDialog();
             else
                 ((Window)this).ShowDialog();

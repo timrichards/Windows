@@ -41,7 +41,7 @@ namespace DoubleFile
             TopWindow
         {
             get { return _wr.Get(s => s._topWindow); }
-            set { _wr.Get(s => s._topWindow = Util.AssertNutNull(99775, value)); }
+            set { _wr.Get(s => s._topWindow = Util.AssertNotNull(99775, value)); }
         }
         ILocalWindow _topWindow;
 

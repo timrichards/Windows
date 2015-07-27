@@ -33,7 +33,7 @@ namespace DoubleFile
         internal LV_ProgressVM()
         {
             _lsDisposable.Add(Observable.Timer(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500)).Timestamp()
-                .LocalSubscribe(x =>
+                .LocalSubscribe(99733, x =>
             {
                 foreach (var lvItem in ItemsCast.ToArray())
                     lvItem.TimerTick();

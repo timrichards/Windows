@@ -56,7 +56,7 @@ namespace DoubleFile
                     // When there are too many items you get UI thread lockup.
                     // One-shot: no need to dispose
                     Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()
-                        .LocalSubscribe(x => blockingFrame.Continue = false);
+                        .LocalSubscribe(99758, x => blockingFrame.Continue = false);
 
                     blockingFrame.PushFrameToTrue();
                     dt = DateTime.Now;

@@ -81,11 +81,11 @@ namespace DoubleFile
             if (0 < (lvProjectVM?.CanLoadCount ?? 0))
                 TabledString<Tabled_Folders>.AddRef();
 
-            _lsDisposable.Add(WinDuplicatesVM.GoToFile.LocalSubscribe(WinDuplicatesVM_GoToFile));
-            _lsDisposable.Add(WinSearchVM.GoToFile.LocalSubscribe(WinSearchVM_GoToFile));
-            _lsDisposable.Add(TreeSelect.FileListUpdated.Observable.LocalSubscribe(v => _treeSelect_FileList = v.Item1));
-            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(v => _treeSelect_FolderDetail = v.Item1));
-            _lsDisposable.Add(TreeSelect.VolumeDetailUpdated.Observable.LocalSubscribe(v => _treeSelect_VolumeDetail = v.Item1));
+            _lsDisposable.Add(WinDuplicatesVM.GoToFile.LocalSubscribe(99766, WinDuplicatesVM_GoToFile));
+            _lsDisposable.Add(WinSearchVM.GoToFile.LocalSubscribe(99765, WinSearchVM_GoToFile));
+            _lsDisposable.Add(TreeSelect.FileListUpdated.Observable.LocalSubscribe(99764, v => _treeSelect_FileList = v.Item1));
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99763, v => _treeSelect_FolderDetail = v.Item1));
+            _lsDisposable.Add(TreeSelect.VolumeDetailUpdated.Observable.LocalSubscribe(99762, v => _treeSelect_VolumeDetail = v.Item1));
         }
 
         internal LocalTV

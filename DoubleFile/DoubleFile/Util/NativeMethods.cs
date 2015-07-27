@@ -30,6 +30,11 @@ namespace DoubleFile
         public IntPtr Handle { get; private set; } = IntPtr.Zero;
         internal Window Window = null;
 
+        // can't override == and != operator because of the implicit operator IntPtr above
+        public bool Equals(NativeWindow other) => Handle == other?.Handle;
+
+        static int nBadCount = 0;
+
         internal class TitleMatcher : IDisposable
         {
             internal TitleMatcher(string dlgTitle)
@@ -43,19 +48,16 @@ namespace DoubleFile
                 if (false == dictDialogTitles.TryGetValue(dlgTitle, out CurrentDialogText))
                     CurrentDialogText = dlgTitle;
             }
-            internal static string CurrentDialogText;
+
             public void Dispose() { CurrentDialogText = null; }
+
+            internal static string CurrentDialogText;
 
             static IReadOnlyDictionary<string, string> dictDialogTitles = new Dictionary<string, string>
             {
                 { "FolderBrowserDialog", "Browse For Folder" }
             };
         }
-
-        // can't override == and != operator because of the implicit operator IntPtr above
-        public bool Equals(NativeWindow other) => Handle == other?.Handle;
-
-        static int nBadCount = 0;
     }
 
     static class NativeMethods
@@ -243,15 +245,15 @@ namespace DoubleFile
         internal static IList<NativeWindow> GetAllWindowsWithTitleOf(string title)
         {
             var searchData = new SearchData { Title = title };
-            _lsRet = new List<NativeWindow>();
 
+            _lsRet = new List<NativeWindow>();
             EnumWindows(EnumProcTitleAll, ref searchData);
             return _lsRet;
         }
 
         static bool EnumProcTitleAll(IntPtr hWnd, ref SearchData searchData)
         {
-            StringBuilder sb = new StringBuilder(1024);
+            var sb = new StringBuilder(1024);
 
             GetWindowText(hWnd, sb, sb.Capacity);
 

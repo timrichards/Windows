@@ -23,13 +23,11 @@ namespace DoubleFile
         {
             internal Rect Rect;
 
-            internal DarkWindow(ILocalWindow owner)
+            internal DarkWindow(Window owner)
             {
-                var winOwner = (Window)owner;
-
-                Rect = Win32Screen.GetWindowRect(winOwner);
+                Rect = Win32Screen.GetWindowRect(owner);
                 this.SetRect(new Rect());
-                Owner = winOwner;
+                Owner = owner;
                 Background = Brushes.Black;
                 AllowsTransparency = true;
                 Opacity = 0.4;
@@ -67,7 +65,7 @@ namespace DoubleFile
                 (null == MainWindow.WithMainWindow(w => w)))    // use-case: VolTreeMap project
             {
                 var prevTopWindow = Statics.TopWindow;
-                var darkWindow = new DarkWindow(Statics.TopWindow);
+                var darkWindow = new DarkWindow((Window)Statics.TopWindow);
 
                 darkWindow
                     .SetRect(darkWindow.Rect)
@@ -81,7 +79,7 @@ namespace DoubleFile
                 if (false == darkWindow.LocalIsClosed)      // happens with system dialogs
                     darkWindow.Close();
 
-                Statics.TopWindow = Util.AssertNutNull(99774, prevTopWindow);
+                Statics.TopWindow = Util.AssertNotNull(99774, prevTopWindow);
                 Statics.TopWindow?.Activate();
                 _dtLastDarken = DateTime.Now;
                 return retVal;
@@ -108,10 +106,10 @@ namespace DoubleFile
             if (1 < ++_nRefCount)
                 return;
 
-            Util.Assert(0, null == _lockupTimer);
+            Util.Assert(99767, null == _lockupTimer);
 
             _lockupTimer = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Timestamp()
-                .LocalSubscribe(x => Util.UIthread(99798, () =>
+                .LocalSubscribe(99738, x => Util.UIthread(99798, () =>
                 RepeatedOuterCheckForLockup()));
         }
         static void Pop()
@@ -119,7 +117,9 @@ namespace DoubleFile
             if (0 < --_nRefCount)
                 return;
 
-            _lockupTimer.Dispose();
+            Util.AssertNotNull(99768, _lockupTimer)?
+                .Dispose();
+
             _lockupTimer = null;
         }
         static int _nRefCount = 0;
@@ -191,24 +191,30 @@ namespace DoubleFile
                 return dictOwners_;   // from lasmbda
             });
 
-            var mainWindow = MainWindow.WithMainWindow(w => w);
-            var doubleBufferWindow = Step1_ShowDoubleBufferedWindow(mainWindow);
+            var mainWindow = Application.Current.MainWindow;
+            var doubleBufferWindow = Step1_ShowDoubleBufferedWindow();
             var fakeBaseWindow = Step2_ShowFakeBaseWindow();
             var lsDarkWindows = new List<DarkWindow> { };
 
             var lsNativeWindowsDarkenedLowestFirst = Util.Closure(() =>
             {
-                var lsDarkenedWindows = dictOwners.Keys.Where(w => mainWindow != w).ToList();
+                var lsDarkenedWindows =
+                    dictOwners
+                    .Keys
+                    .Where(w => mainWindow != w)
+                    .Select(w => (Window)w)
+                    .ToList();
 
                 lsDarkenedWindows.ForEach(window =>
-                    ((Window)window).Owner = fakeBaseWindow);
+                    window.Owner = fakeBaseWindow);
 
                 lsDarkWindows =
                     lsDarkenedWindows
                     .Select(w => new DarkWindow(w))
                     .ToList();
 
-                return GetNativeWindowsTopDown(lsDarkenedWindows.Select(w => (Window)w))
+                return
+                    GetNativeWindowsTopDown(lsDarkenedWindows)
                     .Reverse()
                     .ToList();  // from lambda
             });
@@ -228,10 +234,10 @@ namespace DoubleFile
                 var darkDialog = new DarkWindow(mainWindow) { Content = new Grid() };
 
                 Observable.FromEventPattern(darkDialog, "SourceInitialized")
-                    .LocalSubscribe(x => darkDialog.ShowActivated = false);
+                    .LocalSubscribe(99737, x => darkDialog.ShowActivated = false);
 
                 Observable.FromEventPattern(darkDialog, "ContentRendered")
-                    .LocalSubscribe(x =>
+                    .LocalSubscribe(99736, x =>
                 {
                     NativeMethods.SetWindowPos(fakeBaseWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
 
@@ -248,7 +254,7 @@ namespace DoubleFile
                 var nWindowCount = 0;
 
                 using (Observable.Timer(TimeSpan.FromMilliseconds(250), TimeSpan.FromSeconds(1)).Timestamp()
-                    .LocalSubscribe(x => Util.UIthread(99871, () =>
+                    .LocalSubscribe(99735, x => Util.UIthread(99871, () =>
                     Step3_RepeatedInnerCheckForLockup(darkDialog, ref nWindowCount))))
                     darkDialog.ShowDialog();
             }
@@ -300,6 +306,11 @@ namespace DoubleFile
                 return;
             }
 
+            var nativeTopWindow = NativeTopWindow();
+
+            if (false == nativeTopWindow.Window is DarkWindow)
+                return;
+
             var lsNativeModalWindows = 
                 Application.Current.Windows
                 .OfType<IModalWindow>()
@@ -307,43 +318,37 @@ namespace DoubleFile
                 .Select(w => (NativeWindow)(Window)w)
                 .ToList();
 
-            if (GetNativeWindowsTopDown(Application.Current.Windows.OfType<Window>())
-                .First().Window is IDarkWindow)
+            if (null != NativeWindow.TitleMatcher.CurrentDialogText)
             {
-                if (null != NativeWindow.TitleMatcher.CurrentDialogText)
+                foreach (var systemDialog in
+                    NativeMethods
+                    .GetAllWindowsWithTitleOf(NativeWindow.TitleMatcher.CurrentDialogText))
                 {
-                    foreach (var systemDialog in
-                        NativeMethods
-                        .GetAllWindowsWithTitleOf(NativeWindow.TitleMatcher.CurrentDialogText))
-                    {
-                        var owner =
-                            NativeMethods.GetWindow(
-                            NativeMethods.GetWindow(systemDialog, NativeMethods.GW_OWNER),NativeMethods.GW_OWNER);
+                    var owner =
+                        NativeMethods.GetWindow(
+                        NativeMethods.GetWindow(systemDialog, NativeMethods.GW_OWNER), NativeMethods.GW_OWNER);
 
-                        if (owner.Equals(Application.Current.MainWindow))
-                            return;     // use case: system dialogs off the main window
+                    if (owner.Equals(Application.Current.MainWindow))
+                        return;     // use case: system dialogs off the main window
 
-                        if (lsNativeModalWindows.Contains(owner))
-                            return;     // use case: system dialogs off edit/new listing file dlg
-                    }
+                    if (lsNativeModalWindows.Contains(owner))
+                        return;     // use case: system dialogs off edit/new listing file dlg
                 }
-
-                Abort_ClearOut(99769);
             }
 
-            if (lsNativeModalWindows.Contains(NativeTopWindow()))
-                return;     // use-case: all IModalWindows: New/Edit Listing File; Group; WinProgress; LocalMbox
-
-            if (1 != lsNativeModalWindows.Count)    // if there are two stuck then it needs to be looked into.
-                Abort_ClearOut(99797);
-
-            UnstickDialog(lsNativeModalWindows[0]);
+            if (1 == lsNativeModalWindows.Count)
+                UnstickDialog(lsNativeModalWindows[0]);
+            else
+                Abort_ClearOut(99797);    // if there are two stuck then it needs to be looked into.
         }
 
         static Window
-            Step1_ShowDoubleBufferedWindow(MainWindow mainWindow)
+            Step1_ShowDoubleBufferedWindow()
         {
-            var bounds = Win32Screen.GetWindowMonitorInfo(mainWindow).rcMonitor;
+            var bounds =
+                Win32Screen
+                .GetWindowMonitorInfo(Application.Current.MainWindow)
+                .rcMonitor;
 
             var doubleBufferWindow =
                 new Window
@@ -357,8 +362,8 @@ namespace DoubleFile
                 Focusable = false,
                 IsEnabled = false
             }
-                //.SetRect(new Rect());
-                .SetRect(bounds);        // mahApps seems to have slowed window creation to a crawl
+                .SetRect(new Rect());
+                //.SetRect(bounds);        // mahApps seems to have slowed window creation to a crawl
 
             using (var bitmap = new Drawing::Bitmap(bounds.Width, bounds.Height))
             {
@@ -435,7 +440,7 @@ namespace DoubleFile
                 .FirstOnlyAssert(dialog =>
             {
                 Observable.FromEventPattern(dialog, "Closed")
-                    .LocalSubscribe(y =>
+                    .LocalSubscribe(99734, y =>
                 {
                     if ((null == darkDialog) || darkDialog.LocalIsClosing || darkDialog.LocalIsClosed)
                         return;     // from lambda

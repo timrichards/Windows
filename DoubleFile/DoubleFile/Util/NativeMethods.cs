@@ -1,9 +1,11 @@
 ﻿using Microsoft.Win32.SafeHandles;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Text;
 using System.Windows;
 using System.Windows.Interop;
 
@@ -12,21 +14,47 @@ namespace DoubleFile
     internal class NativeWindow : IEquatable<NativeWindow>, IWin32Window, System.Windows.Forms.IWin32Window
     {
         static public implicit operator
-            IntPtr(NativeWindow h) => h.hwnd;
+            IntPtr(NativeWindow h) => h.Handle;
 
         static public implicit operator
             NativeWindow(Window w) =>
-            new NativeWindow { hwnd = (null != w) ? new WindowInteropHelper(w).Handle : (IntPtr)0xBAD00 + nBadCount++ };
+            new NativeWindow
+            {
+                Handle = (null != w) ? new WindowInteropHelper(w).Handle : (IntPtr)0xBAD00 + nBadCount++,
+                Window = w
+            };
 
         static public implicit operator
-            NativeWindow(IntPtr hwnd) => new NativeWindow { hwnd = hwnd };
+            NativeWindow(IntPtr hwnd) => new NativeWindow { Handle = hwnd };
 
-        public IntPtr Handle => hwnd;
+        public IntPtr Handle { get; private set; } = IntPtr.Zero;
+        internal Window Window = null;
+
+        internal class TitleMatcher : IDisposable
+        {
+            internal TitleMatcher(string dlgTitle)
+            {
+                if (null == dlgTitle)
+                {
+                    CurrentDialogText = null;
+                    return;
+                }
+
+                if (false == dictDialogTitles.TryGetValue(dlgTitle, out CurrentDialogText))
+                    CurrentDialogText = dlgTitle;
+            }
+            internal static string CurrentDialogText;
+            public void Dispose() { CurrentDialogText = null; }
+
+            static IReadOnlyDictionary<string, string> dictDialogTitles = new Dictionary<string, string>
+            {
+                { "FolderBrowserDialog", "Browse For Folder" }
+            };
+        }
 
         // can't override == and != operator because of the implicit operator IntPtr above
-        public bool Equals(NativeWindow other) => hwnd == other?.hwnd;
+        public bool Equals(NativeWindow other) => Handle == other?.Handle;
 
-        IntPtr hwnd = IntPtr.Zero;
         static int nBadCount = 0;
     }
 
@@ -211,5 +239,44 @@ namespace DoubleFile
         static extern IntPtr GetWindow(IntPtr hWnd, uint wCmd);
         static internal NativeWindow
             GetWindow(NativeWindow w, uint wCmd) => GetWindow((IntPtr)w, wCmd);
+
+        internal static IEnumerable<NativeWindow> EnumerateWindowsWithTitleOf(string title)
+        {
+            var searchData = new SearchData { Title = title };
+
+            EnumWindows(EnumProcTitleAll, ref searchData);
+            yield return searchData.hWnd;
+        }
+
+        static bool EnumProcTitleAll(IntPtr hWnd, ref SearchData searchData)
+        {
+            StringBuilder sb = new StringBuilder(1024);
+
+            GetWindowText(hWnd, sb, sb.Capacity);
+
+            if (sb.ToString().StartsWith(searchData.Title))
+            {
+                searchData.hWnd = hWnd;
+                return true;    // Found the wnd, keep enumerating though
+            }
+
+            searchData.hWnd = IntPtr.Zero;
+            return true;
+        }
+
+        public class SearchData
+        {
+            public string Title;
+            public IntPtr hWnd;
+        }
+
+        private delegate bool EnumWindowsProc(IntPtr hWnd, ref SearchData data);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, ref SearchData data);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
     }
 }

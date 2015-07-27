@@ -17,10 +17,14 @@ namespace DoubleFile
 
         protected override void LocalNavigatedTo()
         {
-            var dlg = new FolderBrowserDialog { Description = "Select the path to browse." };
+            var dlg = new FolderBrowserDialog
+            {
+                Description = "Select the path to browse.",
+                ShowNewFolderButton = false
+            };
 
             if (DialogResult.OK !=
-                ModalThread.Go(darkWindow => dlg.ShowDialog(((NativeWindow)(Window)darkWindow))))
+                ModalThread.Go(darkWindow => dlg.ShowDialog(((NativeWindow)(Window)darkWindow)), dlg.GetType().Name))
             {
                 Dispatcher.InvokeShutdown();
                 return;

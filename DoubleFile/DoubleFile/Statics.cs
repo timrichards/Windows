@@ -89,8 +89,8 @@ namespace DoubleFile
         // mysteriously leaves WinProject unpopulated after clicking OK: does not run any code
         // in MainWindow.xaml.cs after volumes.ShowDialog. Acts like a suppressed null pointer.
 
-        // 6/4/15 This is also true because of GoModeless(), which I've never seen demostrated
-        // natively, and believe is not possible.
+        // 6/4/15 This is also true because of GoModeless(), which might also be possible via subclass:
+        // https://msdn.microsoft.com/en-us/library/windows/desktop/ms644996%28v=vs.85%29.aspx#modeless_box
         internal const bool SimulatingModal = true;   // Change it here to switch to simulated dialog
     }
 }

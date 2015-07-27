@@ -1,6 +1,7 @@
 ﻿using DoubleFile;
 using FirstFloor.ModernUI.Presentation;
 using System;
+using System.Windows;
 
 namespace VolTreeMap
 {
@@ -28,6 +29,7 @@ namespace VolTreeMap
             Init();
             Init = null;
             InitializeComponent();
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
             var W = "/DoubleFile;component/Win";
 

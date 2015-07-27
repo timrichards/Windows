@@ -9,7 +9,6 @@ using System.Windows.Interop;
 using Drawing = System.Drawing;
 using System.Windows.Media.Imaging;
 using System.Threading;
-using System.Collections.ObjectModel;
 
 namespace DoubleFile
 {
@@ -46,7 +45,7 @@ namespace DoubleFile
         }
 
         internal static T
-            Go<T>(Func<IDarkWindow, T> showDialog)
+            Go<T>(Func<IDarkWindow, T> showDialog, string dlgTitle)
         {
             if (_bNappingDontDebounce)
                 return default(T);
@@ -65,7 +64,7 @@ namespace DoubleFile
             var retVal = default(T);
 
             if ((_thread.IsAlive) ||
-                (null == MainWindow.WithMainWindow(w => w)))
+                (null == MainWindow.WithMainWindow(w => w)))    // use-case: VolTreeMap project
             {
                 var prevTopWindow = Statics.TopWindow;
                 var darkWindow = new DarkWindow(Statics.TopWindow);
@@ -74,7 +73,10 @@ namespace DoubleFile
                     .SetRect(darkWindow.Rect)
                     .Show();
 
-                retVal = showDialog(darkWindow);
+                Push();
+                using (new NativeWindow.TitleMatcher(dlgTitle))
+                    retVal = showDialog(darkWindow);
+                Pop();
 
                 if (false == darkWindow.LocalIsClosed)      // happens with system dialogs
                     darkWindow.Close();
@@ -82,7 +84,6 @@ namespace DoubleFile
                 Statics.TopWindow = Util.AssertNutNull(99774, prevTopWindow);
                 Statics.TopWindow?.Activate();
                 _dtLastDarken = DateTime.Now;
-                RepeatedOuterCheckForLockup();
                 return retVal;
             }
 
@@ -94,13 +95,35 @@ namespace DoubleFile
                 _blockingFrame.Continue = false;
             }));
 
-            using (Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Timestamp()
-                .LocalSubscribe(x => Util.UIthread(99798, () =>
-                RepeatedOuterCheckForLockup())))
+            Push();
+            using (new NativeWindow.TitleMatcher(dlgTitle))
                 _blockingFrame.PushFrameToTrue();
-
+            Pop();
+            Util.Assert(99770, 0 == _nRefCount);
             return retVal;
         }
+
+        static void Push()
+        {
+            if (1 < ++_nRefCount)
+                return;
+
+            Util.Assert(0, null == _lockupTimer);
+
+            _lockupTimer = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Timestamp()
+                .LocalSubscribe(x => Util.UIthread(99798, () =>
+                RepeatedOuterCheckForLockup()));
+        }
+        static void Pop()
+        {
+            if (0 < --_nRefCount)
+                return;
+
+            _lockupTimer.Dispose();
+            _lockupTimer = null;
+        }
+        static int _nRefCount = 0;
+        static IDisposable _lockupTimer = null;
 
         static void
             Abort_ClearOut(decimal nLocation)
@@ -118,23 +141,34 @@ namespace DoubleFile
         }
 
         static IEnumerable<NativeWindow>
-            GetNativeWindowsTopDown(IEnumerable<ILocalWindow> ieWindows)
+            GetNativeWindowsTopDown(IEnumerable<Window> ieWindows = null)
         {
-            var lsNativeWindows = ieWindows.Select(w => (NativeWindow)(Window)w).ToList();
+            List<NativeWindow> lsNativeWindows = null;
 
-            if (0 == lsNativeWindows.Count)
-                yield break;
+            if (null != ieWindows)
+            {
+                lsNativeWindows = ieWindows.Select(w => (NativeWindow)w).ToList();
+
+                if (0 == lsNativeWindows.Count)
+                    yield break;
+            }
 
             for (var nativeWindow = NativeMethods.GetTopWindow(IntPtr.Zero); nativeWindow != IntPtr.Zero;
                 nativeWindow = NativeMethods.GetWindow(nativeWindow, NativeMethods.GW_HWNDNEXT))
             {
+                if (null == lsNativeWindows)
+                {
+                    yield return nativeWindow;
+                    continue;
+                }
+
                 // array enumerable Linq extension Contains came up empty -?
                 var nIx = lsNativeWindows.IndexOf(nativeWindow);
 
                 if (0 > nIx)
                     continue;
 
-                yield return nativeWindow;
+                yield return lsNativeWindows[nIx];
                 lsNativeWindows.RemoveAt(nIx);
 
                 if (0 == lsNativeWindows.Count)
@@ -174,7 +208,9 @@ namespace DoubleFile
                     .Select(w => new DarkWindow(w))
                     .ToList();
 
-                return GetNativeWindowsTopDown(lsDarkenedWindows).Reverse().ToList();  // from lambda
+                return GetNativeWindowsTopDown(lsDarkenedWindows.Select(w => (Window)w))
+                    .Reverse()
+                    .ToList();  // from lambda
             });
 
             NativeMethods.SetWindowPos(
@@ -247,7 +283,8 @@ namespace DoubleFile
             return GetNativeWindowsTopDown(
                 Application.Current.Windows
                 .OfType<ILocalWindow>()
-                .Where(w => false == w.LocalIsClosed))
+                .Where(w => false == w.LocalIsClosed)
+                .Select(w => (Window)w))
             .FirstOrDefault();
         }
 
@@ -263,14 +300,36 @@ namespace DoubleFile
                 return;
             }
 
+            {
+                if (null != NativeWindow.TitleMatcher.CurrentDialogText)
+                {
+                    var systemDialogs = NativeMethods.EnumerateWindowsWithTitleOf(NativeWindow.TitleMatcher.CurrentDialogText).ToList();
+
+                    if (1 == systemDialogs.Count)
+                        return;
+                }
+
+                var lsWindows =
+                    Application.Current.Windows
+                    .OfType<Window>()
+                    .ToList();
+
+                var topNativeWindow = GetNativeWindowsTopDown(lsWindows).FirstOrDefault();
+
+                if (topNativeWindow.Window is IDarkWindow)
+                    Abort_ClearOut(99769);
+            }
+
             var owner = NativeMethods.GetWindow(NativeTopWindow(), NativeMethods.GW_OWNER);
  
-            if (owner.Equals(MainWindow.WithMainWindow(w => w)))
-                return;     // use-case: Open/Save Project; Open Listing File system dialogs
+            if (owner.Equals(Application.Current.MainWindow))
+                return;     // use-case: Open/Save Project; Open Listing File system dialogs; VolTreeMap project Source Path
 
             var lsModalWindows = 
                 Application.Current.Windows
                 .OfType<IModalWindow>()
+                .Where(w => false == w.LocalIsClosed)
+                .Select(w => (Window)w)
                 .ToList();
 
             if (owner.Equals(GetNativeWindowsTopDown(lsModalWindows).FirstOrDefault())) // have to pass in the whole list
@@ -278,7 +337,7 @@ namespace DoubleFile
 
             var lsNativeModalWindows = 
                 lsModalWindows
-                .Select(w => (NativeWindow)(Window)w)
+                .Select(w => (NativeWindow)w)
                 .ToList();
 
             if (lsNativeModalWindows.Contains(NativeTopWindow()))

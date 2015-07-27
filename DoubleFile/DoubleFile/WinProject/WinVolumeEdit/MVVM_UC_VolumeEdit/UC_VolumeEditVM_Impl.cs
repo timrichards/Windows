@@ -10,11 +10,15 @@ namespace DoubleFile
             var dlg = new FolderBrowserDialog
             {
                 SelectedPath = SourcePath_CurrentText(),
-                Description = "Source path of the directory for which a listing file is to be created."
+                Description = "Source path of the directory for which a listing file is to be created.",
+                ShowNewFolderButton = false
             };
 
-            if (DialogResult.OK == ModalThread.Go(darkWindow => dlg.ShowDialog(((NativeWindow)(Window)darkWindow))))
+            if (DialogResult.OK ==
+                ModalThread.Go(darkWindow => dlg.ShowDialog(((NativeWindow)(Window)darkWindow)), dlg.GetType().Name))
+            {
                 FromSourcePathDlg(dlg.SelectedPath);
+            }
         }
 
         internal void Probe()
@@ -43,7 +47,7 @@ namespace DoubleFile
                 Title = "Save Listing File"
             };
 
-            if (ModalThread.Go(darkWindow => dlg.ShowDialog((Window)darkWindow)) ?? false)
+            if (ModalThread.Go(darkWindow => dlg.ShowDialog((Window)darkWindow), dlg.GetType().Name) ?? false)
                 FromListingFileDlg(dlg.FileName);
         }
     }

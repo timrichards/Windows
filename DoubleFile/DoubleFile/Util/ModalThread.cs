@@ -300,24 +300,21 @@ namespace DoubleFile
                 return;
             }
 
+            if (GetNativeWindowsTopDown(Application.Current.Windows.OfType<Window>())
+                .First().Window is IDarkWindow)
             {
                 if (null != NativeWindow.TitleMatcher.CurrentDialogText)
                 {
-                    var systemDialogs = NativeMethods.EnumerateWindowsWithTitleOf(NativeWindow.TitleMatcher.CurrentDialogText).ToList();
+                    var systemDialogs =
+                        NativeMethods
+                        .EnumerateWindowsWithTitleOf(NativeWindow.TitleMatcher.CurrentDialogText)
+                        .ToList();
 
                     if (1 == systemDialogs.Count)
                         return;
                 }
 
-                var lsWindows =
-                    Application.Current.Windows
-                    .OfType<Window>()
-                    .ToList();
-
-                var topNativeWindow = GetNativeWindowsTopDown(lsWindows).FirstOrDefault();
-
-                if (topNativeWindow.Window is IDarkWindow)
-                    Abort_ClearOut(99769);
+                Abort_ClearOut(99769);
             }
 
             var lsNativeModalWindows = 

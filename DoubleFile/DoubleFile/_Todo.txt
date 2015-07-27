@@ -5,6 +5,8 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- if (1 == systemDialogs.Count) - doesn't account for other apps.
+- if (owner.Equals(Application.Current.MainWindow)) may never get hit anymore
 - CurrentDialogText is static: doesn't support stacking
 - buttons don't usually work on cancel dialogs, and they lock up the app: darkwindow still. (main app too?)
 - can't move main window when there's an extra window - even when it's closed

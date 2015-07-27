@@ -320,28 +320,15 @@ namespace DoubleFile
                     Abort_ClearOut(99769);
             }
 
-            var owner = NativeMethods.GetWindow(NativeTopWindow(), NativeMethods.GW_OWNER);
- 
-            if (owner.Equals(Application.Current.MainWindow))
-                return;     // use-case: Open/Save Project; Open Listing File system dialogs; VolTreeMap project Source Path
-
-            var lsModalWindows = 
+            var lsNativeModalWindows = 
                 Application.Current.Windows
                 .OfType<IModalWindow>()
                 .Where(w => false == w.LocalIsClosed)
-                .Select(w => (Window)w)
-                .ToList();
-
-            if (owner.Equals(GetNativeWindowsTopDown(lsModalWindows).FirstOrDefault())) // have to pass in the whole list
-                return;     // use-case: Source Path and Save To system dialogs in in New/Edit Listing File IModalWindows
-
-            var lsNativeModalWindows = 
-                lsModalWindows
-                .Select(w => (NativeWindow)w)
+                .Select(w => (NativeWindow)(Window)w)
                 .ToList();
 
             if (lsNativeModalWindows.Contains(NativeTopWindow()))
-                return;     // use-case: all IModalWindows: New/Edit Listing File; WinProgress; LocalMbox
+                return;     // use-case: all IModalWindows: New/Edit Listing File; Group; WinProgress; LocalMbox
 
             if (1 != lsNativeModalWindows.Count)    // if there are two stuck then it needs to be looked into.
                 Abort_ClearOut(99797);

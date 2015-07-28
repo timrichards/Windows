@@ -101,19 +101,7 @@ namespace DoubleFile
                 {
                     Util.UIthread(99827, () => formBtn_Cancel.ToolTip = "Process completed. You may now close the window");
 
-                    if ((false == MBoxStatic.AssertUp) &&
-                        _bConfirmingClose)
-                    {
-                        Util.UIthread(99774, () =>
-                            OwnedWindows
-                            .Cast<Window>()
-                            .ToList()
-                            .FirstOnlyAssert(w =>
-                        {
-                            w.Close();
-                            _bConfirmingClose = false;
-                        }));
-                    }
+                    CloseConfirmMessage();
 
                     if (_bAllowSubsequentProcess)
                         GoModeless();
@@ -141,6 +129,8 @@ namespace DoubleFile
             if (_bClosing)
                 return this;     // get an error otherwise
 
+            CloseConfirmMessage();
+
             if (_bAborted)
                 return this;     // don't close: there may be an error message
 
@@ -152,6 +142,30 @@ namespace DoubleFile
 
             _bAborted = true;
             base.Close();
+            return this;
+        }
+
+        WinProgress CloseConfirmMessage()
+        {
+            if (false == _bConfirmingClose)
+                return this;
+
+            if (_bAborted)
+                return this;     // don't close: there may be an error message
+
+            if (MBoxStatic.AssertUp)
+                return this;     // don't close: there Is an error message
+
+            Util.UIthread(99774, () =>
+                OwnedWindows
+                .Cast<Window>()
+                .ToList()
+                .FirstOnlyAssert(w =>
+            {
+                w.Close();
+                _bConfirmingClose = false;
+            }));
+
             return this;
         }
 

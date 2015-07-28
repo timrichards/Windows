@@ -59,7 +59,7 @@ namespace DoubleFile
         {
             var retVal = source.FirstOrDefault();
 #if (DEBUG)
-            var enumerator = source.GetEnumerator();    // GetEnumerator() is only used here in ExtensionMethodsStatic 3x 7/6/15
+            var enumerator = source.GetEnumerator();    // GetEnumerator() is only used here 3x and ListViewVM_Base<T> 2x 7/28/15
 
             if (enumerator.MoveNext())
                 Util.Assert(99903, false == enumerator.MoveNext());
@@ -78,7 +78,7 @@ namespace DoubleFile
                 return true;    // from lambda; NOT a no-op: has to be a non-default value.
             });
 #if (DEBUG)
-            var enumerator = source.GetEnumerator();    // GetEnumerator() is only used here in ExtensionMethodsStatic 3x 7/6/15
+            var enumerator = source.GetEnumerator();    // GetEnumerator() is only used here 3x and ListViewVM_Base<T> 2x 7/28/15
 
             if (enumerator.MoveNext())
                 Util.Assert(99953, false == enumerator.MoveNext());
@@ -118,7 +118,7 @@ namespace DoubleFile
                 return ((ICollection<T>)source).Count == nDesiredElements;
             }
 
-            var ie = source.GetEnumerator();    // GetEnumerator() is only used here in ExtensionMethodsStatic 3x 7/6/15
+            var ie = source.GetEnumerator();    // GetEnumerator() is only used here 3x and ListViewVM_Base<T> 2x 7/28/15
 
             for (var i = 0; i < nDesiredElements; ++i)
             {

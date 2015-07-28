@@ -101,7 +101,7 @@ namespace DoubleFile
             }
 
             var strDlgTitle =
-                (dlg is ILocalWindow) ? null
+                (dlg is IModalWindow) ? null
                 : (dlg is System.Windows.Forms.FolderBrowserDialog) ? "Browse For Folder"
                 : dlg.As<OpenFileDialog>()?.Title
                 ?? dlg.As<SaveFileDialog>()?.Title
@@ -129,7 +129,7 @@ namespace DoubleFile
 
             var retVal = default(T);
 
-            if (_thread.IsAlive)    // use-case: VolTreeMap project
+            if (_thread.IsAlive)
             {
                 var prevTopWindow = Statics.TopWindow;
                 var darkWindow = new DarkWindow((Window)Statics.TopWindow);
@@ -144,7 +144,7 @@ namespace DoubleFile
                 if (false == darkWindow.LocalIsClosed)      // happens with system dialogs
                     darkWindow.Close();
 
-                Statics.TopWindow = Util.AssertNotNull(99774, prevTopWindow);
+                Statics.TopWindow = prevTopWindow;
                 Statics.TopWindow?.Activate();
                 _dtLastDarken = DateTime.Now;
                 return retVal;

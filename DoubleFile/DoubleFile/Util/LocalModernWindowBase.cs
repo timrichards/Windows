@@ -47,6 +47,8 @@ namespace DoubleFile
 
             Icon = Statics.Icon;
             WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            Width -= 10;
+            Height -= 10;
             ResizeMode = ResizeMode.CanResizeWithGrip;
             ShowInTaskbar = false;
             Init();
@@ -95,8 +97,7 @@ namespace DoubleFile
                     prevTopWindow =
                         (Statics.TopWindow is ExtraWindow)
                         ? Statics.TopWindow
-                        : MainWindow.WithMainWindow(w => w)
-                        ?? prevTopWindow;
+                        : (ILocalWindow)Application.Current.MainWindow;
 
                     Statics.TopWindow = this;
                 }
@@ -113,12 +114,11 @@ namespace DoubleFile
             {
                 LocalIsClosed = true;
 
-                if (this is MainWindow)
-                {
-                    // this is an effective test of whether (null == Application.Current) really works
-                    // Util.ThreadMake(() => Util.Assert(0, false));
+                if (null == Application.Current?.MainWindow)
                     return;
-                }
+
+                if (this == Application.Current?.MainWindow)
+                    return;
 
                 if (this != Statics.TopWindow)
                     return;
@@ -126,8 +126,7 @@ namespace DoubleFile
                 Statics.TopWindow =
                     (false == prevTopWindow.LocalIsClosed)
                     ? prevTopWindow
-                    : MainWindow.WithMainWindow(w => w)
-                    ?? Statics.TopWindow;
+                    : (ILocalWindow)Application.Current.MainWindow;
             });
 
             ShowActivated = true;
@@ -135,7 +134,7 @@ namespace DoubleFile
 
         IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
-            if (this is MainWindow)
+            if (this == Application.Current?.MainWindow)
                 return IntPtr.Zero;
 
             var command = NativeMethods.Command(wParam);

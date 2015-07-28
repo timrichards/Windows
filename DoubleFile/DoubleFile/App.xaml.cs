@@ -40,7 +40,7 @@ namespace DoubleFile
 
 #if (false == DEBUG)
             Observable.FromEventPattern<System.Windows.Threading.DispatcherUnhandledExceptionEventArgs>(this, "DispatcherUnhandledException")
-                .LocalSubscribe(args =>
+                .LocalSubscribe(99674, args =>
             {
                 args.EventArgs.Handled = true;
                 Util.Assert(-1, false, args.EventArgs.Exception.Message);

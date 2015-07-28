@@ -2,6 +2,7 @@
 using System.Windows;
 using DoubleFile;
 using System.Reactive.Linq;
+using System.Windows.Threading;     // false == DEBUG
 
 namespace VolTreeMap
 {
@@ -40,8 +41,8 @@ namespace VolTreeMap
                 .LocalSubscribe(99680, x => { Statics.AppActivated = false; DeactivateDidOccurOnNext(); });
 
 #if (false == DEBUG)
-            Observable.FromEventPattern<System.Windows.Threading.DispatcherUnhandledExceptionEventArgs>(this, "DispatcherUnhandledException")
-                .LocalSubscribe(args =>
+            Observable.FromEventPattern<DispatcherUnhandledExceptionEventArgs>(this, "DispatcherUnhandledException")
+                .LocalSubscribe(99675, args =>
             {
                 args.EventArgs.Handled = true;
                 UtilPublic.Assert(-1, false, args.EventArgs.Exception.Message);

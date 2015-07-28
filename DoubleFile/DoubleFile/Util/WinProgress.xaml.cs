@@ -1,7 +1,6 @@
 ﻿using System.Windows;
 using System.Linq;
 using System.Collections.Generic;
-using System.Threading;
 using System.Reactive.Linq;
 using System;
 using System.ComponentModel;
@@ -102,13 +101,19 @@ namespace DoubleFile
                 {
                     Util.UIthread(99827, () => formBtn_Cancel.ToolTip = "Process completed. You may now close the window");
 
-                    // All owned windows would be closed if the progress window closed
-                    // so act that way (this success obviates any error message?)
-                    Util.UIthread(99774, () =>
-                        OwnedWindows
-                        .Cast<Window>()
-                        .ToList()
-                        .ForEach(w => w.Close()));
+                    if ((false == MBoxStatic.AssertUp) &&
+                        _bConfirmingClose)
+                    {
+                        Util.UIthread(99774, () =>
+                            OwnedWindows
+                            .Cast<Window>()
+                            .ToList()
+                            .FirstOnlyAssert(w =>
+                        {
+                            w.Close();
+                            _bConfirmingClose = false;
+                        }));
+                    }
 
                     if (_bAllowSubsequentProcess)
                         GoModeless();
@@ -192,7 +197,9 @@ namespace DoubleFile
             {
                 bool bConfirmClose = false;
 
+                _bConfirmingClose = true;
                 Util.UIthread(99824, () => bConfirmClose = windowClosing.ConfirmClose());
+                _bConfirmingClose = false;
 
                 if (bConfirmClose)
                 {
@@ -214,5 +221,7 @@ namespace DoubleFile
             _lv = new LV_ProgressVM();
         bool
             _bClosing = false;
+        bool
+            _bConfirmingClose = false;
     }
 }

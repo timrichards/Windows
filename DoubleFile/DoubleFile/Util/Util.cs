@@ -9,7 +9,14 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    partial class Util : FileParse
+    public class UtilPublic
+    {
+        static public bool
+            Assert(decimal nLocation, bool bCondition, string strError_in = null, bool bTraceOnly = false) =>
+            Util.Assert(nLocation, bCondition, strError_in, bTraceOnly);
+    }
+
+    class Util : FileParse
     {
         static internal bool
             Assert(decimal nLocation, bool bCondition, string strError_in = null, bool bTraceOnly = false) =>

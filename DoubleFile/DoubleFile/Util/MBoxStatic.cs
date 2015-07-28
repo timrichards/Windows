@@ -6,9 +6,8 @@ namespace DoubleFile
 {
     static class MBoxStatic
     {
-#if ((false == DEBUG) || LOCALMBOX)
-        static bool _bAssertUp = false;
-#endif
+        static internal bool AssertUp { get; private set; }
+
         static internal bool
             Assert(decimal nLocation, bool bCondition, string strError_in, bool bTraceOnly)
         {
@@ -31,21 +30,27 @@ namespace DoubleFile
             Debug.Assert(false, strError);
             return false;
 #else
-            if (_bAssertUp)
-                return false;
-
             if (bTraceOnly)
                 return false;
 
+            var strErrorOut =
+                strError +
+                "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.";
+
             _nLastAssertLoc = nLocation;
             _dtLastAssert = DateTime.Now;
-            _bAssertUp = true;
 
-            MBoxStatic.ShowDialog(strError +
-                "\n\nPlease discuss this bug at http://sourceforge.net/projects/searchdirlists/.",
-                "DoubleFile Assert");
-
-            _bAssertUp = false;
+            if (AssertUp)
+            {
+                MessageBox.Show("There is a local assert box already up but there is a new assert (next...)");
+                MessageBox.Show(strErrorOut);
+            }
+            else
+            {
+                AssertUp = true;
+                MBoxStatic.ShowDialog(strErrorOut, "DoubleFile Assert");
+                AssertUp = false;
+            }
 #if (DEBUG && LOCALMBOX)
             Debugger.Break();
 #endif

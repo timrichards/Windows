@@ -12,9 +12,6 @@ namespace DoubleFile
         {
             InitializeComponent();
 
-            Observable.FromEventPattern(this, "SizeChanged")
-                .LocalSubscribe(99683, x => _ucTreeMap?.ClearSelection());
-
             Observable.FromEventPattern(form_slider, "LostMouseCapture")
                 .LocalSubscribe(99682, x => _ucTreeMap?.TreeMapVM.LostMouseCapture());
         }

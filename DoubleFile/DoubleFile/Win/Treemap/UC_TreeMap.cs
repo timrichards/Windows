@@ -99,17 +99,7 @@ namespace DoubleFile
                 LocalTV.SelectedNode = treeNode;
         }
 
-        internal void Clear()
-        {
-            TreeMapVM.TreeNode = null;
-            _prevNode = null;
-            TreeMapVM.DeepNode = null;
-            _deepNodeDrawn = null;
-            WinTooltip.CloseTooltip();      // Tag
-            ClearSelection();
-        }
-
-        internal void ClearSelection(bool bKeepTooltipActive = false)
+        internal void ClearSelection(bool bDontCloseTooltip = false)
         {
             if (System.Windows.Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                 return;
@@ -119,7 +109,7 @@ namespace DoubleFile
 
             _bClearingSelection = true;
 
-            if (false == bKeepTooltipActive)
+            if (false == bDontCloseTooltip)
                 WinTooltip.CloseTooltip();  // CloseTooltip callback recurses here hence _bClearingSelection
 
             _selChildNode = null;
@@ -155,7 +145,7 @@ namespace DoubleFile
                 return null;
             }
 
-            ClearSelection(bKeepTooltipActive: true);
+            ClearSelection(bDontCloseTooltip: true);
 
             if (null == TreeMapVM.TreeNode)
                 return null;
@@ -340,7 +330,7 @@ namespace DoubleFile
                     Util.FormatSize(nodeDatum.TotalLength, bBytes: true),
                     LocalOwner,
                     Tooltip_Click,
-                    () => ClearSelection()),
+                    () => ClearSelection(bDontCloseTooltip: true)),
                 treeNodeChild);
 
             _selChildNode = treeNodeChild;

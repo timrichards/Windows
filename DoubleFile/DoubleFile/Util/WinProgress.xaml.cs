@@ -101,7 +101,7 @@ namespace DoubleFile
                 {
                     Util.UIthread(99827, () => formBtn_Cancel.ToolTip = "Process completed. You may now close the window");
 
-                    CloseConfirmMessage();
+                    StopShowingConfirmMessage();
 
                     if (_bAllowSubsequentProcess)
                         GoModeless();
@@ -129,7 +129,7 @@ namespace DoubleFile
             if (_bClosing)
                 return this;     // get an error otherwise
 
-            CloseConfirmMessage();
+            StopShowingConfirmMessage();
 
             if (_bAborted)
                 return this;     // don't close: there may be an error message
@@ -145,7 +145,7 @@ namespace DoubleFile
             return this;
         }
 
-        WinProgress CloseConfirmMessage()
+        WinProgress StopShowingConfirmMessage()
         {
             if (false == _bConfirmingClose)
                 return this;

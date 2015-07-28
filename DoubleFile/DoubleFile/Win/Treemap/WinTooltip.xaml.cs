@@ -57,6 +57,9 @@ namespace DoubleFile
                 _winOwnerClosedObserver = Observable.FromEventPattern(winOwner, "Closed")
                     .LocalSubscribe(99691, argsA => CloseTooltip());
 
+                _winOwnerClosedObserver = Observable.FromEventPattern(winOwner, "LocationChanged")
+                    .LocalSubscribe(99673, argsA => CloseTooltip());
+
                 Observable.FromEventPattern<SizeChangedEventArgs>(_winTooltip, "SizeChanged")
                     .LocalSubscribe(99690, argsA => _winTooltip.WinTooltip_SizeChanged(argsA.EventArgs.NewSize));
             });
@@ -107,7 +110,6 @@ namespace DoubleFile
                 (false == _winTooltip.LocalIsClosing) &&
                 (false == _winTooltip.LocalIsClosed))
             {
-                _winTooltip._closingCallback?.Invoke();
                 _winTooltip.Close();
             }
 
@@ -135,6 +137,9 @@ namespace DoubleFile
 
             Observable.FromEventPattern(this, "MouseUp")
                 .LocalSubscribe(99687, x => { if (bMouseDown) _clickCallback?.Invoke(); bMouseDown = false; });
+
+            Observable.FromEventPattern(this, "Closing")
+                .LocalSubscribe(99672, x => _closingCallback?.Invoke());
         }
 
         void WinTooltip_SizeChanged(Size newSize)

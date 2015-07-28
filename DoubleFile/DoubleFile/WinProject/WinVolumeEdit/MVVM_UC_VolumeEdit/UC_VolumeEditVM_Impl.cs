@@ -15,7 +15,7 @@ namespace DoubleFile
             };
 
             if (DialogResult.OK ==
-                ModalThread.Go(darkWindow => dlg.ShowDialog(((NativeWindow)(Window)darkWindow)), dlg.GetType().Name))
+                ModalThread.Go(darkWindow => dlg.ShowDialog(((NativeWindow)(Window)darkWindow)), dlg))
             {
                 FromSourcePathDlg(dlg.SelectedPath);
             }
@@ -47,7 +47,7 @@ namespace DoubleFile
                 Title = "Save Listing File"
             };
 
-            if (ModalThread.Go(darkWindow => dlg.ShowDialog((Window)darkWindow), dlg.Title) ?? false)
+            if (ModalThread.Go(darkWindow => dlg.ShowDialog((Window)darkWindow), dlg) ?? false)
                 FromListingFileDlg(dlg.FileName);
         }
     }

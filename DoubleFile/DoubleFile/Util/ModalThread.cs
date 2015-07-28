@@ -9,6 +9,7 @@ using System.Windows.Interop;
 using Drawing = System.Drawing;
 using System.Windows.Media.Imaging;
 using System.Threading;
+using Microsoft.Win32;
 
 namespace DoubleFile
 {
@@ -44,21 +45,15 @@ namespace DoubleFile
 
         class Push : IDisposable
         {
-            internal readonly string CurrentDialogText = null;
+            internal readonly string
+                DialogTitle = null;
 
-            internal Push(string dlgTitle)
+            internal
+                Push(string strDlgTitle)
             {
+                DialogTitle = strDlgTitle;
                 _prevPush = _wr.Get(p => p);
                 _wr.SetTarget(this);
-
-                if (null == dlgTitle)
-                {
-                    CurrentDialogText = null;
-                    return;
-                }
-
-                if (false == dictDialogTitles.TryGetValue(dlgTitle, out CurrentDialogText))
-                    CurrentDialogText = dlgTitle;
 
                 if (1 < ++_nRefCount)
                     return;
@@ -70,7 +65,8 @@ namespace DoubleFile
                     RepeatedOuterCheckForLockup()));
             }
 
-            public void Dispose()
+            public void
+                Dispose()
             {
                 _wr.SetTarget(_prevPush);
 
@@ -83,24 +79,40 @@ namespace DoubleFile
                 _lockupTimer = null;
             }
 
-            static internal void AssertAllClear() => Util.Assert(99770, 0 == _nRefCount);
+            static internal void
+                AssertAllClear() => Util.Assert(99770, 0 == _nRefCount);
 
-            static internal T WithPush<T>(Func<Push, T> doSomethingWith) => _wr.Get(p => doSomethingWith(p));
+            static internal T
+                WithPush<T>(Func<Push, T> doSomethingWith) => _wr.Get(p => doSomethingWith(p));
             static WeakReference<Push> _wr = new WeakReference<Push>(null);
             Push _prevPush;
 
             static int _nRefCount = 0;
             static IDisposable _lockupTimer = null;
-
-            static IReadOnlyDictionary<string, string> dictDialogTitles = new Dictionary<string, string>
-            {
-                { "FolderBrowserDialog", "Browse For Folder" }
-            };
         }
 
         internal static T
-            Go<T>(Func<IDarkWindow, T> showDialog, string dlgTitle)
+            Go<T>(Func<IDarkWindow, T> showDialog, object dlg)
         {
+            if (null == dlg)
+            {
+                Util.Assert(99679, false);
+                return default(T);
+            }
+
+            var strDlgTitle =
+                (dlg is ILocalWindow) ? null
+                : (dlg is System.Windows.Forms.FolderBrowserDialog) ? "Browse For Folder"
+                : dlg.As<OpenFileDialog>()?.Title
+                ?? dlg.As<SaveFileDialog>()?.Title
+                ?? "";
+
+            if (0 == strDlgTitle?.Length)
+            {
+                Util.Assert(99677, false);
+                return default(T);
+            }
+
             if (_bNappingDontDebounce)
                 return default(T);
 
@@ -126,7 +138,7 @@ namespace DoubleFile
                     .SetRect(darkWindow.Rect)
                     .Show();
 
-                using (new Push(dlgTitle))
+                using (new Push(strDlgTitle))
                     retVal = showDialog(darkWindow);
 
                 if (false == darkWindow.LocalIsClosed)      // happens with system dialogs
@@ -146,7 +158,7 @@ namespace DoubleFile
                 _blockingFrame.Continue = false;
             }));
 
-            using (new Push(dlgTitle))
+            using (new Push(strDlgTitle))
                 _blockingFrame.PushFrameToTrue();
 
             Push.AssertAllClear();
@@ -346,13 +358,14 @@ namespace DoubleFile
                 .Select(w => (NativeWindow)(Window)w)
                 .ToList();
 
-            var currentDialogText = Push.WithPush(p => p)?.CurrentDialogText;
+            var strDlgTitle = Util.AssertNotNull(99676, Push.WithPush(w => w))?
+                .DialogTitle;
 
-            if (null != currentDialogText)
+            if (null != strDlgTitle)
             {
                 foreach (var systemDialog in
                     NativeMethods
-                    .GetAllWindowsWithTitleOf(currentDialogText))
+                    .GetAllWindowsWithTitleOf(strDlgTitle))
                 {
                     var owner =
                         NativeMethods.GetWindow(

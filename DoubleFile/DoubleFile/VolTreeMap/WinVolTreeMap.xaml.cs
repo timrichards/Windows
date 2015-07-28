@@ -24,7 +24,7 @@ namespace DoubleFile
             };
 
             if (DialogResult.OK !=
-                ModalThread.Go(darkWindow => dlg.ShowDialog(((NativeWindow)(Window)darkWindow)), dlg.GetType().Name))
+                ModalThread.Go(darkWindow => dlg.ShowDialog(((NativeWindow)(Window)darkWindow)), dlg))
             {
                 Dispatcher.InvokeShutdown();
                 return;

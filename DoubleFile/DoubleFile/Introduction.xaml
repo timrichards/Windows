@@ -8,12 +8,7 @@
             <StackPanel MinWidth="200">
                 <TextBlock Text="INTRODUCTION" Style="{StaticResource Heading2}" />
                 <TextBlock TextWrapping="WrapWithOverflow" Text=
-"The main purpose of Double File is to allow you to pack up your drive and go: transition from one computer to another;
-or put a new drive or operating system in. Copy the files you use then let the rest just sit in storage. Drive capacities
-and speeds are increasing. This drive has nothing better to do than serve as backup; to maintain enviroment state. Plug it
-back in and be right where you were when you left it. But wait - what's actually on those drives, and are they backed up?
-Out of sight, out of mind: that's where Double File comes in. Catalog them, then have them curated for you on your current
-setup as they sit in storage: safe from transitional hazards. Plan well, then act: reuse the drives after making a plan.
+"On the surface, Double File may look like WinDirStat (from which it borrows code) or similar graphical drive utilization utilities, and in fact the second assembly 'Volume Treemap' does just that. However, Double File is project-based: it checksums files and saves them in directory listings that you store locally. The main purpose of Double File is to allow you to pack up your drive and go: transition from one computer to another; or put a new drive or operating system in. Copy the files you use then let the rest just sit in storage. Drive capacities and speeds are increasing. This drive has nothing better to do than serve as backup; to maintain environment state. Plug it back in and be right where you were when you left it. But wait - what's actually on those drives, and are they backed up? Out of sight, out of mind: that's where Double File comes in. Catalog them, then have them curated for you on your current setup as they sit in storage: safe from transitional hazards. Plan well, then act: reuse the drives after making a plan.
 " />
             </StackPanel>
         </ScrollViewer>

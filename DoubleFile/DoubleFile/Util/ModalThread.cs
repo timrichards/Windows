@@ -372,10 +372,10 @@ namespace DoubleFile
                         NativeMethods.GetWindow(systemDialog, NativeMethods.GW_OWNER), NativeMethods.GW_OWNER);
 
                     if (owner.Equals(Application.Current.MainWindow))
-                        return;     // use case: system dialogs off the main window
+                        return;     // use-case: system dialogs off the main window
 
                     if (lsNativeModalWindows.Contains(owner))
-                        return;     // use case: system dialogs off edit/new listing file dlg
+                        return;     // use-case: system dialogs off edit/new listing file dlg
                 }
             }
 

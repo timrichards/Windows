@@ -35,9 +35,6 @@ namespace DoubleFile
 
         void SearchFolders()
         {
-            if (string.IsNullOrWhiteSpace(SearchText))
-                return;
-
             if (Reinitialize_And_FullPathFound(SearchText))
                 return;
 
@@ -64,9 +61,6 @@ namespace DoubleFile
 
         void SearchFoldersAndFiles(bool bSearchFilesOnly = false)
         {
-            if (string.IsNullOrWhiteSpace(SearchText))
-                return;
-
             if (Reinitialize_And_FullPathFound(SearchText))
                 return;
 
@@ -92,6 +86,9 @@ namespace DoubleFile
 
         bool Reinitialize_And_FullPathFound(string strPath)
         {
+            if (string.IsNullOrWhiteSpace(SearchText))
+                return true;        // found the UI doesn't block the user's attempt to search for nothing
+
             if (0 == (Statics.LVprojectVM?.CanLoadCount ?? 0))
                 return true;        // found there are no volumes loaded
 

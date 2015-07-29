@@ -5,6 +5,7 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- VolTreeMap has focus rectangles on the progress dialog controls
 - Clone LVs: cycle the clones.
 - When VolTreeMap exits it will crash any other copies of it up
 - background progress: saving project doesn't have to tie up the app.
@@ -128,7 +129,7 @@
 Coding purpose:
 - Change-managed Windows.Forms.ListView app into WPF app with MVVM DataGrids
 - Implemented modal (does not use WinForms ShowDialog)
-- Implemented 220 release mode asserts (does not depend on Debug.Assert)
+- Implemented 340 release mode asserts (does not depend on Debug.Assert)
 - Optimized memory; DRY; standards; maintainability; speed O(1) where possible
 Skills used:
 - WinMerge; GitHub; Spy++; JetBrains dotMemory and dotTrace; Visual Studio 2015

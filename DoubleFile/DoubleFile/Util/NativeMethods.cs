@@ -19,16 +19,19 @@ namespace DoubleFile
         static public implicit operator
             NativeWindow(Window w) =>
             new NativeWindow
-            {
-                Handle = (null != w) ? new WindowInteropHelper(w).Handle : (IntPtr)0xBAD00 + nBadCount++,
-                Window = w
-            };
+        {
+            Handle = (null != w) ? new WindowInteropHelper(w).Handle : (IntPtr)0xBAD00 + nBadCount++,
+            Window = w
+        };
 
         static public implicit operator
             NativeWindow(IntPtr hwnd) => new NativeWindow { Handle = hwnd };
 
         public IntPtr Handle { get; private set; } = IntPtr.Zero;
-        internal Window Window = null;
+
+        internal Window
+            Window { get { return _wr.Get(w => w); } set { _wr.Get(w => w = value); } }
+        WeakReference<Window> _wr = new WeakReference<Window>(null);
 
         // can't override == and != operator because of the implicit operator IntPtr above
         public bool Equals(NativeWindow other) => Handle == other?.Handle;

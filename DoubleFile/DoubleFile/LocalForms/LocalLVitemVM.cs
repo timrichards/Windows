@@ -15,17 +15,7 @@ namespace DoubleFile
         public string
             Clones => SubItems[1];
 
-        public string ClonePaths
-        {
-            get
-            {
-                if (0 == TreeNodes.Count)
-                    return null;
-
-                return TreeNodes[_clonePathIndex % TreeNodes.Count].FullPath;
-            }
-        }
-        int _clonePathIndex = 0;
+        public string ClonePaths => WithLocalTreeNode(t => t.FullPath);
 
         public Brush Foreground => _classObject.Foreground;
         public Brush Background => _classObject.Background;
@@ -58,8 +48,9 @@ namespace DoubleFile
             if (0 == TreeNodes.Count)
                 return default(T);
 
-            return doSomethingWith(TreeNodes[0]);
+            return doSomethingWith(TreeNodes[_clonePathIndex % TreeNodes.Count]);
         }
+        int _clonePathIndex = 0;
 
         internal int
             Index { get { return _classObject.Datum16bits_ClassObject; } set { _classObject.Datum16bits_ClassObject = value; } }

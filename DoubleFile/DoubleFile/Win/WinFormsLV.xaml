@@ -16,10 +16,10 @@
                     <Setter Property="FontWeight" Value="{Binding FontWeight}" />
                 </Style>
                 <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
-                    <Setter Property="Button.Visibility" Value="Hidden"/>
+                    <Setter Property="Visibility" Value="Collapsed"/>
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}, Path=IsSelected}" Value="True">
-                            <Setter Property="Button.Visibility" Value="Visible"/>
+                            <Setter Property="Visibility" Value="Visible"/>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
@@ -27,14 +27,14 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Folders" Binding="{Binding Folder}" Width="{Binding WidthFolder}" />
                 <DataGridTextColumn Header="Clones" Binding="{Binding Clones}" Width="{Binding WidthClones}" />
-                <DataGridTemplateColumn Header="Paths">
+                <DataGridTemplateColumn Header="Paths" Width="{Binding WidthClonePaths}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <Button Command="{Binding Icmd_NextClonePath}" Padding="0" Margin="5, 0">
+                                <Button Command="{Binding Icmd_NextClonePath}" Padding="0" Margin="0,0,5,0">
                                     <Image Source="/DoubleFile;component/Assets/ic_skip_next_white_18dp.png" Height="18"/>
                                 </Button>
-                                <TextBlock Text="{Binding ClonePaths}" Width="{Binding WidthClonePaths}"/>
+                                <TextBlock Text="{Binding ClonePaths}"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

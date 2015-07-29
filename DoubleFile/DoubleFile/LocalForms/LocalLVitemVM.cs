@@ -1,16 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace DoubleFile
 {
     class LocalLVitemVM : ListViewItemVM_Base, ILocalColorItemBase
     {
+        public ICommand Icmd_NextClonePath { get; private set; }
+
         public string
             Folder { get { return SubItems[0]; } set { SubItems[0] = value; } }
         public string
             Clones => SubItems[1];
+
+        public string ClonePaths
+        {
+            get
+            {
+                if (0 == TreeNodes.Count)
+                    return null;
+
+                return TreeNodes[_clonePathIndex % TreeNodes.Count].FullPath;
+            }
+        }
+        int _clonePathIndex = 0;
 
         public Brush Foreground => _classObject.Foreground;
         public Brush Background => _classObject.Background;
@@ -37,9 +52,6 @@ namespace DoubleFile
         internal IList<LocalTreeNode>
             TreeNodes = new LocalTreeNode[0];
 
-        internal int
-            Index { get { return _classObject.Datum16bits_ClassObject; } set { _classObject.Datum16bits_ClassObject = value; } }
-
         internal T
             WithLocalTreeNode<T>(Func<LocalTreeNode, T> doSomethingWith)
         {
@@ -49,9 +61,17 @@ namespace DoubleFile
             return doSomethingWith(TreeNodes[0]);
         }
 
+        internal int
+            Index { get { return _classObject.Datum16bits_ClassObject; } set { _classObject.Datum16bits_ClassObject = value; } }
+
         internal LocalLVitemVM(IList<string> asString)
             : base(null, asString)
         {
+            Icmd_NextClonePath = new RelayCommand(() =>
+            {
+                ++_clonePathIndex;
+                RaisePropertyChanged("ClonePaths");
+            });
         }
 
         LocalColorItemBase_ClassObject

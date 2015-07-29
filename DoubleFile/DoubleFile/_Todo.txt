@@ -6,7 +6,6 @@
 - fix slider in tree list
 
 - VolTreeMap has focus rectangles on the progress dialog controls
-- Clone LVs: cycle the clones.
 - When VolTreeMap exits it will crash any other copies of it up
 - background progress: saving project doesn't have to tie up the app.
 - Could remove ?? true: false != null
@@ -16,7 +15,6 @@
 	- WinProject doesn't test its weak reference which is understandable
 - SelectedItem binding not found on Detail Datagrids: BindingExpression path error: 'SelectedItem' property not found on 'object' ''LV_VolumeDetailVM' (HashCode=47281521)'. BindingExpression:Path=SelectedItem; DataItem='LV_VolumeDetailVM' (HashCode=47281521); target element is 'DataGrid' (Name='formLV_Volume'); target property is 'SelectedItem' (type 'Object')
 - if (null == tuple.Item3.NodeDatum.TreeMapFiles)     // TODO: Why would this be null?
-- SDL small then check outer folder score: 0 0 0
 - rename "tuple" in TreeSelect clients
 - same volume / solitary red forecolors are too similar
 - WinFolderListVM has a Dispose method that's never called.
@@ -48,6 +46,7 @@
 - Eliminate no files here + just one subfolder from folder score (but why's it different?)
 	- Why does a folder with the same # items as subfolder have a different folder score? (i.e. no files here)
 	- why does e.g. monkey_house have a nFolderScorer of 0?
+	- SDL small then check outer folder score: 0 0 0
 - What is the distribution of sums of "random" hash folder score?
 - Why are some folders white? Why do some folders not say they're duplicated?
 - PresentationCore.dll: FormatException; InvalidCastException; ArgumentException (see output window)

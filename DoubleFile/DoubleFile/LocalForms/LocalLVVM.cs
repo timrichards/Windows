@@ -2,8 +2,9 @@
 {
     class LocalLVVM : ListViewVM_Base<LocalLVitemVM>
     {
-        public string WidthFolder => SCW;                  // franken all NaN
-        public string WidthClones => SCW;                  // franken all NaN
+        public string WidthFolder => SCW;                   // franken all NaN
+        public string WidthClones => SCW;                   // franken all NaN
+        public string WidthClonePaths => SCW;               // franken all NaN
 
         internal override int NumCols => LocalLVitemVM.NumCols_;
 

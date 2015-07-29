@@ -10,15 +10,35 @@
         </Grid.ColumnDefinitions>
         <DataGrid Grid.Column="0">
             <DataGrid.Resources>
-                <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
+                <Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
                     <Setter Property="Foreground" Value="{Binding Foreground}" />
                     <Setter Property="Background" Value="{Binding Background}" />
                     <Setter Property="FontWeight" Value="{Binding FontWeight}" />
+                </Style>
+                <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+                    <Setter Property="Button.Visibility" Value="Hidden"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}, Path=IsSelected}" Value="True">
+                            <Setter Property="Button.Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
                 </Style>
             </DataGrid.Resources>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Folders" Binding="{Binding Folder}" Width="{Binding WidthFolder}" />
                 <DataGridTextColumn Header="Clones" Binding="{Binding Clones}" Width="{Binding WidthClones}" />
+                <DataGridTemplateColumn Header="Paths">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Command="{Binding Icmd_NextClonePath}" Padding="0" Margin="5, 0">
+                                    <Image Source="/DoubleFile;component/Assets/ic_skip_next_white_18dp.png" Height="18"/>
+                                </Button>
+                                <TextBlock Text="{Binding ClonePaths}" Width="{Binding WidthClonePaths}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
         <Button Command="{Binding Icmd_GoTo}" Content="Go To" Margin="5,0,0,0" Grid.Column="1" Width="70" VerticalAlignment="Bottom" HorizontalAlignment="Right">

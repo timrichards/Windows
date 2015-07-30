@@ -41,9 +41,9 @@ namespace DoubleFile
         }
         static bool _bFolderListLinkCheck = false;
 
-        class FormsLV_Link : Link
+        class ClonesLink : Link
         {
-            internal FormsLV_Link(KeyValuePair<string, string> kvp)
+            internal ClonesLink(KeyValuePair<string, string> kvp)
             {
                 if (false == _bFormsLV_LinkCheck)
                 {
@@ -51,7 +51,7 @@ namespace DoubleFile
                     _bFormsLV_LinkCheck = true;
                 }
 
-                Source = new Uri("/Win/WinFormsLV.xaml#" + kvp.Key, UriKind.Relative);
+                Source = new Uri("/Win/WinClones.xaml#" + kvp.Key, UriKind.Relative);
                 DisplayName = kvp.Value;
             }
         }
@@ -266,9 +266,9 @@ namespace DoubleFile
             }},
             new LinkGroup { DisplayName="Clones", Links =
             {
-                new FormsLV_Link(WinClones.FolderListFragments.ElementAt(0)),
-                new FormsLV_Link(WinClones.FolderListFragments.ElementAt(1)),
-                new FormsLV_Link(WinClones.FolderListFragments.ElementAt(2))
+                new ClonesLink(WinClones.FolderListFragments.ElementAt(0)),
+                new ClonesLink(WinClones.FolderListFragments.ElementAt(1)),
+                new ClonesLink(WinClones.FolderListFragments.ElementAt(2))
             }},
             new LinkGroup { DisplayName="Files", Links =
             {

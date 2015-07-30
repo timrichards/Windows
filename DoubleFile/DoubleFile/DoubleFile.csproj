@@ -224,13 +224,13 @@
     <Compile Include="VolTreeMap\WinVolTreeMap.xaml.cs">
       <DependentUpon>WinVolTreeMap.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Win\MVVM_FormsLV\WinClonesVM_Impl.cs" />
-    <Compile Include="Win\MVVM_FormsLV\WinClonesVM.cs" />
+    <Compile Include="Win\MVVM_Clones\WinClonesVM_Impl.cs" />
+    <Compile Include="Win\MVVM_Clones\WinClonesVM.cs" />
     <Compile Include="Win\MVVM_FolderList\LVitem_FolderListVM.cs" />
     <Compile Include="Win\MVVM_FolderList\WinFolderListVM.cs" />
     <Compile Include="Win\MVVM_FolderList\WinFolderListM_Impl.cs" />
-    <Compile Include="Win\WinFormsLV.xaml.cs">
-      <DependentUpon>WinFormsLV.xaml</DependentUpon>
+    <Compile Include="Win\WinClones.xaml.cs">
+      <DependentUpon>WinClones.xaml</DependentUpon>
     </Compile>
     <Compile Include="Win\WinFolderList.xaml.cs">
       <DependentUpon>WinFolderList.xaml</DependentUpon>
@@ -491,7 +491,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Win\WinFormsLV.xaml">
+    <Page Include="Win\WinClones.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

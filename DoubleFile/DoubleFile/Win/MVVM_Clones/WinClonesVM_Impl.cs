@@ -6,9 +6,18 @@ namespace DoubleFile
 {
     partial class WinClonesVM
     {
-        internal WinClonesVM(string strFragment)
+        // The create/dispose model is different for this class than anywhere else.
+        // The class is created 3x in LocalTV using this empty constructor, and held there statically.
+        // WinClones.xaml.cs will call upon FactoryGetHolder on each LocalNavigatedTo(), and then
+        // calls Dispose() on the static object, UX-repeating this cycle without ever destroying
+        // the three objects created by this default constructor.
+        internal WinClonesVM()
         {
-            LV_ClonesVM localLVVM = null;
+        }
+
+        internal static WinClonesVM FactoryGetHolder(string strFragment)
+        {
+            WinClonesVM localLVVM = null;
 
             switch (strFragment)
             {
@@ -36,23 +45,24 @@ namespace DoubleFile
                 default:
                 {
                     Util.Assert(99784, false);
-                    return;
+                    return null;
                 }
             }
 
-            if (localLVVM.Items.Any())
-                Add(localLVVM.ItemsCast);
+            return
+                localLVVM
+                .Init();
+        }
 
+        WinClonesVM Init()
+        {
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99700, TreeSelect_FolderDetailUpdated));
 
             var folderDetail = LocalTV.TreeSelect_FolderDetail;
 
             if (null != folderDetail)
                 TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, 0));
-        }
 
-        internal WinClonesVM Init()
-        {
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
             return this;
         }

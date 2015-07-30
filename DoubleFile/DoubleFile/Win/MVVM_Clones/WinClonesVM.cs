@@ -2,7 +2,7 @@
 
 namespace DoubleFile
 {
-    partial class WinClonesVM : LV_ClonesVM
+    partial class WinClonesVM : ListViewVM_Base<LVitem_ClonesVM>
     {
         public ICommand Icmd_GoTo { get; private set; }
 
@@ -33,5 +33,14 @@ namespace DoubleFile
         {
         }
         LVitem_ClonesVM _selectedItem = null;
+
+        internal LVitem_ClonesVM
+            TopItem;
+
+        public string WidthFolder => SCW;                   // franken all NaN
+        public string WidthClones => SCW;                   // franken all NaN
+        public string WidthClonePaths => SCW;               // franken all NaN
+
+        internal override int NumCols => LVitem_ClonesVM.NumCols_;
     }
 }

@@ -8,7 +8,7 @@ namespace DoubleFile
 {
     class LVitem_ClonesVM : ListViewItemVM_Base
     {
-        public ICommand Icmd_NextClonePath { get; private set; }
+        public ICommand Icmd_NextClonePath { get; }
 
         // marker node if treenode not present
         public string Folder => WithLocalTreeNode(t => t)?.Text ?? SubItems[0];
@@ -25,7 +25,7 @@ namespace DoubleFile
         static string[] _propNamesA = null;
 
         internal override int NumCols => NumCols_;
-        internal const int NumCols_ = 2;
+        internal const int NumCols_ = 1;
 
         internal TabledString<Tabled_Folders>
             Name;

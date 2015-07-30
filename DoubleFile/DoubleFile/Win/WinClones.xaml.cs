@@ -29,8 +29,7 @@ namespace DoubleFile
         {
             DataContext = 
                 _winFormsLVVM =
-                new WinClonesVM(strFragment)
-                .Init();
+                WinClonesVM.FactoryGetHolder(strFragment);
 
             LocalTitle =
                 new CultureInfo("en-US", false).TextInfo            // future proof to title case
@@ -39,6 +38,8 @@ namespace DoubleFile
 
         protected override void LocalNavigatedFrom()
         {
+            _winFormsLVVM.Dispose();
+
             DataContext =
                 _winFormsLVVM =
                 null;

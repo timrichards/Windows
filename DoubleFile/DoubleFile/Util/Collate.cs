@@ -15,9 +15,9 @@ namespace DoubleFile
 
         internal Collate(
             ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>> dictNodes,
-            LV_ClonesVM lvClones,
-            LV_ClonesVM lvSameVol,
-            LV_ClonesVM lvSolitary,
+            WinClonesVM lvClones,
+            WinClonesVM lvSameVol,
+            WinClonesVM lvSolitary,
             IReadOnlyList<LocalTreeNode> lsRootNodes,
             List<LocalTreeNode> lsAllNodes,
             List<LVitem_ClonesVM> lsLVignore,
@@ -637,9 +637,9 @@ namespace DoubleFile
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
         readonly ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>
             _dictNodes = null;
-        readonly LV_ClonesVM _lvClones = null;
-        readonly LV_ClonesVM _lvSameVol = null;
-        readonly LV_ClonesVM _lvSolitary = null;
+        readonly WinClonesVM _lvClones = null;
+        readonly WinClonesVM _lvSameVol = null;
+        readonly WinClonesVM _lvSolitary = null;
         readonly IReadOnlyList<LocalTreeNode> _lsRootNodes = null;
         readonly IList<LocalTreeNode> _lsAllNodes = null;
         readonly IList<LVitem_ClonesVM> _lsLVignore = null;

@@ -193,7 +193,7 @@
     <Compile Include="Introduction.xaml.cs">
       <DependentUpon>Introduction.xaml</DependentUpon>
     </Compile>
-    <Compile Include="LocalForms\LocalColorItemBase.cs" />
+    <Compile Include="LocalTreeNode\LocalColorItemBase.cs" />
     <Compile Include="Statics.cs" />
     <Compile Include="Util\ModalThread.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -283,8 +283,7 @@
     <Compile Include="Util\Collate\AddTreeToList.cs" />
     <Compile Include="Util\Collate\InsertSizeMarkerStatic.cs" />
     <Compile Include="Util\CountNodes.cs" />
-    <Compile Include="LocalForms\LV_ClonesVM.cs" />
-    <Compile Include="LocalForms\LVitem_ClonesVM.cs" />
+    <Compile Include="Win\MVVM_Clones\LVitem_ClonesVM.cs" />
     <Compile Include="Win\SearchListings\SearchBase.cs" />
     <Compile Include="Win\SearchListings\SearchBase\SearchListings.cs" />
     <Compile Include="Win\SearchListings\SearchBase\SearchListings\SearchListing.cs" />
@@ -311,13 +310,13 @@
     <Compile Include="Win\MVVM_Files\LVitem_FilesVM.cs" />
     <Compile Include="Win\MVVM_Files\LV_FilesVM.cs" />
     <Compile Include="Win\MVVM_Files\LV_FilesVM_Impl.cs" />
-    <Compile Include="LocalForms\LocalTreeNode.cs" />
+    <Compile Include="LocalTreeNode\LocalTreeNode.cs" />
     <Compile Include="Win\MVVM_TreeView\TreeViewItemVM.cs" />
-    <Compile Include="LocalForms\LocalTV.cs" />
+    <Compile Include="LocalTreeNode\LocalTV.cs" />
     <Compile Include="Win\MVVM_TreeView\TreeViewVM.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LocalForms\LocalTV_Impl.cs" />
+    <Compile Include="LocalTreeNode\LocalTV_Impl.cs" />
     <Compile Include="Win\WinTreeView.xaml.cs">
       <DependentUpon>WinTreeView.xaml</DependentUpon>
     </Compile>

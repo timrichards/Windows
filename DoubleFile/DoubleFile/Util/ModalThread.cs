@@ -120,12 +120,13 @@ namespace DoubleFile
                     .SetRect(new Rect())
                     .Show();
 
-                var windows = Application.Current.Windows.Cast<Window>();
+                var windows = Application.Current.Windows.Cast<Window>()
+                    .ToDictionary(w => w, w => w.IsEnabled);
 
-                windows.ForEach(window => window.IsEnabled = false);
+                windows.ForEach(window => window.Key.IsEnabled = false);
                 // Can't use Push or dark window becuase it could lock up the app
                 retVal = showDialog(darkWindow);
-                windows.ForEach(window => window.IsEnabled = true);
+                windows.ForEach(window => window.Key.IsEnabled = window.Value);
 
                 if (false == darkWindow.LocalIsClosed)      // happens with system dialogs
                     darkWindow.Close();

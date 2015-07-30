@@ -16,8 +16,6 @@ namespace DoubleFile
         public virtual LocalTreeNode
             Parent { get; protected set; }
 
-        internal string
-            Name => Text;
         internal int
             Level { get { return Datum8bits; } set { Datum8bits = value; } }
         internal int

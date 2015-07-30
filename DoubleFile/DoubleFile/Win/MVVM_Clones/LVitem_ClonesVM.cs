@@ -35,7 +35,7 @@ namespace DoubleFile
             TreeNodes = new LocalTreeNode[0];
 
         internal int
-            Index= 0;
+            Index = 0;
 
         internal T
             WithLocalTreeNode<T>(Func<LocalTreeNode, T> doSomethingWith) =>

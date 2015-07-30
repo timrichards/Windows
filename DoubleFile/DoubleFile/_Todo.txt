@@ -5,7 +5,6 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
-- Treemap selection rectangle still doesn't always know what the treemap treenode view is set at
 - VolTreeMap has focus rectangles on the progress dialog controls
 - When VolTreeMap exits it will crash any other copies of it up
 - background progress: saving project doesn't have to tie up the app.

@@ -47,7 +47,7 @@ namespace DoubleFile
             {
                 if (false == _bFormsLV_LinkCheck)
                 {
-                    Util.Assert(99782, 3 == WinFormsLV.FolderListFragments.Count);
+                    Util.Assert(99782, 3 == WinClones.FolderListFragments.Count);
                     _bFormsLV_LinkCheck = true;
                 }
 
@@ -266,9 +266,9 @@ namespace DoubleFile
             }},
             new LinkGroup { DisplayName="Clones", Links =
             {
-                new FormsLV_Link(WinFormsLV.FolderListFragments.ElementAt(0)),
-                new FormsLV_Link(WinFormsLV.FolderListFragments.ElementAt(1)),
-                new FormsLV_Link(WinFormsLV.FolderListFragments.ElementAt(2))
+                new FormsLV_Link(WinClones.FolderListFragments.ElementAt(0)),
+                new FormsLV_Link(WinClones.FolderListFragments.ElementAt(1)),
+                new FormsLV_Link(WinClones.FolderListFragments.ElementAt(2))
             }},
             new LinkGroup { DisplayName="Files", Links =
             {

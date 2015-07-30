@@ -39,6 +39,8 @@ namespace DoubleFile
 
         protected override void LocalNavigatedFrom()
         {
+            _winFolderListVM.Dispose();
+
             DataContext =
                 _winFolderListVM =
                 null;

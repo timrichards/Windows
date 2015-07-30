@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace DoubleFile
 {
-    partial class WinFolderListVM
+    partial class WinFolderListVM : IDisposable
     {
         internal WinFolderListVM(string strFragment)
         {

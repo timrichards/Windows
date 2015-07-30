@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    partial class WinClonesVM
+    partial class WinClonesVM : IDisposable
     {
         // The create/dispose model is different for this class than anywhere else.
         // The class is created 3x in LocalTV using this empty constructor, and held there statically.

@@ -17,7 +17,6 @@
 - if (null == tuple.Item3.NodeDatum.TreeMapFiles)     // TODO: Why would this be null?
 - rename "tuple" in TreeSelect clients
 - same volume / solitary red forecolors are too similar
-- WinFolderListVM has a Dispose method that's never called.
 - object.MemberwiseClone()
 - NumCols_ = 0 for some Wins
 - check and remove Linq/enumeration for arrays - prob OK: tests for ICollection

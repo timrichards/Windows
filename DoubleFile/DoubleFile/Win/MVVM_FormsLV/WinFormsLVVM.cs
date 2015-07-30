@@ -2,11 +2,11 @@
 
 namespace DoubleFile
 {
-    partial class WinFormsLVVM : LocalLVVM
+    partial class WinClonesVM : LV_ClonesVM
     {
         public ICommand Icmd_GoTo { get; private set; }
 
-        public LocalLVitemVM SelectedItem
+        public LVitem_ClonesVM SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -20,7 +20,7 @@ namespace DoubleFile
                     SelectedItem_AllTriggers();
             }
         }
-        internal void SelectedItem_Set(LocalLVitemVM value)
+        internal void SelectedItem_Set(LVitem_ClonesVM value)
         {
             if (value == _selectedItem)
                 return;
@@ -32,6 +32,6 @@ namespace DoubleFile
         void SelectedItem_AllTriggers()
         {
         }
-        LocalLVitemVM _selectedItem = null;
+        LVitem_ClonesVM _selectedItem = null;
     }
 }

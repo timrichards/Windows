@@ -6,28 +6,20 @@ using System.Windows.Media;
 
 namespace DoubleFile
 {
-    class LocalLVitemVM : ListViewItemVM_Base, ILocalColorItemBase
+    class LVitem_ClonesVM : ListViewItemVM_Base
     {
         public ICommand Icmd_NextClonePath { get; private set; }
 
-        public string
-            Folder { get { return SubItems[0]; } set { SubItems[0] = value; } }
-        public string
-            Clones => SubItems[1];
+        // marker node if treenode not present
+        public string Folder => WithLocalTreeNode(t => t)?.Text ?? SubItems[0];
+        public Brush Foreground => WithLocalTreeNode(t => t.Foreground) ?? Brushes.White;
+        public Brush Background => WithLocalTreeNode(t => t.Background) ?? Brushes.DarkSlateGray;
+        public FontWeight FontWeight => (0 < TreeNodes.Count) ? FontWeights.Normal : FontWeights.Bold;
+
+        public string       // includes the subject node: only note three clones or more
+            Clones => (3 <= TreeNodes.Count) ? (TreeNodes.Count - 1).ToString("###,###") : null;
 
         public string ClonePaths => WithLocalTreeNode(t => t.FullPath);
-
-        public Brush Foreground => _classObject.Foreground;
-        public Brush Background => _classObject.Background;
-
-        public FontWeight FontWeight
-        {
-            get { return (_classObject.Datum8bits_ClassObject != 0) ? FontWeights.Bold : FontWeights.Normal; }
-            set { _classObject.Datum8bits_ClassObject = (value == FontWeights.Normal) ? 0 : -1; }
-        }
-
-        public int ForeColor { get { return _classObject.ForeColor; } set { _classObject.ForeColor = value; } }
-        public int BackColor { get { return _classObject.BackColor; } set { _classObject.BackColor = value; } }
 
         protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
         static string[] _propNamesA = null;
@@ -42,30 +34,25 @@ namespace DoubleFile
         internal IList<LocalTreeNode>
             TreeNodes = new LocalTreeNode[0];
 
-        internal T
-            WithLocalTreeNode<T>(Func<LocalTreeNode, T> doSomethingWith)
-        {
-            if (0 == TreeNodes.Count)
-                return default(T);
-
-            return doSomethingWith(TreeNodes[_clonePathIndex % TreeNodes.Count]);
-        }
-        int _clonePathIndex = 0;
-
         internal int
-            Index { get { return _classObject.Datum16bits_ClassObject; } set { _classObject.Datum16bits_ClassObject = value; } }
+            Index= 0;
 
-        internal LocalLVitemVM(IList<string> asString)
+        internal T
+            WithLocalTreeNode<T>(Func<LocalTreeNode, T> doSomethingWith) =>
+            (0 < TreeNodes.Count) ? doSomethingWith(TreeNodes[_clonePathIndex % TreeNodes.Count]) : default(T);
+
+        internal LVitem_ClonesVM(IList<string> asString = null)
             : base(null, asString)
         {
-            Icmd_NextClonePath = new RelayCommand(() =>
+            Icmd_NextClonePath =
+                new RelayCommand(() =>
             {
                 ++_clonePathIndex;
                 RaisePropertyChanged("ClonePaths");
+                RaisePropertyChanged("Folder");
             });
         }
 
-        LocalColorItemBase_ClassObject
-            _classObject = new LocalColorItemBase_ClassObject();
+        int _clonePathIndex = 0;
     }
 }

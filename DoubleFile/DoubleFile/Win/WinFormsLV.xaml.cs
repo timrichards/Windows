@@ -29,7 +29,7 @@ namespace DoubleFile
         {
             DataContext = 
                 _winFormsLVVM =
-                new WinFormsLVVM(strFragment)
+                new WinClonesVM(strFragment)
                 .Init();
 
             LocalTitle =
@@ -44,7 +44,7 @@ namespace DoubleFile
                 null;
         }
 
-        WinFormsLVVM
+        WinClonesVM
             _winFormsLVVM = null;
     }
 }

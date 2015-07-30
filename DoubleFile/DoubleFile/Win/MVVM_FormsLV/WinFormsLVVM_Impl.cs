@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    partial class WinFormsLVVM
+    partial class WinClonesVM
     {
-        internal WinFormsLVVM(string strFragment)
+        internal WinClonesVM(string strFragment)
         {
-            LocalLVVM localLVVM = null;
+            LV_ClonesVM localLVVM = null;
 
             switch (strFragment)
             {
@@ -51,7 +51,7 @@ namespace DoubleFile
                 TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, 0));
         }
 
-        internal WinFormsLVVM Init()
+        internal WinClonesVM Init()
         {
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
             return this;

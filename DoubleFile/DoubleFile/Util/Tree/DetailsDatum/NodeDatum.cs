@@ -6,7 +6,7 @@ namespace DoubleFile
     {
         internal List<LocalTreeNode>
             Clones;
-        internal LocalLVitemVM
+        internal LVitem_ClonesVM
             LVitem;
         internal LocalTreeNode
             TreeMapFiles;

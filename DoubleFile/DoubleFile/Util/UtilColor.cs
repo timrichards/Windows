@@ -10,12 +10,10 @@ namespace DoubleFile
             Descriptions = new Dictionary<int, string>
         {
             {Empty,             ""},
-            {White,             ""},
             {LightBlue,         "This folder has multiple copies on at least two separate volumes."},
             {DarkGray,          ""},						            // ignore list
             {DarkKhaki,         ""},						            // Treemap: Folder containing files
             {DarkRedBG,         "Contains folders that have no copy, or copies are on one volume."},
-            {DarkSlateGray,     ""},						            // LV marker item back color
             {Firebrick,         "All copies of this folder reside on one volume."},
             {DarkYellowBG,      "This folder and its parent have a copy on a separate volume."},
             {LightGray,         "This folder has no data."},
@@ -27,12 +25,10 @@ namespace DoubleFile
         };
 
         static internal int Empty => Color.Empty.ToArgb();
-        static internal int White => Color.White.ToArgb();
         static internal int LightBlue => Color.LightBlue.ToArgb();
         static internal int DarkGray => Color.DarkGray.ToArgb();
         static internal int DarkKhaki => Color.DarkKhaki.ToArgb();
         static internal int DarkRedBG => Color.FromArgb(64, 64, 0, 0).ToArgb();
-        static internal int DarkSlateGray => Color.DarkSlateGray.ToArgb();
         static internal int Firebrick => Color.Firebrick.ToArgb();
         static internal int DarkYellowBG => Color.FromArgb(64, 0, 64, 64).ToArgb();
         static internal int LightGray => Color.LightGray.ToArgb();
@@ -72,7 +68,7 @@ namespace DoubleFile
 
         readonly static int[] CLUT = new int[_knNumColors]
         {
-            Empty, White, LightBlue, DarkGray, DarkKhaki, DarkRedBG, DarkSlateGray,
+            Empty, LightBlue, DarkGray, DarkKhaki, DarkRedBG,
             Firebrick, DarkYellowBG, LightGray, MediumSpringGreen, MediumVioletRed,
             OliveDrab, Red, SteelBlue
         };
@@ -83,12 +79,10 @@ namespace DoubleFile
             var revClut = new Dictionary<int, int>();
 
             revClut[Empty] = nIx++;
-            revClut[White] = nIx++;
             revClut[LightBlue] = nIx++;
             revClut[DarkGray] = nIx++;
             revClut[DarkKhaki] = nIx++;
             revClut[DarkRedBG] = nIx++;
-            revClut[DarkSlateGray] = nIx++;
             revClut[Firebrick] = nIx++;
             revClut[DarkYellowBG] = nIx++;
             revClut[LightGray] = nIx++;
@@ -103,7 +97,7 @@ namespace DoubleFile
         }
 
         const int
-            _knNumColors = 15;
+            _knNumColors = 13;
         const uint
             _knCLUT_FGmask = 0xF;
         static readonly uint

@@ -25,17 +25,17 @@ namespace DoubleFile
         }
         LocalTreeNode _selectedNode = null;
 
-        static internal LocalLVVM
+        static internal LV_ClonesVM
             Clones => _wr.Get(o => o._clones);
-        LocalLVVM _clones = new LocalLVVM();
+        LV_ClonesVM _clones = new LV_ClonesVM();
 
-        static internal LocalLVVM
+        static internal LV_ClonesVM
             SameVol => _wr.Get(o => o._sameVol);
-        LocalLVVM _sameVol = new LocalLVVM();
+        LV_ClonesVM _sameVol = new LV_ClonesVM();
 
-        static internal LocalLVVM
+        static internal LV_ClonesVM
             Solitary => _wr.Get(o => o._solitary);
-        LocalLVVM _solitary = new LocalLVVM();
+        LV_ClonesVM _solitary = new LV_ClonesVM();
 
         static internal IReadOnlyDictionary<string, string>
             DictVolumeInfo => _wr.Get(o => o._dictVolumeInfo);

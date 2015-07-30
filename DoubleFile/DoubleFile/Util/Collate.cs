@@ -15,12 +15,12 @@ namespace DoubleFile
 
         internal Collate(
             ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>> dictNodes,
-            LocalLVVM lvClones,
-            LocalLVVM lvSameVol,
-            LocalLVVM lvSolitary,
+            LV_ClonesVM lvClones,
+            LV_ClonesVM lvSameVol,
+            LV_ClonesVM lvSolitary,
             IReadOnlyList<LocalTreeNode> lsRootNodes,
             List<LocalTreeNode> lsAllNodes,
-            List<LocalLVitemVM> lsLVignore,
+            List<LVitem_ClonesVM> lsLVignore,
             bool bLoose)
         {
             _dictNodes = dictNodes;
@@ -33,7 +33,7 @@ namespace DoubleFile
             _bLoose = bLoose;
         }
 
-        static internal void InsertSizeMarkers(IList<LocalLVitemVM> listLVitems)
+        static internal void InsertSizeMarkers(IList<LVitem_ClonesVM> listLVitems)
         {
             var nCount = listLVitems.Count;
 
@@ -87,7 +87,7 @@ namespace DoubleFile
                 Util.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds."); dtStart = DateTime.Now;
             }
 
-            var dictIgnoreMark = new Dictionary<LocalTreeNode, LocalLVitemVM>();
+            var dictIgnoreMark = new Dictionary<LocalTreeNode, LVitem_ClonesVM>();
             var dictNodes = new SortedDictionary<FolderKeyTuple, List<LocalTreeNode>>();
 
             foreach (var kvp in _dictNodes)                     // clone to remove ignored
@@ -268,24 +268,13 @@ namespace DoubleFile
                 if (1 == nClones)
                     continue;           // keep the same-vol
 
-                string str_nClones = null;
-
                 if (2 < nClones)        // includes the subject node: only note three clones or more
                 {
-                    str_nClones = nClones.ToString("###,###");
-
                     foreach (var node in listNodes.Value)
                         node.ForeColor = UtilColor.LightBlue;
                 }
 
-                var lvItem = new LocalLVitemVM(new[] { "", str_nClones })
-                {
-                    TreeNodes = listNodes.Value,
-                    ForeColor = listNodes.Value[0].ForeColor
-                };
-
-                LocalTreeNode nameNode = null;
-                var nLevel = int.MaxValue;
+                var lvItem = new LVitem_ClonesVM { TreeNodes = listNodes.Value };
 
                 foreach (var treeNode in listNodes.Value)
                 {
@@ -293,12 +282,6 @@ namespace DoubleFile
                         _bAborted)
                     {
                         return;
-                    }
-
-                    if (treeNode.Level < nLevel)
-                    {
-                        nLevel = treeNode.Level;
-                        nameNode = treeNode;
                     }
 
                     var nodeDatum = treeNode.NodeDatum;
@@ -312,7 +295,6 @@ namespace DoubleFile
                     nodeDatum.LVitem = lvItem;
                 }
 
-                lvItem.Folder = nameNode.Text;
                 _lsLVdiffVol.Add(lvItem);
             }
 
@@ -359,7 +341,7 @@ namespace DoubleFile
 
                 Util.Assert(1305.6321m, false == string.IsNullOrWhiteSpace(treeNode.Text));
 
-                var lvItem = new LocalLVitemVM(new[] { treeNode.Text }) { TreeNodes = new[] { treeNode } };
+                var lvItem = new LVitem_ClonesVM { TreeNodes = new[] { treeNode } };
                 var nodeDatum = treeNode.NodeDatum;
 
                 if (null == nodeDatum)      // added 2/13/15
@@ -372,7 +354,6 @@ namespace DoubleFile
                 SnowUniqueParents(treeNode);
                 Util.Assert(1305.6323m, UtilColor.Empty == treeNode.ForeColor);
                 treeNode.ForeColor = UtilColor.Red;
-                lvItem.ForeColor = treeNode.ForeColor;
                 _lsLVsolitary.Add(lvItem);
                 Util.Assert(1305.6324m, null == nodeDatum.LVitem);
                 nodeDatum.LVitem = lvItem;
@@ -415,27 +396,11 @@ namespace DoubleFile
                     return;
                 }
 
-                var nClones = nodeDatum.Clones?.Count ?? 0;
-
-                if (0 == nClones)
+                if (0 == (nodeDatum.Clones?.Count ?? 0))
                     Util.Assert(1305.6328m, false);
 
-                string str_nClones = null;
-
-                if (2 < nClones)
-                    str_nClones = nClones.ToString("###,###");
-
                 Util.Assert(1305.6329m, false == string.IsNullOrWhiteSpace(treeNode.Text));
-
-                var lvItem = new LocalLVitemVM(new[] { "" + treeNode.Text, str_nClones })
-                {
-                    TreeNodes = nodeDatum.Clones,
-                    ForeColor = UtilColor.Firebrick,
-                    BackColor = treeNode.BackColor
-                };
-
-                _lsLVsameVol.Add(lvItem);
-                nodeDatum.LVitem = lvItem;
+                _lsLVsameVol.Add(nodeDatum.LVitem = new LVitem_ClonesVM { TreeNodes = nodeDatum.Clones });
             }
 
             InsertSizeMarkers(_lsLVsameVol);
@@ -598,7 +563,7 @@ namespace DoubleFile
             }
         }
 
-        void IgnoreNodeAndSubnodes(LocalLVitemVM lvItem, LocalTreeNode treeNode_in, bool bContinue = false)
+        void IgnoreNodeAndSubnodes(LVitem_ClonesVM lvItem, LocalTreeNode treeNode_in, bool bContinue = false)
         {
             var treeNode = treeNode_in;
 
@@ -661,9 +626,6 @@ namespace DoubleFile
 
                 var nodeDatum = parentNode.NodeDatum;
 
-                if (null != nodeDatum.LVitem)
-                    nodeDatum.LVitem.BackColor = parentNode.BackColor;
-
                 Util.Assert(1305.6313m,
                     (parentNode.ForeColor == UtilColor.Empty) ==
                     (null == nodeDatum.LVitem));
@@ -675,18 +637,18 @@ namespace DoubleFile
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
         readonly ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>
             _dictNodes = null;
-        readonly LocalLVVM _lvClones = null;
-        readonly LocalLVVM _lvSameVol = null;
-        readonly LocalLVVM _lvSolitary = null;
+        readonly LV_ClonesVM _lvClones = null;
+        readonly LV_ClonesVM _lvSameVol = null;
+        readonly LV_ClonesVM _lvSolitary = null;
         readonly IReadOnlyList<LocalTreeNode> _lsRootNodes = null;
         readonly IList<LocalTreeNode> _lsAllNodes = null;
-        readonly IList<LocalLVitemVM> _lsLVignore = null;
+        readonly IList<LVitem_ClonesVM> _lsLVignore = null;
 
         // the following are "local" to this object, and do not have m_ prefixes because they do not belong to the form.
-        readonly IList<LocalLVitemVM> _lsLVsolitary = new List<LocalLVitemVM>();
-        readonly IList<LocalLVitemVM> _lsLVsameVol = new List<LocalLVitemVM>();
-        readonly IList<LocalLVitemVM> _lsLVdiffVol = new List<LocalLVitemVM>();
-        readonly IDictionary<LocalTreeNode, LocalLVitemVM> _dictIgnoreNodes = new Dictionary<LocalTreeNode, LocalLVitemVM>();
+        readonly IList<LVitem_ClonesVM> _lsLVsolitary = new List<LVitem_ClonesVM>();
+        readonly IList<LVitem_ClonesVM> _lsLVsameVol = new List<LVitem_ClonesVM>();
+        readonly IList<LVitem_ClonesVM> _lsLVdiffVol = new List<LVitem_ClonesVM>();
+        readonly IDictionary<LocalTreeNode, LVitem_ClonesVM> _dictIgnoreNodes = new Dictionary<LocalTreeNode, LVitem_ClonesVM>();
         readonly bool _bLoose = false;
     }
 }

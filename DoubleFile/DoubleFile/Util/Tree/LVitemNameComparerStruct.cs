@@ -5,9 +5,9 @@ using System.Windows.Forms;
 
 namespace DoubleFile
 {
-    struct LVitemNameComparerStruct : IEqualityComparer<LocalLVitemVM>
+    struct LVitemNameComparerStruct : IEqualityComparer<LVitem_ClonesVM>
     {
-        public bool Equals(LocalLVitemVM x, LocalLVitemVM y)
+        public bool Equals(LVitem_ClonesVM x, LVitem_ClonesVM y)
         {
             return (x != null) &&
                 (y != null) &&
@@ -15,11 +15,11 @@ namespace DoubleFile
                 x.Name.Equals(y.Name);
         }
 
-        public int GetHashCode(LocalLVitemVM obj) => obj.Name?.GetHashCode() ?? 0;
+        public int GetHashCode(LVitem_ClonesVM obj) => obj.Name?.GetHashCode() ?? 0;
 
         static internal void NameItems(ListView.ListViewItemCollection list)
         {
-            foreach (LocalLVitemVM item in list)
+            foreach (LVitem_ClonesVM item in list)
             {
                 item.Name = item.Folder;
 
@@ -28,20 +28,20 @@ namespace DoubleFile
             }
         }
 
-        static internal void MarkItemsFrom1notIn2(LocalLVVM lv1, LocalLVVM lv2)
+        static internal void MarkItemsFrom1notIn2(LV_ClonesVM lv1, LV_ClonesVM lv2)
         {
             if ((0 == lv1.Items.Count) || (0 == lv2.Items.Count))
                 return;
 
-            var list = lv1.Items.Cast<LocalLVitemVM>().Except(lv2.Items.Cast<LocalLVitemVM>(), new LVitemNameComparerStruct());
+            var list = lv1.Items.Cast<LVitem_ClonesVM>().Except(lv2.Items.Cast<LVitem_ClonesVM>(), new LVitemNameComparerStruct());
 
             lv1.TopItem = list.FirstOrDefault();
 
-            foreach (var item in list)
-                item.ForeColor = UtilColor.Red;
+            //foreach (var item in list)
+            //    item.ForeColor = UtilColor.Red;
         }
 
-        static internal void SetTopItem(LocalLVVM lv1, LocalLVVM lv2)
+        static internal void SetTopItem(LV_ClonesVM lv1, LV_ClonesVM lv2)
         {
             if ((0 < (lv1.TopItem?.Index ?? 1)) ||
                 (null == lv2.TopItem))
@@ -57,7 +57,7 @@ namespace DoubleFile
                 return;
 
             if (lv1Count > nIx)
-                lv1.TopItem = (LocalLVitemVM)lv1.Items[nIx];
+                lv1.TopItem = (LVitem_ClonesVM)lv1.Items[nIx];
         }
     }
 }

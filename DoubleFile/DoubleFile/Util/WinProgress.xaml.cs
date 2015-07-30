@@ -15,7 +15,8 @@ namespace DoubleFile
 
     // Window_Closed() calls Dispose() on the LV_ProgressVM member.
     [SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
-    partial class WinProgress : IModalWindow
+    partial class
+        WinProgress : IModalWindow
     {
         internal WeakReference<IWinProgressClosing>
             WindowClosingCallback { set; private get; }
@@ -28,7 +29,8 @@ namespace DoubleFile
             Abort() { _bAborted = true; return this; }
         bool _bAborted = false;
 
-        internal WinProgress(IEnumerable<string> astrBigLabels, IEnumerable<string> astrSmallKeyLabels, Action<WinProgress> initClient)
+        internal
+            WinProgress(IEnumerable<string> astrBigLabels, IEnumerable<string> astrSmallKeyLabels, Action<WinProgress> initClient)
         {
             WithWinProgress(w =>
             {
@@ -144,16 +146,20 @@ namespace DoubleFile
             return this;
         }
 
-        WinProgress StopShowingConfirmMessage()
+        WinProgress
+            StopShowingConfirmMessage()
         {
-            if (false == _bConfirmingClose)
+            if (DateTime.MinValue == _dtConfirmingClose)
                 return this;
 
+            //if (TimeSpan.FromSeconds(2) < DateTime.Now - _dtConfirmingClose)
+            //    return this;        // don't yank out the message box before they can read it
+
             if (_bAborted)
-                return this;     // don't close: there may be an error message
+                return this;        // don't close: there may be an error message
 
             if (MBoxStatic.AssertUp)
-                return this;     // don't close: there Is an error message
+                return this;        // don't close: there Is an error message
 
             Util.UIthread(99774, () =>
                 OwnedWindows
@@ -162,7 +168,7 @@ namespace DoubleFile
                 .FirstOnlyAssert(w =>
             {
                 w.Close();
-                _bConfirmingClose = false;
+                _dtConfirmingClose = DateTime.MinValue;
             }));
 
             return this;
@@ -210,9 +216,9 @@ namespace DoubleFile
             {
                 bool bConfirmClose = false;
 
-                _bConfirmingClose = true;
+                _dtConfirmingClose = DateTime.Now;
                 Util.UIthread(99824, () => bConfirmClose = windowClosing.ConfirmClose());
-                _bConfirmingClose = false;
+                _dtConfirmingClose = DateTime.MinValue;
 
                 if (bConfirmClose)
                 {
@@ -234,7 +240,7 @@ namespace DoubleFile
             _lv = new LV_ProgressVM();
         bool
             _bClosing = false;
-        bool
-            _bConfirmingClose = false;
+        DateTime
+            _dtConfirmingClose = DateTime.MinValue;
     }
 }

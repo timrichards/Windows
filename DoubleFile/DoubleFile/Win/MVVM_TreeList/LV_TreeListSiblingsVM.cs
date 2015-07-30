@@ -125,7 +125,7 @@ namespace DoubleFile
 
             foreach (var treeNode in treeNodes)
             {
-                var lvItem = new LVitem_TreeListVM(new[] { treeNode.Name }) { LocalTreeNode = treeNode };
+                var lvItem = new LVitem_TreeListVM(new[] { treeNode.Text }) { LocalTreeNode = treeNode };
 
                 lsLVitems.Add(lvItem);
 

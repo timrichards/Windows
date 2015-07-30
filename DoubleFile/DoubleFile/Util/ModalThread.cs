@@ -107,10 +107,29 @@ namespace DoubleFile
                 ?? dlg.As<SaveFileDialog>()?.Title
                 ?? "";
 
+            var retVal = default(T);
+
             if (0 == strDlgTitle?.Length)
             {
-                Util.Assert(99677, false);
-                return default(T);
+                Util.Assert(99677, false, "Showing unknown modal (next...)");
+
+                var prevTopWindow = Statics.TopWindow;
+
+                var darkWindow =    // need to pass in a dark window. Make it zero size: no lockup
+                    new DarkWindow((Window)Statics.TopWindow)
+                    .SetRect(new Rect())
+                    .Show();
+
+                // Can't use Push or dark window becuase it could lock up the app
+                retVal = showDialog(darkWindow);
+
+                if (false == darkWindow.LocalIsClosed)      // happens with system dialogs
+                    darkWindow.Close();
+
+                Statics.TopWindow = prevTopWindow;
+                Statics.TopWindow?.Activate();
+                _dtLastDarken = DateTime.Now;
+                return retVal;
             }
 
             if (_bNappingDontDebounce)
@@ -126,8 +145,6 @@ namespace DoubleFile
                     _bNappingDontDebounce = false;
                 }
             }
-
-            var retVal = default(T);
 
             if (_thread.IsAlive)
             {

@@ -46,13 +46,9 @@ namespace DoubleFile
 
         class Push : IDisposable
         {
-            internal readonly string
-                DialogTitle = null;
-
             internal
-                Push(string strDlgTitle)
+                Push()
             {
-                DialogTitle = strDlgTitle;
                 _prevPush = _wr.Get(p => p);
                 _wr.SetTarget(this);
 
@@ -110,27 +106,8 @@ namespace DoubleFile
         }
 
         internal static T
-            Go<T>(Func<IDarkWindow, T> showDialog, object dlg)
+            Go<T>(Func<IDarkWindow, T> showDialog)
         {
-            if (null == dlg)
-            {
-                Util.Assert(99679, false);
-                return default(T);
-            }
-
-            var strDlgTitle =
-                (dlg is IModalWindow) ? null
-                : (dlg is System.Windows.Forms.FolderBrowserDialog) ? "Browse For Folder"
-                : dlg.As<OpenFileDialog>()?.Title
-                ?? dlg.As<SaveFileDialog>()?.Title
-                ?? "";
-
-            if (0 == strDlgTitle?.Length)
-            {
-                Util.Assert(99677, false);
-                DarkWindow.ShowDarkWindows = false;
-            }
-
             if (_bNappingDontDebounce)
                 return default(T);
 
@@ -156,7 +133,7 @@ namespace DoubleFile
                     .SetRect(darkWindow.Rect)
                     .Show();
 
-                using (new Push(strDlgTitle))
+                using (new Push())
                     retVal = showDialog(darkWindow);
 
                 if (false == darkWindow.LocalIsClosed)      // happens with system dialogs
@@ -176,7 +153,7 @@ namespace DoubleFile
                 _blockingFrame.Continue = false;
             }));
 
-            using (new Push(strDlgTitle))
+            using (new Push())
                 _blockingFrame.PushFrameToTrue();
 
             Push.AssertAllClear();
@@ -370,7 +347,7 @@ namespace DoubleFile
 
             var nativeTopWindow = NativeTopWindow();
 
-            if (false == nativeTopWindow.Window is DarkWindow)
+            if (nativeTopWindow.Window is IModalWindow)
             {
                 if (false == nativeTopWindow.Window.IsEnabled)
                     Abort_ClearOut(99671);
@@ -385,25 +362,27 @@ namespace DoubleFile
                 .Select(w => (NativeWindow)(Window)w)
                 .ToList();
 
-            var strDlgTitle = Util.AssertNotNull(99676, Push.WithPush(w => w))?
-                .DialogTitle;
+            var nativeMainWindow = (NativeWindow)Application.Current.MainWindow;
 
-            if (null != strDlgTitle)
+            foreach (var systemDialog in
+                NativeMethods
+                .GetAllSystemDialogs())
             {
-                foreach (var systemDialog in
-                    NativeMethods
-                    .GetAllSysDlgsWithTitleOf(strDlgTitle))
-                {
-                    var owner =
-                        NativeMethods.GetWindow(
-                        NativeMethods.GetWindow(systemDialog, NativeMethods.GW_OWNER), NativeMethods.GW_OWNER);
+                var owner = NativeMethods.GetWindow(systemDialog, NativeMethods.GW_OWNER);
 
-                    if (owner.Equals(Application.Current.MainWindow))
-                        return;     // use-case: system dialogs off the main window
+                if (owner.Equals(IntPtr.Zero))
+                    continue;
 
-                    if (lsNativeModalWindows.Contains(owner))
-                        return;     // use-case: system dialogs off edit/new listing file dlg
-                }
+                owner = NativeMethods.GetWindow(systemDialog, NativeMethods.GW_OWNER);
+
+                if (owner.Equals(IntPtr.Zero))
+                    continue;
+
+                if (owner.Equals(nativeMainWindow))
+                    return;     // use-case: system dialogs off the main window
+
+                if (lsNativeModalWindows.Contains(owner))
+                    return;     // use-case: system dialogs off edit/new listing file dlg
             }
 
             if (1 == lsNativeModalWindows.Count)

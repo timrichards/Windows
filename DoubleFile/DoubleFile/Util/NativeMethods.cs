@@ -221,9 +221,9 @@ namespace DoubleFile
         static internal NativeWindow
             GetWindow(NativeWindow w, uint wCmd) => GetWindow((IntPtr)w, wCmd);
 
-        internal static IList<NativeWindow> GetAllSysDlgsWithTitleOf(string title)
+        internal static IList<NativeWindow> GetAllSystemDialogs()
         {
-            var searchData = new SearchData { Title = title };
+            var searchData = new SearchData { };
 
             _lsRet = new List<NativeWindow>();
             EnumWindows(EnumProcTitleAll, ref searchData);
@@ -237,18 +237,13 @@ namespace DoubleFile
             GetClassName(hWnd, sb, sb.Capacity);
 
             if (false == ("" + sb).StartsWith("#32770"))    // class name can be suffixed " (Debug)"
-                return true;        // Not a system dialog
-
-            GetWindowText(hWnd, sb, sb.Capacity);
-
-            if (("" + sb).StartsWith(searchData.Title))
                 _lsRet.Add(hWnd);   // Found the wnd, keep enumerating though
 
             return true;
         }
 
         static IList<NativeWindow> _lsRet = null;
-        public class SearchData { public string Title; }
+        public class SearchData { }
         private delegate bool EnumWindowsProc(IntPtr hWnd, ref SearchData data);
 
         [DllImport("user32.dll")]
@@ -257,8 +252,5 @@ namespace DoubleFile
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
     }
 }

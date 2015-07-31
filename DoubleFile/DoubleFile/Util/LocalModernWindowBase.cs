@@ -191,7 +191,7 @@ namespace DoubleFile
             return this;
         }
 
-        internal new bool? ShowDialog() => ModalThread.Go(ShowDialog, this);
+        internal new bool? ShowDialog() => ModalThread.Go(ShowDialog);
 
         bool? ShowDialog(ILocalWindow me)
         {

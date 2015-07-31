@@ -392,7 +392,7 @@ namespace DoubleFile
             {
                 foreach (var systemDialog in
                     NativeMethods
-                    .GetAllWindowsWithTitleOf(strDlgTitle))
+                    .GetAllSysDlgsWithTitleOf(strDlgTitle))
                 {
                     var owner =
                         NativeMethods.GetWindow(

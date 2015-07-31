@@ -186,6 +186,7 @@ namespace DoubleFile
             if (null == Owner)
                 Owner = Application.Current.MainWindow;
 
+            IsEnabled = true;
             base.Show();
             return this;
         }
@@ -202,6 +203,8 @@ namespace DoubleFile
                 Util.Assert(99793, false);
                 return null;
             }
+
+            IsEnabled = true;
 
             if (me.LocalIsClosed)
             {

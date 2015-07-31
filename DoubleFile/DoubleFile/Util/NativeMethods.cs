@@ -30,7 +30,7 @@ namespace DoubleFile
         public IntPtr Handle { get; private set; } = IntPtr.Zero;
 
         internal Window
-            Window { get { return _wr.Get(w => w); } set { _wr.Get(w => w = value); } }
+            Window { get { return _wr.Get(w => w); } set { _wr.SetTarget(value); } }
         WeakReference<Window> _wr = new WeakReference<Window>(null);
 
         // can't override == and != operator because of the implicit operator IntPtr above

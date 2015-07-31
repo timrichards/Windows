@@ -23,10 +23,11 @@ namespace DoubleFile
             DarkWindow : LocalWindowBase, IDarkWindow
         {
             internal Rect Rect;
+            internal static bool ShowDarkWindows = true;
 
             internal DarkWindow(Window owner)
             {
-                Rect = Win32Screen.GetWindowRect(owner);
+                Rect = ShowDarkWindows ? Win32Screen.GetWindowRect(owner) : new Rect();
                 this.SetRect(new Rect());
                 Owner = owner;
                 Background = Brushes.Black;
@@ -55,6 +56,11 @@ namespace DoubleFile
                 _prevPush = _wr.Get(p => p);
                 _wr.SetTarget(this);
 
+                _dictDimmedWindows = Application.Current.Windows.Cast<Window>()
+                    .ToDictionary(w => w, w => w.IsEnabled);
+
+                _dictDimmedWindows.ForEach(kvp => kvp.Key.IsEnabled = false);
+
                 if (1 < ++_nRefCount)
                     return;
 
@@ -68,6 +74,15 @@ namespace DoubleFile
             public void
                 Dispose()
             {
+                Application.Current.Windows.Cast<Window>()
+                    .ForEach(w =>
+                {
+                    var bIsEnabled = true;
+
+                    if (_dictDimmedWindows.TryGetValue(w, out bIsEnabled))
+                        w.IsEnabled = bIsEnabled;
+                });
+
                 _wr.SetTarget(_prevPush);
 
                 if (0 < --_nRefCount)
@@ -81,6 +96,9 @@ namespace DoubleFile
 
             static internal void
                 AssertAllClear() => Util.Assert(99770, 0 == _nRefCount);
+
+            IDictionary<Window, bool>
+                _dictDimmedWindows = new Dictionary<Window, bool>();
 
             static internal T
                 WithPush<T>(Func<Push, T> doSomethingWith) => _wr.Get(p => doSomethingWith(p));
@@ -110,7 +128,7 @@ namespace DoubleFile
             if (0 == strDlgTitle?.Length)
             {
                 Util.Assert(99677, false);
-                return default(T);
+                DarkWindow.ShowDarkWindows = false;
             }
 
             if (_bNappingDontDebounce)
@@ -162,6 +180,7 @@ namespace DoubleFile
                 _blockingFrame.PushFrameToTrue();
 
             Push.AssertAllClear();
+            DarkWindow.ShowDarkWindows = true;
             return retVal;
         }
 
@@ -174,6 +193,9 @@ namespace DoubleFile
             Application.Current.Windows
                 .OfType<DarkWindow>()
                 .ForEach(w => w.Close());
+
+            Application.Current.Windows.Cast<Window>()
+                .ForEach(w => w.IsEnabled = true);
 
             var strStuckFrames = LocalDispatcherFrame.ClearFrames();
 
@@ -228,7 +250,7 @@ namespace DoubleFile
                     .Where(w => false == w.LocalIsClosed)    // not shown yet
                     .ForEach(window => dictOwners_.Add(window, ((Window)window).Owner));
 
-                return dictOwners_;   // from lasmbda
+                return dictOwners_;   // from lambda
             });
 
             var mainWindow = Application.Current.MainWindow;
@@ -349,7 +371,12 @@ namespace DoubleFile
             var nativeTopWindow = NativeTopWindow();
 
             if (false == nativeTopWindow.Window is DarkWindow)
+            {
+                if (false == nativeTopWindow.Window.IsEnabled)
+                    Abort_ClearOut(99671);
+
                 return;
+            }
 
             var lsNativeModalWindows = 
                 Application.Current.Windows

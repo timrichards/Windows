@@ -74,4 +74,18 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+
+    <Style TargetType="TreeView" BasedOn="{StaticResource {x:Type TreeView}}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TreeView">
+                    <Border>
+                        <ScrollViewer Background="{TemplateBinding Background}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" >
+                            <ItemsPresenter/>
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

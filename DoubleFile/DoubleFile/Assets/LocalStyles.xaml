@@ -75,6 +75,7 @@
         </Style.Triggers>
     </Style>
 
+    <!--fixes TreeView background when IsEnabled=false-->
     <Style TargetType="TreeView" BasedOn="{StaticResource {x:Type TreeView}}">
         <Setter Property="Template">
             <Setter.Value>

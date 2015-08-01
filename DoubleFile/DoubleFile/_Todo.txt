@@ -126,6 +126,7 @@
 - replace null member vars like Thread with instances so no need to test for null
 
 Coding purpose:
+- I built a reusable platform to rapidly create apps: no need to distract from the business logic.
 - Change-managed Windows.Forms.ListView app into WPF app with MVVM DataGrids
 - Implemented modal (does not use WinForms ShowDialog)
 - Implemented 340 release mode asserts (does not depend on Debug.Assert)

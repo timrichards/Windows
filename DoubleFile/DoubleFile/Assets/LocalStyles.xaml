@@ -79,11 +79,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TreeView">
-                    <Border>
-                        <ScrollViewer Background="{TemplateBinding Background}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" >
-                            <ItemsPresenter/>
-                        </ScrollViewer>
-                    </Border>
+                    <ScrollViewer Background="{TemplateBinding Background}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" >
+                        <ItemsPresenter/>
+                    </ScrollViewer>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

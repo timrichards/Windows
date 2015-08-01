@@ -180,9 +180,16 @@ namespace DoubleFile
                 Directory.Delete(TempPath01, true);
             }
 
-            WinProgress.WithWinProgress(w => w
-                .Abort()
-                .Close());
+            WinProgress.WithWinProgress(w =>
+            {
+                if (w.LocalIsClosed)
+                    return w;   // from lambda
+
+                return
+                    w           // from lambda
+                  .Abort()
+                  .Close();
+            });
 
             _bProcessing = false;
             return bRet && (false == _bUserCanceled);

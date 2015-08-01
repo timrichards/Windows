@@ -9,7 +9,6 @@ using System.Windows.Interop;
 using Drawing = System.Drawing;
 using System.Windows.Media.Imaging;
 using System.Threading;
-using Microsoft.Win32;
 
 namespace DoubleFile
 {
@@ -231,8 +230,7 @@ namespace DoubleFile
             });
 
             var mainWindow = Application.Current.MainWindow;
-            var doubleBufferWindow = Step1_ShowDoubleBufferedWindow();
-            var fakeBaseWindow = Step2_ShowFakeBaseWindow();
+            var fakeBaseWindow = Step1_ShowFakeBaseWindow();
             var lsDarkWindows = new List<DarkWindow> { };
 
             var lsNativeWindowsDarkenedLowestFirst = Util.Closure(() =>
@@ -284,17 +282,15 @@ namespace DoubleFile
                         .BringWindowToTop);
 
                     darkDialog.SetRect(darkDialog.Rect);
-                    doubleBufferWindow.Opacity = 0;
-                    doubleBufferWindow.Close();
                     retVal = showDialog(darkDialog);
-                    Step4_CloseDarkDialog(darkDialog);
+                    Step3_CloseDarkDialog(darkDialog);
                 });
 
                 var nWindowCount = 0;
 
                 using (Observable.Timer(TimeSpan.FromMilliseconds(250), TimeSpan.FromSeconds(1)).Timestamp()
                     .LocalSubscribe(99735, x => Util.UIthread(99871, () =>
-                    Step3_RepeatedInnerCheckForLockup(darkDialog, ref nWindowCount))))
+                    Step2_RepeatedInnerCheckForLockup(darkDialog, ref nWindowCount))))
                     darkDialog.ShowDialog();
             }
 
@@ -316,7 +312,7 @@ namespace DoubleFile
                 .BringWindowToTop);
 
             // Look for a modal window stuck behind a dark window and bring it to top. This happens.
-            Step5_LastCheckForLockup();
+            Step4_LastCheckForLockup();
             _dtLastDarken = DateTime.Now;
             return retVal;
         }
@@ -392,47 +388,7 @@ namespace DoubleFile
         }
 
         static Window
-            Step1_ShowDoubleBufferedWindow()
-        {
-            var bounds =
-                Win32Screen
-                .GetWindowMonitorInfo(Application.Current.MainWindow)
-                .rcMonitor;
-
-            var doubleBufferWindow =
-                new Window
-            {
-                Topmost = true,
-                WindowStyle = WindowStyle.None,
-                ShowInTaskbar = false,
-                AllowsTransparency = true,
-                Opacity = 0,
-                ShowActivated = false,
-                Focusable = false,
-                IsEnabled = false
-            }
-                //.SetRect(new Rect());
-                .SetRect(bounds);        // mahApps seems to have slowed window creation to a crawl
-
-            using (var bitmap = new Drawing::Bitmap(bounds.Width, bounds.Height))
-            {
-                using (var g = Drawing::Graphics.FromImage(bitmap))
-                    g.CopyFromScreen(Drawing::Point.Empty, Drawing::Point.Empty, new Drawing::Size(bounds.Width, bounds.Height));
-
-                doubleBufferWindow.Background = new ImageBrush(Imaging.CreateBitmapSourceFromHBitmap(
-                    bitmap.GetHbitmap(),
-                    IntPtr.Zero,
-                    Int32Rect.Empty,
-                    BitmapSizeOptions.FromEmptyOptions()));
-            }
-
-            doubleBufferWindow.Show();
-            doubleBufferWindow.Opacity = 1;
-            return doubleBufferWindow;
-        }
-
-        static Window
-            Step2_ShowFakeBaseWindow()
+            Step1_ShowFakeBaseWindow()
         {
             var fakeBaseWindow = new Window
             {
@@ -452,7 +408,7 @@ namespace DoubleFile
         }
 
         static void
-            Step3_RepeatedInnerCheckForLockup(DarkWindow darkDialog, ref int nWindowCount)
+            Step2_RepeatedInnerCheckForLockup(DarkWindow darkDialog, ref int nWindowCount)
         {
             if (0 == nWindowCount)
                 nWindowCount = darkDialog.OwnedWindows.Count;
@@ -480,7 +436,7 @@ namespace DoubleFile
         }
 
         static void
-            Step4_CloseDarkDialog(DarkWindow darkDialog)
+            Step3_CloseDarkDialog(DarkWindow darkDialog)
         {
             if (false ==
                 darkDialog.OwnedWindows
@@ -511,7 +467,7 @@ namespace DoubleFile
         }
 
         static void
-            Step5_LastCheckForLockup()
+            Step4_LastCheckForLockup()
         {
             // Look for a modal window stuck behind a dark window and bring it to top. This happens.
             var nativeModalWindow = Application.Current.Windows

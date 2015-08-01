@@ -11,7 +11,7 @@ namespace DoubleFile
         public string Path { get { return SubItems[0]; } private set { SetProperty(0, value); } }
 
         internal override int NumCols => NumCols_;
-        internal const int NumCols_ = 2;
+        internal const int NumCols_ = 1;
 
         protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
         static string[] _propNamesA = null;

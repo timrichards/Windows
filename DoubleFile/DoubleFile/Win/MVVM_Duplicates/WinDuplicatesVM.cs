@@ -41,7 +41,7 @@ namespace DoubleFile
         }
         LVitem_FileDuplicatesVM _selectedItem = null;
 
-        public string WidthHeader => SCW;       // franken all NaN
+        public string WidthFilename => SCW;       // franken all NaN
         public string WidthPath => SCW;
 
         internal override int NumCols => LVitem_FileDuplicatesVM.NumCols_;

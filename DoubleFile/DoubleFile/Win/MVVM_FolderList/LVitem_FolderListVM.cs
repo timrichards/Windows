@@ -8,7 +8,7 @@
         public string Parent => LocalTreeNode.Parent?.FullPath;
 
         internal override int NumCols => NumCols_;
-        internal const int NumCols_ = 2;
+        internal const int NumCols_ = 0;
 
         protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
         static string[] _propNamesA = null;

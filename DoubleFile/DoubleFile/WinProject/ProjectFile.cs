@@ -18,7 +18,7 @@ namespace DoubleFile
 
     // The Process disposable field is managed by wrapper functions that dispose it once control returns.
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
-    class ProjectFile : IWinProgressClosing
+    class ProjectFile : IWinProgressClosing, IDisposable
     {
         static internal event Func<string> OnSavingProject = null;
         static internal event Action OnOpenedProject = null;
@@ -29,28 +29,18 @@ namespace DoubleFile
         static internal bool
             OpenProject(string strProjectFilename, WeakReference<IOpenListingFiles> openListingFilesWR, bool bClearItems)
         {
-            var projectFile = new ProjectFile();
-
-            _weakReference.Target = projectFile;
-
-            var bRet = projectFile.OpenProject_(strProjectFilename, openListingFilesWR, bClearItems);
-
-            Util.LocalDispose(projectFile._lsDisposable);
-            return bRet;
+            using (var projectFile = new ProjectFile())
+                return projectFile.OpenProject_(strProjectFilename, openListingFilesWR, bClearItems);
         }
 
         static internal bool
             SaveProject(LV_ProjectVM lvProjectVM, string strProjectFilename)
         {
-            var projectFile = new ProjectFile();
-
-            _weakReference.Target = projectFile;
-
-            var bRet = projectFile.SaveProject_(lvProjectVM, strProjectFilename);
-
-            Util.LocalDispose(projectFile._lsDisposable);
-            return bRet;
+            using (var projectFile = new ProjectFile())
+                return projectFile.SaveProject_(lvProjectVM, strProjectFilename);
         }
+
+        public void Dispose() => Util.LocalDispose(_lsDisposable);
 
         ProjectFile()
         {
@@ -460,7 +450,5 @@ namespace DoubleFile
             _status = null;
         readonly Process
             _process = null;
-        static readonly WeakReference
-            _weakReference = new WeakReference(null);
     }
 }

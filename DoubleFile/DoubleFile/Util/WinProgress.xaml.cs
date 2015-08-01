@@ -25,6 +25,14 @@ namespace DoubleFile
             AllowSubsequentProcess() { _bAllowSubsequentProcess = true; return this; }
         bool _bAllowSubsequentProcess = false;
 
+        internal static WinProgress
+            CloseForced() => WithWinProgress(w =>
+        {
+            return
+                (w.LocalIsClosed)
+                ? w
+                : (WinProgress) w.Abort().Close();
+        });
         internal WinProgress
             Abort() { _bAborted = true; return this; }
         bool _bAborted = false;
@@ -37,12 +45,15 @@ namespace DoubleFile
                 if (w.LocalIsClosed ||
                     w._bAllowSubsequentProcess)
                 {
-                    return false;   // from lambda
+                    return w;   // from lambda
                 }
 
                 Util.Assert(99792, false);
-                w.Abort().Close();
-                return false;       // from lambda
+
+                return
+                    w           // from lambda
+                    .Abort()
+                    .Close();
             });
 
             _wr.SetTarget(this);

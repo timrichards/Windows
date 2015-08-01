@@ -138,9 +138,7 @@ namespace DoubleFile
                     if (OpenListingFiles(dlg.FileNames, userCanceled: () => _bUserCanceled))
                         _lvVM.Unsaved = true;
 
-                    winProgress
-                        .Abort()
-                        .Close();
+                    WinProgress.CloseForced();
                 }))
             {
                 WindowClosingCallback = new WeakReference<IWinProgressClosing>(this)

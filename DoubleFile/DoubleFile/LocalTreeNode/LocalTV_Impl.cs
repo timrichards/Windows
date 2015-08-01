@@ -137,10 +137,7 @@ namespace DoubleFile
         {
             if (0 == _rootNodes.Count)
             {
-                WinProgress.WithWinProgress(w => w
-                    .Abort()
-                    .Close());
-
+                WinProgress.CloseForced();
                 return;
             }
 

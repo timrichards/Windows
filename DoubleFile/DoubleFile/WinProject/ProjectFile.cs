@@ -170,17 +170,7 @@ namespace DoubleFile
                 Directory.Delete(TempPath01, true);
             }
 
-            WinProgress.WithWinProgress(w =>
-            {
-                if (w.LocalIsClosed)
-                    return w;   // from lambda
-
-                return
-                    w           // from lambda
-                  .Abort()
-                  .Close();
-            });
-
+            WinProgress.CloseForced();
             _bProcessing = false;
             return bRet && (false == _bUserCanceled);
         }
@@ -417,15 +407,7 @@ namespace DoubleFile
 
             // bootstrap the window close with a delay then messagebox
             // otherwise it freezes
-            WinProgress.WithWinProgress(w =>
-            {
-                if (w.LocalIsClosed)
-                    return false;   // from lambda
-
-                w.Abort();
-                w.Close();
-                return false;       // from lambda
-            });
+            WinProgress.CloseForced();
 
             // One-shot: no need to dispose
             Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()

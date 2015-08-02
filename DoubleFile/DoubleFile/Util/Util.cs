@@ -163,7 +163,7 @@ namespace DoubleFile
         {
             try
             {
-                source.ForEach(doSomething);
+                Parallel.ForEach(source, options, doSomething);
             }
             catch (OperationCanceledException)
             {
@@ -212,6 +212,15 @@ namespace DoubleFile
             {
                 blockingFrame.Continue = false;
             }
+        }
+
+        static internal void Using<T>(T t, Action<T> doSomething) where T : IDisposable
+        {
+            doSomething(t);
+
+            // doesn't have to be on the UI thread, but file create/open/close stream doesn't seem to work simultaneously
+            // Util.UIthread blocks until done, making all threads queue up.
+            Util.UIthread(99677, () => t.Dispose());
         }
 
         static internal void Write(string str)

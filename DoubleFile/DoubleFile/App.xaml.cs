@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.IO.IsolatedStorage;
 using System.Reactive.Linq;
 using System.Windows;

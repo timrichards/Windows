@@ -80,9 +80,21 @@ namespace DoubleFile
                 if (false == App.IsoStore.DirectoryExists(ProjectFile.TempPathIso))
                     App.IsoStore.CreateDirectory(ProjectFile.TempPathIso);
 
+                FileStream fs = null;
+
+                // doesn't have to be on the UI thread, but file create/open/close stream doesn't seem to work simultaneously
+                // Util.UIthread blocks until done, making all threads queue up.
+                Util.UIthread(99679, () =>
+                {
+                    if (App.IsoStore.FileExists(LVitemProjectVM.ListingFile))
+                        App.IsoStore.DeleteFile(LVitemProjectVM.ListingFile);
+
+                    fs = App.IsoStore.CreateFile(LVitemProjectVM.ListingFile);
+                });
+
                 try
                 {
-                    using (var sw = new StreamWriter(App.IsoStore.CreateFile(LVitemProjectVM.ListingFile)))
+                    Util.Using(new StreamWriter(fs), sw =>
                     {
                         WriteHeader(sw);
                         sw.WriteLine();
@@ -104,7 +116,7 @@ namespace DoubleFile
 
                         sw.WriteLine();
                         sw.WriteLine(FormatString(strDir: ksTotalLengthLoc01, nLength: LengthRead));
-                    }
+                    });
 
                     if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                         _bThreadAbort)

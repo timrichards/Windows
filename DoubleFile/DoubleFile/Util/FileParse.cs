@@ -111,17 +111,17 @@ namespace DoubleFile
         {
             var strFile_01 = StrFile_01(strFile);
 
-            if (File.Exists(strFile_01))
-                File.Delete(strFile_01);
+            if (Statics.IsoStore.FileExists(strFile_01))
+                Statics.IsoStore.DeleteFile(strFile_01);
 
-            File.Move(strFile, strFile_01);
+            Statics.IsoStore.MoveFile(strFile, strFile_01);
 
             string strLine = null;
             long nLineNo = 0;       // lines number from one
             var bAtErrors = false;
 
-            using (var file_out = new StreamWriter(strFile))
-            using (var file_in = new StreamReader(strFile_01))
+            using (var file_out = new StreamWriter(Statics.IsoStore.CreateFile(strFile)))
+            using (var file_in = new StreamReader(Statics.IsoStore.OpenFile(strFile_01, FileMode.Open)))
             while (null !=
                 (strLine = file_in.ReadLine()))
             {
@@ -354,7 +354,7 @@ namespace DoubleFile
             const int knLinesDesired = 4 + knDriveInfoItems;
             const int knLinesGrabFile = 10;
 
-            var asLines = File.ReadLines(strFile).Take(knLinesDesired + knLinesGrabFile)
+            var asLines = Statics.ReadLines(strFile).Take(knLinesDesired + knLinesGrabFile)
                 .ToArray();
 
             if (knLinesDesired > asLines.Length)
@@ -422,11 +422,11 @@ namespace DoubleFile
         {
             var retVal = Tuple.Create(false, 0UL, 0);
 
-            if (false == File.Exists(strFile))
+            if (false == Statics.IsoStore.FileExists(strFile))
                 return retVal;
 
             var arrLine =
-                File.ReadLines(strFile)
+                Statics.ReadLines(strFile)
                 .Take(1)
                 .ToArray();
 
@@ -444,7 +444,7 @@ namespace DoubleFile
             }
 
             if (false ==
-                File.ReadLines(strFile)
+                Statics.ReadLines(strFile)
                 .Take(1)
                 .Select(strLine => strLine.Split('\t'))
                 .Select(asLine => ((3 < asLine.Length) && (ksHeader == asLine[2])))
@@ -458,7 +458,7 @@ namespace DoubleFile
             ulong nScannedLength = 0;
             var nLinesTotal = 0;
 
-            File.ReadLines(strFile)
+            Statics.ReadLines(strFile)
                 .Where(strLine => strLine.StartsWith(ksLineType_Length))
                 .Select(strLine => strLine.Split('\t'))
                 .FirstOnlyAssert(asLine =>
@@ -479,9 +479,9 @@ namespace DoubleFile
             var strFile_01 = StrFile_01(strFile);
 
             if (bConvertFile &&
-                File.Exists(strFile_01))
+                Statics.IsoStore.FileExists(strFile_01))
             {
-                File.Delete(strFile_01);
+                Statics.IsoStore.DeleteFile(strFile_01);
             }
 
             return Tuple.Create(true, nScannedLength, nLinesTotal);

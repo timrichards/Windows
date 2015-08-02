@@ -183,7 +183,7 @@ namespace DoubleFile
                 var bOnlyHashV1pt0 = true;
 
                 foreach (var tuple in
-                    File
+                    Statics
                     .ReadLines(lvItem.ListingFile)
                     .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
                     .Select(strLine => strLine.Split('\t'))
@@ -327,55 +327,6 @@ namespace DoubleFile
             createFileDictStatus.Callback(bDone, nProgress);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        string Serialize()
-        {
-            using (var writer = new StreamWriter(_ksSerializeFile, false))
-            {
-                foreach (var kvp in _dictFiles)
-                {
-                    writer.Write(kvp.Key.Item1 + " " + kvp.Key.Item2);
-
-                    foreach (var ls in kvp.Value.Item2)
-                        writer.Write("\t" + ls);
-
-                    writer.WriteLine();
-                }
-            }
-
-            return _ksSerializeFile;
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        void Deserialize()
-        {
-            if (false == File.Exists(_ksSerializeFile))
-                return;
-
-            using (var reader = new StreamReader(_ksSerializeFile, false))
-            {
-                string strLine = null;
-                var nFolderScorer = 0U;
-
-                var dictFiles = new Dictionary<FileKeyTuple, Tuple<uint[], IEnumerable<int>>>();
-
-                while (null !=
-                    (strLine = reader.ReadLine()))
-                {
-                    var asLine = strLine.Split('\t');
-                    var asKey = asLine[0].Split(' ');
-
-                    dictFiles[FileKeyTuple.FactoryCreate(asKey[0], ("" + asKey[1]).ToUlong())] =
-                        Tuple.Create(new uint[] { nFolderScorer++, 0, 0 },
-                        asLine
-                        .Skip(1)
-                        .Select(s => ("" + s).ToInt()));
-                }
-
-                _dictFiles = dictFiles;
-            }
-        }
-
         static int GetLVitemProjectVM(int n) => (int)(n & _knItemVMmask) >> 24;
         static int SetLVitemProjectVM(ref int n, int v) => n = GetLineNumber(n) + (v << 24);
         static int GetLineNumber(int n) => n & 0x00FFFFFF;
@@ -383,9 +334,6 @@ namespace DoubleFile
 
         const uint
             _knItemVMmask = 0xFF000000;
-
-        readonly string
-            _ksSerializeFile = ProjectFile.TempPath + "_DuplicateFiles._";
 
         IReadOnlyDictionary<LVitem_ProjectVM, int>
             _dictLVtoItemNumber = null;

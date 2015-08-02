@@ -118,7 +118,7 @@ namespace DoubleFile
                     var lsFileLengths_ = new List<decimal>();
 
                     foreach (var nLength in
-                        File
+                        Statics
                         .ReadLines(lvItem.ListingFile)
                         .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
                         .Select(strLine => strLine.Split('\t'))

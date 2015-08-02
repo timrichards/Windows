@@ -49,7 +49,7 @@ namespace DoubleFile
                 if (false == _volStrings.CanLoad)
                     return;
 
-                using (var sr = new StreamReader(_volStrings.ListingFile))
+                using (var sr = new StreamReader(Statics.IsoStore.OpenFile(_volStrings.ListingFile, FileMode.Open)))
                 {
                     var strSearch = _strSearch;
                     var strCurrentNode = "" + _strCurrentNode;

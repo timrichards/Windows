@@ -23,8 +23,9 @@ namespace DoubleFile
         static internal event Func<string> OnSavingProject = null;
         static internal event Action OnOpenedProject = null;
 
-        static internal string TempPath => Path.GetTempPath() + @"DoubleFile\";
-        static internal string TempPath01 => TempPath.TrimEnd('\\') + "01";
+        static internal string TempPath => @"DoubleFile\";
+        static string _tempPath => Path.GetTempPath() + TempPath;
+        static string _tempPath01 => TempPath.TrimEnd('\\') + "01";
 
         static internal bool
             OpenProject(string strProjectFilename, WeakReference<IOpenListingFiles> openListingFilesWR, bool bClearItems)
@@ -44,49 +45,43 @@ namespace DoubleFile
 
         ProjectFile()
         {
-            _process = new Process
+            _lsDisposable.Add(
+                _process = new Process
             {
+                EnableRaisingEvents = true,
+
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = Path.GetDirectoryName(
-                        new Uri(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)
-                        .LocalPath) +
-                        @"\WinProject\7z920x86\7z.exe",
+                    FileName =
+                        Path.GetDirectoryName(new Uri(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)
+                        .LocalPath) + @"\WinProject\7z920x86\7z.exe",
 
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true
                 }
-            };
+            });
 
             _lsDisposable.Add(Observable.FromEventPattern<DataReceivedEventArgs>(_process, "OutputDataReceived")
                 .LocalSubscribe(99725, args => { Util.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); }));
 
             _lsDisposable.Add(Observable.FromEventPattern<DataReceivedEventArgs>(_process, "ErrorDataReceived")
                 .LocalSubscribe(99724, args => { Util.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); }));
-
-            _process.EnableRaisingEvents = true;
-            _lsDisposable.Add(_process);
         }
 
         bool OpenProject_(string strProjectFilename, WeakReference<IOpenListingFiles> openListingFilesWR, bool bClearItems)
         {
-            if (Directory.Exists(TempPath))                     // close box/cancel/undo
-            {
-                if (Directory.Exists(TempPath01))
-                    Directory.Delete(TempPath01, true);
+            if (Directory.Exists(_tempPath))
+                Directory.Delete(_tempPath, true);
 
-                Directory.Move(TempPath, TempPath01);
-            }
-
-            Directory.CreateDirectory(TempPath);
-
+            Directory.CreateDirectory(_tempPath);
+            
             var bRet = false;
 
             if (false == StartProcess((bClearItems ? "Opening" : "Appending") + " project",
                 Path.GetFileName(strProjectFilename),
-                TempPath,
+                _tempPath,
                 "e \"" + strProjectFilename + "\" -y",
                 () => bRet = OpenProjectExited(openListingFilesWR, bClearItems)))
             {
@@ -104,12 +99,7 @@ namespace DoubleFile
 
             if (bErr || _bUserCanceled)
             {
-                if (Directory.Exists(TempPath01))
-                {
-                    Directory.Delete(TempPath, true);
-                    Directory.Move(TempPath01, TempPath);
-                }
-
+                Directory.Delete(_tempPath, true);
                 _bProcessing = false;
                 return false;
             }
@@ -130,44 +120,66 @@ namespace DoubleFile
                 return false;
             }
 
+            foreach (var strFilename in Directory.GetFiles(_tempPath))
+            {
+                using (var sr = File.OpenText(strFilename))
+                using (var sw = new StreamWriter(Statics.IsoStore.CreateFile(TempPath + Path.GetFileName(strFilename))))
+                {
+                    const int kBufSize = 1024 * 1024 * 4;
+                    var buffer = new char[kBufSize];
+                    var nRead = 0;
+
+                    while (0 < (nRead = sr.Read(buffer, 0, kBufSize)))
+                        sw.Write(buffer, 0, nRead);
+                }
+            }
+
+            Directory.Delete(_tempPath, true);
+
             var bRet = openListingFiles.Callback
             (
-                Directory.GetFiles(TempPath)
+                Statics.IsoStore.GetFileNames(TempPath + "*.*")
                     .Where(s =>
                 {
                     var strExt = "" + Path.GetExtension(Path.GetFileName(s));
 
                     if (0 == strExt.Length)
-                        return false;   // both returns are from lambda
+                        return false;   // from lambda
 
-                    return 
+                    return              // from lambda
                         strExt
                         .Remove(0, 1)
                         .Equals(FileParse.ksFileExt_Listing,
                         StringComparison.InvariantCultureIgnoreCase);
-                }),
+                })
+                    .Select(strFilename => TempPath + strFilename),
                 bClearItems,
                 () => _bUserCanceled
             );
 
             OnOpenedProject?.Invoke();
 
-            if (Directory.Exists(TempPath01))
+            if (Statics.IsoStore.DirectoryExists(_tempPath01))
             {
                 if (false == bClearItems)
                 {
                     string strNew = null;
 
                     foreach (var strFile in
-                        Directory.GetFiles(TempPath01, "*.*")
-                        .Where(strFile => false == File.Exists(strNew = strFile.Replace(TempPath01, TempPath))))
+                        Statics.IsoStore.GetFileNames()
+                        .Where(strFile =>
+                    {
+                        return
+                            strFile.StartsWith(_tempPath01) &&
+                            (false == Statics.IsoStore.FileExists(strNew = strFile.Replace(_tempPath01, TempPath)));
+                    }))
                     {
                         // strNew is assigned each iteration in C# 4.
-                        File.Move(strFile, strNew);
+                        Statics.IsoStore.MoveFile(strFile, strNew);
                     }
                 }
 
-                Directory.Delete(TempPath01, true);
+                Statics.IsoStore.DeleteDirectory(_tempPath01);
             }
 
             WinProgress.CloseForced();
@@ -211,7 +223,7 @@ namespace DoubleFile
                     if (bSuccess)
                     {
                         strNewName = TempPath + strNewName;
-                        File.Copy(volStrings.ListingFile, strNewName);
+                        Statics.IsoStore.CopyFile(volStrings.ListingFile, strNewName);
                         volStrings.ListingFile = strNewName;
                     }
                 }
@@ -256,8 +268,8 @@ namespace DoubleFile
 
             var str7z = strProjectFilename + ".7z";
 
-            if (File.Exists(str7z))
-                File.Delete(str7z);
+            if (Statics.IsoStore.FileExists(str7z))
+                Statics.IsoStore.DeleteFile(str7z);
 
             if (false == StartProcess("Saving project", strProjectFileNoPath,
                 strPath,
@@ -282,10 +294,10 @@ namespace DoubleFile
                 return;
             }
 
-            if (File.Exists(strProjectFilename))
-                File.Delete(strProjectFilename);
+            if (Statics.IsoStore.FileExists(strProjectFilename))
+                Statics.IsoStore.DeleteFile(strProjectFilename);
 
-            File.Move(strProjectFilename + ".7z", strProjectFilename);
+            Statics.IsoStore.MoveFile(strProjectFilename + ".7z", strProjectFilename);
             _bProcessing = false;
             bRet = true;
             
@@ -308,7 +320,7 @@ namespace DoubleFile
 
                 try
                 {
-                    Directory.CreateDirectory(strDir);
+                    Statics.IsoStore.CreateDirectory(strDir);
                     bSuccess = true;
                     break;
                 }
@@ -320,7 +332,7 @@ namespace DoubleFile
             if (bSuccess)
             {
                 foreach (var listingFile in lsListingFiles)
-                    File.Copy(listingFile, strDir + '\\' + Path.GetFileName(listingFile));
+                    Statics.IsoStore.CopyFile(listingFile, strDir + '\\' + Path.GetFileName(listingFile));
 
                 strMessage = " Copied the listing files to\n" + strDir;
             }
@@ -403,7 +415,8 @@ namespace DoubleFile
             if (string.IsNullOrWhiteSpace(strError))
                 strError = "Error " + strMode.ToLower() + " project.";
 
-            File.AppendAllText(_strErrorLogFile, "" + _sbError);
+            using (var sw = new StreamWriter(Statics.IsoStore.OpenFile(_strErrorLogFile, FileMode.Append)))
+                sw.Write("" + _sbError);
 
             // bootstrap the window close with a delay then messagebox
             // otherwise it freezes

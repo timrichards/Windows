@@ -238,15 +238,6 @@ namespace DoubleFile
                 e.Cancel = true;
                 return;
             }
-
-            if (Directory.Exists(ProjectFile.TempPath))
-            {
-                try { Directory.Delete(ProjectFile.TempPath, true); }
-                catch { }
-            }
-
-            if (Directory.Exists(ProjectFile.TempPath01))
-                Directory.Delete(ProjectFile.TempPath01, true);
         }
 
         static readonly LinkGroup[]

@@ -128,7 +128,7 @@ namespace DoubleFile
 
         internal bool FileExists(string strListingFile)
         {
-            if (File.Exists(strListingFile) &&
+            if (Statics.IsoStore.FileExists(strListingFile) &&
                 ((false == strListingFile.StartsWith(ProjectFile.TempPath)) || FileParse.ValidateFile(strListingFile).Item1))
             {
                 MBoxStatic.ShowDialog("Listing file exists. Please manually delete it using the Save Listing\n" +
@@ -249,19 +249,19 @@ namespace DoubleFile
 
             var strFile_01 = FileParse.StrFile_01(lvItem_Orig.ListingFile);
 
-            if (File.Exists(strFile_01))
-                File.Delete(strFile_01);
+            if (Statics.IsoStore.FileExists(strFile_01))
+                Statics.IsoStore.DeleteFile(strFile_01);
 
-            File.Move(lvItem_Orig.ListingFile, strFile_01);
+            Statics.IsoStore.MoveFile(lvItem_Orig.ListingFile, strFile_01);
 
             var sbOut = new StringBuilder();
 
-            using (var reader = File.OpenText(strFile_01))
+            using (var reader = new StreamReader(Statics.IsoStore.OpenFile(strFile_01, FileMode.Open)))
             {
                 string strLine = null;
 
                 while ((bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo) &&
-                    (null != 
+                    (null !=
                     (strLine = reader.ReadLine())))
                 {
                     if (strLine.StartsWith(FileParse.ksLineType_Start))
@@ -317,15 +317,17 @@ namespace DoubleFile
                 if (sbOut.Length > 0)
                 {
                     ModifyDriveLetter();
-                    File.WriteAllText(lvItem_Orig.ListingFile, "" + sbOut);
+
+                    using (var sw = new StreamWriter(Statics.IsoStore.CreateFile(lvItem_Orig.ListingFile)))
+                        sw.Write(lvItem_Orig.ListingFile, "" + sbOut);
                 }
                 else
                 {
-                    Util.Assert(99988, false == File.Exists(lvItem_Orig.ListingFile));
+                    Util.Assert(99988, false == Statics.IsoStore.FileExists(lvItem_Orig.ListingFile));
 
                     try
                     {
-                        File.Delete(lvItem_Orig.ListingFile);
+                        Statics.IsoStore.DeleteFile(lvItem_Orig.ListingFile);
                     }
                     catch (Exception e)
                     {
@@ -334,7 +336,7 @@ namespace DoubleFile
                     }
                 }
 
-                using (var fileWriter = File.AppendText(lvItem_Orig.ListingFile))
+                using (var sw = new StreamWriter(Statics.IsoStore.OpenFile(lvItem_Orig.ListingFile, FileMode.Append)))
                 {
                     const int kBufSize = 1024 * 1024 * 4;
                     var buffer = new char[kBufSize];
@@ -346,7 +348,7 @@ namespace DoubleFile
                         sbOut.Clear();
                         sbOut.Append(buffer, 0, nRead);
                         ModifyDriveLetter();
-                        fileWriter.Write("" + sbOut);
+                        sw.Write("" + sbOut);
                     }
                 }
 

@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Windows;
 
 namespace DoubleFile

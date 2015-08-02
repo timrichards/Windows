@@ -6,7 +6,6 @@ using System.Linq;
 using System.Drawing.Drawing2D;
 using System.Threading;
 using System.Collections.Concurrent;
-using System.IO;
 using System.Reactive.Linq;
 
 namespace DoubleFile
@@ -420,7 +419,7 @@ namespace DoubleFile
             var lsFiles = new List<Tuple<string, ulong>>();
 
             foreach (var asFileLine
-                in File.ReadLines(strListingFile)
+                in Statics.ReadLines(strListingFile)
                 .Skip(nPrevDir)
                 .Take((nLineNo - nPrevDir - 1))
                 .Select(s =>

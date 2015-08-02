@@ -77,23 +77,22 @@ namespace DoubleFile
                         Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + "." + ksFileExt_Listing;
                 }
 
-                var strPathOrig = Directory.GetCurrentDirectory();
-
-                Directory.CreateDirectory(Path.GetDirectoryName(LVitemProjectVM.ListingFile));
+                if (false == Statics.IsoStore.DirectoryExists(ProjectFile.TempPath))
+                    Statics.IsoStore.CreateDirectory(ProjectFile.TempPath);
 
                 try
                 {
-                    using (TextWriter fs = File.CreateText(LVitemProjectVM.ListingFile))
+                    using (var sw = new StreamWriter(Statics.IsoStore.CreateFile(LVitemProjectVM.ListingFile)))
                     {
-                        WriteHeader(fs);
-                        fs.WriteLine();
-                        fs.WriteLine(FormatString(nHeader: 0));
-                        fs.WriteLine(FormatString(nHeader: 1));
-                        fs.WriteLine(ksStart01 + " " + DateTime.Now);
-                        WriteDirectoryListing(fs, Hash ? HashAllFiles(GetFileList()) : null);
-                        fs.WriteLine(ksEnd01 + " " + DateTime.Now);
-                        fs.WriteLine();
-                        fs.WriteLine(ksErrorsLoc01);
+                        WriteHeader(sw);
+                        sw.WriteLine();
+                        sw.WriteLine(FormatString(nHeader: 0));
+                        sw.WriteLine(FormatString(nHeader: 1));
+                        sw.WriteLine(ksStart01 + " " + DateTime.Now);
+                        WriteDirectoryListing(sw, Hash ? HashAllFiles(GetFileList()) : null);
+                        sw.WriteLine(ksEnd01 + " " + DateTime.Now);
+                        sw.WriteLine();
+                        sw.WriteLine(ksErrorsLoc01);
 
                         // Unit test metrix on non-system volume
                         //MBox.Assert(99893, nProgressDenominator >= nProgressNumerator);       file creation/deletion between times
@@ -101,20 +100,19 @@ namespace DoubleFile
                         //MBox.Assert(99891, nProgressDenominator == dictHash.Count);           ditto
 
                         foreach (var strError in ErrorList)
-                            fs.WriteLine(strError);
+                            sw.WriteLine(strError);
 
-                        fs.WriteLine();
-                        fs.WriteLine(FormatString(strDir: ksTotalLengthLoc01, nLength: LengthRead));
+                        sw.WriteLine();
+                        sw.WriteLine(FormatString(strDir: ksTotalLengthLoc01, nLength: LengthRead));
                     }
 
                     if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                         _bThreadAbort)
                     {
-                        File.Delete(LVitemProjectVM.ListingFile);
+                        Statics.IsoStore.DeleteFile(LVitemProjectVM.ListingFile);
                         return;
                     }
 
-                    Directory.SetCurrentDirectory(strPathOrig);
                     StatusCallback(LVitemProjectVM, bDone: true);
                 }
 #if DEBUG == false

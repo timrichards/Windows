@@ -121,7 +121,7 @@ namespace DoubleFile
                     return null;     // from lambda
 
                 return
-                    File
+                    Statics
                     .ReadLines(strListingFile)
                     .Skip(nPrevDir)
                     .Take((nLineNo - nPrevDir - 1))

@@ -160,25 +160,22 @@ namespace DoubleFile
             if (new[] { Key.Tab, Key.Back, Key.Delete, Key.Left, Key.Right }.Contains(e.Key))
                 return;
 
-            if (0 < formEdit_DriveLetter.Text.Length)
-            {
-                e.Handled = true;
-                return;
-            }
-            
-            if ((Key.A > e.Key) ||
-                (Key.Z < e.Key))
-            {
-                e.Handled = true;
-                return;
-            }
+            e.Handled = true;
 
-            if ((new KeyConverter().ConvertToString(e.Key) + "\0")[0] ==
-                formEdit_SourcePath.Text[0])
-            {
-                e.Handled = true;
+            if ((Key.A > e.Key) || (Key.Z < e.Key))
                 return;
-            }
+
+            var strChar = "" + (new KeyConverter().ConvertToString(e.Key) + "\0")[0];
+
+            if (strChar[0] == formEdit_SourcePath.Text[0])
+                strChar = null;
+
+            var selStart = formEdit_DriveLetter.SelectionStart;
+            var selLength = formEdit_DriveLetter.SelectionLength;
+
+            formEdit_DriveLetter.Text = strChar;
+            formEdit_DriveLetter.SelectionStart = selStart;
+            formEdit_DriveLetter.SelectionLength = selLength;
         }
 
         void formEdit_ListingFile_LostFocus()

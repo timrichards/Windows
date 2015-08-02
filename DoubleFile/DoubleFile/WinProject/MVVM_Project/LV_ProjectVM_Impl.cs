@@ -247,12 +247,17 @@ namespace DoubleFile
                 return false;
             }
 
-            var strFile_01 = FileParse.StrFile_01(lvItem_Orig.ListingFile);
+            var strIsoFile = ProjectFile.TempPathIso + Path.GetFileName(lvItem_Orig.ListingFile);
+
+            if (':' == lvItem_Orig.ListingFile[1])
+                lvItem_Orig.ListingFile.FileMoveToIso(strIsoFile);
+
+            var strFile_01 = FileParse.StrFile_01(strIsoFile);
 
             if (App.IsoStore.FileExists(strFile_01))
                 App.IsoStore.DeleteFile(strFile_01);
 
-            App.IsoStore.MoveFile(lvItem_Orig.ListingFile, strFile_01);
+            App.IsoStore.MoveFile(strIsoFile, strFile_01);
 
             var sbOut = new StringBuilder();
 
@@ -314,20 +319,20 @@ namespace DoubleFile
                 if (bDriveLetter_Todo)
                     ModifyDriveLetter = () => sbOut.Replace("\t" + driveLetterOrig + @":\", "\t" + driveLetter + @":\");
 
-                if (sbOut.Length > 0)
+                if (0 < sbOut.Length)
                 {
                     ModifyDriveLetter();
 
-                    using (var sw = new StreamWriter(App.IsoStore.CreateFile(lvItem_Orig.ListingFile)))
-                        sw.Write(lvItem_Orig.ListingFile, "" + sbOut);
+                    using (var sw = new StreamWriter(App.IsoStore.CreateFile(strIsoFile)))
+                        sw.Write("" + sbOut);
                 }
                 else
                 {
-                    Util.Assert(99988, false == App.IsoStore.FileExists(lvItem_Orig.ListingFile));
+                    Util.Assert(99988, false == App.IsoStore.FileExists(strIsoFile));
 
                     try
                     {
-                        App.IsoStore.DeleteFile(lvItem_Orig.ListingFile);
+                        App.IsoStore.DeleteFile(strIsoFile);
                     }
                     catch (Exception e)
                     {
@@ -336,7 +341,7 @@ namespace DoubleFile
                     }
                 }
 
-                using (var sw = new StreamWriter(App.IsoStore.OpenFile(lvItem_Orig.ListingFile, FileMode.Append)))
+                using (var sw = new StreamWriter(App.IsoStore.OpenFile(strIsoFile, FileMode.Append)))
                     Util.CopyStream(sr, sw, (buffer, nRead) =>
                 {
                     sbOut.Clear();
@@ -350,6 +355,18 @@ namespace DoubleFile
             }
 
             Util.Assert(99987, (false == (bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo || bDriveLetter_Todo)));
+
+            if (':' == lvItem_Orig.ListingFile[1])
+            {
+                File.Delete(lvItem_Orig.ListingFile);
+
+                using (var sr = new StreamReader(App.IsoStore.OpenFile(strIsoFile, FileMode.Open)))
+                using (var sw = new StreamWriter(File.OpenWrite(lvItem_Orig.ListingFile)))
+                    Util.CopyStream(sr, sw);
+
+                App.IsoStore.DeleteFile(strIsoFile);
+            }
+
             return true;
         }
     }

@@ -68,24 +68,28 @@ namespace DoubleFile
                 : App.IsoStore.FileExists(strFile);
         }
 
-        static internal void FileMoveToIso(this string strSource, string strIsoDest)
+        static internal string
+            FileMoveToIso(this string strSource, string strIsoDest)
         {
             if (null == strSource)
-                return;
+                return null;
 
             if (2 > strSource.Length)
             {
                 App.IsoStore.MoveFile(strSource, strIsoDest);
-                return;
+                return strIsoDest;
             }
 
             if (':' == strSource[1])
                 MoveFile_(strSource, strIsoDest);
             else
                 App.IsoStore.MoveFile(strSource, strIsoDest);
+
+            return strIsoDest;
         }
 
-        static internal void MoveFile_(string strSource, string strDest)
+        static void
+            MoveFile_(string strSource, string strDest)
         {
             using (var sr = File.OpenText(strSource))
             using (var sw = new StreamWriter(App.IsoStore.CreateFile(ProjectFile.TempPathIso + Path.GetFileName(strDest))))

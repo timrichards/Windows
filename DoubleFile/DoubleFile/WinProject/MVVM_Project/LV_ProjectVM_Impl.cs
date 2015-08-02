@@ -128,7 +128,7 @@ namespace DoubleFile
 
         internal bool FileExists(string strListingFile)
         {
-            if (Statics.IsoStore.FileExists(strListingFile) &&
+            if (App.IsoStore.FileExists(strListingFile) &&
                 ((false == strListingFile.StartsWith(ProjectFile.TempPath)) || FileParse.ValidateFile(strListingFile).Item1))
             {
                 MBoxStatic.ShowDialog("Listing file exists. Please manually delete it using the Save Listing\n" +
@@ -249,14 +249,14 @@ namespace DoubleFile
 
             var strFile_01 = FileParse.StrFile_01(lvItem_Orig.ListingFile);
 
-            if (Statics.IsoStore.FileExists(strFile_01))
-                Statics.IsoStore.DeleteFile(strFile_01);
+            if (App.IsoStore.FileExists(strFile_01))
+                App.IsoStore.DeleteFile(strFile_01);
 
-            Statics.IsoStore.MoveFile(lvItem_Orig.ListingFile, strFile_01);
+            App.IsoStore.MoveFile(lvItem_Orig.ListingFile, strFile_01);
 
             var sbOut = new StringBuilder();
 
-            using (var reader = new StreamReader(Statics.IsoStore.OpenFile(strFile_01, FileMode.Open)))
+            using (var reader = new StreamReader(App.IsoStore.OpenFile(strFile_01, FileMode.Open)))
             {
                 string strLine = null;
 
@@ -318,16 +318,16 @@ namespace DoubleFile
                 {
                     ModifyDriveLetter();
 
-                    using (var sw = new StreamWriter(Statics.IsoStore.CreateFile(lvItem_Orig.ListingFile)))
+                    using (var sw = new StreamWriter(App.IsoStore.CreateFile(lvItem_Orig.ListingFile)))
                         sw.Write(lvItem_Orig.ListingFile, "" + sbOut);
                 }
                 else
                 {
-                    Util.Assert(99988, false == Statics.IsoStore.FileExists(lvItem_Orig.ListingFile));
+                    Util.Assert(99988, false == App.IsoStore.FileExists(lvItem_Orig.ListingFile));
 
                     try
                     {
-                        Statics.IsoStore.DeleteFile(lvItem_Orig.ListingFile);
+                        App.IsoStore.DeleteFile(lvItem_Orig.ListingFile);
                     }
                     catch (Exception e)
                     {
@@ -336,7 +336,7 @@ namespace DoubleFile
                     }
                 }
 
-                using (var sw = new StreamWriter(Statics.IsoStore.OpenFile(lvItem_Orig.ListingFile, FileMode.Append)))
+                using (var sw = new StreamWriter(App.IsoStore.OpenFile(lvItem_Orig.ListingFile, FileMode.Append)))
                 {
                     const int kBufSize = 1024 * 1024 * 4;
                     var buffer = new char[kBufSize];

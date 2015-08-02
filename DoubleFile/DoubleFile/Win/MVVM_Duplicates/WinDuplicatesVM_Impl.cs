@@ -109,8 +109,8 @@ namespace DoubleFile
                 var nMatchLine = lsLineNumbers[0];
 
                 foreach (var strLine
-                    in Statics
-                    .ReadLines(g.Key.ListingFile))
+                    in g.Key.ListingFile
+                    .ReadLines())
                 {
                     if (_cts.IsCancellationRequested)
                         return;     // from lambda

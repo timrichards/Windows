@@ -183,8 +183,8 @@ namespace DoubleFile
                 var bOnlyHashV1pt0 = true;
 
                 foreach (var tuple in
-                    Statics
-                    .ReadLines(lvItem.ListingFile)
+                    lvItem.ListingFile
+                    .ReadLines()
                     .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
                     .Select(strLine => strLine.Split('\t'))
                     .Where(asLine => 10 < asLine.Length)

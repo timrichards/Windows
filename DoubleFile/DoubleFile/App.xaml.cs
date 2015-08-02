@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.IO.IsolatedStorage;
 using System.Reactive.Linq;
 using System.Windows;
 
@@ -9,6 +12,9 @@ namespace DoubleFile
     /// </summary>
     public partial class App : Application
     {
+        static internal IsolatedStorageFile
+            IsoStore = IsolatedStorageFile.GetUserStoreForAssembly();
+
         static internal IObservable<Tuple<bool, int>>   // bool is a no-op: generic placeholder
             DeactivateDidOccur => _deactivateDidOccur;
         static readonly LocalSubject<bool> _deactivateDidOccur = new LocalSubject<bool>();

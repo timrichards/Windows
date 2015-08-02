@@ -77,12 +77,12 @@ namespace DoubleFile
                         Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + "." + ksFileExt_Listing;
                 }
 
-                if (false == Statics.IsoStore.DirectoryExists(ProjectFile.TempPath))
-                    Statics.IsoStore.CreateDirectory(ProjectFile.TempPath);
+                if (false == App.IsoStore.DirectoryExists(ProjectFile.TempPath))
+                    App.IsoStore.CreateDirectory(ProjectFile.TempPath);
 
                 try
                 {
-                    using (var sw = new StreamWriter(Statics.IsoStore.CreateFile(LVitemProjectVM.ListingFile)))
+                    using (var sw = new StreamWriter(App.IsoStore.CreateFile(LVitemProjectVM.ListingFile)))
                     {
                         WriteHeader(sw);
                         sw.WriteLine();
@@ -109,7 +109,7 @@ namespace DoubleFile
                     if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                         _bThreadAbort)
                     {
-                        Statics.IsoStore.DeleteFile(LVitemProjectVM.ListingFile);
+                        App.IsoStore.DeleteFile(LVitemProjectVM.ListingFile);
                         return;
                     }
 

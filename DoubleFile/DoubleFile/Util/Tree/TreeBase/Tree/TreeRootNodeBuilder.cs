@@ -119,12 +119,12 @@ namespace DoubleFile
                         if (bValid || bAttemptConvert)
                             break;
 
-                        if (false == Statics.IsoStore.FileExists(StrFile_01(_volStrings.ListingFile)))
+                        if (false == App.IsoStore.FileExists(StrFile_01(_volStrings.ListingFile)))
                             break;
 
                         try
                         {
-                            Statics.IsoStore.DeleteFile(StrFile_01(_volStrings.ListingFile));
+                            App.IsoStore.DeleteFile(StrFile_01(_volStrings.ListingFile));
                         }
                         catch (IOException) { }
 
@@ -144,8 +144,8 @@ namespace DoubleFile
 
                 {
                     var ieDriveInfo =
-                        Statics
-                        .ReadLines(_volStrings.ListingFile)
+                        _volStrings.ListingFile
+                        .ReadLines()
                         .Where(s => s.StartsWith(ksLineType_VolumeInfo));
 
                     var strBuilder = new StringBuilder();
@@ -193,8 +193,8 @@ namespace DoubleFile
                 }
 
                 var dirData =
-                    Statics
-                    .ReadLines(_volStrings.ListingFile)
+                    _volStrings.ListingFile
+                    .ReadLines()
                     .Where(s => s.StartsWith(ksLineType_Start))
                     .Select(s => new DirData((s.Split('\t')[1]).ToInt()))
                     .FirstOnlyAssert();
@@ -207,7 +207,7 @@ namespace DoubleFile
                     ? 11
                     : 10;
 
-                foreach (var strLine in Statics.ReadLines(_volStrings.ListingFile))
+                foreach (var strLine in _volStrings.ListingFile.ReadLines())
                 {
                     if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                         _bThreadAbort)
@@ -270,8 +270,8 @@ namespace DoubleFile
                 StatusCallback(_volStrings, rootTreeNode);
 
 #if (DEBUG && FOOBAR)
-                Util.WriteLine("" + C.IsoStore.ReadLines(_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_File)).Sum(s => (decimal)(s.Split('\t')[knColLength]).ToUlong()));
-                Util.WriteLine("" + C.IsoStore.ReadLines(_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => (decimal)(s.Split('\t')[knColLength]).ToUlong()));
+                Util.WriteLine("" + App.ReadLines(_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_File)).Sum(s => (decimal)(s.Split('\t')[knColLength]).ToUlong()));
+                Util.WriteLine("" + App.ReadLines(_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => (decimal)(s.Split('\t')[knColLength]).ToUlong()));
 
                 ulong nScannedLength = 0;
 

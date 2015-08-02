@@ -2,8 +2,8 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Windows;
 
 namespace DoubleFile
@@ -52,7 +52,90 @@ namespace DoubleFile
         }
     }
 
-    static class ExtensionMethodsStatic
+    static partial class ExtensionMethodsStatic
+    {
+        static internal bool FileExists(this string strFile)
+        {
+            if (null == strFile)
+                return false;
+
+            if (2 > strFile.Length)
+                return App.IsoStore.FileExists(strFile);
+
+            return
+                (':' == strFile[1])
+                ? File.Exists(strFile)
+                : App.IsoStore.FileExists(strFile);
+        }
+
+        static internal void MoveFile(this string strSource, string strDest)
+        {
+            if (null == strSource)
+                return;
+
+            if (2 > strSource.Length)
+            {
+                App.IsoStore.MoveFile(strSource, strDest);
+                return;
+            }
+
+            if (':' == strSource[1])
+                MoveFile_(strSource, strDest);
+            else
+                App.IsoStore.MoveFile(strSource, strDest);
+        }
+
+        static internal void MoveFile_(string strSource, string strDest)
+        {
+            using (var sr = File.OpenText(strSource))
+            using (var sw = new StreamWriter(App.IsoStore.CreateFile(ProjectFile.TempPath + Path.GetFileName(strDest))))
+            {
+                const int kBufSize = 1024 * 1024 * 4;
+                var buffer = new char[kBufSize];
+                var nRead = 0;
+
+                while (0 < (nRead = sr.Read(buffer, 0, kBufSize)))
+                    sw.Write(buffer, 0, nRead);
+            }
+
+            File.Delete(strSource);
+        }
+
+        static internal IEnumerable<string> ReadLines(this string strFile)
+        {
+            if (null == strFile)
+                return new string[0];
+
+            if (2 > strFile.Length)
+                return ReadLines_(strFile);
+
+            return
+                (':' == strFile[1])
+                ? File.ReadLines(strFile)
+                : ReadLines_(strFile);
+        }
+
+        static IEnumerable<string>
+            ReadLines_(string path)
+        {
+            var nCount = 0;
+
+            using (var fs = new StreamReader(App.IsoStore.OpenFile(path, FileMode.Open)))
+            {
+                string strLine = null;
+
+                while (null != (strLine = fs.ReadLine()))
+                {
+                    ++nCount;
+                    yield return strLine;
+                }
+            }
+
+            Util.WriteLine("" + nCount + " " + path);
+        }
+    }
+
+    static partial class ExtensionMethodsStatic
     {
         static internal T As<T>(this object o) where T: class => (o is T) ? (T)o : null;  // 20x faster than as p. 123
 

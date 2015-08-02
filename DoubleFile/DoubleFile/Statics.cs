@@ -1,30 +1,11 @@
 ﻿using System.Windows.Media;
 using System;
 using System.Windows;
-using System.IO.IsolatedStorage;
-using System.Collections.Generic;
-using System.IO;
 
 namespace DoubleFile
 {
     public class Statics
     {
-        static internal IsolatedStorageFile
-            IsoStore => _isoStore;
-        static IsolatedStorageFile _isoStore = IsolatedStorageFile.GetUserStoreForAssembly();
-
-        static internal IEnumerable<string>
-            ReadLines(string path)
-        {
-            using (var fs = new StreamReader(IsoStore.OpenFile(path, FileMode.Open)))
-            {
-                string strLine = null;
-
-                while (null != (strLine = fs.ReadLine()))
-                    yield return strLine;
-            }
-        }
-
         static internal LocalUserControlBase
             CurrentPage
         {

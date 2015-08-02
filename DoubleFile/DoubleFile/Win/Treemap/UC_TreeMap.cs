@@ -419,7 +419,7 @@ namespace DoubleFile
             var lsFiles = new List<Tuple<string, ulong>>();
 
             foreach (var asFileLine
-                in Statics.ReadLines(strListingFile)
+                in strListingFile.ReadLines()
                 .Skip(nPrevDir)
                 .Take((nLineNo - nPrevDir - 1))
                 .Select(s =>

@@ -129,7 +129,7 @@ namespace DoubleFile
         internal bool FileExists(string strListingFile)
         {
             if (App.IsoStore.FileExists(strListingFile) &&
-                ((false == strListingFile.StartsWith(ProjectFile.TempPath)) || FileParse.ValidateFile(strListingFile).Item1))
+                ((false == strListingFile.StartsWith(ProjectFile.TempPathIso)) || FileParse.ValidateFile(strListingFile).Item1))
             {
                 MBoxStatic.ShowDialog("Listing file exists. Please manually delete it using the Save Listing\n" +
                     "File dialog by clicking the icon button after this alert closes.", "New Listing File");
@@ -256,13 +256,13 @@ namespace DoubleFile
 
             var sbOut = new StringBuilder();
 
-            using (var reader = new StreamReader(App.IsoStore.OpenFile(strFile_01, FileMode.Open)))
+            using (var sr = new StreamReader(App.IsoStore.OpenFile(strFile_01, FileMode.Open)))
             {
                 string strLine = null;
 
                 while ((bDriveModel_Todo || bDriveSerial_Todo || bNickname_Todo) &&
                     (null !=
-                    (strLine = reader.ReadLine())))
+                    (strLine = sr.ReadLine())))
                 {
                     if (strLine.StartsWith(FileParse.ksLineType_Start))
                     {
@@ -337,20 +337,14 @@ namespace DoubleFile
                 }
 
                 using (var sw = new StreamWriter(App.IsoStore.OpenFile(lvItem_Orig.ListingFile, FileMode.Append)))
+                    Util.CopyStream(sr, sw, (buffer, nRead) =>
                 {
-                    const int kBufSize = 1024 * 1024 * 4;
-                    var buffer = new char[kBufSize];
-                    var nRead = 0;
-
-                    while (0 <
-                        (nRead = reader.Read(buffer, 0, kBufSize)))
-                    {
-                        sbOut.Clear();
-                        sbOut.Append(buffer, 0, nRead);
-                        ModifyDriveLetter();
-                        sw.Write("" + sbOut);
-                    }
-                }
+                    sbOut.Clear();
+                    sbOut.Append(buffer, 0, nRead);
+                    ModifyDriveLetter();
+                    sbOut.CopyTo(0, buffer, 0, nRead);
+                    return buffer;
+                });
 
                 bDriveLetter_Todo = false;
             }

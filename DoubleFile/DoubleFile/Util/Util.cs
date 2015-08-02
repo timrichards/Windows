@@ -50,6 +50,19 @@ namespace DoubleFile
         static internal T
             Closure<T>(Func<T> action) => action();
 
+        static internal void CopyStream(StreamReader sr, StreamWriter sw, Func<char[], int, char[]> replace = null)
+        {
+            const int kBufSize = 1024 * 1024 * 4;
+            var buffer = new char[kBufSize];
+            var nRead = 0;
+
+            if (null == replace)
+                replace = (x, n) => x;
+
+            while (0 < (nRead = sr.Read(buffer, 0, kBufSize)))
+                sw.Write(replace(buffer, nRead), 0, nRead);
+        }
+
         static internal string
             DecodeAttributes(string strAttr)
         {
@@ -150,7 +163,7 @@ namespace DoubleFile
         {
             try
             {
-                Parallel.ForEach(source, options, doSomething);
+                source.ForEach(doSomething);
             }
             catch (OperationCanceledException)
             {

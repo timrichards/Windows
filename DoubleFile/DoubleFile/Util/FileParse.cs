@@ -114,7 +114,7 @@ namespace DoubleFile
             if (App.IsoStore.FileExists(strFile_01))
                 App.IsoStore.DeleteFile(strFile_01);
 
-            strFile.MoveFile(strFile_01);
+            strFile.FileMoveToIso(strFile_01);
 
             string strLine = null;
             long nLineNo = 0;       // lines number from one

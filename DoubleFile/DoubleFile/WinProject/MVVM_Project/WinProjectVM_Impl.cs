@@ -75,7 +75,7 @@ namespace DoubleFile
                 {
                     strFilename = dlg.FileName;
 
-                    if (App.IsoStore.FileExists(strFilename))
+                    if (File.Exists(strFilename))
                     {
                         MBoxStatic.ShowDialog("Project file exists. Please manually delete it using the Save Project dialog after this alert closes.", "Save Project");
                         continue;

@@ -72,13 +72,13 @@ namespace DoubleFile
                 if (string.IsNullOrWhiteSpace(LVitemProjectVM.ListingFile))
                 {
                     LVitemProjectVM.ListingFile =
-                        ProjectFile.TempPath +
+                        ProjectFile.TempPathIso +
                         LVitemProjectVM.SourcePath[0] + "_Listing_" +
                         Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + "." + ksFileExt_Listing;
                 }
 
-                if (false == App.IsoStore.DirectoryExists(ProjectFile.TempPath))
-                    App.IsoStore.CreateDirectory(ProjectFile.TempPath);
+                if (false == App.IsoStore.DirectoryExists(ProjectFile.TempPathIso))
+                    App.IsoStore.CreateDirectory(ProjectFile.TempPathIso);
 
                 try
                 {

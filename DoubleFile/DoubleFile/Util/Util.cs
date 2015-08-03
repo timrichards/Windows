@@ -237,23 +237,23 @@ namespace DoubleFile
 
         class D : IDisposable { public void Dispose() { } }
         static internal void
-            UsingISO(Action<IDisposable> doSomething, IsolatedStorageFile isoStore = null)
+            UsingIso(Action<IDisposable> doSomething, IsolatedStorageFile isoStore = null)
         {
-            UsingISO(() => new D(), doSomething);
+            UsingIso(() => new D(), doSomething);
         }
 
         static readonly string _strLockFile = Path.GetTempPath() + "DoubleFile_IsoLock";
 
         static internal void
-            UsingISO<T>(Func<T> openFile, Action<T> doSomething) where T : IDisposable
+            UsingIso<T>(Func<T> openFile, Action<T> doSomething) where T : IDisposable
         {
-            Func<FileStream> checkLockFile = () =>
+            Func<IDisposable> checkLockFile = () =>
             {
                 try { return File.Open(_strLockFile, FileMode.OpenOrCreate, FileAccess.Read, FileShare.None); }
                 catch (IOException) { return null; }
             };
 
-            FileStream lockFile = null;
+            IDisposable lockFile = null;
 
             while (null == (lockFile = checkLockFile()))
                 Block(100);

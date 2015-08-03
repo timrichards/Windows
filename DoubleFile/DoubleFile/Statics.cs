@@ -128,7 +128,7 @@ namespace DoubleFile
                 // files at root are lock files. Temp files are in TempPathIso
                 foreach (var strFile in isoStore.GetFileNames())
                 {
-                    try { Util.UsingISO(x => isoStore.DeleteFile(strFile), isoStore); }
+                    try { Util.UsingIso(x => isoStore.DeleteFile(strFile), isoStore); }
                     catch (IsolatedStorageException) { bLocked = true; break; }
                 }
 
@@ -139,12 +139,12 @@ namespace DoubleFile
             CleanupTemp();
             IsoStore = IsolatedStorageFile.GetUserStoreForAssembly();
 
-            Util.UsingISO(x =>
+            Util.UsingIso(x =>
                 _lockTempIsoDir =
                 IsoStore.OpenFile(Path.GetRandomFileName(), FileMode.OpenOrCreate, FileAccess.Read, FileShare.None));
 
             if (false == IsoStore.DirectoryExists(TempPathIso))
-                Util.UsingISO(x => IsoStore.CreateDirectory(TempPathIso));
+                Util.UsingIso(x => IsoStore.CreateDirectory(TempPathIso));
 
             Observable.FromEventPattern(app, "Exit")
                 .LocalSubscribe(99670, x => CleanupTemp());

@@ -112,7 +112,7 @@ namespace DoubleFile
             var strFile_01 = StrFile_01(strFile);
 
             if (Statics.IsoStore.FileExists(strFile_01))
-                Util.UsingISO(x => Statics.IsoStore.DeleteFile(strFile_01));
+                Util.UsingIso(x => Statics.IsoStore.DeleteFile(strFile_01));
 
             strFile.FileMoveToIso(strFile_01);
 
@@ -120,7 +120,7 @@ namespace DoubleFile
             long nLineNo = 0;       // lines number from one
             var bAtErrors = false;
 
-            Util.UsingISO(() => new StreamWriter(Statics.IsoStore.CreateFile(strFile)), file_out => {
+            Util.UsingIso(() => new StreamWriter(Statics.IsoStore.CreateFile(strFile)), file_out => {
             using (var file_in = new StreamReader(Statics.IsoStore.OpenFile(strFile_01, FileMode.Open)))
             while (null !=
                 (strLine = file_in.ReadLine()))
@@ -479,7 +479,7 @@ namespace DoubleFile
             var strFile_01 = StrFile_01(strFile);
 
             if (bConvertFile && Statics.IsoStore.FileExists(strFile_01))
-                Util.UsingISO(x => Statics.IsoStore.DeleteFile(strFile_01));
+                Util.UsingIso(x => Statics.IsoStore.DeleteFile(strFile_01));
 
             return Tuple.Create(true, nScannedLength, nLinesTotal);
         }

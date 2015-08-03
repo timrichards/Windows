@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Microsoft.Win32.SafeHandles;
 using System.Windows;
+using System.ServiceModel.Channels;
 
 namespace DoubleFile
 {
@@ -78,12 +79,16 @@ namespace DoubleFile
                 }
 
                 if (Statics.IsoStore.FileExists(LVitemProjectVM.ListingFile))
-                    Util.UsingISO(x => Statics.IsoStore
+                    Util.UsingIso(x => Statics.IsoStore
                     .DeleteFile(LVitemProjectVM.ListingFile));
 
                 try
                 {
-                    Util.UsingISO(() => new StreamWriter(Statics.IsoStore.CreateFile(LVitemProjectVM.ListingFile)),
+                    _bufferManager = BufferManager.CreateBufferManager(16 * _knBigBuffLength, 2 * _knBigBuffLength);
+
+                    var hash = Hash ? HashAllFiles(GetFileList()) : null;
+
+                    Util.UsingIso(() => new StreamWriter(Statics.IsoStore.CreateFile(LVitemProjectVM.ListingFile)),
                         sw =>
                     {
                         WriteHeader(sw);
@@ -91,7 +96,7 @@ namespace DoubleFile
                         sw.WriteLine(FormatString(nHeader: 0));
                         sw.WriteLine(FormatString(nHeader: 1));
                         sw.WriteLine(ksStart01 + " " + DateTime.Now);
-                        WriteDirectoryListing(sw, Hash ? HashAllFiles(GetFileList()) : null);
+                        WriteDirectoryListing(sw, hash);
                         sw.WriteLine(ksEnd01 + " " + DateTime.Now);
                         sw.WriteLine();
                         sw.WriteLine(ksErrorsLoc01);
@@ -111,7 +116,7 @@ namespace DoubleFile
                     if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                         _bThreadAbort)
                     {
-                        Util.UsingISO(x => Statics.IsoStore.DeleteFile(LVitemProjectVM.ListingFile));
+                        Util.UsingIso(x => Statics.IsoStore.DeleteFile(LVitemProjectVM.ListingFile));
                         return;
                     }
 
@@ -355,10 +360,8 @@ namespace DoubleFile
                     using (var fs = new FileStream(fileHandle, FileAccess.Read))
                     Util.Closure(() =>
                     {
-                        const int knBigBuffLength = 524288;
-
-                        lsRet.Add(new byte[4096]);          // happens to be block size
-                        var bFilled = FillBuffer(fs, knBigBuffLength, lsRet);
+                        lsRet.Add(_bufferManager.TakeBuffer(4096));          // happens to be block size
+                        var bFilled = FillBuffer(fs, _knBigBuffLength, lsRet);
 
                         if (0 < lsRet[1].Length)
                         {
@@ -366,7 +369,10 @@ namespace DoubleFile
                             Array.Copy(lsRet[1], lsRet[0], Math.Min(lsRet[1].Length, lsRet[0].Length));
 
                             if (lsRet[1].Length <= lsRet[0].Length)
+                            {
+                                _bufferManager.ReturnBuffer(lsRet[1]);
                                 lsRet.RemoveAt(1);
+                            }
                         }
                         else
                         {
@@ -378,17 +384,17 @@ namespace DoubleFile
                         if (false == bFilled)
                             return;     // from lambda
 
-                        var desiredPos = fs.Length - knBigBuffLength;
+                        var desiredPos = fs.Length - _knBigBuffLength;
 
                         if (desiredPos > fs.Position)
                         {
-                            Util.Assert(99931, knBigBuffLength == fs.Position);
+                            Util.Assert(99931, _knBigBuffLength == fs.Position);
                             desiredPos += (4096 - (desiredPos & 4095));       // align to block boundary if possible
                             Util.Assert(99914, 0 == (desiredPos & 4095));
                             fs.Position = desiredPos;
                         }
 
-                        if (false == FillBuffer(fs, knBigBuffLength, lsRet))
+                        if (false == FillBuffer(fs, _knBigBuffLength, lsRet))
                             return;     // from lambda
                     });
 
@@ -398,15 +404,16 @@ namespace DoubleFile
 
             bool FillBuffer(FileStream fs, int nBufferSize, IList<byte[]> lsBuffer)
             {
-                var readBuffer = new byte[nBufferSize];
+                var readBuffer = _bufferManager.TakeBuffer(nBufferSize);
                 var nRead = fs.Read(readBuffer, 0, nBufferSize);
 
                 if (nRead < nBufferSize)
                 {
                     // works fine with 0 == nRead
-                    var truncBuffer = new byte[nRead];
+                    var truncBuffer = _bufferManager.TakeBuffer(nRead);
 
                     Array.Copy(readBuffer, truncBuffer, nRead);
+                    _bufferManager.ReturnBuffer(readBuffer);
                     readBuffer = truncBuffer;
                 }
 
@@ -459,17 +466,21 @@ namespace DoubleFile
 
                     Util.Assert(99909, 1048576 >= nSize);
 
-                    var hashArray = new byte[nSize];
+                    var hashArray = _bufferManager.TakeBuffer(nSize);
                     var nIx = 0;
 
-                    foreach (var buffer in lsBuffer.Skip(1))
+                    foreach (byte[] buffer in lsBuffer.Skip(1))
                     {
-                        ((byte[])buffer).CopyTo(hashArray, nIx);
-                        nIx += buffer.Count;
+                        buffer.CopyTo(hashArray, nIx);
+                        nIx += buffer.Length;
+                        _bufferManager.ReturnBuffer(buffer);
                     }
 
-                    return Tuple.Create(hash1pt0,
+                    var retVal = Tuple.Create(hash1pt0,
                         HashTuple.FactoryCreate(md5.ComputeHash(hashArray)));
+
+                    _bufferManager.ReturnBuffer(hashArray);
+                    return retVal;
                 }
             }
 
@@ -477,6 +488,10 @@ namespace DoubleFile
                 _saveDirListingsStatus = null;
             Thread
                 _thread = new Thread(() => { });
+            BufferManager
+                _bufferManager = null;
+            const int
+                _knBigBuffLength = 524288;
         }
     }
 }

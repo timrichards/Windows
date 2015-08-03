@@ -18,13 +18,18 @@ namespace DoubleFile
             Dispatcher.PushFrame(this);
 
             lock (_dispatcherFrames)
-                _dispatcherFrames?.Remove(this);
+            {
+                var ix = _dispatcherFrames.IndexOf(this);
+
+                if (-1 < ix)
+                    _dispatcherFrames.RemoveAt(ix);
+            }
         }
 
         internal static string ClearFrames()
         {
             var strRet = "";
-            var dispatcherFrames = _dispatcherFrames?.ToList();
+            var dispatcherFrames = _dispatcherFrames.ToList();
 
             _dispatcherFrames = new List<LocalDispatcherFrame>();
 

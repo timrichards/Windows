@@ -255,9 +255,9 @@ namespace DoubleFile
             var strFile_01 = FileParse.StrFile_01(strIsoFile);
 
             if (Statics.IsoStore.FileExists(strFile_01))
-                Util.UsingISO(x => Statics.IsoStore.DeleteFile(strFile_01));
+                Util.UsingIso(x => Statics.IsoStore.DeleteFile(strFile_01));
 
-            Util.UsingISO(x => Statics.IsoStore.MoveFile(strIsoFile, strFile_01));
+            Util.UsingIso(x => Statics.IsoStore.MoveFile(strIsoFile, strFile_01));
 
             var sbOut = new StringBuilder();
 
@@ -323,7 +323,7 @@ namespace DoubleFile
                 {
                     ModifyDriveLetter();
 
-                    Util.UsingISO(() => new StreamWriter(Statics.IsoStore.CreateFile(strIsoFile)),
+                    Util.UsingIso(() => new StreamWriter(Statics.IsoStore.CreateFile(strIsoFile)),
                         sw => sw.Write("" + sbOut));
                 }
                 else
@@ -332,7 +332,7 @@ namespace DoubleFile
 
                     try
                     {
-                        Util.UsingISO(x => Statics.IsoStore.DeleteFile(strIsoFile));
+                        Util.UsingIso(x => Statics.IsoStore.DeleteFile(strIsoFile));
                     }
                     catch (Exception e)
                     {
@@ -341,7 +341,7 @@ namespace DoubleFile
                     }
                 }
 
-                Util.UsingISO(() => new StreamWriter(Statics.IsoStore.OpenFile(strIsoFile, FileMode.Append)), sw =>
+                Util.UsingIso(() => new StreamWriter(Statics.IsoStore.OpenFile(strIsoFile, FileMode.Append)), sw =>
                     Util.CopyStream(sr, sw, (buffer, nRead) =>
                 {
                     sbOut.Clear();
@@ -364,7 +364,7 @@ namespace DoubleFile
                 using (var sw = new StreamWriter(File.OpenWrite(lvItem_Orig.ListingFile)))
                     Util.CopyStream(sr, sw);
 
-                Util.UsingISO(x => Statics.IsoStore.DeleteFile(strIsoFile));
+                Util.UsingIso(x => Statics.IsoStore.DeleteFile(strIsoFile));
             }
 
             return true;

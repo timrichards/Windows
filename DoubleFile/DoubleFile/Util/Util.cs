@@ -242,7 +242,12 @@ namespace DoubleFile
             UsingIso(() => new D(), doSomething);
         }
 
-        static readonly string _strLockFile = Path.GetTempPath() + "DoubleFile_IsoLock";
+        static Util()
+        {
+            Assert(99679, false == string.IsNullOrEmpty(Statics.Namespace));
+        }
+
+        static readonly string _strLockFile = Path.GetTempPath() + Statics.Namespace + "_IsoLock";
 
         static internal void
             UsingIso<T>(Func<T> openFile, Action<T> doSomething) where T : IDisposable

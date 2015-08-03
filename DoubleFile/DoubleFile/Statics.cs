@@ -10,6 +10,10 @@ namespace DoubleFile
 {
     public class Statics
     {
+        static internal string
+            Namespace => _wr.Get(s => s._namespace);
+        readonly string _namespace = null;
+
         static internal LocalUserControlBase
             CurrentPage
         {
@@ -83,6 +87,7 @@ namespace DoubleFile
 
         public Statics(Application app)
         {
+            _namespace = app.GetType().Namespace;
             app.ShutdownMode = ShutdownMode.OnMainWindowClose;
 
             Observable.FromEventPattern<DispatcherUnhandledExceptionEventArgs>(app, "DispatcherUnhandledException")

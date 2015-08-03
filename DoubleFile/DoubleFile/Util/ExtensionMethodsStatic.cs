@@ -28,7 +28,7 @@ namespace DoubleFile
             });
         }
 
-        static readonly IDictionary<int, Tuple<DateTime, WeakReference>> _lsSubjects = new Dictionary<int, Tuple<DateTime, WeakReference>>();
+        static readonly IDictionary<int, Tuple<DateTime, WeakReference>> _lsSubjects = new ConcurrentDictionary<int, Tuple<DateTime, WeakReference>>();
         static public void LocalOnNext<T>(this LocalSubject<T> subject, T value, int nOnNextAssertLoc, int nInitiator = 0)
         {
             Util.Assert(nOnNextAssertLoc, 0 <= nInitiator);

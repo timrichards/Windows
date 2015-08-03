@@ -84,8 +84,6 @@ namespace DoubleFile
 
                 try
                 {
-                    _bufferManager = BufferManager.CreateBufferManager(16 * _knBigBuffLength, 2 * _knBigBuffLength);
-
                     var hash = Hash ? HashAllFiles(GetFileList()) : null;
 
                     Util.UsingIso(() => new StreamWriter(Statics.IsoStore.CreateFile(LVitemProjectVM.ListingFile)),
@@ -184,6 +182,8 @@ namespace DoubleFile
                 // Maximize hash buffers while reducing CreateFile() and fs.Read() calls.
                 long nProgressNumerator = 0;
                 double nProgressDenominator = lsFilePaths.Count;  // double preserves mantissa
+
+                _bufferManager = BufferManager.CreateBufferManager(16 * _knBigBuffLength, 2 * _knBigBuffLength);
 
                 using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                     .LocalSubscribe(99721, x => StatusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator)))
@@ -303,6 +303,7 @@ namespace DoubleFile
                     }
 
                     blockUntilAllFilesOpened.PushFrameToTrue();
+                    _bufferManager.Clear();
                     StatusCallback(LVitemProjectVM, nProgress: 1);
                     
                     return Tuple.Create(
@@ -452,8 +453,10 @@ namespace DoubleFile
 
                 using (var md5 = MD5.Create())
                 {
-                    var hash1pt0 = HashTuple.FactoryCreate(md5.ComputeHash((byte[])lsBuffer[0]));
+                    var buffer0 = (byte[])lsBuffer[0];
+                    var hash1pt0 = HashTuple.FactoryCreate(md5.ComputeHash(buffer0));
 
+                    _bufferManager.ReturnBuffer(buffer0);
                     retval = Tuple.Create(hash1pt0, hash1pt0);
 
                     if (1 == nCount)
@@ -461,10 +464,10 @@ namespace DoubleFile
 
                     var nSize = 0;
 
-                    foreach (var buffer in lsBuffer.Skip(1))
-                        nSize += buffer.Count;
+                    foreach (byte[] buffer in lsBuffer.Skip(1))
+                        nSize += buffer.Length;
 
-                    Util.Assert(99909, 1048576 >= nSize);
+                    Util.Assert(99909, 2 * _knBigBuffLength >= nSize);
 
                     var hashArray = _bufferManager.TakeBuffer(nSize);
                     var nIx = 0;

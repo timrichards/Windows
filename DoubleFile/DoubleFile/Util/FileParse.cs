@@ -111,8 +111,8 @@ namespace DoubleFile
         {
             var strFile_01 = StrFile_01(strFile);
 
-            if (App.IsoStore.FileExists(strFile_01))
-                App.IsoStore.DeleteFile(strFile_01);
+            if (Statics.IsoStore.FileExists(strFile_01))
+                Statics.IsoStore.DeleteFile(strFile_01);
 
             strFile.FileMoveToIso(strFile_01);
 
@@ -120,8 +120,8 @@ namespace DoubleFile
             long nLineNo = 0;       // lines number from one
             var bAtErrors = false;
 
-            using (var file_out = new StreamWriter(App.IsoStore.CreateFile(strFile)))
-            using (var file_in = new StreamReader(App.IsoStore.OpenFile(strFile_01, FileMode.Open)))
+            using (var file_out = new StreamWriter(Statics.IsoStore.CreateFile(strFile)))
+            using (var file_in = new StreamReader(Statics.IsoStore.OpenFile(strFile_01, FileMode.Open)))
             while (null !=
                 (strLine = file_in.ReadLine()))
             {
@@ -479,9 +479,9 @@ namespace DoubleFile
             var strFile_01 = StrFile_01(strFile);
 
             if (bConvertFile &&
-                App.IsoStore.FileExists(strFile_01))
+                Statics.IsoStore.FileExists(strFile_01))
             {
-                App.IsoStore.DeleteFile(strFile_01);
+                Statics.IsoStore.DeleteFile(strFile_01);
             }
 
             return Tuple.Create(true, nScannedLength, nLinesTotal);

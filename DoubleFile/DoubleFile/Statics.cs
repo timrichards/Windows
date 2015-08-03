@@ -1,6 +1,9 @@
 ﻿using System.Windows.Media;
 using System;
 using System.Windows;
+using System.IO;
+using System.IO.IsolatedStorage;
+using System.Reactive.Linq;
 
 namespace DoubleFile
 {
@@ -53,8 +56,36 @@ namespace DoubleFile
             Icon { get { return _wr.Get(s => s._icon); } set { _wr.Get(s => s._icon = value); } }
         ImageSource _icon;
 
-        public Statics()
+        static internal IsolatedStorageFile
+            IsoStore = null;
+        internal const string
+            TempPathIso = @"DoubleFile\";
+        FileStream _lockTempIsoDir = null;
+
+        static internal IObservable<Tuple<bool, int>>   // bool is a no-op: generic placeholder
+            DeactivateDidOccur => _deactivateDidOccur;
+        static readonly LocalSubject<bool> _deactivateDidOccur = new LocalSubject<bool>();
+        static void DeactivateDidOccurOnNext() => _deactivateDidOccur.LocalOnNext(false, 99839);
+
+        static internal bool CanFlashWindow_ResetsIt
         {
+            get
+            {
+                if (_canFlashWindow_ResetsIt)
+                    return true;
+
+                _canFlashWindow_ResetsIt = true;
+                return false;
+            }
+        }
+        static bool _canFlashWindow_ResetsIt = true;
+
+        public Statics(Application app)
+        {
+            app.ShutdownMode = ShutdownMode.OnMainWindowClose;
+
+            // ensure that Statics is created only once
+
             if (_wr.Get(s => true))
             {
                 Util.Assert(99776, false);
@@ -62,6 +93,61 @@ namespace DoubleFile
             }
 
             _wr.SetTarget(this);
+
+            // set up the IsoStore temp directory: clean it up if it's not locked by another app instance,
+            // lock it so it can't be removed by this block of code in a new app instance
+
+            Action CleanupTemp = () =>
+            {
+                _lockTempIsoDir?.Dispose();
+
+                var bLocked = false;
+                var isoStore = IsolatedStorageFile.GetUserStoreForAssembly();
+
+                // files at root are lock files. Temp files are in TempPathIso
+                foreach (var strFile in isoStore.GetFileNames())
+                { try { isoStore.DeleteFile(strFile); } catch (IsolatedStorageException) { bLocked = true; break; } }
+
+                if (false == bLocked)
+                    try { isoStore.Remove(); } catch (IsolatedStorageException) { }
+            };
+
+            CleanupTemp();
+            IsoStore = IsolatedStorageFile.GetUserStoreForAssembly();
+            _lockTempIsoDir = IsoStore.OpenFile(Path.GetRandomFileName(), FileMode.OpenOrCreate, FileAccess.Read, FileShare.None);
+
+            if (false == IsoStore.DirectoryExists(TempPathIso))
+                IsoStore.CreateDirectory(TempPathIso);
+
+            Observable.FromEventPattern(app, "Exit")
+                .LocalSubscribe(99670, x => CleanupTemp());
+
+            // set up App parameters, starting with the App events for CanFlashWindow_ResetsIt etc.
+
+            AppActivated = true;      // Application_Activated() seemed to work but jic
+
+            Observable.FromEventPattern(app, "Activated")
+                .LocalSubscribe(99771, x =>
+            {
+                if (false == AppActivated)
+                    _canFlashWindow_ResetsIt = false;
+
+                AppActivated = true;
+            });
+
+            Observable.FromEventPattern(app, "Deactivated")
+                .LocalSubscribe(99769, x => { AppActivated = false; DeactivateDidOccurOnNext(); });
+
+#if (false == DEBUG)
+            Observable.FromEventPattern<System.Windows.Threading.DispatcherUnhandledExceptionEventArgs>(app, "DispatcherUnhandledException")
+                .LocalSubscribe(99674, args =>
+            {
+                args.EventArgs.Handled = true;
+                Util.Assert(-1, false, args.EventArgs.Exception.Message);
+            });
+#endif
+
+            // set up the main window menu
 
             foreach (var strSource in new[]
             {

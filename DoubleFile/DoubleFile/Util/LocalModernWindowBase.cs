@@ -74,7 +74,7 @@ namespace DoubleFile
             Observable.FromEventPattern(this, "Activated")
                 .LocalSubscribe(99751, x =>
             {
-                var bCanFlashWindow = App.CanFlashWindow_ResetsIt;     // querying it resets it
+                var bCanFlashWindow = Statics.CanFlashWindow_ResetsIt;     // querying it resets it
                 var topWindow = Statics.TopWindow;
 
                 if (topWindow.SimulatingModal)

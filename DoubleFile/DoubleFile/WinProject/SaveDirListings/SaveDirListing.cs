@@ -72,13 +72,10 @@ namespace DoubleFile
                 if (string.IsNullOrWhiteSpace(LVitemProjectVM.ListingFile))
                 {
                     LVitemProjectVM.ListingFile =
-                        ProjectFile.TempPathIso +
+                        Statics.TempPathIso +
                         LVitemProjectVM.SourcePath[0] + "_Listing_" +
                         Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + "." + ksFileExt_Listing;
                 }
-
-                if (false == App.IsoStore.DirectoryExists(ProjectFile.TempPathIso))
-                    App.IsoStore.CreateDirectory(ProjectFile.TempPathIso);
 
                 FileStream fs = null;
 
@@ -86,10 +83,10 @@ namespace DoubleFile
                 // Util.UIthread blocks until done, making all threads queue up.
                 Util.UIthread(99679, () =>
                 {
-                    if (App.IsoStore.FileExists(LVitemProjectVM.ListingFile))
-                        App.IsoStore.DeleteFile(LVitemProjectVM.ListingFile);
+                    if (Statics.IsoStore.FileExists(LVitemProjectVM.ListingFile))
+                        Statics.IsoStore.DeleteFile(LVitemProjectVM.ListingFile);
 
-                    fs = App.IsoStore.CreateFile(LVitemProjectVM.ListingFile);
+                    fs = Statics.IsoStore.CreateFile(LVitemProjectVM.ListingFile);
                 });
 
                 try
@@ -121,7 +118,7 @@ namespace DoubleFile
                     if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                         _bThreadAbort)
                     {
-                        App.IsoStore.DeleteFile(LVitemProjectVM.ListingFile);
+                        Statics.IsoStore.DeleteFile(LVitemProjectVM.ListingFile);
                         return;
                     }
 

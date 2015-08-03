@@ -119,12 +119,12 @@ namespace DoubleFile
                         if (bValid || bAttemptConvert)
                             break;
 
-                        if (false == App.IsoStore.FileExists(StrFile_01(_volStrings.ListingFile)))
+                        if (false == Statics.IsoStore.FileExists(StrFile_01(_volStrings.ListingFile)))
                             break;
 
                         try
                         {
-                            App.IsoStore.DeleteFile(StrFile_01(_volStrings.ListingFile));
+                            Statics.IsoStore.DeleteFile(StrFile_01(_volStrings.ListingFile));
                         }
                         catch (IOException) { }
 

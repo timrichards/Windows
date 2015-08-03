@@ -60,12 +60,12 @@ namespace DoubleFile
                 return false;
 
             if (2 > strFile.Length)
-                return App.IsoStore.FileExists(strFile);
+                return Statics.IsoStore.FileExists(strFile);
 
             return
                 (':' == strFile[1])
                 ? File.Exists(strFile)
-                : App.IsoStore.FileExists(strFile);
+                : Statics.IsoStore.FileExists(strFile);
         }
 
         static internal string
@@ -76,14 +76,14 @@ namespace DoubleFile
 
             if (2 > strSource.Length)
             {
-                App.IsoStore.MoveFile(strSource, strIsoDest);
+                Statics.IsoStore.MoveFile(strSource, strIsoDest);
                 return strIsoDest;
             }
 
             if (':' == strSource[1])
                 MoveFile_(strSource, strIsoDest);
             else
-                App.IsoStore.MoveFile(strSource, strIsoDest);
+                Statics.IsoStore.MoveFile(strSource, strIsoDest);
 
             return strIsoDest;
         }
@@ -92,7 +92,7 @@ namespace DoubleFile
             MoveFile_(string strSource, string strDest)
         {
             using (var sr = File.OpenText(strSource))
-            using (var sw = new StreamWriter(App.IsoStore.CreateFile(ProjectFile.TempPathIso + Path.GetFileName(strDest))))
+            using (var sw = new StreamWriter(Statics.IsoStore.CreateFile(Statics.TempPathIso + Path.GetFileName(strDest))))
                 Util.CopyStream(sr, sw);
 
             File.Delete(strSource);
@@ -117,7 +117,7 @@ namespace DoubleFile
         {
             var nCount = 0;
 
-            using (var fs = new StreamReader(App.IsoStore.OpenFile(path, FileMode.Open)))
+            using (var fs = new StreamReader(Statics.IsoStore.OpenFile(path, FileMode.Open)))
             {
                 string strLine = null;
 

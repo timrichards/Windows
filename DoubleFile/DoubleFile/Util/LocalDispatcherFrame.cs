@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Threading;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -9,17 +11,24 @@ namespace DoubleFile
 
         internal void PushFrameToTrue()
         {
-            _dispatcherFrames.Add(this);
+            lock (_dispatcherFrames)
+                _dispatcherFrames.Add(this);
+
             Continue = true;
             Dispatcher.PushFrame(this);
-            _dispatcherFrames.Remove(this);
+
+            lock (_dispatcherFrames)
+                _dispatcherFrames?.Remove(this);
         }
 
         internal static string ClearFrames()
         {
             var strRet = "";
+            var dispatcherFrames = _dispatcherFrames?.ToList();
 
-            _dispatcherFrames.ForEach(dispatcherFrame =>
+            _dispatcherFrames = new List<LocalDispatcherFrame>();
+
+            dispatcherFrames.ForEach(dispatcherFrame =>
             {
                 if (dispatcherFrame.Continue)
                     strRet += dispatcherFrame._nLocation + " ";
@@ -27,7 +36,6 @@ namespace DoubleFile
                 dispatcherFrame.Continue = false;
             });
 
-            _dispatcherFrames = new List<LocalDispatcherFrame>();
             return strRet;
         }
 

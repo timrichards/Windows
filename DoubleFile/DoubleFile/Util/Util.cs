@@ -239,7 +239,7 @@ namespace DoubleFile
         static internal void
             UsingISO(Action<IDisposable> doSomething, IsolatedStorageFile isoStore = null)
         {
-            UsingISO(() => new D(), doSomething);   //, isoStore);
+            UsingISO(() => new D(), doSomething);
         }
 
         static readonly string _strLockFile = Path.GetTempPath() + "DoubleFile_IsoLock";
@@ -247,21 +247,26 @@ namespace DoubleFile
         static internal void
             UsingISO<T>(Func<T> openFile, Action<T> doSomething) where T : IDisposable
         {
-            Func<IDisposable> checkLockFile = () =>
+            Func<FileStream> checkLockFile = () =>
             {
                 try { return File.Open(_strLockFile, FileMode.OpenOrCreate, FileAccess.Read, FileShare.None); }
                 catch (IOException) { return null; }
             };
 
-            IDisposable lockFile = null;
+            FileStream lockFile = null;
 
             while (null == (lockFile = checkLockFile()))
                 Block(100);
 
-            using (var t = openFile())
-                doSomething(t);
-
-            lockFile.Dispose();
+            try
+            {
+                using (var t = openFile())
+                    doSomething(t);
+            }
+            finally
+            {
+                lockFile.Dispose();
+            }
         }
 
         static internal void Write(string str)

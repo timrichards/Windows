@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Linq;
+using System.IO.IsolatedStorage;
 
 namespace DoubleFile
 {
@@ -183,7 +184,7 @@ namespace DoubleFile
             }
             catch (AggregateException)
             {
-                Util.Assert(99669, false);
+                Util.Assert(99669, false, "AggragateException in ParallelForEach");
             }
             catch (OperationCanceledException)
             {
@@ -234,13 +235,33 @@ namespace DoubleFile
             }
         }
 
-        static internal void Using<T>(T t, Action<T> doSomething) where T : IDisposable
+        class D : IDisposable { public void Dispose() { } }
+        static internal void
+            UsingISO(Action<IDisposable> doSomething, IsolatedStorageFile isoStore = null)
         {
-            doSomething(t);
+            UsingISO(() => new D(), doSomething);   //, isoStore);
+        }
 
-            // doesn't have to be on the UI thread, but file create/open/close stream doesn't seem to work simultaneously
-            // Util.UIthread blocks until done, making all threads queue up.
-            Util.UIthread(99677, () => t.Dispose());
+        static readonly string _strLockFile = Path.GetTempPath() + "DoubleFile_IsoLock";
+
+        static internal void
+            UsingISO<T>(Func<T> openFile, Action<T> doSomething) where T : IDisposable
+        {
+            Func<IDisposable> checkLockFile = () =>
+            {
+                try { return File.Open(_strLockFile, FileMode.OpenOrCreate, FileAccess.Read, FileShare.None); }
+                catch (IOException) { return null; }
+            };
+
+            IDisposable lockFile = null;
+
+            while (null == (lockFile = checkLockFile()))
+                Block(100);
+
+            using (var t = openFile())
+                doSomething(t);
+
+            lockFile.Dispose();
         }
 
         static internal void Write(string str)

@@ -255,9 +255,9 @@ namespace DoubleFile
             var strFile_01 = FileParse.StrFile_01(strIsoFile);
 
             if (Statics.IsoStore.FileExists(strFile_01))
-                Statics.IsoStore.DeleteFile(strFile_01);
+                Util.UsingISO(x => Statics.IsoStore.DeleteFile(strFile_01));
 
-            Statics.IsoStore.MoveFile(strIsoFile, strFile_01);
+            Util.UsingISO(x => Statics.IsoStore.MoveFile(strIsoFile, strFile_01));
 
             var sbOut = new StringBuilder();
 
@@ -323,8 +323,8 @@ namespace DoubleFile
                 {
                     ModifyDriveLetter();
 
-                    using (var sw = new StreamWriter(Statics.IsoStore.CreateFile(strIsoFile)))
-                        sw.Write("" + sbOut);
+                    Util.UsingISO(() => new StreamWriter(Statics.IsoStore.CreateFile(strIsoFile)),
+                        sw => sw.Write("" + sbOut));
                 }
                 else
                 {
@@ -332,7 +332,7 @@ namespace DoubleFile
 
                     try
                     {
-                        Statics.IsoStore.DeleteFile(strIsoFile);
+                        Util.UsingISO(x => Statics.IsoStore.DeleteFile(strIsoFile));
                     }
                     catch (Exception e)
                     {
@@ -341,7 +341,7 @@ namespace DoubleFile
                     }
                 }
 
-                using (var sw = new StreamWriter(Statics.IsoStore.OpenFile(strIsoFile, FileMode.Append)))
+                Util.UsingISO(() => new StreamWriter(Statics.IsoStore.OpenFile(strIsoFile, FileMode.Append)), sw =>
                     Util.CopyStream(sr, sw, (buffer, nRead) =>
                 {
                     sbOut.Clear();
@@ -349,7 +349,7 @@ namespace DoubleFile
                     ModifyDriveLetter();
                     sbOut.CopyTo(0, buffer, 0, nRead);
                     return buffer;
-                });
+                }));
 
                 bDriveLetter_Todo = false;
             }
@@ -364,7 +364,7 @@ namespace DoubleFile
                 using (var sw = new StreamWriter(File.OpenWrite(lvItem_Orig.ListingFile)))
                     Util.CopyStream(sr, sw);
 
-                Statics.IsoStore.DeleteFile(strIsoFile);
+                Util.UsingISO(x => Statics.IsoStore.DeleteFile(strIsoFile));
             }
 
             return true;

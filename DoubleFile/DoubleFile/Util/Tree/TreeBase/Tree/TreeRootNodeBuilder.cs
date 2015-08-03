@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Collections.Generic;
 using System.Windows;
+using System.IO.IsolatedStorage;
 
 namespace DoubleFile
 {
@@ -124,9 +125,9 @@ namespace DoubleFile
 
                         try
                         {
-                            Statics.IsoStore.DeleteFile(StrFile_01(_volStrings.ListingFile));
+                            Util.UsingISO(x => Statics.IsoStore.DeleteFile(StrFile_01(_volStrings.ListingFile)));
                         }
-                        catch (IOException) { }
+                        catch (IsolatedStorageException) { }
 
                         bAttemptConvert = true;
                     }

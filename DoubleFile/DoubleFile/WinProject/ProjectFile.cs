@@ -23,8 +23,8 @@ namespace DoubleFile
         static internal event Func<string> OnSavingProject = null;
         static internal event Action OnOpenedProject = null;
 
-        static string _tempPath = Path.GetTempPath() + Statics.TempPathIso.TrimEnd('\\') + "_" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + '\\';
-        static string _tempPathIso01 = Statics.TempPathIso.TrimEnd('\\') + "01";
+        static readonly string _tempPath = Path.GetTempPath() + Statics.TempPathIso.TrimEnd('\\') + "_" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + '\\';
+        static readonly string _tempPathIso01 = Statics.TempPathIso.TrimEnd('\\') + "01";
 
         static internal bool
             OpenProject(string strProjectFilename, WeakReference<IOpenListingFiles> openListingFilesWR, bool bClearItems)
@@ -170,11 +170,11 @@ namespace DoubleFile
                     }))
                     {
                         // strNew is assigned each iteration in C# 4.
-                        Statics.IsoStore.MoveFile(strFile, strNew);
+                        Util.UsingISO(x => Statics.IsoStore.MoveFile(strFile, strNew));
                     }
                 }
 
-                Statics.IsoStore.DeleteDirectory(_tempPathIso01);
+                Util.UsingISO(x => Statics.IsoStore.DeleteDirectory(_tempPathIso01));
             }
 
             WinProgress.CloseForced();
@@ -218,7 +218,7 @@ namespace DoubleFile
                     if (bSuccess)
                     {
                         strNewName = Statics.TempPathIso + strNewName;
-                        Statics.IsoStore.CopyFile(volStrings.ListingFile, strNewName);
+                        Util.UsingISO(x => Statics.IsoStore.CopyFile(volStrings.ListingFile, strNewName));
                         volStrings.ListingFile = strNewName;
                     }
                 }

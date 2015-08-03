@@ -77,21 +77,14 @@ namespace DoubleFile
                         Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + "." + ksFileExt_Listing;
                 }
 
-                FileStream fs = null;
-
-                // doesn't have to be on the UI thread, but file create/open/close stream doesn't seem to work simultaneously
-                // Util.UIthread blocks until done, making all threads queue up.
-                Util.UIthread(99679, () =>
-                {
-                    if (Statics.IsoStore.FileExists(LVitemProjectVM.ListingFile))
-                        Statics.IsoStore.DeleteFile(LVitemProjectVM.ListingFile);
-
-                    fs = Statics.IsoStore.CreateFile(LVitemProjectVM.ListingFile);
-                });
+                if (Statics.IsoStore.FileExists(LVitemProjectVM.ListingFile))
+                    Util.UsingISO(x => Statics.IsoStore
+                    .DeleteFile(LVitemProjectVM.ListingFile));
 
                 try
                 {
-                    Util.Using(new StreamWriter(fs), sw =>
+                    Util.UsingISO(() => new StreamWriter(Statics.IsoStore.CreateFile(LVitemProjectVM.ListingFile)),
+                        sw =>
                     {
                         WriteHeader(sw);
                         sw.WriteLine();
@@ -118,7 +111,7 @@ namespace DoubleFile
                     if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                         _bThreadAbort)
                     {
-                        Statics.IsoStore.DeleteFile(LVitemProjectVM.ListingFile);
+                        Util.UsingISO(x => Statics.IsoStore.DeleteFile(LVitemProjectVM.ListingFile));
                         return;
                     }
 

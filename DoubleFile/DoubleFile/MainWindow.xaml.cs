@@ -4,9 +4,10 @@ using System.Reactive.Linq;
 using System.Windows;
 using System.Reactive;
 using System.ComponentModel;
-using System.Diagnostics;
+using System.Diagnostics;           // DEBUG
 using System.Linq;
 using System.Collections.Generic;
+using System.IO;                    // false == DEBUG
 
 namespace DoubleFile
 {

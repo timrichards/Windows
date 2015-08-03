@@ -97,10 +97,12 @@ namespace DoubleFile
             Observable.FromEventPattern<UnhandledExceptionEventArgs>(AppDomain.CurrentDomain, "UnhandledException")
                 .LocalSubscribe(99663, args =>
             {
-                var o = args.EventArgs.ExceptionObject;
+                var o = args.EventArgs.ExceptionObject?.As<Exception>()?.GetBaseException();
+                var t = o?.GetType();
+                var s = "" + o;
 
                 Util.Assert(99666, false, "UnhandledException\n" +
-                    o?.As<Exception>()?.GetBaseException().Message ?? "" + o);
+                    o?.Message + "\n" + t + "\n" + s);
             });
 
             // ensure that Statics is created only once
@@ -125,7 +127,10 @@ namespace DoubleFile
 
                 // files at root are lock files. Temp files are in TempPathIso
                 foreach (var strFile in isoStore.GetFileNames())
-                { try { isoStore.DeleteFile(strFile); } catch (IsolatedStorageException) { bLocked = true; break; } }
+                {
+                    try { Util.UsingISO(x => isoStore.DeleteFile(strFile), isoStore); }
+                    catch (IsolatedStorageException) { bLocked = true; break; }
+                }
 
                 if (false == bLocked)
                     try { isoStore.Remove(); } catch (IsolatedStorageException) { }
@@ -133,10 +138,13 @@ namespace DoubleFile
 
             CleanupTemp();
             IsoStore = IsolatedStorageFile.GetUserStoreForAssembly();
-            _lockTempIsoDir = IsoStore.OpenFile(Path.GetRandomFileName(), FileMode.OpenOrCreate, FileAccess.Read, FileShare.None);
+
+            Util.UsingISO(x =>
+                _lockTempIsoDir =
+                IsoStore.OpenFile(Path.GetRandomFileName(), FileMode.OpenOrCreate, FileAccess.Read, FileShare.None));
 
             if (false == IsoStore.DirectoryExists(TempPathIso))
-                IsoStore.CreateDirectory(TempPathIso);
+                Util.UsingISO(x => IsoStore.CreateDirectory(TempPathIso));
 
             Observable.FromEventPattern(app, "Exit")
                 .LocalSubscribe(99670, x => CleanupTemp());

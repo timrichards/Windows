@@ -112,7 +112,7 @@ namespace DoubleFile
             var strFile_01 = StrFile_01(strFile);
 
             if (Statics.IsoStore.FileExists(strFile_01))
-                Statics.IsoStore.DeleteFile(strFile_01);
+                Util.UsingISO(x => Statics.IsoStore.DeleteFile(strFile_01));
 
             strFile.FileMoveToIso(strFile_01);
 
@@ -120,7 +120,7 @@ namespace DoubleFile
             long nLineNo = 0;       // lines number from one
             var bAtErrors = false;
 
-            using (var file_out = new StreamWriter(Statics.IsoStore.CreateFile(strFile)))
+            Util.UsingISO(() => new StreamWriter(Statics.IsoStore.CreateFile(strFile)), file_out => {
             using (var file_in = new StreamReader(Statics.IsoStore.OpenFile(strFile_01, FileMode.Open)))
             while (null !=
                 (strLine = file_in.ReadLine()))
@@ -267,7 +267,7 @@ namespace DoubleFile
                 // directory
                 file_out.WriteLine(FormatLine(bAtErrors ? ksLineType_ErrorDir : ksLineType_Directory,
                     nLineNo, strLine.Replace(@"\\", @"\")));
-            }
+            }});
         }
 
         static string FormatLine(string strLineType, long nLineNo, string strLine_in = null)
@@ -478,11 +478,8 @@ namespace DoubleFile
 
             var strFile_01 = StrFile_01(strFile);
 
-            if (bConvertFile &&
-                Statics.IsoStore.FileExists(strFile_01))
-            {
-                Statics.IsoStore.DeleteFile(strFile_01);
-            }
+            if (bConvertFile && Statics.IsoStore.FileExists(strFile_01))
+                Util.UsingISO(x => Statics.IsoStore.DeleteFile(strFile_01));
 
             return Tuple.Create(true, nScannedLength, nLinesTotal);
         }

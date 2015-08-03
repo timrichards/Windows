@@ -146,7 +146,9 @@ namespace DoubleFile
             }
             catch (Exception ex)
             {
-                Util.Assert(99942, false, ex.GetBaseException().Message);
+                Util.Assert(99942, false, "Exception in ISearchStatus.Status\n" +
+                    ex.GetBaseException().Message);
+
                 _searchType2?.EndThread();
                 _searchType2 = null;
                 _dictResults = null;

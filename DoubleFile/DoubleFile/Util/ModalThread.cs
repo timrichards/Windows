@@ -172,7 +172,8 @@ namespace DoubleFile
 
             var strStuckFrames = LocalDispatcherFrame.ClearFrames();
 
-            Util.Assert(nLocation, false, strStuckFrames);
+            Util.Assert(nLocation, false, "ModalThread Abort_ClearOut with stuck frame #s\n" +
+                strStuckFrames);
         }
 
         static IEnumerable<NativeWindow>
@@ -424,7 +425,8 @@ namespace DoubleFile
 
                 var strStuckFrames = LocalDispatcherFrame.ClearFrames();
 
-                Util.Assert(99885, false, strStuckFrames);
+                Util.Assert(99885, false, "ModalThread Step2_RepeatedInnerCheckForLockup with stuck frame #s\n" +
+                    strStuckFrames);
             }
             else
             {

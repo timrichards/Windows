@@ -159,11 +159,30 @@ namespace DoubleFile
         }
 
         static internal void
+            ParallelForEach<TSource>(IEnumerable<TSource> source, Action<TSource> doSomething) =>
+            ParallelForEach(source, new ParallelOptions { }, doSomething);
+
+        static internal void
             ParallelForEach<TSource>(IEnumerable<TSource> source, ParallelOptions options, Action<TSource> doSomething)
         {
             try
             {
-                Parallel.ForEach(source, options, doSomething);
+                Parallel.ForEach(source, options, s =>
+                {
+                    try
+                    {
+                        doSomething(s);
+                    }
+                    catch (Exception e)
+                    {
+                        Util.Assert(99675, false, "Exception in ParallelForEach\n" +
+                            e.GetBaseException().Message);
+                    }
+                });
+            }
+            catch (AggregateException)
+            {
+                Util.Assert(99669, false);
             }
             catch (OperationCanceledException)
             {

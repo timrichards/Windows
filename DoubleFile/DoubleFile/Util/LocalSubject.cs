@@ -6,7 +6,7 @@ namespace DoubleFile
     public class LocalSubject<T> : ISubject<Tuple<T, int>>
     {
         public void OnCompleted() => _subject.OnCompleted();
-        public void OnError(Exception e) => Util.Assert(99772, false, e.GetBaseException().Message);
+        public void OnError(Exception e) => Util.Assert(99772, false, "Exception in LocalSubject\n" + e.GetBaseException().Message);
         public void OnNext(Tuple<T, int> value) => _subject.OnNext(value);
         public IDisposable Subscribe(IObserver<Tuple<T, int>> observer) => _subject.Subscribe(observer);
 

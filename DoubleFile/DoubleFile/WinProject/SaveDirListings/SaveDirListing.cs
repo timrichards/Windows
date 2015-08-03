@@ -283,7 +283,7 @@ namespace DoubleFile
                                 {
                                     cts.Cancel();
                                     bAllFilesOpened = true;
-                                    return;     // from lambda Parallel.ForEach
+                                    return;     // from lambda Util.ParallelForEach
                                 }
 
                                 var strFile = tuple.Item1;

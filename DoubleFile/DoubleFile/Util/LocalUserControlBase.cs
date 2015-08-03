@@ -111,7 +111,7 @@ namespace DoubleFile
 
             Util.ThreadMake(() =>
             {
-                Parallel.ForEach(
+                Util.ParallelForEach(
                     Statics.LVprojectVM.ItemsCast
                     .Where(lvItem => lvItem.CanLoad), lvItem =>
                 {

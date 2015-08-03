@@ -23,8 +23,8 @@ namespace DoubleFile
         static internal event Func<string> OnSavingProject = null;
         static internal event Action OnOpenedProject = null;
 
-        static string _tempPath => Path.GetTempPath() + Statics.TempPathIso;
-        static string _tempPathIso01 => Statics.TempPathIso.TrimEnd('\\') + "01";
+        static string _tempPath = Path.GetTempPath() + Statics.TempPathIso.TrimEnd('\\') + "_" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + '\\';
+        static string _tempPathIso01 = Statics.TempPathIso.TrimEnd('\\') + "01";
 
         static internal bool
             OpenProject(string strProjectFilename, WeakReference<IOpenListingFiles> openListingFilesWR, bool bClearItems)
@@ -40,10 +40,19 @@ namespace DoubleFile
                 return projectFile.SaveProject_(lvProjectVM, strProjectFilename);
         }
 
-        public void Dispose() => Util.LocalDispose(_lsDisposable);
+        public void Dispose()
+        {
+            if (Directory.Exists(_tempPath))
+                Directory.Delete(_tempPath, true);
+
+            Util.LocalDispose(_lsDisposable);
+        }
 
         ProjectFile()
         {
+            Dispose();
+            Directory.CreateDirectory(_tempPath);
+
             _lsDisposable.Add(
                 _process = new Process
             {
@@ -71,11 +80,6 @@ namespace DoubleFile
 
         bool OpenProject_(string strProjectFilename, WeakReference<IOpenListingFiles> openListingFilesWR, bool bClearItems)
         {
-            if (Directory.Exists(_tempPath))
-                Directory.Delete(_tempPath, true);
-
-            Directory.CreateDirectory(_tempPath);
-            
             var bRet = false;
 
             if (false == StartProcess((bClearItems ? "Opening" : "Appending") + " project",
@@ -98,7 +102,6 @@ namespace DoubleFile
 
             if (bErr || _bUserCanceled)
             {
-                Directory.Delete(_tempPath, true);
                 _bProcessing = false;
                 return false;
             }
@@ -128,8 +131,6 @@ namespace DoubleFile
                 lsFilenames.Add(strNewFilename);
                 strFilename.FileMoveToIso(strNewFilename);
             }
-
-            Directory.Delete(_tempPath, true);
 
             var bRet = openListingFiles.Callback
             (
@@ -237,11 +238,6 @@ namespace DoubleFile
                 if (bIsEmpty)
                     return false;
             }
-
-            if (Directory.Exists(_tempPath))
-                Directory.Delete(_tempPath, true);
-
-            Directory.CreateDirectory(_tempPath);
 
             var sbSource = new StringBuilder();
             var strPath = Path.GetDirectoryName(lsListingFiles[0]) + '\\';
@@ -365,10 +361,18 @@ namespace DoubleFile
 
             (new WinProgress(new[] { _status }, new[] { strProjectFileNoPath }, x =>
             {
-                _sbError.AppendLine(DateTime.Now.ToLongTimeString().PadRight(80, '-'));
-                _bProcessing = true;
-                _process.Start();
-                _process.BeginOutputReadLine();
+                try
+                {
+                    _sbError.AppendLine(DateTime.Now.ToLongTimeString().PadRight(80, '-'));
+                    _bProcessing = true;
+                    _process.Start();
+                    _process.BeginOutputReadLine();
+                }
+                catch (Exception e)
+                {
+                    Util.Assert(99668, false, "Exception in StartProcess\n" +
+                        e.GetBaseException().Message);
+                }
             })
             { WindowClosingCallback = new WeakReference<IWinProgressClosing>(this) })
                 .ShowDialog();

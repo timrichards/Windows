@@ -4,6 +4,8 @@ using System.Windows;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Reactive.Linq;
+using System.Threading;
+using System.Windows.Threading;
 
 namespace DoubleFile
 {
@@ -84,6 +86,24 @@ namespace DoubleFile
         {
             app.ShutdownMode = ShutdownMode.OnMainWindowClose;
 
+            Observable.FromEventPattern<DispatcherUnhandledExceptionEventArgs>(app, "DispatcherUnhandledException")
+                .LocalSubscribe(99670, args =>
+            {
+                args.EventArgs.Handled = true;
+
+                Util.Assert(99665, false, "DispatcherUnhandledException\n" +
+                    args.EventArgs.Exception.GetBaseException().Message);
+            });
+
+            Observable.FromEventPattern<UnhandledExceptionEventArgs>(AppDomain.CurrentDomain, "UnhandledException")
+                .LocalSubscribe(99670, args =>
+            {
+                var o = args.EventArgs.ExceptionObject;
+
+                Util.Assert(99666, false, "UnhandledException\n" +
+                    o?.As<Exception>()?.GetBaseException().Message ?? "" + o);
+            });
+
             // ensure that Statics is created only once
 
             if (_wr.Get(s => true))
@@ -147,7 +167,7 @@ namespace DoubleFile
             });
 #endif
 
-            // set up the main window menu
+            // set up the merge dictionaries across assemblies
 
             foreach (var strSource in new[]
             {

@@ -21,7 +21,8 @@ namespace DoubleFile
                 }
                 catch (Exception e)
                 {
-                    Util.Assert(nLocation, false, e.GetBaseException().Message);
+                    Util.Assert(nLocation, false, "Exception in LocalSubscribe\n" +
+                        e.GetBaseException().Message);
                 }
             });
         }

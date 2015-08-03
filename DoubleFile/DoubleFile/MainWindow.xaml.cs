@@ -1,6 +1,5 @@
 ﻿using FirstFloor.ModernUI.Presentation;
 using System;
-using System.IO;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Reactive;

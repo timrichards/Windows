@@ -4,7 +4,6 @@ using System.Windows;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Reactive.Linq;
-using System.Threading;
 using System.Windows.Threading;
 
 namespace DoubleFile
@@ -87,7 +86,7 @@ namespace DoubleFile
             app.ShutdownMode = ShutdownMode.OnMainWindowClose;
 
             Observable.FromEventPattern<DispatcherUnhandledExceptionEventArgs>(app, "DispatcherUnhandledException")
-                .LocalSubscribe(99670, args =>
+                .LocalSubscribe(99664, args =>
             {
                 args.EventArgs.Handled = true;
 
@@ -96,7 +95,7 @@ namespace DoubleFile
             });
 
             Observable.FromEventPattern<UnhandledExceptionEventArgs>(AppDomain.CurrentDomain, "UnhandledException")
-                .LocalSubscribe(99670, args =>
+                .LocalSubscribe(99663, args =>
             {
                 var o = args.EventArgs.ExceptionObject;
 

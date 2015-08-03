@@ -195,6 +195,7 @@
     </Compile>
     <Compile Include="LocalTreeNode\LocalColorItemBase.cs" />
     <Compile Include="Statics.cs" />
+    <Compile Include="Util\Iterator.cs" />
     <Compile Include="Util\ModalThread.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -217,6 +218,7 @@
     <Compile Include="Util\LocalSubject.cs" />
     <Compile Include="Util\LocalUserControlBase.cs" />
     <Compile Include="Util\NativeMethods.cs" />
+    <Compile Include="Util\ReadLinesIterator.cs" />
     <Compile Include="Util\Win32Screen\MONITORINFO.cs" />
     <Compile Include="Util\Win32Screen\RECT.cs" />
     <Compile Include="Util\Win32Screen\SWP.cs" />

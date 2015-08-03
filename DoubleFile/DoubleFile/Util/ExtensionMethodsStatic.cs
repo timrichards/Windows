@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 
 namespace DoubleFile
@@ -60,13 +61,9 @@ namespace DoubleFile
             if (null == strFile)
                 return false;
 
-            if (2 > strFile.Length)
-                return Statics.IsoStore.FileExists(strFile);
-
-            return
-                (':' == strFile[1])
-                ? File.Exists(strFile)
-                : Statics.IsoStore.FileExists(strFile);
+            return ((2 > strFile.Length) || (':' != strFile[1]))
+                ? Statics.IsoStore.FileExists(strFile)
+                : File.Exists(strFile);
         }
 
         static internal string
@@ -75,16 +72,10 @@ namespace DoubleFile
             if (null == strSource)
                 return null;
 
-            if (2 > strSource.Length)
-            {
+            if ((2 > strSource.Length) || (':' != strSource[1]))
                 Statics.IsoStore.MoveFile(strSource, strIsoDest);
-                return strIsoDest;
-            }
-
-            if (':' == strSource[1])
-                MoveFile_(strSource, strIsoDest);
             else
-                Statics.IsoStore.MoveFile(strSource, strIsoDest);
+                MoveFile_(strSource, strIsoDest);
 
             return strIsoDest;
         }
@@ -104,32 +95,9 @@ namespace DoubleFile
             if (null == strFile)
                 return new string[0];
 
-            if (2 > strFile.Length)
-                return ReadLines_(strFile);
-
-            return
-                (':' == strFile[1])
-                ? File.ReadLines(strFile)
-                : ReadLines_(strFile);
-        }
-
-        static IEnumerable<string>
-            ReadLines_(string path)
-        {
-            var nCount = 0;
-
-            using (var fs = new StreamReader(Statics.IsoStore.OpenFile(path, FileMode.Open)))
-            {
-                string strLine = null;
-
-                while (null != (strLine = fs.ReadLine()))
-                {
-                    ++nCount;
-                    yield return strLine;
-                }
-            }
-
-            Util.WriteLine("" + nCount + " " + path);
+            return ((2 > strFile.Length) || (':' != strFile[1]))
+                ? ReadLinesIterator.CreateIterator(new StreamReader(Statics.IsoStore.OpenFile(strFile, FileMode.Open)))
+                : File.ReadLines(strFile);
         }
     }
 

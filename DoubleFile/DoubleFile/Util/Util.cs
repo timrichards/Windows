@@ -50,7 +50,8 @@ namespace DoubleFile
         static internal T
             Closure<T>(Func<T> action) => action();
 
-        static internal void CopyStream(StreamReader sr, StreamWriter sw, Func<char[], int, char[]> replace = null)
+        static internal void
+            CopyStream(StreamReader sr, StreamWriter sw, Func<char[], int, char[]> replace = null)
         {
             const int kBufSize = 1024 * 1024 * 4;
             var buffer = new char[kBufSize];

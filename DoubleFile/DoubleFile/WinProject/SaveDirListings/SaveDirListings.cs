@@ -57,17 +57,20 @@ namespace DoubleFile
 
             var dtStart = DateTime.Now;
 
-            foreach (var lvItemProjectVM
-                in _lvProjectVM.ItemsCast
-                .Where(lvItemProjectVM => lvItemProjectVM.WouldSave))
+            using (var bufferManager = new SDL_BufferManager())
             {
-                _cbagWorkers
-                    .Add(new SaveDirListing(lvItemProjectVM, _saveDirListingsStatus)
-                    .DoThreadFactory());
-            }
+                foreach (var lvItemProjectVM
+                    in _lvProjectVM.ItemsCast
+                    .Where(lvItemProjectVM => lvItemProjectVM.WouldSave))
+                {
+                    _cbagWorkers
+                        .Add(new SaveDirListing(lvItemProjectVM, _saveDirListingsStatus, bufferManager)
+                        .DoThreadFactory());
+                }
 
-            foreach (var worker in _cbagWorkers)
-                worker.Join();
+                foreach (var worker in _cbagWorkers)
+                    worker.Join();
+            }
 
             Util.WriteLine(string.Format("Finished saving directory listings in {0} seconds.",
                 ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10d));

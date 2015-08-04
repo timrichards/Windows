@@ -12,7 +12,6 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Microsoft.Win32.SafeHandles;
 using System.Windows;
-using System.ServiceModel.Channels;
 
 namespace DoubleFile
 {
@@ -20,12 +19,89 @@ namespace DoubleFile
     {
         static internal bool Hash = true;   // use-case: VolTreeMap project
 
+        class SDL_ByteArray
+        {
+            internal int
+                Length => Math.Min(_length, _buffer.Length);
+            static public explicit operator
+                byte[](SDL_ByteArray byteArray) => byteArray._buffer;
+
+            internal SDL_ByteArray(int nBufferSize, int nPow)
+            {
+                _buffer = new byte[1 << nPow];
+                _length = nBufferSize;
+                Util.Assert(0, _buffer.Length >= _length);
+            }
+
+            internal byte[] _buffer;
+            internal int _length;
+        }
+
+        class SDL_BufferManager : IDisposable
+        {
+            public void Clear()
+            {
+            }
+
+            public void Dispose()
+            {
+            }
+
+            public void ReturnBuffer(SDL_ByteArray buffer)
+            {
+                var nPow = (int)Math.Ceiling(Math.Log(buffer._buffer.Length, 2));
+
+                if (_lsBuffers.Count <= nPow)
+                {
+                    lock (_lock)
+                    while (_lsBuffers.Count <= nPow)
+                        _lsBuffers.Add(new ConcurrentBag<SDL_ByteArray>());
+                }
+
+                _lsBuffers[nPow].Add(buffer);
+                _nStored += (ulong)buffer._buffer.Length;
+            }
+
+            public SDL_ByteArray TakeBuffer(int bufferSize)
+            {
+                var nPow = (int)Math.Ceiling(Math.Log(bufferSize, 2));
+
+                if (bufferSize > (1 << nPow))   // if false then it fits even #s like 4096
+                    ++nPow;
+
+                if (_lsBuffers.Count <= nPow)
+                    return new SDL_ByteArray(bufferSize, nPow);
+
+                SDL_ByteArray buffer = null;
+
+                _lsBuffers[nPow].TryTake(out buffer);
+
+                if (null == buffer)
+                    return new SDL_ByteArray(bufferSize, nPow);
+
+                buffer._length = bufferSize;
+                _nStored -= (ulong)buffer._buffer.Length;
+                return buffer;
+            }
+
+            List<ConcurrentBag<SDL_ByteArray>>
+                _lsBuffers = new List<ConcurrentBag<SDL_ByteArray>> { };
+            object
+                _lock = new object();
+
+            ulong _nStored = 0;
+        }
+
         class SaveDirListing : TraverseTreeBase
         {
-            internal SaveDirListing(LVitem_ProjectVM volStrings, ISaveDirListingsStatus saveDirListingsStatus)
+            internal
+                SaveDirListing(LVitem_ProjectVM volStrings,
+                ISaveDirListingsStatus saveDirListingsStatus,
+                SDL_BufferManager bufferManager)
                 : base(volStrings)
             {
                 _saveDirListingsStatus = saveDirListingsStatus;
+                _bufferManager = bufferManager;
             }
 
             internal SaveDirListing DoThreadFactory()
@@ -85,6 +161,8 @@ namespace DoubleFile
                 try
                 {
                     var hash = Hash ? HashAllFiles(GetFileList()) : null;
+
+                    Util.WriteLine("hashed " + LVitemProjectVM.SourcePath);
 
                     Util.UsingIso(() => new StreamWriter(Statics.IsoStore.CreateFile(LVitemProjectVM.ListingFile)),
                         sw =>
@@ -148,7 +226,7 @@ namespace DoubleFile
                 var sb = new StringBuilder();
                 var nCount = 0;
 
-                Action<Object> WriteLine = o =>
+                Action<object> WriteLine = o =>
                 {
                     var s = (o != null) ? "" + o : null;
 
@@ -212,8 +290,6 @@ namespace DoubleFile
                     var blockWhileHashingPreviousBatch = new LocalDispatcherFrame(99872) { Continue = false };
                     var bEnqueued = true;
 
-                    _bufferManager = BufferManager.CreateBufferManager(16 * _knBigBuffLength, 2 * _knBigBuffLength);
-
                     // The above ThreadMake will be busy pumping out new file handles while the below processes will
                     // read those files' buffers and simultaneously hash them in batches until all files have been opened.
                     while ((false == bAllFilesOpened) ||
@@ -221,11 +297,13 @@ namespace DoubleFile
                         bEnqueued)
                     {
                         // Avoid spinning too quickly while waiting for new file handles.
+                        // Since lsFileBuffers_Enqueue is tested to continue looping, block only
+                        // after it has been populated. Blocking too early can cause lockups.
                         Util.Block(100);
 
                         var lsOpenedFiles = new List<Tuple<string, ulong, SafeFileHandle, string>> { };
 
-                        for (int i = 0; i < 4096; ++i)
+                        for (int i = 0; i < (1 << 12); ++i)
                         {
                             Tuple<string, ulong, SafeFileHandle, string>
                                 tupleA = null;
@@ -238,7 +316,7 @@ namespace DoubleFile
                             lsOpenedFiles.Add(tupleA);
                         }
 
-                        IReadOnlyList<Tuple<string, ulong, string, IReadOnlyList<IReadOnlyCollection<byte>>>>
+                        IReadOnlyList<Tuple<string, ulong, string, IReadOnlyList<SDL_ByteArray>>>
                             lsFileBuffers_Enqueue = null;
 
                         try
@@ -252,7 +330,11 @@ namespace DoubleFile
                         }
                         catch (Exception e)
                         {
+#if (DEBUG)
+                            Util.Assert(99677, false, e.GetBaseException().Message);
+#else
                             StatusCallback(LVitemProjectVM, strError: e.GetBaseException().Message);
+#endif
                             return null;
                         }
 
@@ -303,7 +385,6 @@ namespace DoubleFile
                     }
 
                     blockUntilAllFilesOpened.PushFrameToTrue();
-                    _bufferManager.Clear();
                     StatusCallback(LVitemProjectVM, nProgress: 1);
                     
                     return Tuple.Create(
@@ -338,15 +419,15 @@ namespace DoubleFile
                 return Tuple.Create(strFile, tuple.Item2, fileHandle, strError);
             }
 
-            IEnumerable<Tuple<string, ulong, string, IReadOnlyList<IReadOnlyCollection<byte>>>>
+            IEnumerable<Tuple<string, ulong, string, IReadOnlyList<SDL_ByteArray>>>
                 ReadBuffers(IEnumerable<Tuple<string, ulong, SafeFileHandle, string>> ieFileHandles)
             {
                 foreach (var tuple in ieFileHandles)
                 {
-                    var lsRet = new List<byte[]> { };
+                    var lsRet = new List<SDL_ByteArray> { };
 
                     var retval = Tuple.Create(tuple.Item1, tuple.Item2, tuple.Item4,
-                        (IReadOnlyList<IReadOnlyCollection<byte>>)lsRet);
+                        (IReadOnlyList<SDL_ByteArray>)lsRet);
 
                     var fileHandle = tuple.Item3;
 
@@ -361,13 +442,13 @@ namespace DoubleFile
                     using (var fs = new FileStream(fileHandle, FileAccess.Read))
                     Util.Closure(() =>
                     {
-                        lsRet.Add(_bufferManager.TakeBuffer(4096));          // happens to be block size
-                        var bFilled = FillBuffer(fs, _knBigBuffLength, lsRet);
+                        lsRet.Add(_bufferManager.TakeBuffer((1 << 12)));          // happens to be block size
+                        var bFilled = FillBuffer(fs, (1 << 19), lsRet);
 
                         if (0 < lsRet[1].Length)
                         {
                             // virtually always: all non-empty files
-                            Array.Copy(lsRet[1], lsRet[0], Math.Min(lsRet[1].Length, lsRet[0].Length));
+                            Array.Copy((byte[])lsRet[1], (byte[])lsRet[0], Math.Min(lsRet[1].Length, lsRet[0].Length));
 
                             if (lsRet[1].Length <= lsRet[0].Length)
                             {
@@ -385,17 +466,17 @@ namespace DoubleFile
                         if (false == bFilled)
                             return;     // from lambda
 
-                        var desiredPos = fs.Length - _knBigBuffLength;
+                        var desiredPos = fs.Length - (1 << 19);
 
                         if (desiredPos > fs.Position)
                         {
-                            Util.Assert(99931, _knBigBuffLength == fs.Position);
-                            desiredPos += (4096 - (desiredPos & 4095));       // align to block boundary if possible
-                            Util.Assert(99914, 0 == (desiredPos & 4095));
+                            Util.Assert(99931, (1 << 19) == fs.Position);
+                            desiredPos += ((1 << 12) - (desiredPos & ((1 << 12) - 1)));       // align to block boundary if possible
+                            Util.Assert(99914, 0 == (desiredPos & ((1 << 12) - 1)));
                             fs.Position = desiredPos;
                         }
 
-                        if (false == FillBuffer(fs, _knBigBuffLength, lsRet))
+                        if (false == FillBuffer(fs, (1 << 19), lsRet))
                             return;     // from lambda
                     });
 
@@ -403,17 +484,17 @@ namespace DoubleFile
                 }
             }
 
-            bool FillBuffer(FileStream fs, int nBufferSize, IList<byte[]> lsBuffer)
+            bool FillBuffer(FileStream fs, int nBufferSize, IList<SDL_ByteArray> lsBuffer)
             {
                 var readBuffer = _bufferManager.TakeBuffer(nBufferSize);
-                var nRead = fs.Read(readBuffer, 0, nBufferSize);
+                var nRead = fs.Read((byte[])readBuffer, 0, nBufferSize);
 
                 if (nRead < nBufferSize)
                 {
                     // works fine with 0 == nRead
                     var truncBuffer = _bufferManager.TakeBuffer(nRead);
 
-                    Array.Copy(readBuffer, truncBuffer, nRead);
+                    Array.Copy((byte[])readBuffer, (byte[])truncBuffer, nRead);
                     _bufferManager.ReturnBuffer(readBuffer);
                     readBuffer = truncBuffer;
                 }
@@ -432,7 +513,7 @@ namespace DoubleFile
             }
 
             Tuple<HashTuple, HashTuple>
-                HashFile(Tuple<string, ulong, string, IReadOnlyList<IReadOnlyCollection<byte>>> tuple)
+                HashFile(Tuple<string, ulong, string, IReadOnlyList<SDL_ByteArray>> tuple)
             {
                 var retval = Tuple.Create((HashTuple)null, (HashTuple)null);
                 var lsBuffer = tuple.Item4;
@@ -453,10 +534,9 @@ namespace DoubleFile
 
                 using (var md5 = MD5.Create())
                 {
-                    var buffer0 = (byte[])lsBuffer[0];
-                    var hash1pt0 = HashTuple.FactoryCreate(md5.ComputeHash(buffer0));
+                    var hash1pt0 = HashTuple.FactoryCreate(md5.ComputeHash((byte[])lsBuffer[0], 0, lsBuffer[0].Length));
 
-                    _bufferManager.ReturnBuffer(buffer0);
+                    _bufferManager.ReturnBuffer(lsBuffer[0]);
                     retval = Tuple.Create(hash1pt0, hash1pt0);
 
                     if (1 == nCount)
@@ -464,23 +544,23 @@ namespace DoubleFile
 
                     var nSize = 0;
 
-                    foreach (byte[] buffer in lsBuffer.Skip(1))
+                    foreach (var buffer in lsBuffer.Skip(1))
                         nSize += buffer.Length;
 
-                    Util.Assert(99909, 2 * _knBigBuffLength >= nSize);
+                    Util.Assert(99909, (1 << 20) >= nSize);
 
                     var hashArray = _bufferManager.TakeBuffer(nSize);
                     var nIx = 0;
 
-                    foreach (byte[] buffer in lsBuffer.Skip(1))
+                    foreach (var buffer in lsBuffer.Skip(1))
                     {
-                        buffer.CopyTo(hashArray, nIx);
+                        Array.Copy((byte[])buffer, 0, (byte[])hashArray, nIx, buffer.Length);
                         nIx += buffer.Length;
                         _bufferManager.ReturnBuffer(buffer);
                     }
 
                     var retVal = Tuple.Create(hash1pt0,
-                        HashTuple.FactoryCreate(md5.ComputeHash(hashArray)));
+                        HashTuple.FactoryCreate(md5.ComputeHash((byte[])hashArray, 0, hashArray.Length)));
 
                     _bufferManager.ReturnBuffer(hashArray);
                     return retVal;
@@ -491,10 +571,8 @@ namespace DoubleFile
                 _saveDirListingsStatus = null;
             Thread
                 _thread = new Thread(() => { });
-            BufferManager
+            SDL_BufferManager
                 _bufferManager = null;
-            const int
-                _knBigBuffLength = 524288;
         }
     }
 }

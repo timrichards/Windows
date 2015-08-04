@@ -63,8 +63,8 @@ namespace DoubleFile
 
         static internal IsolatedStorageFile
             IsoStore = null;
-        internal const string
-            TempPathIso = @"DoubleFile\";
+        internal static readonly string
+            TempPathIso = "DoubleFile_ " + Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + "\\";
         FileStream _lockTempIsoDir = null;
 
         static internal IObservable<Tuple<bool, int>>   // bool is a no-op: generic placeholder

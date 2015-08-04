@@ -183,8 +183,6 @@ namespace DoubleFile
                 long nProgressNumerator = 0;
                 double nProgressDenominator = lsFilePaths.Count;  // double preserves mantissa
 
-                _bufferManager = BufferManager.CreateBufferManager(16 * _knBigBuffLength, 2 * _knBigBuffLength);
-
                 using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                     .LocalSubscribe(99721, x => StatusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator)))
                 {
@@ -213,6 +211,8 @@ namespace DoubleFile
                     var dictException_FileRead = new ConcurrentDictionary<string, string> { };
                     var blockWhileHashingPreviousBatch = new LocalDispatcherFrame(99872) { Continue = false };
                     var bEnqueued = true;
+
+                    _bufferManager = BufferManager.CreateBufferManager(16 * _knBigBuffLength, 2 * _knBigBuffLength);
 
                     // The above ThreadMake will be busy pumping out new file handles while the below processes will
                     // read those files' buffers and simultaneously hash them in batches until all files have been opened.
@@ -267,7 +267,7 @@ namespace DoubleFile
                         // The closure along with the block being false should make the copy unnecessary but just in case.
                         var lsFileBuffers_Dequeue =
                             lsFileBuffers_Enqueue
-                            .ToArray();
+                            .ToList();
 
                         // While reading in the next batch of buffers, hash this batch. Three processes are occurring
                         // simultaneously: opening all files on disk; reading in all buffers from files; hashing all buffers.
@@ -292,7 +292,7 @@ namespace DoubleFile
                                 dictHash[strFile] = HashFile(tuple);
                             });
 
-                            nProgressNumerator += lsFileBuffers_Dequeue.Length;
+                            nProgressNumerator += lsFileBuffers_Dequeue.Count;
                             blockWhileHashingPreviousBatch.Continue = false;
 
                             if (bAllFilesOpened)

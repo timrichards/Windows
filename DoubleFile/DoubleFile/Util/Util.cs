@@ -37,11 +37,9 @@ namespace DoubleFile
         {
             var blockingFrame = new LocalDispatcherFrame(99879);
 
-            ThreadMake(() =>
-            {
-                Thread.Sleep(napTime);
-                blockingFrame.Continue = false;
-            });
+            // One-shot: no need to dispose
+            Observable.Timer(napTime).Timestamp()
+                .Subscribe(x => blockingFrame.Continue = false);
 
             blockingFrame.PushFrameToTrue();
         }

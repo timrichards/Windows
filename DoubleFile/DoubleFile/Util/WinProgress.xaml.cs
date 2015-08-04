@@ -110,7 +110,7 @@ namespace DoubleFile
             {
                 lvItem.SetCompleted();
 
-                if (_lv.ItemsCast.All(lvItemA => 1 == lvItemA.Progress))
+                if (_lv.ItemsCast.All(lvItemA => lvItemA.Progress.Equals(1)))
                 {
                     Util.UIthread(99827, () => formBtn_Cancel.ToolTip = "Process completed. You may now close the window");
                     StopShowingConfirmMessage();

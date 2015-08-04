@@ -472,8 +472,8 @@ namespace DoubleFile
 
                     var nSize = 0;
 
-                    foreach (var buffer in lsBuffer.Skip(1))
-                        nSize += buffer.Count;
+                    foreach (byte[] buffer in lsBuffer.Skip(1))
+                        nSize += buffer.Length;
 
                     Util.Assert(99909, (1 << 20) >= nSize);
 

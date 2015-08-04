@@ -7,13 +7,9 @@ namespace DoubleFile
 {
     class LV_ProgressVM : ListViewVM_Base<LVitem_ProgressVM>, IDisposable
     {
-        // queried by ObservableObject but not used for progress bar
-        public string WidthBigLabel => SCW;                        // franken all NaN
+        public string WidthBigLabel => SCW;             // franken all NaN
         public string WidthSmallKeyLabel => SCW;
-        public string WidthProgress => SCW;
-        public string WidthIndeterminate => SCW;
-        public string WidthProgressState => SCW;
-        public string WidthRemaining => SCW;
+        public string WidthStatus => SCW;
 
         internal override int NumCols => LVitem_ProgressVM.NumCols_;
 

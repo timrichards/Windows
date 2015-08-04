@@ -93,7 +93,7 @@ namespace DoubleFile
         {
             if (false ==
                 _lv[strPath]
-                .FirstOnlyAssert(lvItem => lvItem.Progress = nProgress - double.Epsilon))
+                .FirstOnlyAssert(lvItem => lvItem.Progress = nProgress))
             {
                 Util.Assert(99969, false);
             }
@@ -110,7 +110,7 @@ namespace DoubleFile
             {
                 lvItem.SetCompleted();
 
-                if (_lv.ItemsCast.All(lvItemA => lvItemA.Progress.Equals(1)))
+                if (_lv.ItemsCast.All(lvItemA => lvItemA.IsCompleted))
                 {
                     Util.UIthread(99827, () => formBtn_Cancel.ToolTip = "Process completed. You may now close the window");
                     StopShowingConfirmMessage();

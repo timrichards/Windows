@@ -5,42 +5,38 @@ using System.Collections.Generic;
 
 namespace DoubleFile
 {
+    using static Brushes;
+
     class LVitem_ProgressVM : ListViewItemVM_Base
     {
         public string
             BigLabel { get { return SubItems[0]; } private set { SetProperty(0, value); } }
         public string
             SmallKeyLabel { get { return SubItems[1]; } private set { SetProperty(1, value); } }
+        public string
+            Status { get { return SubItems[2]; } private set { SetProperty(2, value); } }
+
+        enum
+            ProgressStates { Indeterminate, Determinate, Completed, Error };    // order is int cast as array indices
+        ProgressStates _progressState = ProgressStates.Indeterminate;
+        internal bool
+            IsCompleted => ProgressStates.Completed == _progressState;
+
         public double
-            Progress { get; internal set; }
+            Progress
+        {
+            get { return new double[] { 0, _nProgress, 1, 1 }[(int)_progressState]; }
+            internal set { _nProgress = value; }    // RaisPropertyChanged is in OnTimerTick()
+        }
+        double _nProgress = 0;
 
         public bool
-            Indeterminate
-        {
-            get { return _bIndeterminate; }
-            internal set
-            {
-                _bIndeterminate = value;
-
-                ProgressState = _bIndeterminate ? Brushes.Navy : Brushes.Navy;
-                RaisePropertyChanged();
-            }
-        }
-        bool _bIndeterminate = true;
-
+            Indeterminate => ProgressStates.Indeterminate == _progressState;
         public Brush
-            ProgressState
-        {
-            get { return _brushProgressState; }
-            private set { _brushProgressState = value; RaisePropertyChanged(); }
-        }
-        Brush _brushProgressState = Brushes.Navy;
-        
-        public string
-            Remaining { get { return SubItems[5]; } private set { SetProperty(5, value); } }
+            Foreground => new Brush[] { Navy, Navy, LimeGreen, Red }[(int)_progressState];
 
         internal override int NumCols => NumCols_;
-        internal const int NumCols_ = 6;
+        internal const int NumCols_ = 3;
 
         protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
         static string[] _propNamesA = null;
@@ -52,34 +48,39 @@ namespace DoubleFile
         {
         }
 
+        void Progress_RaisePropertyChanged()
+        {
+            RaisePropertyChanged("Progress");
+            RaisePropertyChanged("Indeterminate");
+            RaisePropertyChanged("Foreground");
+        }
+
         internal void SetCompleted()
         {
-            Indeterminate = false;
-            ProgressState = Brushes.LimeGreen;
-            Remaining = "Completed.";
-            Progress = 1;
-            RaisePropertyChanged(_ksProgress);
+            _progressState = ProgressStates.Completed;
+            Status = "Completed.";
+            Progress_RaisePropertyChanged();
         }
 
         internal void SetError(string strError)
         {
-            Indeterminate = false;
-            ProgressState = Brushes.Red;
-            Remaining = "Error. " + strError;
-            Progress = 1;
-            RaisePropertyChanged(_ksProgress);
+            _progressState = ProgressStates.Error;
+            Status = "Error. " + strError;
+            Progress_RaisePropertyChanged();
         }
 
         internal void TimerTick()
         {
-            if (_nLastProgress.Equals(Progress))
+            var nProgress = _nProgress;     // do not use the Progress property in TimerTick()
+
+            if (_nLastProgress.Equals(nProgress))
                 return;
 
-            if (double.IsNaN(Progress))
+            if (double.IsNaN(nProgress))
                 return;
 
-            if (_bIndeterminate)
-                Indeterminate = false;
+            if (ProgressStates.Indeterminate == _progressState)
+                _progressState = ProgressStates.Determinate;
 
             if (_dtRollingProgress == DateTime.MinValue)
                 _dtRollingProgress = DateTime.Now;
@@ -91,7 +92,7 @@ namespace DoubleFile
             {
                 // The operating system caches reads so restarting the drive read sweeps
                 // through the already-read data unreasonably fast.
-                _nRollingProgress = Progress;
+                _nRollingProgress = nProgress;
 
                 if (_nRollingProgress.Equals(0))
                     _nRollingProgress = double.Epsilon;
@@ -100,7 +101,7 @@ namespace DoubleFile
             }
             else if (tmRolling > TimeSpan.FromMinutes(_knRollingMinutes))
             {
-                var v = Math.Min(1, Progress + double.Epsilon);
+                var v = Math.Min(1, nProgress + double.Epsilon);
                 var numerator = Math.Max(0, (1 - v) * tmRolling.Ticks);
                 var denominator = (v - _nRollingProgress) / _knRollingMinutes;
 
@@ -110,7 +111,7 @@ namespace DoubleFile
                         .Add(TimeSpan.FromMinutes(1))
                         .TotalMinutes;
 
-                    Remaining = "About " +
+                    Status = "About " +
                         nRemaining.ToString("0") +
                         " Minute" +
                         (nRemaining != 1 ? "s" : "") +
@@ -121,12 +122,10 @@ namespace DoubleFile
                 _dtRollingProgress = DateTime.Now;
             }
 
-            RaisePropertyChanged(_ksProgress);
-            _nLastProgress = Progress;
+            Progress_RaisePropertyChanged();
+            _nLastProgress = nProgress;
         }
 
-        const string
-            _ksProgress = "Progress";
         const int
             _knRollingMinutes = 2;
 

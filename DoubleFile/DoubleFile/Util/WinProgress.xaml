@@ -19,8 +19,8 @@
                         <StackPanel Margin="10,0,0,0">
                             <TextBlock FontWeight="Bold" Text="{Binding BigLabel}" />
                             <TextBlock Text="{Binding SmallKeyLabel}" />
-                            <ProgressBar Foreground="{Binding ProgressState}" Value="{Binding Progress, Mode=OneWay}" Maximum="1" LargeChange="0.1" SmallChange="0.01" IsIndeterminate="{Binding Indeterminate}" Height="5" Margin="0,2"/>
-                            <TextBlock Text="{Binding Remaining}" />
+                            <ProgressBar Foreground="{Binding Foreground}" Value="{Binding Progress, Mode=OneWay}" Maximum="1" LargeChange="0.1" SmallChange="0.01" IsIndeterminate="{Binding Indeterminate}" Height="5" Margin="0,2"/>
+                            <TextBlock Text="{Binding Status}" />
                         </StackPanel>
                     </Border>
                 </DataTemplate>

@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Windows;
+using System.ServiceModel.Channels;
 
 namespace DoubleFile
 {
@@ -57,12 +57,14 @@ namespace DoubleFile
 
             var dtStart = DateTime.Now;
 
+            var bufferManager = BufferManager.CreateBufferManager(16 * (1 << 19), (1 << 20));
+
             foreach (var lvItemProjectVM
                 in _lvProjectVM.ItemsCast
                 .Where(lvItemProjectVM => lvItemProjectVM.WouldSave))
             {
                 _cbagWorkers
-                    .Add(new SaveDirListing(lvItemProjectVM, _saveDirListingsStatus)
+                    .Add(new SaveDirListing(lvItemProjectVM, _saveDirListingsStatus, bufferManager)
                     .DoThreadFactory());
             }
 

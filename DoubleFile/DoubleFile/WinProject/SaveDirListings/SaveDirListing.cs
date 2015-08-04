@@ -12,7 +12,6 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Microsoft.Win32.SafeHandles;
 using System.Windows;
-using System.Runtime;
 
 namespace DoubleFile
 {
@@ -89,7 +88,6 @@ namespace DoubleFile
                     var hash = Hash ? HashAllFiles(GetFileList()) : null;
 
                     Util.WriteLine("hashed " + LVitemProjectVM.SourcePath);
-                    GC.Collect();
 
                     Util.UsingIso(() => new StreamWriter(Statics.IsoStore.CreateFile(LVitemProjectVM.ListingFile)),
                         sw =>
@@ -224,13 +222,11 @@ namespace DoubleFile
                         bEnqueued)
                     {
                         // Avoid spinning too quickly while waiting for new file handles.
-                        // Since lsFileBuffers_Enqueue is tested to continue looping, block only
-                        // after it has been populated. Blocking too early can cause lockups.
                         Util.Block(100);
 
                         var lsOpenedFiles = new List<Tuple<string, ulong, SafeFileHandle, string>> { };
 
-                        for (int i = 0; i < (1 << 12); ++i)
+                        for (int i = 0; i < (1 << 8); ++i)
                         {
                             Tuple<string, ulong, SafeFileHandle, string>
                                 tupleA = null;
@@ -243,7 +239,7 @@ namespace DoubleFile
                             lsOpenedFiles.Add(tupleA);
                         }
 
-                        IReadOnlyList<Tuple<string, ulong, string, IReadOnlyList<byte[]>>>
+                        IReadOnlyList<Tuple<string, ulong, string, IReadOnlyList<IReadOnlyList<byte>>>>
                             lsFileBuffers_Enqueue = null;
 
                         try
@@ -346,15 +342,15 @@ namespace DoubleFile
                 return Tuple.Create(strFile, tuple.Item2, fileHandle, strError);
             }
 
-            IEnumerable<Tuple<string, ulong, string, IReadOnlyList<byte[]>>>
+            IEnumerable<Tuple<string, ulong, string, IReadOnlyList<IReadOnlyList<byte>>>>
                 ReadBuffers(IEnumerable<Tuple<string, ulong, SafeFileHandle, string>> ieFileHandles)
             {
                 foreach (var tuple in ieFileHandles)
                 {
-                    var lsRet = new List<byte[]> { };
+                    var lsRet = new List<IReadOnlyList<byte>> { };
 
                     var retval = Tuple.Create(tuple.Item1, tuple.Item2, tuple.Item4,
-                        (IReadOnlyList<byte[]>)lsRet);
+                        (IReadOnlyList<IReadOnlyList<byte>>)lsRet);
 
                     var fileHandle = tuple.Item3;
 
@@ -372,12 +368,12 @@ namespace DoubleFile
                         lsRet.Add(new byte[1 << 12]);          // happens to be block size
                         var bFilled = FillBuffer(fs, (1 << 19), lsRet);
 
-                        if (0 < lsRet[1].Length)
+                        if (0 < lsRet[1].Count)
                         {
                             // virtually always: all non-empty files
-                            Array.Copy(lsRet[1], lsRet[0], Math.Min(lsRet[1].Length, lsRet[0].Length));
+                            Array.Copy((byte[])lsRet[1], (byte[])lsRet[0], Math.Min(lsRet[1].Count, lsRet[0].Count));
 
-                            if (lsRet[1].Length <= lsRet[0].Length)
+                            if (lsRet[1].Count <= lsRet[0].Count)
                                 lsRet.RemoveAt(1);
                         }
                         else
@@ -408,7 +404,7 @@ namespace DoubleFile
                 }
             }
 
-            bool FillBuffer(FileStream fs, int nBufferSize, IList<byte[]> lsBuffer)
+            bool FillBuffer(FileStream fs, int nBufferSize, IList<IReadOnlyList<byte>> lsBuffer)
             {
                 var readBuffer = new byte[nBufferSize];
                 var nRead = fs.Read(readBuffer, 0, nBufferSize);
@@ -436,7 +432,7 @@ namespace DoubleFile
             }
 
             Tuple<HashTuple, HashTuple>
-                HashFile(Tuple<string, ulong, string, IReadOnlyList<byte[]>> tuple)
+                HashFile(Tuple<string, ulong, string, IReadOnlyList<IReadOnlyList<byte>>> tuple)
             {
                 var retval = Tuple.Create((HashTuple)null, (HashTuple)null);
                 var lsBuffer = tuple.Item4;
@@ -457,7 +453,7 @@ namespace DoubleFile
 
                 using (var md5 = MD5.Create())
                 {
-                    var hash1pt0 = HashTuple.FactoryCreate(md5.ComputeHash(lsBuffer[0], 0, lsBuffer[0].Length));
+                    var hash1pt0 = HashTuple.FactoryCreate(md5.ComputeHash((byte[])lsBuffer[0], 0, lsBuffer[0].Count));
 
                     retval = Tuple.Create(hash1pt0, hash1pt0);
 
@@ -467,14 +463,14 @@ namespace DoubleFile
                     var nSize = 0;
 
                     foreach (var buffer in lsBuffer.Skip(1))
-                        nSize += buffer.Length;
+                        nSize += buffer.Count;
 
                     Util.Assert(99909, (1 << 20) >= nSize);
 
                     var hashArray = new byte[nSize];
                     var nIx = 0;
 
-                    foreach (var buffer in lsBuffer.Skip(1))
+                    foreach (byte[] buffer in lsBuffer.Skip(1))
                     {
                         Array.Copy(buffer, 0, hashArray, nIx, buffer.Length);
                         nIx += buffer.Length;

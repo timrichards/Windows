@@ -233,22 +233,10 @@ namespace DoubleFile
             }
         }
 
-        class D : IDisposable { public void Dispose() { } }
-        static internal void
-            UsingIso(Action<IDisposable> doSomething, IsolatedStorageFile isoStore = null)
-        {
-            UsingIso(() => new D(), doSomething);
-        }
-
-        static Util()
-        {
-            Assert(99679, false == string.IsNullOrEmpty(Statics.Namespace));
-        }
-
         static readonly string _strLockFile = Path.GetTempPath() + Statics.Namespace + "_IsoLock";
 
         static internal void
-            UsingIso<T>(Func<T> openFile, Action<T> doSomething) where T : IDisposable
+            WritingIsolatedStorage(Action doSomething)
         {
             Func<IDisposable> checkLockFile = () =>
             {
@@ -263,8 +251,7 @@ namespace DoubleFile
 
             try
             {
-                using (var t = openFile())
-                    doSomething(t);
+                doSomething();
             }
             finally
             {

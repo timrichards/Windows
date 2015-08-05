@@ -73,7 +73,7 @@ namespace DoubleFile
                 return null;
 
             if ((2 > strSource.Length) || (':' != strSource[1]))
-                Util.UsingIso(x => Statics.IsoStore.MoveFile(strSource, strIsoDest));
+                Util.WritingIsolatedStorage(() => Statics.IsoStore.MoveFile(strSource, strIsoDest));
             else
                 MoveFile_(strSource, strIsoDest);
 
@@ -84,8 +84,11 @@ namespace DoubleFile
             MoveFile_(string strSource, string strDest)
         {
             using (var sr = File.OpenText(strSource))
-            Util.UsingIso(() => new StreamWriter(Statics.IsoStore.CreateFile(Statics.TempPathIso + Path.GetFileName(strDest))),
-                sw => Util.CopyStream(sr, sw));
+            Util.WritingIsolatedStorage(() =>
+            {
+                using (var sw = new StreamWriter(Statics.IsoStore.CreateFile(Statics.TempPathIso + Path.GetFileName(strDest))))
+                    Util.CopyStream(sr, sw);
+            });
 
             File.Delete(strSource);
         }

@@ -255,9 +255,9 @@ namespace DoubleFile
             var strFile_01 = FileParse.StrFile_01(strIsoFile);
 
             if (Statics.IsoStore.FileExists(strFile_01))
-                Util.UsingIso(x => Statics.IsoStore.DeleteFile(strFile_01));
+                Util.WritingIsolatedStorage(() => Statics.IsoStore.DeleteFile(strFile_01));
 
-            Util.UsingIso(x => Statics.IsoStore.MoveFile(strIsoFile, strFile_01));
+            Util.WritingIsolatedStorage(() => Statics.IsoStore.MoveFile(strIsoFile, strFile_01));
 
             var sbOut = new StringBuilder();
 
@@ -323,8 +323,11 @@ namespace DoubleFile
                 {
                     ModifyDriveLetter();
 
-                    Util.UsingIso(() => new StreamWriter(Statics.IsoStore.CreateFile(strIsoFile)),
-                        sw => sw.Write("" + sbOut));
+                    Util.WritingIsolatedStorage(() =>
+                    {
+                        using (var sw = new StreamWriter(Statics.IsoStore.CreateFile(strIsoFile)))
+                            sw.Write("" + sbOut);
+                    });
                 }
                 else
                 {
@@ -332,7 +335,7 @@ namespace DoubleFile
 
                     try
                     {
-                        Util.UsingIso(x => Statics.IsoStore.DeleteFile(strIsoFile));
+                        Util.WritingIsolatedStorage(() => Statics.IsoStore.DeleteFile(strIsoFile));
                     }
                     catch (Exception e)
                     {
@@ -341,15 +344,18 @@ namespace DoubleFile
                     }
                 }
 
-                Util.UsingIso(() => new StreamWriter(Statics.IsoStore.OpenFile(strIsoFile, FileMode.Append)), sw =>
-                    Util.CopyStream(sr, sw, (buffer, nRead) =>
+                Util.WritingIsolatedStorage(() =>
                 {
-                    sbOut.Clear();
-                    sbOut.Append(buffer, 0, nRead);
-                    ModifyDriveLetter();
-                    sbOut.CopyTo(0, buffer, 0, nRead);
-                    return buffer;
-                }));
+                    using (var sw = new StreamWriter(Statics.IsoStore.OpenFile(strIsoFile, FileMode.Append)))
+                        Util.CopyStream(sr, sw, (buffer, nRead) =>
+                    {
+                        sbOut.Clear();
+                        sbOut.Append(buffer, 0, nRead);
+                        ModifyDriveLetter();
+                        sbOut.CopyTo(0, buffer, 0, nRead);
+                        return buffer;      // from lambda
+                    });
+                });
 
                 bDriveLetter_Todo = false;
             }
@@ -364,7 +370,7 @@ namespace DoubleFile
                 using (var sw = new StreamWriter(File.OpenWrite(lvItem_Orig.ListingFile)))
                     Util.CopyStream(sr, sw);
 
-                Util.UsingIso(x => Statics.IsoStore.DeleteFile(strIsoFile));
+                Util.WritingIsolatedStorage(() => Statics.IsoStore.DeleteFile(strIsoFile));
             }
 
             return true;

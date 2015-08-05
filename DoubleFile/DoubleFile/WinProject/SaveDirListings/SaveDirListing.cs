@@ -84,7 +84,7 @@ namespace DoubleFile
                 }
 
                 if (Statics.IsoStore.FileExists(LVitemProjectVM.ListingFile))
-                    Util.UsingIso(x => Statics.IsoStore
+                    Util.WritingIsolatedStorage(() => Statics.IsoStore
                     .DeleteFile(LVitemProjectVM.ListingFile));
 
                 try
@@ -93,35 +93,37 @@ namespace DoubleFile
 
                     Util.WriteLine("hashed " + LVitemProjectVM.SourcePath);
 
-                    Util.UsingIso(() => new StreamWriter(Statics.IsoStore.CreateFile(LVitemProjectVM.ListingFile)),
-                        sw =>
+                    Util.WritingIsolatedStorage(() =>
                     {
-                        WriteHeader(sw);
-                        sw.WriteLine();
-                        sw.WriteLine(FormatString(nHeader: 0));
-                        sw.WriteLine(FormatString(nHeader: 1));
-                        sw.WriteLine(ksStart01 + " " + DateTime.Now);
-                        WriteDirectoryListing(sw, hash);
-                        sw.WriteLine(ksEnd01 + " " + DateTime.Now);
-                        sw.WriteLine();
-                        sw.WriteLine(ksErrorsLoc01);
+                        using (var sw = new StreamWriter(Statics.IsoStore.CreateFile(LVitemProjectVM.ListingFile)))
+                        {
+                            WriteHeader(sw);
+                            sw.WriteLine();
+                            sw.WriteLine(FormatString(nHeader: 0));
+                            sw.WriteLine(FormatString(nHeader: 1));
+                            sw.WriteLine(ksStart01 + " " + DateTime.Now);
+                            WriteDirectoryListing(sw, hash);
+                            sw.WriteLine(ksEnd01 + " " + DateTime.Now);
+                            sw.WriteLine();
+                            sw.WriteLine(ksErrorsLoc01);
 
-                        // Unit test metrix on non-system volume
-                        //MBox.Assert(99893, nProgressDenominator >= nProgressNumerator);       file creation/deletion between times
-                        //MBox.Assert(99892, nProgressDenominator == m_nFilesDiff);             ditto
-                        //MBox.Assert(99891, nProgressDenominator == dictHash.Count);           ditto
+                            // Unit test metrix on non-system volume
+                            //MBox.Assert(99893, nProgressDenominator >= nProgressNumerator);       file creation/deletion between times
+                            //MBox.Assert(99892, nProgressDenominator == m_nFilesDiff);             ditto
+                            //MBox.Assert(99891, nProgressDenominator == dictHash.Count);           ditto
 
-                        foreach (var strError in ErrorList)
-                            sw.WriteLine(strError);
+                            foreach (var strError in ErrorList)
+                                sw.WriteLine(strError);
 
-                        sw.WriteLine();
-                        sw.WriteLine(FormatString(strDir: ksTotalLengthLoc01, nLength: LengthRead));
+                            sw.WriteLine();
+                            sw.WriteLine(FormatString(strDir: ksTotalLengthLoc01, nLength: LengthRead));
+                        }
                     });
 
                     if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                         _bThreadAbort)
                     {
-                        Util.UsingIso(x => Statics.IsoStore.DeleteFile(LVitemProjectVM.ListingFile));
+                        Util.WritingIsolatedStorage(() => Statics.IsoStore.DeleteFile(LVitemProjectVM.ListingFile));
                         return;
                     }
 

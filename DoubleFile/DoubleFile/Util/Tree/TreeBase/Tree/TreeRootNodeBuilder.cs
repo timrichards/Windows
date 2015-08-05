@@ -125,7 +125,7 @@ namespace DoubleFile
 
                         try
                         {
-                            Util.UsingIso(x => Statics.IsoStore.DeleteFile(StrFile_01(_volStrings.ListingFile)));
+                            Util.WritingIsolatedStorage(() => Statics.IsoStore.DeleteFile(StrFile_01(_volStrings.ListingFile)));
                         }
                         catch (IsolatedStorageException) { }
 

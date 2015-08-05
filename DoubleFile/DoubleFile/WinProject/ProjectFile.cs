@@ -170,11 +170,11 @@ namespace DoubleFile
                     }))
                     {
                         // strNew is assigned each iteration in C# 4.
-                        Util.UsingIso(x => Statics.IsoStore.MoveFile(strFile, strNew));
+                        Util.WritingIsolatedStorage(() => Statics.IsoStore.MoveFile(strFile, strNew));
                     }
                 }
 
-                Util.UsingIso(x => Statics.IsoStore.DeleteDirectory(_tempPathIso01));
+                Util.WritingIsolatedStorage(() => Statics.IsoStore.DeleteDirectory(_tempPathIso01));
             }
 
             WinProgress.CloseForced();
@@ -218,7 +218,7 @@ namespace DoubleFile
                     if (bSuccess)
                     {
                         strNewName = Statics.TempPathIso + strNewName;
-                        Util.UsingIso(x => Statics.IsoStore.CopyFile(volStrings.ListingFile, strNewName));
+                        Util.WritingIsolatedStorage(() => Statics.IsoStore.CopyFile(volStrings.ListingFile, strNewName));
                         volStrings.ListingFile = strNewName;
                     }
                 }

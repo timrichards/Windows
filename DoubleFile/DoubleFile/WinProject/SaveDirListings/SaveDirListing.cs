@@ -194,8 +194,6 @@ namespace DoubleFile
                     .LocalSubscribe(99721, x => StatusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator)))
                 {
                     var lsFileHandles = new ConcurrentBag<Tuple<string, ulong, SafeFileHandle, string>> { };
-                    var blockUntilAllFilesOpened = new LocalDispatcherFrame(99883);
-                    var bAllFilesOpened = false;
                     var cts = new CancellationTokenSource();
 
                     Util.ThreadMake(() =>
@@ -210,20 +208,15 @@ namespace DoubleFile
                         {
                             lsFileHandles.Add(OpenFile(tuple));
                         });
-
-                        bAllFilesOpened = true;
                     });
 
                     var dictHash = new ConcurrentDictionary<string, Tuple<HashTuple, HashTuple>> { };
                     var dictException_FileRead = new ConcurrentDictionary<string, string> { };
                     var blockWhileHashingPreviousBatch = new LocalDispatcherFrame(99872) { Continue = false };
-                    var bEnqueued = true;
 
                     // The above ThreadMake will be busy pumping out new file handles while the below processes will
                     // read those files' buffers and simultaneously hash them in batches until all files have been opened.
-                    while ((false == bAllFilesOpened) ||
-                        0 < lsFileHandles.Count ||
-                        bEnqueued)
+                    while (nProgressNumerator < nProgressDenominator)
                     {
                         // Avoid spinning too quickly while waiting for new file handles.
                         Util.Block(100);
@@ -255,6 +248,7 @@ namespace DoubleFile
                                 ReadBuffers(lsOpenedFiles)
                                 .ToList();
                         }
+                        catch (ThreadAbortException) { }
                         catch (Exception e)
                         {
 #if (DEBUG)
@@ -289,7 +283,6 @@ namespace DoubleFile
                                 if (_bThreadAbort)
                                 {
                                     cts.Cancel();
-                                    bAllFilesOpened = true;
                                     return;     // from lambda Util.ParallelForEach
                                 }
 
@@ -303,15 +296,12 @@ namespace DoubleFile
 
                             nProgressNumerator += lsFileBuffers_Dequeue.Count;
                             blockWhileHashingPreviousBatch.Continue = false;
-
-                            if (bAllFilesOpened)
-                                blockUntilAllFilesOpened.Continue = false;
                         });
 
-                        bEnqueued = 0 < lsFileBuffers_Enqueue.Count;
+                        if (cts.IsCancellationRequested)
+                            break;
                     }
 
-                    blockUntilAllFilesOpened.PushFrameToTrue();
                     StatusCallback(LVitemProjectVM, nProgress: 1);
                     
                     return Tuple.Create(

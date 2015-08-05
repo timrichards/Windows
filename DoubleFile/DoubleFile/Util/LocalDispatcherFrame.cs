@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Threading;
+﻿using System.Windows.Threading;
 using System.Linq;
+using System.Collections.Concurrent;
 
 namespace DoubleFile
 {
@@ -11,27 +10,22 @@ namespace DoubleFile
 
         internal void PushFrameToTrue()
         {
-            lock (_dispatcherFrames)
-                _dispatcherFrames.Add(this);
+            _dispatcherFrames.TryAdd(this, false);
 
             Continue = true;
             Dispatcher.PushFrame(this);
 
-            lock (_dispatcherFrames)
-            {
-                var ix = _dispatcherFrames.IndexOf(this);
+            var noop = false;
 
-                if (-1 < ix)
-                    _dispatcherFrames.RemoveAt(ix);
-            }
+            _dispatcherFrames.TryRemove(this, out noop);
         }
 
         internal static string ClearFrames()
         {
             var strRet = "";
-            var dispatcherFrames = _dispatcherFrames.ToList();
+            var dispatcherFrames = _dispatcherFrames.Keys.ToList();
 
-            _dispatcherFrames = new List<LocalDispatcherFrame>();
+            _dispatcherFrames.Clear();
 
             dispatcherFrames.ForEach(dispatcherFrame =>
             {
@@ -46,7 +40,7 @@ namespace DoubleFile
 
         decimal
             _nLocation = -1;
-        static List<LocalDispatcherFrame>
-            _dispatcherFrames = new List<LocalDispatcherFrame>();
+        static ConcurrentDictionary<LocalDispatcherFrame, bool>     // bool is a no-op: generic placeholder
+            _dispatcherFrames = new ConcurrentDictionary<LocalDispatcherFrame, bool>();
     }
 }

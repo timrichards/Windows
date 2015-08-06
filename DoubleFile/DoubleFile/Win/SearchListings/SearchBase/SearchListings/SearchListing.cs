@@ -29,7 +29,18 @@ namespace DoubleFile
 
             internal SearchListing DoThreadFactory()
             {
-                _thread = Util.ThreadMake(Go);
+                _thread = Util.ThreadMake(() =>
+                {
+                    try
+                    {
+                        Go();
+                    }
+                    catch (OutOfMemoryException)
+                    {
+                        Util.Assert(99921, false, "OutOfMemoryException in SearchListing");
+                    }
+                });
+
                 return this;
             }
 

@@ -62,7 +62,7 @@ namespace DoubleFile
 
         //    return
         //        (_t.Generating)
-        //     //   ? ((string)this).LocalCompare((string)that)
+        //        //   ? ((string)this).LocalCompare((string)that)
         //        ? ("" + Get(nIndex)).CompareTo(Get(that.nIndex))
         //        : _t.Sort[nIndex] - _t.Sort[that.nIndex];
         //}
@@ -236,7 +236,9 @@ namespace DoubleFile
     class PathBuilder : IComparable<PathBuilder>, IComparable
     {
         static TabledStringStatics
-            _t = null;
+            _tFiles = TypedArrayBase.tA[new Tabled_Files().Type];
+        static TabledStringStatics
+            _t = TypedArrayBase.tA[new Tabled_Folders().Type];
 
         public int CompareTo(object that) => CompareTo((PathBuilder)that);
         public int CompareTo(PathBuilder that)
@@ -260,15 +262,15 @@ namespace DoubleFile
         {
             try
             {
-                if (null == _t)
+                if (null == _tFiles)
                     throw new NullReferenceException();
 
-                Util.Assert(99985, _t.Generating);
+                Util.Assert(99985, _tFiles.Generating);
 
-                lock (_t.DictPathParts)
+                lock (_tFiles.DictPathParts)
                 {
                     return
-                        _t.DictPathParts
+                        _tFiles.DictPathParts
                         .GetOrAdd(strDir, x => new PathBuilder(strDir));
                 }
             }
@@ -281,7 +283,7 @@ namespace DoubleFile
 
         PathBuilder(string strDir)
         {
-            var lsInts = new List<int>();
+            var lsInts = new List<int> { };
 
             foreach (var s in strDir.Split('\\'))
             {

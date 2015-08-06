@@ -76,8 +76,9 @@ namespace DoubleFile
             if (null == strFile)
                 return false;
 
-            return File.Exists(strFile) ||
-                _isoStore.FileExists(strFile);
+            return
+                _isoStore.FileExists(strFile) ||
+                File.Exists(strFile);
         }
 
         static internal string
@@ -86,17 +87,17 @@ namespace DoubleFile
             if (null == strSource)
                 return null;
 
-            if (File.Exists(strSource))
+            if (_isoStore.FileExists(strSource))
+            {
+                MoveFile(strSource, strIsoDest);
+            }
+            else
             {
                 using (var sr = File.OpenText(strSource))
                 using (var sw = new StreamWriter(CreateFile(TempDir + Path.GetFileName(strIsoDest))))
                     Util.CopyStream(sr, sw);
 
                 File.Delete(strSource);
-            }
-            else
-            {
-                MoveFile(strSource, strIsoDest);
             }
 
             return strIsoDest;
@@ -105,16 +106,16 @@ namespace DoubleFile
         static internal FileStream
             OpenFile(this string strFile, FileMode mode)
         {
-            if (File.Exists(strFile))
-            {
-                return File.Open(strFile, mode);
-            }
-            else
+            if (_isoStore.FileExists(strFile))
             {
                 if (FileMode.Open == mode)
                     return _isoStore.OpenFile(strFile, FileMode.Open);
 
                 return WriteLockA(() => _isoStore.OpenFile(strFile, mode));
+            }
+            else
+            {
+                return File.Open(strFile, mode);
             }
         }
 
@@ -124,9 +125,9 @@ namespace DoubleFile
             if (null == strFile)
                 return new string[0];
 
-            return (File.Exists(strFile))
-                ? File.ReadLines(strFile)
-                : ReadLinesIterator.CreateIterator(new StreamReader(OpenFile(strFile, FileMode.Open)));
+            return (_isoStore.FileExists(strFile))
+                ? ReadLinesIterator.CreateIterator(new StreamReader(OpenFile(strFile, FileMode.Open)))
+                : File.ReadLines(strFile);
         }
     }
 }

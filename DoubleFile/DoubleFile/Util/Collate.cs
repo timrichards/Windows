@@ -601,8 +601,7 @@ namespace DoubleFile
                 {
                     if (_lsLVignore
                         .Where(lvItem => treeNode.Level == (("" + lvItem.SubItems[1]).ToInt() - 1))
-                        .Any(lvItem => ("" + lvItem.Folder).Equals(treeNode.Text,
-                            StringComparison.InvariantCultureIgnoreCase)))
+                        .Any(lvItem => ("" + lvItem.Folder).Equals(treeNode.Text, StringComparison.Ordinal)))
                     {
                         Util.Assert(99898, false);    // replace the Tag field with an LVitem
                   //      IgnoreNodeAndSubnodes((LocalLVitem)lvItem.Tag, treeNode);

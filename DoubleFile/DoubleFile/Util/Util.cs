@@ -6,7 +6,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Linq;
-using System.IO.IsolatedStorage;
 
 namespace DoubleFile
 {
@@ -173,6 +172,7 @@ namespace DoubleFile
                     {
                         doSomething(s);
                     }
+                    catch (ThreadAbortException) { }
                     catch (Exception e)
                     {
                         Util.Assert(99675, false, "Exception in ParallelForEach\n" +
@@ -217,12 +217,12 @@ namespace DoubleFile
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         action();
-                        blockingFrame.Continue = false;     // A
+                        blockingFrame.Continue = false;     // 2
                     });
 
                     // fast operation (e.g. OnPropertyChanged()) may exit Invoke() before this line is even hit:
-                    // A then B not the reverse.
-                    if (blockingFrame.Continue)             // B
+                    // 2 then 1 not the reverse.
+                    if (blockingFrame.Continue)             // 1
                         blockingFrame.PushFrameToTrue();
                 }
             }
@@ -233,40 +233,16 @@ namespace DoubleFile
             }
         }
 
-        static readonly string _strLockFile = Path.GetTempPath() + Statics.Namespace + "_IsoLock";
-
         static internal void
-            WritingIsolatedStorage(Action doSomething)
-        {
-            Func<IDisposable> checkLockFile = () =>
-            {
-                try { return File.Open(_strLockFile, FileMode.OpenOrCreate, FileAccess.Read, FileShare.None); }
-                catch (IOException) { return null; }
-            };
-
-            IDisposable lockFile = null;
-
-            while (null == (lockFile = checkLockFile()))
-                Block(100);
-
-            try
-            {
-                doSomething();
-            }
-            finally
-            {
-                lockFile.Dispose();
-            }
-        }
-
-        static internal void Write(string str)
+            Write(string str)
         {
 #if (DEBUG)
             Console.Write(str);
 #endif
         }
 
-        static internal void WriteLine(string str = null)
+        static internal void
+            WriteLine(string str = null)
         {
 #if (DEBUG)
             Console.WriteLine(str);

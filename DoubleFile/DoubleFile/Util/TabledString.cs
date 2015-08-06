@@ -40,25 +40,18 @@ namespace DoubleFile
     }
 
     // can't be struct because of null
-    class TabledString<T> : IComparable
+    class TabledString<T> : IComparable<TabledString<T>>, IComparable
         where T : TypedArrayBase, new()
     {
-        static public implicit operator
-            TabledString<T>(string value) => (null == value) ? null : new TabledString<T> { nIndex = Set(value) };
+        static public explicit operator
+            TabledString<T>(string value) =>
+            string.IsNullOrWhiteSpace(value) ? null : new TabledString<T> { nIndex = Set(value) };
 
-        static public implicit operator
+        static public explicit operator
             string(TabledString<T> value) => (null == value) ? null : Get(value.nIndex);
 
-        public int CompareTo(object obj) => ("" + Get(nIndex)).CompareTo(Get(((TabledString<T>)obj).nIndex));
-
-        internal bool Contains(TabledString<T> ustr) => Get(nIndex).Contains(Get(ustr.nIndex));
-        internal bool Contains(char ch) => Get(nIndex).Contains(ch);
-        internal bool EndsWith(string str) => Get(nIndex).EndsWith(str);
-        internal string[] Split(char ch) => Get(nIndex).Split(ch);
-        internal string[] Split(string[] arrStr, StringSplitOptions opts) => Get(nIndex).Split(arrStr, opts);
-        internal bool StartsWith(string str) => Get(nIndex).StartsWith(str);
-        internal TabledString<T> ToLower() => Get(nIndex).ToLower();
-        static internal TabledString<T> Empty  => "";
+        public int CompareTo(object that) => CompareTo((TabledString<T>)that);
+        public int CompareTo(TabledString<T> that) => ("" + Get(nIndex)).CompareTo(Get(((TabledString<T>)that).nIndex));
 
         static internal void Reinitialize()
         {
@@ -141,7 +134,32 @@ namespace DoubleFile
             t.DictPathParts = null;
             Util.Assert(99922, t.IndexGenerator == nCount);
 
-            var sortedStrings = new SortedDictionary<string, int>(t.DictStrings);
+            SortedDictionary<string, int> sortedStrings = new SortedDictionary<string, int>();
+
+            try
+            {
+                sortedStrings = new SortedDictionary<string, int>(t.DictStrings);
+            }
+            catch (ArgumentException ex)
+            {
+                var lsDupes = new List<string> { };
+
+                foreach (var kvp in t.DictStrings)
+                {
+                    try
+                    {
+                        sortedStrings.Add(kvp.Key, kvp.Value);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        lsDupes.Add(kvp.Key + " " + e.GetBaseException().Message);
+                    }
+                }
+
+                Util.Assert(99661, false, "ArgumentException in TabledString creating SortedDictionary\n" +
+                    ex.GetBaseException().Message + "\n" +
+                    string.Join("\n", lsDupes.Select(s => s)));
+            }
 
             t.DictStrings = null;
             t.DictStringsRev = null;
@@ -212,12 +230,11 @@ namespace DoubleFile
         int nIndex = -1;
     }
 
-    class PathBuilder : IComparable
+    class PathBuilder : IComparable<PathBuilder>, IComparable
     {
-        public int CompareTo(object obj)
-        {
-            var that = (PathBuilder)obj;
-            
+        public int CompareTo(object that) => CompareTo((PathBuilder)that);
+        public int CompareTo(PathBuilder that)
+        {            
             for (var nIx = 0; ; ++nIx)
             {
                 if ((PathParts.Length == nIx) ||
@@ -318,7 +335,7 @@ namespace DoubleFile
 
                 var nIx = nMin + nShift;
 
-                switch (str.CompareTo(t.Strings[nIx]))
+                switch (str.LocalCompare(t.Strings[nIx]))
                 {
                     case -1:
                     {

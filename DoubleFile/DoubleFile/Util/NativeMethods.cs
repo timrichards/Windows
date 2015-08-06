@@ -108,7 +108,7 @@ namespace DoubleFile
         
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal struct
-            DATUM : IComparable
+            DATUM : IComparable<DATUM>, IComparable
         {
             internal FileAttributes fileAttributes;
             internal uint ftCreationTimeLow;
@@ -126,10 +126,8 @@ namespace DoubleFile
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
             internal string strAltFileName;
 
-            public int CompareTo(object obj)
-            {
-                return strAltFileName.CompareTo(((DATUM)obj).strAltFileName);
-            }
+            public int CompareTo(object that) => CompareTo((DATUM)that);
+            public int CompareTo(DATUM that) => strAltFileName.LocalCompare(that.strAltFileName);
         }
 
         internal enum

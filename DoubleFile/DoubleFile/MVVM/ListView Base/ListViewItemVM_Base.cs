@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -74,7 +75,7 @@ namespace DoubleFile
             {
                 if (false ==
                     string.Join("", _subItems).Equals(
-                    string.Join("", other._subItems)))
+                    string.Join("", other._subItems), StringComparison.Ordinal))
                 {
                     return false;
                 }

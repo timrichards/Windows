@@ -49,7 +49,7 @@ namespace DoubleFile
                 if (false == _volStrings.CanLoad)
                     return;
 
-                using (var sr = new StreamReader(Statics.IsoStore.OpenFile(_volStrings.ListingFile, FileMode.Open)))
+                using (var sr = new StreamReader(_volStrings.ListingFile.OpenFile(FileMode.Open)))
                 {
                     var strSearch = _strSearch;
                     var strCurrentNode = "" + _strCurrentNode;
@@ -118,9 +118,9 @@ namespace DoubleFile
                         {
                             // a. SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
                             // Not here. The other case b below.
-                            searchResultDir.StrDir = PathBuilder.FactoryCreateOrFind(strDir, Cancel: Abort);
+                            searchResultDir.PathBuilder = PathBuilder.FactoryCreateOrFind(strDir, Cancel: Abort);
 
-                            var a = searchResultDir.StrDir.PathParts;
+                            var a = searchResultDir.PathBuilder.PathParts;
                             Util.Assert(99789, -1 != a[a.Length - 1]);  // a will never and b will always end with a -1.
 
                             listResults.Add(searchResultDir, false);
@@ -143,9 +143,9 @@ namespace DoubleFile
                                 searchResultDir = new SearchResultsDir();
 
                             // b. SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
-                            searchResultDir.StrDir = PathBuilder.FactoryCreateOrFind(strDir + '\\', Cancel: Abort);
+                            searchResultDir.PathBuilder = PathBuilder.FactoryCreateOrFind(strDir + '\\', Cancel: Abort);
 
-                            var b = searchResultDir.StrDir.PathParts;
+                            var b = searchResultDir.PathBuilder.PathParts;
                             Util.Assert(99787, -1 == b[b.Length - 1]);  // a will never and b will always end with a -1.
 
                             listResults.Add(searchResultDir, false);
@@ -159,12 +159,12 @@ namespace DoubleFile
                             if (null == searchResultDir)
                                 searchResultDir = new SearchResultsDir();
 
-                            searchResultDir.ListFiles.Add(strFile, false);
+                            searchResultDir.ListFiles.Add((TabledString<Tabled_Files>)strFile, false);
                         }
                     }
 
                     if (null != searchResultDir)
-                        Util.Assert(1307.8301m, null == searchResultDir.StrDir);
+                        Util.Assert(1307.8301m, null == searchResultDir.PathBuilder);
                     else
                         Util.Assert(1307.8302m, null == searchResultDir);
 

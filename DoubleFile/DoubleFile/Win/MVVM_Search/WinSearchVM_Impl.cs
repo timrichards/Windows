@@ -100,7 +100,7 @@ namespace DoubleFile
 
             if (null != LocalTV.GetOneNodeByRootPathA(strPath, null))
             {
-                result.StrDir = PathBuilder.FactoryCreateOrFind(strPath);
+                result.PathBuilder = PathBuilder.FactoryCreateOrFind(strPath);
             }
             else
             {
@@ -109,12 +109,12 @@ namespace DoubleFile
                 if (2 > nLastBackSlashIx)
                     return false;
 
-                result.StrDir = PathBuilder.FactoryCreateOrFind(strPath.Substring(0, nLastBackSlashIx));
+                result.PathBuilder = PathBuilder.FactoryCreateOrFind(strPath.Substring(0, nLastBackSlashIx));
 
-                if (null == LocalTV.GetOneNodeByRootPathA("" + result.StrDir, null))
+                if (null == LocalTV.GetOneNodeByRootPathA("" + result.PathBuilder, null))
                     return false;
 
-                result.ListFiles.Add(strPath.Substring(nLastBackSlashIx + 1), false);
+                result.ListFiles.Add((TabledString<Tabled_Files>)strPath.Substring(nLastBackSlashIx + 1), false);
             }
 
             _dictResults = new ConcurrentDictionary<SearchResultsDir, bool>();
@@ -185,7 +185,7 @@ namespace DoubleFile
                 try
                 {
                     // SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
-                    var Directory = PathBuilder.FactoryCreateOrFind(("" + searchResult.StrDir).TrimEnd('\\'));
+                    var Directory = PathBuilder.FactoryCreateOrFind(("" + searchResult.PathBuilder).TrimEnd('\\'));
 
                     if (0 < (searchResult.ListFiles?.Count ?? 0))
                     {
@@ -202,17 +202,17 @@ namespace DoubleFile
                         lsLVitems.Add(new LVitem_SearchVM { Directory = Directory });
                     }
                 }
-                catch (Exception ex)
+                catch (Exception ex) when (ex is ArgumentNullException || ex is NullReferenceException)
                 {
-                    if ((ex is ArgumentNullException) ||
-                        (ex is NullReferenceException))
-                    {
-                        Util.Assert(99878, _bDisposed);
-                        _dictResults = null;
-                        return;
-                    }
-
-                    throw;
+                    Util.Assert(99878, _bDisposed);
+                    _dictResults = null;
+                    return;
+                }
+                catch (OutOfMemoryException)
+                {
+                    Util.Assert(99660, false, "OutOfMemoryException in Search");
+                    _dictResults = null;
+                    return;
                 }
             }
 

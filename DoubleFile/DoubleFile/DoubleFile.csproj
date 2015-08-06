@@ -196,6 +196,7 @@
     </Compile>
     <Compile Include="LocalTreeNode\LocalColorItemBase.cs" />
     <Compile Include="Statics.cs" />
+    <Compile Include="Util\LocalIsoStore.cs" />
     <Compile Include="Util\Iterator.cs" />
     <Compile Include="Util\ModalThread.cs" />
     <Compile Include="MainWindow.xaml.cs">

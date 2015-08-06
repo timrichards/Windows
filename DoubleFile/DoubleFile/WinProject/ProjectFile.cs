@@ -23,8 +23,8 @@ namespace DoubleFile
         static internal event Func<string> OnSavingProject = null;
         static internal event Action OnOpenedProject = null;
 
-        static readonly string _tempPath = Path.GetTempPath() + Statics.TempPathIso.TrimEnd('\\') + "_" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + '\\';
-        static readonly string _tempPathIso01 = Statics.TempPathIso.TrimEnd('\\') + "01";
+        static readonly string _tempPath = Path.GetTempPath() + LocalIsoStore.TempDir.TrimEnd('\\') + "_" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + '\\';
+        static readonly string _tempPathIso01 = LocalIsoStore.TempDir.TrimEnd('\\') + "01";
 
         static internal bool
             OpenProject(string strProjectFilename, WeakReference<IOpenListingFiles> openListingFilesWR, bool bClearItems)
@@ -126,7 +126,7 @@ namespace DoubleFile
 
             foreach (var strFilename in Directory.GetFiles(_tempPath))
             {
-                var strNewFilename = Statics.TempPathIso + Path.GetFileName(strFilename);
+                var strNewFilename = LocalIsoStore.TempDir + Path.GetFileName(strFilename);
 
                 lsFilenames.Add(strNewFilename);
                 strFilename.FileMoveToIso(strNewFilename);
@@ -145,8 +145,7 @@ namespace DoubleFile
                     return              // from lambda
                         strExt
                         .Remove(0, 1)
-                        .Equals(FileParse.ksFileExt_Listing,
-                        StringComparison.InvariantCultureIgnoreCase);
+                        .Equals(FileParse.ksFileExt_Listing, StringComparison.OrdinalIgnoreCase);
                 }),
                 bClearItems,
                 () => _bUserCanceled
@@ -154,27 +153,27 @@ namespace DoubleFile
 
             OnOpenedProject?.Invoke();
 
-            if (Statics.IsoStore.DirectoryExists(_tempPathIso01))
+            if (LocalIsoStore.DirectoryExists(_tempPathIso01))
             {
                 if (false == bClearItems)
                 {
                     string strNew = null;
 
                     foreach (var strFile in
-                        Statics.IsoStore.GetFileNames()
+                        LocalIsoStore.GetFileNames()
                         .Where(strFile =>
                     {
                         return
                             strFile.StartsWith(_tempPathIso01) &&
-                            (false == Statics.IsoStore.FileExists(strNew = strFile.Replace(_tempPathIso01, Statics.TempPathIso)));
+                            (false == LocalIsoStore.FileExists(strNew = strFile.Replace(_tempPathIso01, LocalIsoStore.TempDir)));
                     }))
                     {
                         // strNew is assigned each iteration in C# 4.
-                        Util.WritingIsolatedStorage(() => Statics.IsoStore.MoveFile(strFile, strNew));
+                        LocalIsoStore.MoveFile(strFile, strNew);
                     }
                 }
 
-                Util.WritingIsolatedStorage(() => Statics.IsoStore.DeleteDirectory(_tempPathIso01));
+                LocalIsoStore.DeleteDirectory(_tempPathIso01);
             }
 
             WinProgress.CloseForced();
@@ -217,8 +216,8 @@ namespace DoubleFile
 
                     if (bSuccess)
                     {
-                        strNewName = Statics.TempPathIso + strNewName;
-                        Util.WritingIsolatedStorage(() => Statics.IsoStore.CopyFile(volStrings.ListingFile, strNewName));
+                        strNewName = LocalIsoStore.TempDir + strNewName;
+                        LocalIsoStore.CopyFile(volStrings.ListingFile, strNewName);
                         volStrings.ListingFile = strNewName;
                     }
                 }
@@ -246,11 +245,11 @@ namespace DoubleFile
             {
                 var strSourceFilename = listingFile;
 
-                if (listingFile.StartsWith(Statics.TempPathIso))
+                if (listingFile.StartsWith(LocalIsoStore.TempDir))
                 {
                     strSourceFilename = listingFile.Replace(strPath, "");
 
-                    using (var sr = new StreamReader(Statics.IsoStore.OpenFile(listingFile, FileMode.Open)))
+                    using (var sr = new StreamReader(LocalIsoStore.OpenFile(listingFile, FileMode.Open)))
                     using (var sw = new StreamWriter(File.OpenWrite(_tempPath + '\\' + strSourceFilename)))
                         Util.CopyStream(sr, sw);
                 }
@@ -333,7 +332,7 @@ namespace DoubleFile
             {
                 foreach (var listingFile in lsListingFiles)
                 {
-                    using (var sr = new StreamReader(Statics.IsoStore.OpenFile(listingFile, FileMode.Open)))
+                    using (var sr = new StreamReader(LocalIsoStore.OpenFile(listingFile, FileMode.Open)))
                     using (var sw = new StreamWriter(File.OpenWrite(strDir + '\\' + Path.GetFileName(listingFile))))
                         Util.CopyStream(sr, sw);
                 }

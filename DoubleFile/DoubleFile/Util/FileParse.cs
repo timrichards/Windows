@@ -111,8 +111,8 @@ namespace DoubleFile
         {
             var strFile_01 = StrFile_01(strFile);
 
-            if (Statics.IsoStore.FileExists(strFile_01))
-                Util.WritingIsolatedStorage(() => Statics.IsoStore.DeleteFile(strFile_01));
+            if (LocalIsoStore.FileExists(strFile_01))
+                LocalIsoStore.DeleteFile(strFile_01);
 
             strFile.FileMoveToIso(strFile_01);
 
@@ -120,9 +120,8 @@ namespace DoubleFile
             long nLineNo = 0;       // lines number from one
             var bAtErrors = false;
 
-            Util.WritingIsolatedStorage(() => {
-            using (var file_out = new StreamWriter(Statics.IsoStore.CreateFile(strFile)))
-            using (var file_in = new StreamReader(Statics.IsoStore.OpenFile(strFile_01, FileMode.Open)))
+            using (var file_out = new StreamWriter(LocalIsoStore.CreateFile(strFile)))
+            using (var file_in = new StreamReader(LocalIsoStore.OpenFile(strFile_01, FileMode.Open)))
             while (null !=
                 (strLine = file_in.ReadLine()))
             {
@@ -268,7 +267,7 @@ namespace DoubleFile
                 // directory
                 file_out.WriteLine(FormatLine(bAtErrors ? ksLineType_ErrorDir : ksLineType_Directory,
                     nLineNo, strLine.Replace(@"\\", @"\")));
-            }});
+            }
         }
 
         static string FormatLine(string strLineType, long nLineNo, string strLine_in = null)
@@ -479,8 +478,8 @@ namespace DoubleFile
 
             var strFile_01 = StrFile_01(strFile);
 
-            if (bConvertFile && Statics.IsoStore.FileExists(strFile_01))
-                Util.WritingIsolatedStorage(() => Statics.IsoStore.DeleteFile(strFile_01));
+            if (bConvertFile && LocalIsoStore.FileExists(strFile_01))
+                LocalIsoStore.DeleteFile(strFile_01);
 
             return Tuple.Create(true, nScannedLength, nLinesTotal);
         }

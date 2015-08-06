@@ -5,6 +5,7 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- leaving the page/can't cancel search
 - Assert box offset when app window partly off screen
 - Treemap selection rectangle still doesn't always know what the treemap treenode view is set at
 - VolTreeMap has focus rectangles on the progress dialog controls
@@ -30,6 +31,12 @@
 - Show parent folder\this folder in rest of path
 - Look for ToArray(): LocalTreeNode etc OK as array for Length.
 - string CompareTo() .Equals StringComparison.InvariantCultureIgnoreCase ToLower
+	- todo: == != .Equals
+	- StringComparison.OrdinalIgnoreCase is for paths
+	- use string.Compare. avoid using the String.CompareTo instance methods because none of the overloads takes a StringComparison
+	- https://msdn.microsoft.com/en-us/library/Cc165449.aspx
+	- Ordinal is the fastest way to compare two strings.
+	- interned means two references to the same object (ReferenceEquals means interned)
 - Application.Current.MainWindow can be LocalMbox (when exiting app)
 - The todo list is not read-only while debugging.
 - You can go to type definition on var right-click
@@ -155,7 +162,5 @@ Specific code areas:
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
 
-99883
-
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
-99661 next low assert
+99659 next low assert

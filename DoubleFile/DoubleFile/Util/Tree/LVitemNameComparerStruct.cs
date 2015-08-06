@@ -11,7 +11,7 @@ namespace DoubleFile
         {
             return (x != null) &&
                 (y != null) &&
-                (false == string.IsNullOrWhiteSpace(x.Name)) &&
+                (false == string.IsNullOrWhiteSpace((string)x.Name)) &&
                 x.Name.Equals(y.Name);
         }
 
@@ -21,10 +21,12 @@ namespace DoubleFile
         {
             foreach (LVitem_ClonesVM item in list)
             {
-                item.Name = item.Folder;
+                var strName = item.Folder;
 
                 if ((item.SubItems?.Count ?? 0) > FileParse.knColLengthLV)
-                    item.Name += item.SubItems[FileParse.knColLengthLV];         // name + size
+                    strName += item.SubItems[FileParse.knColLengthLV];         // name + size
+
+                item.Name = (TabledString<Tabled_Folders>)strName;
             }
         }
 

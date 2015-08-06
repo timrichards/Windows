@@ -13,7 +13,7 @@ namespace DoubleFile
 
         internal SearchResults(string strSearch, LVitem_ProjectVM volStrings, IEnumerable<SearchResultsDir> listResults)
         {
-            StrSearch = strSearch;
+            StrSearch = (TabledString<Tabled_Files>)strSearch;
             VolStrings = volStrings;
             Results = listResults;
         }

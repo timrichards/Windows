@@ -7,8 +7,11 @@ namespace DoubleFile
     {
         public IReadOnlyList<LocalTreeNode>
             Nodes { get; protected set; }
+
         internal virtual string
-            Text { get { return _text; } set { _text = value; } } TabledString<Tabled_Folders> _text = null;
+            Text { get { return (string)_text; } set { _text = (TabledString<Tabled_Folders>)value; } }
+        TabledString<Tabled_Folders> _text = null;
+
         internal LocalTreeNode
             FirstNode => (0 < (Nodes?.Count ?? 0)) ? Nodes[0] : null;
         public virtual LocalTreeNode
@@ -49,7 +52,7 @@ namespace DoubleFile
         internal LocalTreeNode(TabledString<Tabled_Folders> strContent)
             : this()
         {
-            Text = strContent;
+            _text = strContent;
         }
 
         internal LocalTreeNode(string strContent, IReadOnlyList<LocalTreeNode> lsNodes)

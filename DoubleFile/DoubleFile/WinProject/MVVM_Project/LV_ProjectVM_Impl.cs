@@ -128,8 +128,8 @@ namespace DoubleFile
 
         internal bool FileExists(string strListingFile)
         {
-            if (Statics.IsoStore.FileExists(strListingFile) &&
-                ((false == strListingFile.StartsWith(Statics.TempPathIso)) || FileParse.ValidateFile(strListingFile).Item1))
+            if (LocalIsoStore.FileExists(strListingFile) &&
+                ((false == strListingFile.StartsWith(LocalIsoStore.TempDir)) || FileParse.ValidateFile(strListingFile).Item1))
             {
                 MBoxStatic.ShowDialog("Listing file exists. Please manually delete it using the Save Listing\n" +
                     "File dialog by clicking the icon button after this alert closes.", "New Listing File");
@@ -247,21 +247,21 @@ namespace DoubleFile
                 return false;
             }
 
-            var strIsoFile = Statics.TempPathIso + Path.GetFileName(lvItem_Orig.ListingFile);
+            var strIsoFile = LocalIsoStore.TempDir + Path.GetFileName(lvItem_Orig.ListingFile);
 
             if (':' == lvItem_Orig.ListingFile[1])
                 lvItem_Orig.ListingFile.FileMoveToIso(strIsoFile);
 
             var strFile_01 = FileParse.StrFile_01(strIsoFile);
 
-            if (Statics.IsoStore.FileExists(strFile_01))
-                Util.WritingIsolatedStorage(() => Statics.IsoStore.DeleteFile(strFile_01));
+            if (LocalIsoStore.FileExists(strFile_01))
+                LocalIsoStore.DeleteFile(strFile_01);
 
-            Util.WritingIsolatedStorage(() => Statics.IsoStore.MoveFile(strIsoFile, strFile_01));
+            LocalIsoStore.MoveFile(strIsoFile, strFile_01);
 
             var sbOut = new StringBuilder();
 
-            using (var sr = new StreamReader(Statics.IsoStore.OpenFile(strFile_01, FileMode.Open)))
+            using (var sr = new StreamReader(LocalIsoStore.OpenFile(strFile_01, FileMode.Open)))
             {
                 string strLine = null;
 
@@ -323,19 +323,16 @@ namespace DoubleFile
                 {
                     ModifyDriveLetter();
 
-                    Util.WritingIsolatedStorage(() =>
-                    {
-                        using (var sw = new StreamWriter(Statics.IsoStore.CreateFile(strIsoFile)))
-                            sw.Write("" + sbOut);
-                    });
+                    using (var sw = new StreamWriter(LocalIsoStore.CreateFile(strIsoFile)))
+                        sw.Write("" + sbOut);
                 }
                 else
                 {
-                    Util.Assert(99988, false == Statics.IsoStore.FileExists(strIsoFile));
+                    Util.Assert(99988, false == LocalIsoStore.FileExists(strIsoFile));
 
                     try
                     {
-                        Util.WritingIsolatedStorage(() => Statics.IsoStore.DeleteFile(strIsoFile));
+                        LocalIsoStore.DeleteFile(strIsoFile);
                     }
                     catch (Exception e)
                     {
@@ -344,17 +341,14 @@ namespace DoubleFile
                     }
                 }
 
-                Util.WritingIsolatedStorage(() =>
+                using (var sw = new StreamWriter(LocalIsoStore.OpenFile(strIsoFile, FileMode.Append)))
+                    Util.CopyStream(sr, sw, (buffer, nRead) =>
                 {
-                    using (var sw = new StreamWriter(Statics.IsoStore.OpenFile(strIsoFile, FileMode.Append)))
-                        Util.CopyStream(sr, sw, (buffer, nRead) =>
-                    {
-                        sbOut.Clear();
-                        sbOut.Append(buffer, 0, nRead);
-                        ModifyDriveLetter();
-                        sbOut.CopyTo(0, buffer, 0, nRead);
-                        return buffer;      // from lambda
-                    });
+                    sbOut.Clear();
+                    sbOut.Append(buffer, 0, nRead);
+                    ModifyDriveLetter();
+                    sbOut.CopyTo(0, buffer, 0, nRead);
+                    return buffer;      // from lambda
                 });
 
                 bDriveLetter_Todo = false;
@@ -366,11 +360,11 @@ namespace DoubleFile
             {
                 File.Delete(lvItem_Orig.ListingFile);
 
-                using (var sr = new StreamReader(Statics.IsoStore.OpenFile(strIsoFile, FileMode.Open)))
+                using (var sr = new StreamReader(LocalIsoStore.OpenFile(strIsoFile, FileMode.Open)))
                 using (var sw = new StreamWriter(File.OpenWrite(lvItem_Orig.ListingFile)))
                     Util.CopyStream(sr, sw);
 
-                Util.WritingIsolatedStorage(() => Statics.IsoStore.DeleteFile(strIsoFile));
+                LocalIsoStore.DeleteFile(strIsoFile);
             }
 
             return true;

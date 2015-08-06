@@ -15,9 +15,9 @@
             </ListView.Resources>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <Border Style="{StaticResource styleBorder}" Height="60" Margin="5">
+                    <Border Style="{StaticResource styleBorder}" Height="Auto" Margin="5">
                         <StackPanel Margin="10,0,0,0">
-                            <TextBlock FontWeight="Bold" Text="{Binding BigLabel}" />
+                            <TextBlock Style="{StaticResource LocalTextBlock}" Text="{Binding BigLabel}" />
                             <TextBlock Text="{Binding SmallKeyLabel}" />
                             <ProgressBar Foreground="{Binding Foreground}" Value="{Binding Progress, Mode=OneWay}" Maximum="1" LargeChange="0.1" SmallChange="0.01" IsIndeterminate="{Binding Indeterminate}" Height="5" Margin="0,2"/>
                             <TextBlock Text="{Binding Status}" />

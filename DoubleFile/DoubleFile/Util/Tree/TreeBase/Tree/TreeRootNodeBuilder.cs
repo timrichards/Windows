@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -120,12 +119,12 @@ namespace DoubleFile
                         if (bValid || bAttemptConvert)
                             break;
 
-                        if (false == Statics.IsoStore.FileExists(StrFile_01(_volStrings.ListingFile)))
+                        if (false == LocalIsoStore.FileExists(StrFile_01(_volStrings.ListingFile)))
                             break;
 
                         try
                         {
-                            Util.WritingIsolatedStorage(() => Statics.IsoStore.DeleteFile(StrFile_01(_volStrings.ListingFile)));
+                            LocalIsoStore.DeleteFile(StrFile_01(_volStrings.ListingFile));
                         }
                         catch (IsolatedStorageException) { }
 

@@ -125,7 +125,7 @@ namespace DoubleFile
             lock (_rootNodes)
             {
                 // The root volume list is very small so this insert sort is viable
-                _rootNodes.Insert(_rootNodes.TakeWhile(node => 0 < rootNode.Text.CompareTo(node.Text)).Count(), rootNode);
+                _rootNodes.Insert(_rootNodes.TakeWhile(node => 0 < rootNode.Text.LocalCompare(node.Text)).Count(), rootNode);
 
                 WinProgress.WithWinProgress(w => w
                     .SetProgress(_ksFolderTreeKey, _rootNodes.Count * _knProgMult));

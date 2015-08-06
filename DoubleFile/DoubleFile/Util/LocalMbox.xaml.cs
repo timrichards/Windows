@@ -52,7 +52,7 @@ namespace DoubleFile
         public LocalMbox()
         {
             if (false ==
-                DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
+                DesignerProperties.GetIsInDesignMode(new DependencyObject()))
             {
                 Util.Assert(99990, false);
             }

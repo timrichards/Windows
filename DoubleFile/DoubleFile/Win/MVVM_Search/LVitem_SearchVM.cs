@@ -12,9 +12,9 @@
             {
                 if (null != Directory)
                 {
-                    if (false == string.IsNullOrWhiteSpace(Filename))
+                    if (null != Filename)
                     {
-                        return Filename;
+                        return (string)Filename;
                     }
                     else
                     {
@@ -42,7 +42,7 @@
                     var strDirectory = "" + Directory;
                     var nIx = strDirectory.LastIndexOf('\\');
 
-                    if (false == string.IsNullOrWhiteSpace(Filename))
+                    if (null != Filename)
                     {
                         return strDirectory;
                     }

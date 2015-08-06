@@ -193,7 +193,7 @@ namespace DoubleFile
                 (false ==
                 strExt
                     .Remove(0, 1)
-                    .Equals(FileParse.ksFileExt_Listing, StringComparison.InvariantCultureIgnoreCase)))
+                    .Equals(FileParse.ksFileExt_Listing, StringComparison.OrdinalIgnoreCase)))
             {
                 strListingFile += "." + FileParse.ksFileExt_Listing;
             }

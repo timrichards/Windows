@@ -61,10 +61,6 @@ namespace DoubleFile
             Icon { get { return _wr.Get(s => s._icon); } set { _wr.Get(s => s._icon = value); } }
         ImageSource _icon;
 
-        static internal IsolatedStorageFile
-            IsoStore = null;
-        internal static readonly string
-            TempPathIso = Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + "\\";
         FileStream _lockTempIsoDir = null;
 
         static internal IObservable<Tuple<bool, int>>   // bool is a no-op: generic placeholder
@@ -120,45 +116,44 @@ namespace DoubleFile
 
             _wr.SetTarget(this);
 
-            // set up the IsoStore temp directory: clean it up if it's not locked by another app instance,
+            // set up the isolated storage temp directory: clean it up if it's not locked by another app instance,
             // lock it so it can't be removed by this block of code in a new app instance
+
+            var isoStore = IsolatedStorageFile.GetUserStoreForAssembly();
 
             Action CleanupTemp = () =>
             {
                 var bLocked = false;
 
                 // files at root are lock files. Temp files are in TempPathIso
-                foreach (var strFile in IsoStore.GetFileNames())
+                foreach (var strFile in isoStore.GetFileNames())
                 {
-                    try { Util.WritingIsolatedStorage(() => IsoStore.DeleteFile(strFile)); }
+                    try { isoStore.DeleteFile(strFile); }
                     catch (IsolatedStorageException) { bLocked = true; break; }
                 }
 
                 if (false == bLocked)
-                    try { IsoStore.Remove(); } catch (IsolatedStorageException) { }
+                    try { isoStore.Remove(); } catch (IsolatedStorageException) { }
             };
 
-            IsoStore = IsolatedStorageFile.GetUserStoreForAssembly();
             CleanupTemp();
-            IsoStore = IsolatedStorageFile.GetUserStoreForAssembly();
+            isoStore = IsolatedStorageFile.GetUserStoreForAssembly();
+            LocalIsoStore.InitFromStatics(isoStore);
 
             var lockFilename = Path.GetRandomFileName();
 
-            Util.WritingIsolatedStorage(() =>
-                _lockTempIsoDir =
-                IsoStore.OpenFile(lockFilename, FileMode.OpenOrCreate, FileAccess.Read, FileShare.None));
-
-            Util.WritingIsolatedStorage(() => IsoStore.CreateDirectory(TempPathIso));
+            _lockTempIsoDir = LocalIsoStore.LockFile(lockFilename);
+            LocalIsoStore.CreateDirectory(LocalIsoStore.TempDir);
 
             Observable.FromEventPattern(app, "Exit")
                 .LocalSubscribe(99670, x =>
             {
                 _lockTempIsoDir.Dispose();
 
-                try { Util.WritingIsolatedStorage(() => IsoStore.DeleteDirectory(TempPathIso)); }
+                try { LocalIsoStore.DeleteDirectory(LocalIsoStore.TempDir); }
                 catch (IsolatedStorageException) { }
 
-                try { Util.WritingIsolatedStorage(() => IsoStore.DeleteFile(lockFilename)); }
+                try { LocalIsoStore.DeleteFile(lockFilename); }
                 catch (IsolatedStorageException) { }
 
                 CleanupTemp();

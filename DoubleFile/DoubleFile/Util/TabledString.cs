@@ -54,18 +54,16 @@ namespace DoubleFile
             string(TabledString<T> value) => (null == value) ? null : Get(value.nIndex);
 
         public int CompareTo(object that) => CompareTo((TabledString<T>)that);
-        public int CompareTo(TabledString<T> that) => ("" + Get(nIndex)).CompareTo(Get(that.nIndex));
-        //public int CompareTo(TabledString<T> that)
-        //{
-        //    if (null == _t)
-        //        return -1;
+        public int CompareTo(TabledString<T> that)
+        {
+            if (null == _t)
+                return -1;
 
-        //    return
-        //        (_t.Generating)
-        //        //   ? ((string)this).LocalCompare((string)that)
-        //        ? ("" + Get(nIndex)).CompareTo(Get(that.nIndex))
-        //        : _t.Sort[nIndex] - _t.Sort[that.nIndex];
-        //}
+            return
+                (_t.Generating)
+                ? ((string)this).LocalCompare((string)that)
+                : Math.Sign(_t.Sort[nIndex] - _t.Sort[that.nIndex]);
+        }
 
         static internal void Reinitialize()
         {

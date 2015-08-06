@@ -43,6 +43,9 @@ namespace DoubleFile
     class TabledString<T> : IComparable<TabledString<T>>, IComparable
         where T : TypedArrayBase, new()
     {
+        static TabledStringStatics
+            _t = null;
+
         static public explicit operator
             TabledString<T>(string value) =>
             string.IsNullOrWhiteSpace(value) ? null : new TabledString<T> { nIndex = Set(value) };
@@ -51,14 +54,24 @@ namespace DoubleFile
             string(TabledString<T> value) => (null == value) ? null : Get(value.nIndex);
 
         public int CompareTo(object that) => CompareTo((TabledString<T>)that);
-        public int CompareTo(TabledString<T> that) => ("" + Get(nIndex)).CompareTo(Get(((TabledString<T>)that).nIndex));
+        public int CompareTo(TabledString<T> that) => ("" + Get(nIndex)).CompareTo(Get(that.nIndex));
+        //public int CompareTo(TabledString<T> that)
+        //{
+        //    if (null == _t)
+        //        return -1;
+
+        //    return
+        //        (_t.Generating)
+        //     //   ? ((string)this).LocalCompare((string)that)
+        //        ? ("" + Get(nIndex)).CompareTo(Get(that.nIndex))
+        //        : _t.Sort[nIndex] - _t.Sort[that.nIndex];
+        //}
 
         static internal void Reinitialize()
         {
-            var t = TypedArrayBase.tA[new T().Type];
-            var nRefCount = t?.RefCount ?? 0;
+            var nRefCount = _t?.RefCount ?? 0;
 
-            TypedArrayBase.tA[new T().Type] = 
+            _t = TypedArrayBase.tA[new T().Type] = 
                 new TabledStringStatics()
             {
                 RefCount = nRefCount,
@@ -68,59 +81,54 @@ namespace DoubleFile
 
         static internal void AddRef()
         {
-            if (null == TypedArrayBase.tA[new T().Type])
+            if (null == _t)
                 Reinitialize();
 
-            var t = TypedArrayBase.tA[new T().Type];
-
-            ++t.RefCount;
+            ++_t.RefCount;
         }
 
         static internal void DropRef()
         {
-            var t = TypedArrayBase.tA[new T().Type];
+            Util.Assert(99934, 0 < _t.RefCount);
+            --_t.RefCount;
 
-            Util.Assert(99934, 0 < t.RefCount);
-            --t.RefCount;
-
-            if (0 >= t.RefCount)
-                TypedArrayBase.tA[new T().Type] = null;
+            if (0 >= _t.RefCount)
+                _t = TypedArrayBase.tA[new T().Type] = null;
         }
 
         static internal void GenerationStarting()
         {
-            var t = TypedArrayBase.tA[new T().Type];
             var nThreads = Statics.LVprojectVM.CanLoadCount;
 
-            t.DictPathParts = new ConcurrentDictionary<string, PathBuilder>(nThreads, 16384);
+            _t.DictPathParts = new ConcurrentDictionary<string, PathBuilder>(nThreads, 16384);
 
-            if (null == t.Strings)
+            if (null == _t.Strings)
             {
-                Util.Assert(99915, t.Generating);
-                t.DictStrings = new ConcurrentDictionary<string, int>(nThreads, 16384);
-                t.DictStringsRev = new ConcurrentDictionary<int, string>(nThreads, 16384);
+                Util.Assert(99915, _t.Generating);
+                _t.DictStrings = new ConcurrentDictionary<string, int>(nThreads, 16384);
+                _t.DictStringsRev = new ConcurrentDictionary<int, string>(nThreads, 16384);
                 return;
             }
 
-            Util.Assert(99921, false == t.Generating);
-            Util.Assert(99920, null == t.DictStrings);
-            Util.Assert(99919, null == t.DictStringsRev);
-            Util.Assert(99918, t.IndexGenerator == t.Strings.Length);
-            Util.Assert(99916, 1 < t.RefCount);
+            Util.Assert(99921, false == _t.Generating);
+            Util.Assert(99920, null == _t.DictStrings);
+            Util.Assert(99919, null == _t.DictStringsRev);
+            Util.Assert(99918, _t.IndexGenerator == _t.Strings.Length);
+            Util.Assert(99916, 1 < _t.RefCount);
 
-            t.DictStrings = new ConcurrentDictionary<string, int>(nThreads, t.Strings.Length);
-            t.DictStringsRev = new ConcurrentDictionary<int, string>(nThreads, t.Strings.Length);
+            _t.DictStrings = new ConcurrentDictionary<string, int>(nThreads, _t.Strings.Length);
+            _t.DictStringsRev = new ConcurrentDictionary<int, string>(nThreads, _t.Strings.Length);
 
-            for (var nIx = 0; nIx < t.Strings.Length; ++nIx)
+            for (var nIx = 0; nIx < _t.Strings.Length; ++nIx)
             {
-                var strA = t.Strings[nIx];
+                var strA = _t.Strings[nIx];
                          
-                t.DictStrings[strA] = nIx;
-                t.DictStringsRev[nIx] = strA;
+                _t.DictStrings[strA] = nIx;
+                _t.DictStringsRev[nIx] = strA;
             }
 
-            t.Generating = true;
-            t.Strings = null;
+            _t.Generating = true;
+            _t.Strings = null;
         }
 
         static internal void GenerationEnded()
@@ -128,23 +136,22 @@ namespace DoubleFile
             if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
                 return;
 
-            var t = TypedArrayBase.tA[new T().Type];
-            var nCount = t.DictStrings.Count;
+            var nCount = _t.DictStrings.Count;
 
-            t.DictPathParts = null;
-            Util.Assert(99922, t.IndexGenerator == nCount);
+            _t.DictPathParts = null;
+            Util.Assert(99922, _t.IndexGenerator == nCount);
 
             SortedDictionary<string, int> sortedStrings = new SortedDictionary<string, int>();
 
             try
             {
-                sortedStrings = new SortedDictionary<string, int>(t.DictStrings);
+                sortedStrings = new SortedDictionary<string, int>(_t.DictStrings);
             }
             catch (ArgumentException ex)
             {
                 var lsDupes = new List<string> { };
 
-                foreach (var kvp in t.DictStrings)
+                foreach (var kvp in _t.DictStrings)
                 {
                     try
                     {
@@ -161,20 +168,20 @@ namespace DoubleFile
                     string.Join("\n", lsDupes.Select(s => s)));
             }
 
-            t.DictStrings = null;
-            t.DictStringsRev = null;
-            t.Strings = new string[nCount];
-            t.Sort = new int[nCount];
+            _t.DictStrings = null;
+            _t.DictStringsRev = null;
+            _t.Strings = new string[nCount];
+            _t.Sort = new int[nCount];
 
             var nIx = 0;
 
             foreach (var kvp in sortedStrings)
             {
-                t.Strings[nIx] = kvp.Key;
-                t.Sort[kvp.Value] = nIx++;
+                _t.Strings[nIx] = kvp.Key;
+                _t.Sort[kvp.Value] = nIx++;
             }
 
-            t.Generating = false;
+            _t.Generating = false;
         }
 
         static int Set(string str_in)
@@ -195,36 +202,32 @@ namespace DoubleFile
 
         static int SetA(string str)
         {
-            var t = TypedArrayBase.tA[new T().Type];
-
-            if (null == t)
+            if (null == _t)
                 return 0;
 
-            if (false == t.Generating)
+            if (false == _t.Generating)
                 Util.Assert(99917, false);
 
-            lock (t.DictStrings)
-            lock (t.DictStringsRev)
-            return t.DictStrings.GetOrAdd(str, x =>
+            lock (_t.DictStrings)
+            lock (_t.DictStringsRev)
+            return _t.DictStrings.GetOrAdd(str, x =>
             {
-                var nIx = Interlocked.Increment(ref t.IndexGenerator) - 1;
+                var nIx = Interlocked.Increment(ref _t.IndexGenerator) - 1;
 
-                t.DictStringsRev[nIx] = str;
+                _t.DictStringsRev[nIx] = str;
                 return nIx;
             });
         }
 
         static string Get(int nIndex)
         {
-            var t = TypedArrayBase.tA[new T().Type];
-
-            if (null == t)
+            if (null == _t)
                 return null;
 
             return
-                (t.Generating)
-                ? t.DictStringsRev[nIndex]
-                : t.Strings[t.Sort[nIndex]];
+                (_t.Generating)
+                ? _t.DictStringsRev[nIndex]
+                : _t.Strings[_t.Sort[nIndex]];
         }
 
         int nIndex = -1;
@@ -232,6 +235,9 @@ namespace DoubleFile
 
     class PathBuilder : IComparable<PathBuilder>, IComparable
     {
+        static TabledStringStatics
+            _t = null;
+
         public int CompareTo(object that) => CompareTo((PathBuilder)that);
         public int CompareTo(PathBuilder that)
         {            
@@ -252,19 +258,17 @@ namespace DoubleFile
 
         static internal PathBuilder FactoryCreateOrFind(string strDir, Action Cancel = null)
         {
-            var t = TypedArrayBase.tA[new Tabled_Files().Type];
-
             try
             {
-                if (null == t)
+                if (null == _t)
                     throw new NullReferenceException();
 
-                Util.Assert(99985, t.Generating);
+                Util.Assert(99985, _t.Generating);
 
-                lock (t.DictPathParts)
+                lock (_t.DictPathParts)
                 {
                     return
-                        t.DictPathParts
+                        _t.DictPathParts
                         .GetOrAdd(strDir, x => new PathBuilder(strDir));
                 }
             }
@@ -277,7 +281,6 @@ namespace DoubleFile
 
         PathBuilder(string strDir)
         {
-            var t = TypedArrayBase.tA[new Tabled_Folders().Type];
             var lsInts = new List<int>();
 
             foreach (var s in strDir.Split('\\'))
@@ -296,13 +299,12 @@ namespace DoubleFile
 
         public override string ToString()
         {
-            var t = TypedArrayBase.tA[new Tabled_Folders().Type];
             var sbRet = new StringBuilder();
 
             foreach (var nIx in PathParts)
             {
                 if (-1 != nIx)
-                    sbRet.Append(t.Strings[nIx]);
+                    sbRet.Append(_t.Strings[nIx]);
 
                 sbRet.Append('\\');
             }
@@ -312,9 +314,8 @@ namespace DoubleFile
 
         static protected int FindString(string str)
         {
-            var t = TypedArrayBase.tA[new Tabled_Folders().Type];
             var nMin = 0;
-            var nMax = t.Strings.Length;
+            var nMax = _t.Strings.Length;
 
             for (; ; )
             {
@@ -335,7 +336,7 @@ namespace DoubleFile
 
                 var nIx = nMin + nShift;
 
-                switch (str.LocalCompare(t.Strings[nIx]))
+                switch (str.LocalCompare(_t.Strings[nIx]))
                 {
                     case -1:
                     {

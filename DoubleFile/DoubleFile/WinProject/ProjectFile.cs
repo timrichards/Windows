@@ -24,7 +24,6 @@ namespace DoubleFile
         static internal event Action OnOpenedProject = null;
 
         static readonly string _tempPath = Path.GetTempPath() + LocalIsoStore.TempDir.TrimEnd('\\') + "_" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + '\\';
-        static readonly string _tempPathIso01 = LocalIsoStore.TempDir.TrimEnd('\\') + "01";
 
         static internal bool
             OpenProject(string strProjectFilename, WeakReference<IOpenListingFiles> openListingFilesWR, bool bClearItems)
@@ -152,30 +151,6 @@ namespace DoubleFile
             );
 
             OnOpenedProject?.Invoke();
-
-            if (LocalIsoStore.DirectoryExists(_tempPathIso01))
-            {
-                if (false == bClearItems)
-                {
-                    string strNew = null;
-
-                    foreach (var strFile in
-                        LocalIsoStore.GetFileNames()
-                        .Where(strFile =>
-                    {
-                        return
-                            strFile.StartsWith(_tempPathIso01) &&
-                            (false == LocalIsoStore.FileExists(strNew = strFile.Replace(_tempPathIso01, LocalIsoStore.TempDir)));
-                    }))
-                    {
-                        // strNew is assigned each iteration in C# 4.
-                        LocalIsoStore.MoveFile(strFile, strNew);
-                    }
-                }
-
-                LocalIsoStore.DeleteDirectory(_tempPathIso01);
-            }
-
             WinProgress.CloseForced();
             _bProcessing = false;
             return bRet && (false == _bUserCanceled);

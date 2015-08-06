@@ -21,7 +21,7 @@ namespace DoubleFile
         static internal bool
             DirectoryExists(string path) => _isoStore.DirectoryExists(path);
         static internal string[]
-            GetFileNames() => _isoStore.GetFileNames();
+            GetFileNames(string searchPattern) => _isoStore.GetFileNames(searchPattern);
 
         static internal IsolatedStorageFileStream
             LockFile(string path) => WriteLockA(() => _isoStore.OpenFile(path, FileMode.OpenOrCreate, FileAccess.Read, FileShare.None));
@@ -73,31 +73,32 @@ namespace DoubleFile
         static internal bool
             FileExists(this string strFile)
         {
-            if (null == strFile)
+            if (string.IsNullOrWhiteSpace(strFile))
                 return false;
 
             return
-                _isoStore.FileExists(strFile) ||
-                File.Exists(strFile);
+                Path.IsPathRooted(strFile)
+                ? File.Exists(strFile)
+                : _isoStore.FileExists(strFile);
         }
 
         static internal string
             FileMoveToIso(this string strSource, string strIsoDest)
         {
-            if (null == strSource)
+            if (string.IsNullOrWhiteSpace(strSource))
                 return null;
 
-            if (_isoStore.FileExists(strSource))
-            {
-                MoveFile(strSource, strIsoDest);
-            }
-            else
+            if (Path.IsPathRooted(strSource))
             {
                 using (var sr = File.OpenText(strSource))
                 using (var sw = new StreamWriter(CreateFile(TempDir + Path.GetFileName(strIsoDest))))
                     Util.CopyStream(sr, sw);
 
                 File.Delete(strSource);
+            }
+            else
+            {
+                MoveFile(strSource, strIsoDest);
             }
 
             return strIsoDest;
@@ -106,28 +107,31 @@ namespace DoubleFile
         static internal FileStream
             OpenFile(this string strFile, FileMode mode)
         {
-            if (_isoStore.FileExists(strFile))
+            if (string.IsNullOrWhiteSpace(strFile))
+                return null;
+
+            if (Path.IsPathRooted(strFile))
+            {
+                return File.Open(strFile, mode);
+            }
+            else
             {
                 if (FileMode.Open == mode)
                     return _isoStore.OpenFile(strFile, FileMode.Open);
 
                 return WriteLockA(() => _isoStore.OpenFile(strFile, mode));
             }
-            else
-            {
-                return File.Open(strFile, mode);
-            }
         }
 
         static internal IEnumerable<string>
             ReadLines(this string strFile)
         {
-            if (null == strFile)
+            if (string.IsNullOrWhiteSpace(strFile))
                 return new string[0];
 
-            return (_isoStore.FileExists(strFile))
-                ? ReadLinesIterator.CreateIterator(new StreamReader(OpenFile(strFile, FileMode.Open)))
-                : File.ReadLines(strFile);
+            return (Path.IsPathRooted(strFile))
+                ? File.ReadLines(strFile)
+                : ReadLinesIterator.CreateIterator(new StreamReader(OpenFile(strFile, FileMode.Open)));
         }
     }
 }

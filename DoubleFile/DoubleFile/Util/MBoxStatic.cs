@@ -88,7 +88,7 @@ namespace DoubleFile
                 owner =
                     (Statics.TopWindow is IModalWindow)
                     ? Statics.TopWindow
-                    : MainWindow.WithMainWindow(w => w);
+                    : (ILocalWindow) Application.Current.MainWindow;
             } 
 
             if (owner?.LocalIsClosed ?? false)

@@ -57,7 +57,7 @@ namespace DoubleFile
         static internal T As<T>(this object o) where T: class => (o is T) ? (T)o : null;  // 20x faster than as p. 123
 
         static internal int LocalCompare(this string a, string b) => a.CompareTo(b);
-       //     string.Compare(a, b, StringComparison.Ordinal);
+          //  string.Compare(a, b, StringComparison.Ordinal);
 
         static internal T FirstOnlyAssert<T>(this IEnumerable<T> source)
         {

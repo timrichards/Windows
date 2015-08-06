@@ -150,6 +150,12 @@ namespace DoubleFile
             {
                 _lockTempIsoDir.Dispose();
 
+                foreach (var strFilename in LocalIsoStore.GetFileNames(LocalIsoStore.TempDir + @"\*.*"))
+                {
+                    try { LocalIsoStore.DeleteFile(LocalIsoStore.TempDir + @"\" + strFilename); }
+                    catch (IsolatedStorageException) { }
+                }
+
                 try { LocalIsoStore.DeleteDirectory(LocalIsoStore.TempDir); }
                 catch (IsolatedStorageException) { }
 

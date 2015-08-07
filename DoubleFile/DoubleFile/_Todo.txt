@@ -5,7 +5,6 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
-- leaving the page/can't cancel search
 - Assert box offset when app window partly off screen
 - Treemap selection rectangle still doesn't always know what the treemap treenode view is set at
 - VolTreeMap has focus rectangles on the progress dialog controls
@@ -162,9 +161,19 @@ Specific code areas:
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
 
-99919
+99985
 99918
 99917
+99916
+99875
+99857
+99806
+99786
+99785
+99683
+99676
+99667
+99662
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
 99658 next low assert

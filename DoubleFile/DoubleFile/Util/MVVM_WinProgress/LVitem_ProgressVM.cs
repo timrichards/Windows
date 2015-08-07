@@ -26,7 +26,7 @@ namespace DoubleFile
             Progress
         {
             get { return new double[] { 0, _nProgress, 1, 1 }[(int)_progressState]; }
-            internal set { _nProgress = value; }    // RaisPropertyChanged is in OnTimerTick()
+            internal set { _nProgress = value; }    // RaisePropertyChanged is in OnTimerTick()
         }
         double _nProgress = 0;
 

@@ -5,16 +5,14 @@ namespace DoubleFile
 {
     class TabledStringGenerating : TabledStringBase
     {
-        internal TabledStringGenerating(TabledStringBase t_ = null)
+        internal
+            TabledStringGenerating(TabledStringBase t_ = null)
         {
-            RefCount = t_?.RefCount ?? 0;
-
             var nThreads = Statics.LVprojectVM.CanLoadCount;
             var t = t_.As<TabledStringGenerated>();
 
             if (null != t)
             {
-                Util.Assert(99916, 1 < RefCount);
                 IndexGenerator = t.Strings.Length;
                 DictStrings = new ConcurrentDictionary<string, int>(nThreads, t.Strings.Length);
                 DictStringsRev = new ConcurrentDictionary<int, string>(nThreads, t.Strings.Length);
@@ -34,7 +32,8 @@ namespace DoubleFile
             }
         }
 
-        internal override int Set(string str_in)
+        internal override int
+            Set(string str_in)
         {
             var split = str_in.Split('\\');
 

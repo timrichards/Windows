@@ -21,6 +21,7 @@ namespace DoubleFile
             Icmd_FoldersAndFiles = new RelayCommand(() => SearchFoldersAndFiles(), IsSearchEnabled);
             Icmd_Files = new RelayCommand(() => SearchFoldersAndFiles(bSearchFilesOnly: true), IsSearchEnabled);
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
+            TabledString<TabledStringType_Files>.AddRef();
             PathBuilder.AddRef();
             return this;
         }
@@ -28,6 +29,7 @@ namespace DoubleFile
         public void Dispose()
         {
             _bDisposed = true;
+            TabledString<TabledStringType_Files>.DropRef();
             PathBuilder.DropRef();
         }
 

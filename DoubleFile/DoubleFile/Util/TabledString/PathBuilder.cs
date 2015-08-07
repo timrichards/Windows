@@ -7,33 +7,23 @@ namespace DoubleFile
 {
     class PathBuilder : IComparable<PathBuilder>, IComparable
     {
-        static TabledStringBase
-            _tFiles = null;
-        static TabledStringGenerated
-            _t = null;
-        static ConcurrentDictionary<string, PathBuilder>
-            _dictPathParts = null;
-
-        static internal void AddRef()
+        static internal void
+            AddRef()
         {
-            TabledString<TabledStringType_Files>.AddRef();
             _t = TabledStringTypesBase.Types[new TabledStringType_Folders().Type].As<TabledStringGenerated>();
 
-            if (0 < (_tFiles?.RefCount ?? 0))
+            if (0 < _nRefCount++)
                 return;
 
-            _tFiles = TabledStringTypesBase.Types[new TabledStringType_Files().Type];
             _dictPathParts = new ConcurrentDictionary<string, PathBuilder>(Statics.LVprojectVM.CanLoadCount, 16384);
         }
 
-        static internal void DropRef()
+        static internal void
+            DropRef()
         {
-            TabledString<TabledStringType_Files>.DropRef();
-
-            if (0 < _tFiles.RefCount)
+            if (0 < --_nRefCount)
                 return;
 
-            _tFiles = null;
             _t = null;
             _dictPathParts = null;
         }
@@ -56,15 +46,11 @@ namespace DoubleFile
             }
         }
 
-        static internal PathBuilder FactoryCreateOrFind(string strDir, Action Cancel = null)
+        static internal PathBuilder
+            FactoryCreateOrFind(string strDir, Action Cancel = null)
         {
             try
             {
-                if (null == _tFiles)
-                    throw new NullReferenceException();
-
-                Util.Assert(99985, _tFiles is TabledStringGenerating);
-
                 return
                     _dictPathParts
                     .GetOrAdd(strDir, x => new PathBuilder(strDir));
@@ -94,7 +80,8 @@ namespace DoubleFile
             PathParts = lsInts.ToArray();
         }
 
-        public override string ToString()
+        public override string
+            ToString()
         {
             var sbRet = new StringBuilder();
 
@@ -109,7 +96,8 @@ namespace DoubleFile
             return ("" + sbRet).TrimEnd('\\');
         }
 
-        static protected int FindString(string str)
+        static protected int
+            FindString(string str)
         {
             var nMin = 0;
             var nMax = _t.Strings.Length;
@@ -155,6 +143,14 @@ namespace DoubleFile
             }
         }
 
-        internal int[] PathParts;
+        static TabledStringGenerated
+            _t = null;
+        static ConcurrentDictionary<string, PathBuilder>
+            _dictPathParts = null;
+        static int
+            _nRefCount = 0;
+
+        internal int[]
+            PathParts { get; private set; }
     }
 }

@@ -7,9 +7,6 @@ namespace DoubleFile
     class TabledString<T> : IComparable<TabledString<T>>, IComparable
         where T : TabledStringTypesBase, new()
     {
-        static TabledStringBase
-            _t = null;
-
         static public explicit operator
             TabledString<T>(string value) =>
             string.IsNullOrWhiteSpace(value) ? null : new TabledString<T> { nIndex = _t.Set(value) };
@@ -20,31 +17,28 @@ namespace DoubleFile
         public int CompareTo(object that) => CompareTo((TabledString<T>)that);
         public int CompareTo(TabledString<T> that) => _t?.CompareTo(nIndex, that.nIndex) ?? 0;
 
-        static internal bool IsAlive => null != _t;
+        static internal bool
+            IsAlive => null != _t;
 
-        static internal void Reinitialize()
-        {
-            var nRefCount = _t?.RefCount ?? 0;
+        static internal void
+            Reinitialize() =>
+            _t = TabledStringTypesBase.Types[new T().Type] = new TabledStringGenerating();
 
-            _t =
-                TabledStringTypesBase.Types[new T().Type] = 
-                new TabledStringGenerating { RefCount = nRefCount };
-        }
-
-        static internal void AddRef()
+        static internal void
+            AddRef()
         {
             if (null == _t)
                 Reinitialize();
 
-            ++_t.RefCount;
+            ++_nRefCount;
         }
 
-        static internal void DropRef()
+        static internal void
+            DropRef()
         {
-            Util.Assert(99934, 0 < _t.RefCount);
-            --_t.RefCount;
+            Util.Assert(99934, 0 < _nRefCount);
 
-            if (0 < _t.RefCount)
+            if (0 < --_nRefCount)
                 return;
 
             _t =
@@ -52,10 +46,12 @@ namespace DoubleFile
                 null;
         }
 
-        static internal void GenerationStarting() =>
+        static internal void
+            GenerationStarting() =>
             _t = TabledStringTypesBase.Types[new T().Type] = new TabledStringGenerating(_t);
 
-        static internal void GenerationEnded()
+        static internal void
+            GenerationEnded()
         {
             if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
                 return;
@@ -64,6 +60,11 @@ namespace DoubleFile
                 TabledStringTypesBase.Types[new T().Type] =
                 new TabledStringGenerated(_t);
         }
+
+        static TabledStringBase
+            _t = null;
+        static int
+            _nRefCount = 0;
 
         int nIndex = -1;
     }

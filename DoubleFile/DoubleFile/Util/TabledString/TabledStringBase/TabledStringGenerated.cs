@@ -6,7 +6,8 @@ namespace DoubleFile
 {
     class TabledStringGenerated : TabledStringBase
     {
-        internal TabledStringGenerated(TabledStringBase t_)
+        internal
+            TabledStringGenerated(TabledStringBase t_)
         {
             var t = t_.As<TabledStringGenerating>();
 
@@ -15,8 +16,6 @@ namespace DoubleFile
                 Util.Assert(99915, false);
                 return;
             }
-
-            RefCount = t.RefCount;
 
             var nCount = t.DictStrings.Count;
 

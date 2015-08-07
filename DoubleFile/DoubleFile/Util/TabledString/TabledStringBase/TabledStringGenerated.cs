@@ -10,7 +10,12 @@ namespace DoubleFile
         {
             var t = t_.As<TabledStringGenerating>();
 
-            Util.Assert(99915, null != t);
+            if (null == t)
+            {
+                Util.Assert(99915, false);
+                return;
+            }
+
             RefCount = t.RefCount;
 
             var nCount = t.DictStrings.Count;

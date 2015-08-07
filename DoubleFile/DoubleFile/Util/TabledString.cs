@@ -8,57 +8,31 @@ using System.Windows;
 
 namespace DoubleFile
 {
-    abstract class TypedArrayBase
-    {
-        internal abstract int Type { get; }
-        static internal TabledStringStatics[] tA = new TabledStringStatics[2];
-    }
-    class Tabled_Folders : TypedArrayBase { internal override int Type => 0; }
-    class Tabled_Files : TypedArrayBase { internal override int Type => 1; }
-
     abstract class TabledStringStatics
     {
         internal int
             RefCount;
-
-        internal int
-            IndexGenerator;
-        internal ConcurrentDictionary<string, int>
-            DictStrings;
-        internal ConcurrentDictionary<int, string>
-            DictStringsRev;
-
-        internal ConcurrentDictionary<string, PathBuilder>
-            DictPathParts;
-
-        internal string[]
-            Strings;
-        internal int[]
-            Sort;
-
-        internal abstract string
-            Get(int index);
+        internal virtual int
+            Set(string str_in) { Util.Assert(99920, false); return -1; }
         internal abstract int
             CompareTo(int nIx, int thatIx);
+        internal abstract string
+            Get(int index);
     }
 
     class T_Generating : TabledStringStatics
     {
-        internal T_Generating(TabledStringStatics t = null)
+        internal T_Generating(TabledStringStatics t_ = null)
         {
-            RefCount = t?.RefCount ?? 0;
+            RefCount = t_?.RefCount ?? 0;
 
             var nThreads = Statics.LVprojectVM.CanLoadCount;
+            var t = t_.As<T_Generated>();
 
-            DictPathParts = new ConcurrentDictionary<string, PathBuilder>(nThreads, 16384);
-
-            if (t is T_Generated)
+            if (null != t)
             {
                 Util.Assert(99916, 1 < RefCount);
-                Util.Assert(99920, null == t.DictStrings);
-                Util.Assert(99919, null == t.DictStringsRev);
-                Util.Assert(99918, t.IndexGenerator == t.Strings.Length);
-
+                IndexGenerator = t.Strings.Length;
                 DictStrings = new ConcurrentDictionary<string, int>(nThreads, t.Strings.Length);
                 DictStringsRev = new ConcurrentDictionary<int, string>(nThreads, t.Strings.Length);
 
@@ -77,18 +51,55 @@ namespace DoubleFile
             }
         }
 
+        internal override int Set(string str_in)
+        {
+            var split = str_in.Split('\\');
+
+            if (1 < split.Length)
+            {
+                foreach (var str in str_in.Split('\\'))
+                {
+                    if (0 < str.Length)
+                        SetA(str);
+                }
+            }
+
+            return SetA(str_in);
+        }
+        int SetA(string str)
+        {
+            lock (DictStrings)
+            lock (DictStringsRev)
+            return DictStrings.GetOrAdd(str, x =>
+            {
+                var nIx = Interlocked.Increment(ref IndexGenerator) - 1;
+
+                DictStringsRev[nIx] = str;
+                return nIx;
+            });
+        }
+
         internal override int
             CompareTo(int nIx, int thatIx) => Get(nIx).LocalCompare(Get(thatIx));
         internal override string
             Get(int nIndex) => DictStringsRev[nIndex];
+
+        internal int
+            IndexGenerator;
+        internal ConcurrentDictionary<string, int>
+            DictStrings { get; private set; }
+        internal ConcurrentDictionary<int, string>
+            DictStringsRev { get; private set; }
     }
 
     class T_Generated : TabledStringStatics
     {
-        internal T_Generated(TabledStringStatics t)
+        internal T_Generated(TabledStringStatics t_)
         {
+            var t = t_.As<T_Generating>();
+
+            Util.Assert(99915, null != t);
             RefCount = t.RefCount;
-            Util.Assert(99915, t is T_Generating);
 
             var nCount = t.DictStrings.Count;
 
@@ -134,10 +145,26 @@ namespace DoubleFile
         }
 
         internal override int
+            Set(string str_in) { Util.Assert(99920, false); return -1; }
+
+        internal override int
             CompareTo(int nIx, int thatIx) => Math.Sign(Sort[nIx] - Sort[thatIx]);
         internal override string
             Get(int nIndex) => Strings[Sort[nIndex]];
+
+        internal string[]
+            Strings { get; private set; }
+        internal int[]
+            Sort { get; private set; }
     }
+
+    abstract class TypedArrayBase
+    {
+        internal abstract int Type { get; }
+        static internal TabledStringStatics[] tA = new TabledStringStatics[2];
+    }
+    class Tabled_Folders : TypedArrayBase { internal override int Type => 0; }
+    class Tabled_Files : TypedArrayBase { internal override int Type => 1; }
 
     // can't be struct because of null
     class TabledString<T> : IComparable<TabledString<T>>, IComparable
@@ -148,7 +175,7 @@ namespace DoubleFile
 
         static public explicit operator
             TabledString<T>(string value) =>
-            string.IsNullOrWhiteSpace(value) ? null : new TabledString<T> { nIndex = Set(value) };
+            string.IsNullOrWhiteSpace(value) ? null : new TabledString<T> { nIndex = _t.Set(value) };
 
         static public explicit operator
             string(TabledString<T> value) => (null == value) ? null : _t?.Get(value.nIndex);
@@ -188,12 +215,8 @@ namespace DoubleFile
                 null;
         }
 
-        static internal void GenerationStarting()
-        {
-            _t =
-                TypedArrayBase.tA[new T().Type] =
-                new T_Generating(_t);
-        }
+        static internal void GenerationStarting() =>
+            _t = TypedArrayBase.tA[new T().Type] = new T_Generating(_t);
 
         static internal void GenerationEnded()
         {
@@ -205,55 +228,28 @@ namespace DoubleFile
                 new T_Generated(_t);
         }
 
-        static int Set(string str_in)
-        {
-            var split = str_in.Split('\\');
-
-            if (1 < split.Length)
-            {
-                foreach (var str in str_in.Split('\\'))
-                {
-                    if (0 < str.Length)
-                        SetA(str);
-                }
-            }
-
-            return SetA(str_in);
-        }
-
-        static int SetA(string str)
-        {
-            if (null == _t)
-                return 0;
-
-            Util.Assert(99917, _t is T_Generating);
-
-            lock (_t.DictStrings)
-            lock (_t.DictStringsRev)
-            return _t.DictStrings.GetOrAdd(str, x =>
-            {
-                var nIx = Interlocked.Increment(ref _t.IndexGenerator) - 1;
-
-                _t.DictStringsRev[nIx] = str;
-                return nIx;
-            });
-        }
-
         int nIndex = -1;
     }
 
     class PathBuilder : IComparable<PathBuilder>, IComparable
     {
         static TabledStringStatics
-            _tFiles = TypedArrayBase.tA[new Tabled_Files().Type];
-        static TabledStringStatics
+            _tFiles = null;
+        static T_Generated
             _t = null;
+        static ConcurrentDictionary<string, PathBuilder>
+            _dictPathParts = null;
 
         static internal void AddRef()
         {
             TabledString<Tabled_Files>.AddRef();
+            _t = TypedArrayBase.tA[new Tabled_Folders().Type].As<T_Generated>();
+
+            if (0 < (_tFiles?.RefCount ?? 0))
+                return;
+
             _tFiles = TypedArrayBase.tA[new Tabled_Files().Type];
-            _t = TypedArrayBase.tA[new Tabled_Folders().Type];
+            _dictPathParts = new ConcurrentDictionary<string, PathBuilder>(Statics.LVprojectVM.CanLoadCount, 16384);
         }
 
         static internal void DropRef()
@@ -265,6 +261,7 @@ namespace DoubleFile
 
             _tFiles = null;
             _t = null;
+            _dictPathParts = null;
         }
 
         public int CompareTo(object that) => CompareTo((PathBuilder)that);
@@ -294,12 +291,9 @@ namespace DoubleFile
 
                 Util.Assert(99985, _tFiles is T_Generating);
 
-                lock (_tFiles.DictPathParts)
-                {
-                    return
-                        _tFiles.DictPathParts
-                        .GetOrAdd(strDir, x => new PathBuilder(strDir));
-                }
+                return
+                    _dictPathParts
+                    .GetOrAdd(strDir, x => new PathBuilder(strDir));
             }
             catch (NullReferenceException)
             {

@@ -221,6 +221,11 @@
     <Compile Include="Util\LocalUserControlBase.cs" />
     <Compile Include="Util\NativeMethods.cs" />
     <Compile Include="Util\ReadLinesIterator.cs" />
+    <Compile Include="Util\TabledString\PathBuilder.cs" />
+    <Compile Include="Util\TabledString\TabledStringBase.cs" />
+    <Compile Include="Util\TabledString\TabledStringBase\T_Generated.cs" />
+    <Compile Include="Util\TabledString\TabledStringBase\T_Generating.cs" />
+    <Compile Include="Util\TabledString\TypedArrayBase.cs" />
     <Compile Include="Util\Win32Screen\MONITORINFO.cs" />
     <Compile Include="Util\Win32Screen\RECT.cs" />
     <Compile Include="Util\Win32Screen\SWP.cs" />

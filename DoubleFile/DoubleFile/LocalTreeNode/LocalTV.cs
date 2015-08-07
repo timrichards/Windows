@@ -79,7 +79,7 @@ namespace DoubleFile
             _knProgMult = 3 / (4d * _lvProjectVM?.CanLoadCount ?? 0);
 
             if (0 < (lvProjectVM?.CanLoadCount ?? 0))
-                TabledString<Tabled_Folders>.AddRef();
+                TabledString<TabledStringType_Folders>.AddRef();
 
             _lsDisposable.Add(WinDuplicatesVM.GoToFile.LocalSubscribe(99766, WinDuplicatesVM_GoToFile));
             _lsDisposable.Add(WinSearchVM.GoToFile.LocalSubscribe(99765, WinSearchVM_GoToFile));
@@ -92,7 +92,7 @@ namespace DoubleFile
             LocalDispose()
         {
             if (0 < (_lvProjectVM?.CanLoadCount ?? 0))
-                TabledString<Tabled_Folders>.DropRef();
+                TabledString<TabledStringType_Folders>.DropRef();
 
             Util.LocalDispose(_lsDisposable);
             _wr.SetTarget(_instance = null);

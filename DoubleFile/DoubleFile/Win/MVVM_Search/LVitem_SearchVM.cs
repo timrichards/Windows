@@ -66,6 +66,6 @@
         protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
         static string[] _propNamesA = null;
 
-        internal TabledString<Tabled_Files> Filename;
+        internal TabledString<TabledStringType_Files> Filename;
     }
 }

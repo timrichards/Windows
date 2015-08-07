@@ -29,7 +29,7 @@ namespace DoubleFile
         internal override int NumCols => NumCols_;
         internal const int NumCols_ = 1;
 
-        internal TabledString<Tabled_Folders>
+        internal TabledString<TabledStringType_Folders>
             Name;
         //internal LocalLVitem
         //    IgnoreLVItem;

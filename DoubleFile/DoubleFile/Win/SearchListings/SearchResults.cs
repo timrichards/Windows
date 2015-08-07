@@ -4,7 +4,7 @@ namespace DoubleFile
 {
     class SearchResults
     {
-        internal readonly TabledString<Tabled_Files>
+        internal readonly TabledString<TabledStringType_Files>
             StrSearch = null;
         internal readonly LVitem_ProjectVM
             VolStrings = null;
@@ -13,7 +13,7 @@ namespace DoubleFile
 
         internal SearchResults(string strSearch, LVitem_ProjectVM volStrings, IEnumerable<SearchResultsDir> listResults)
         {
-            StrSearch = (TabledString<Tabled_Files>)strSearch;
+            StrSearch = (TabledString<TabledStringType_Files>)strSearch;
             VolStrings = volStrings;
             Results = listResults;
         }

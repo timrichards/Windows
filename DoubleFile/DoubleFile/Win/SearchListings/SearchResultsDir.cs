@@ -7,8 +7,8 @@ namespace DoubleFile
     {
         internal PathBuilder
             PathBuilder;
-        internal readonly SortedDictionary<TabledString<Tabled_Files>, bool>
-            ListFiles = new SortedDictionary<TabledString<Tabled_Files>, bool>();
+        internal readonly SortedDictionary<TabledString<TabledStringType_Files>, bool>
+            ListFiles = new SortedDictionary<TabledString<TabledStringType_Files>, bool>();
 
         public int CompareTo(object other)
         {

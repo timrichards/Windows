@@ -7,28 +7,28 @@ namespace DoubleFile
 {
     class PathBuilder : IComparable<PathBuilder>, IComparable
     {
-        static TabledStringStatics
+        static TabledStringBase
             _tFiles = null;
-        static T_Generated
+        static TabledStringGenerated
             _t = null;
         static ConcurrentDictionary<string, PathBuilder>
             _dictPathParts = null;
 
         static internal void AddRef()
         {
-            TabledString<Tabled_Files>.AddRef();
-            _t = TypedArrayBase.tA[new Tabled_Folders().Type].As<T_Generated>();
+            TabledString<TabledStringType_Files>.AddRef();
+            _t = TabledStringTypesBase.Types[new TabledStringType_Folders().Type].As<TabledStringGenerated>();
 
             if (0 < (_tFiles?.RefCount ?? 0))
                 return;
 
-            _tFiles = TypedArrayBase.tA[new Tabled_Files().Type];
+            _tFiles = TabledStringTypesBase.Types[new TabledStringType_Files().Type];
             _dictPathParts = new ConcurrentDictionary<string, PathBuilder>(Statics.LVprojectVM.CanLoadCount, 16384);
         }
 
         static internal void DropRef()
         {
-            TabledString<Tabled_Files>.DropRef();
+            TabledString<TabledStringType_Files>.DropRef();
 
             if (0 < _tFiles.RefCount)
                 return;
@@ -63,7 +63,7 @@ namespace DoubleFile
                 if (null == _tFiles)
                     throw new NullReferenceException();
 
-                Util.Assert(99985, _tFiles is T_Generating);
+                Util.Assert(99985, _tFiles is TabledStringGenerating);
 
                 return
                     _dictPathParts

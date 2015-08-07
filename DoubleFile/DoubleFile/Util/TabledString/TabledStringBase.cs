@@ -1,6 +1,6 @@
 ﻿namespace DoubleFile
 {
-    abstract class TabledStringStatics
+    abstract class TabledStringBase
     {
         internal int
             RefCount;

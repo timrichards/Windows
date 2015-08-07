@@ -52,7 +52,7 @@ namespace DoubleFile
                 if (Statics.FileDictionary.IsEmpty)
                     Statics.FileDictionary.DoThreadFactory(_lvProjectVM, new WeakReference<ICreateFileDictStatus>(this));
 
-                TabledString<Tabled_Folders>.GenerationStarting();
+                TabledString<TabledStringType_Folders>.GenerationStarting();
 
                 if (Statics.FileDictionary.IsAborted)
                     return;     // from lambda
@@ -72,7 +72,7 @@ namespace DoubleFile
             })
                 .ShowDialog();
 
-            TabledString<Tabled_Folders>.GenerationEnded();
+            TabledString<TabledStringType_Folders>.GenerationEnded();
             return _bTreeDone;
         }
 

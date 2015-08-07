@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    class T_Generated : TabledStringStatics
+    class TabledStringGenerated : TabledStringBase
     {
-        internal T_Generated(TabledStringStatics t_)
+        internal TabledStringGenerated(TabledStringBase t_)
         {
-            var t = t_.As<T_Generating>();
+            var t = t_.As<TabledStringGenerating>();
 
             Util.Assert(99915, null != t);
             RefCount = t.RefCount;

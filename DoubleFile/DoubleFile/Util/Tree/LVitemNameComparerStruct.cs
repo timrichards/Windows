@@ -26,7 +26,7 @@ namespace DoubleFile
                 if ((item.SubItems?.Count ?? 0) > FileParse.knColLengthLV)
                     strName += item.SubItems[FileParse.knColLengthLV];         // name + size
 
-                item.Name = (TabledString<Tabled_Folders>)strName;
+                item.Name = (TabledString<TabledStringType_Folders>)strName;
             }
         }
 

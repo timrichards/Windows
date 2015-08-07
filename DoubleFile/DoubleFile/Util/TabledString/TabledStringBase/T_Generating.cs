@@ -3,14 +3,14 @@ using System.Threading;
 
 namespace DoubleFile
 {
-    class T_Generating : TabledStringStatics
+    class TabledStringGenerating : TabledStringBase
     {
-        internal T_Generating(TabledStringStatics t_ = null)
+        internal TabledStringGenerating(TabledStringBase t_ = null)
         {
             RefCount = t_?.RefCount ?? 0;
 
             var nThreads = Statics.LVprojectVM.CanLoadCount;
-            var t = t_.As<T_Generated>();
+            var t = t_.As<TabledStringGenerated>();
 
             if (null != t)
             {

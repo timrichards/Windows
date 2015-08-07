@@ -5,9 +5,9 @@ namespace DoubleFile
 {
     // can't be struct because of null
     class TabledString<T> : IComparable<TabledString<T>>, IComparable
-        where T : TypedArrayBase, new()
+        where T : TabledStringTypesBase, new()
     {
-        static TabledStringStatics
+        static TabledStringBase
             _t = null;
 
         static public explicit operator
@@ -27,8 +27,8 @@ namespace DoubleFile
             var nRefCount = _t?.RefCount ?? 0;
 
             _t =
-                TypedArrayBase.tA[new T().Type] = 
-                new T_Generating { RefCount = nRefCount };
+                TabledStringTypesBase.Types[new T().Type] = 
+                new TabledStringGenerating { RefCount = nRefCount };
         }
 
         static internal void AddRef()
@@ -48,12 +48,12 @@ namespace DoubleFile
                 return;
 
             _t =
-                TypedArrayBase.tA[new T().Type] =
+                TabledStringTypesBase.Types[new T().Type] =
                 null;
         }
 
         static internal void GenerationStarting() =>
-            _t = TypedArrayBase.tA[new T().Type] = new T_Generating(_t);
+            _t = TabledStringTypesBase.Types[new T().Type] = new TabledStringGenerating(_t);
 
         static internal void GenerationEnded()
         {
@@ -61,8 +61,8 @@ namespace DoubleFile
                 return;
 
             _t =
-                TypedArrayBase.tA[new T().Type] =
-                new T_Generated(_t);
+                TabledStringTypesBase.Types[new T().Type] =
+                new TabledStringGenerated(_t);
         }
 
         int nIndex = -1;

@@ -93,8 +93,8 @@ namespace DoubleFile
                 return true;        // found there are no volumes loaded
 
             ClearItems();
-            TabledString<Tabled_Files>.Reinitialize();
-            TabledString<Tabled_Files>.GenerationStarting();
+            TabledString<TabledStringType_Files>.Reinitialize();
+            TabledString<TabledStringType_Files>.GenerationStarting();
 
             var result = new SearchResultsDir();
 
@@ -114,7 +114,7 @@ namespace DoubleFile
                 if (null == LocalTV.GetOneNodeByRootPathA("" + result.PathBuilder, null))
                     return false;
 
-                result.ListFiles.Add((TabledString<Tabled_Files>)strPath.Substring(nLastBackSlashIx + 1), false);
+                result.ListFiles.Add((TabledString<TabledStringType_Files>)strPath.Substring(nLastBackSlashIx + 1), false);
             }
 
             _dictResults = new ConcurrentDictionary<SearchResultsDir, bool>();
@@ -162,7 +162,7 @@ namespace DoubleFile
             Done();
 
             if (false == _bDisposed)
-                TabledString<Tabled_Files>.GenerationEnded();
+                TabledString<TabledStringType_Files>.GenerationEnded();
         }
 
         void Done()

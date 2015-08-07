@@ -9,8 +9,8 @@ namespace DoubleFile
             Nodes { get; protected set; }
 
         internal virtual string
-            Text { get { return (string)_text; } set { _text = (TabledString<Tabled_Folders>)value; } }
-        TabledString<Tabled_Folders> _text = null;
+            Text { get { return (string)_text; } set { _text = (TabledString<TabledStringType_Folders>)value; } }
+        TabledString<TabledStringType_Folders> _text = null;
 
         internal LocalTreeNode
             FirstNode => (0 < (Nodes?.Count ?? 0)) ? Nodes[0] : null;
@@ -49,7 +49,7 @@ namespace DoubleFile
             Text = strContent;
         }
 
-        internal LocalTreeNode(TabledString<Tabled_Folders> strContent)
+        internal LocalTreeNode(TabledString<TabledStringType_Folders> strContent)
             : this()
         {
             _text = strContent;

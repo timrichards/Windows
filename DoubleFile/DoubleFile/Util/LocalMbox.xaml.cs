@@ -66,8 +66,9 @@ namespace DoubleFile
             }
             catch
             {
-                MessageBox.Show("Could not initialize component while asserting another error (next...)");
-                MessageBox.Show(strMessage, strTitle, buttons ?? MessageBoxButton.OK);
+                MessageBox.Show(strMessage + "\n(LocalMbox: Could not initialize component.)",
+                    strTitle, buttons ?? MessageBoxButton.OK);
+
                 return;
             }
 
@@ -149,10 +150,7 @@ namespace DoubleFile
                 ((Window)this).ShowDialog();
 
             if (false == IsLoaded)
-            {
-                MessageBox.Show("The local message box could not open to display the following message (next...)");
-                _Result = MessageBox.Show(Message, Title, _buttons);
-            }
+                _Result = MessageBox.Show(Message + "\n(LocalMbox: Could not open.)", Title, _buttons);
 
             return _Result;
         }

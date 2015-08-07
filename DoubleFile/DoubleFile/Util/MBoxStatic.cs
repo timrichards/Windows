@@ -42,8 +42,7 @@ namespace DoubleFile
 
             if (AssertUp)
             {
-                MessageBox.Show("There is a local assert box already up but there is a new assert (next...)");
-                MessageBox.Show(strErrorOut);
+                MessageBox.Show(strErrorOut + "\n(LocalMbox: there is a local assert box already up.)");
             }
             else
             {
@@ -78,8 +77,7 @@ namespace DoubleFile
         {
             if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
             {
-                MessageBox.Show("Application shutting down, but there's a message (next...)");
-                MessageBox.Show(strMessage, strTitle, buttons ?? MessageBoxButton.OK);
+                MessageBox.Show(strMessage + "\n(LocalMbox: application shutting down.)", strTitle, buttons ?? MessageBoxButton.OK);
                 return MessageBoxResult.None;
             }
 

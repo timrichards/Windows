@@ -170,7 +170,22 @@ namespace DoubleFile
                             if (null == searchResultDir)
                                 searchResultDir = new SearchResultsDir();
 
-                            searchResultDir.ListFiles.Add((TabledString<Tabled_Files>)strFile, false);
+                            if (false == TabledString<Tabled_Files>.IsAlive)
+                            {
+                                Abort();
+                                return;
+                            }
+
+                            try
+                            {
+                                searchResultDir.ListFiles.Add((TabledString<Tabled_Files>)strFile, false);
+                            }
+                            catch (Exception e) when ((e is ArgumentException) || (e is NullReferenceException))
+                            {
+                                Util.Assert(99659, (false == TabledString<Tabled_Files>.IsAlive));
+                                Abort();
+                                return;
+                            }
                         }
                     }
 

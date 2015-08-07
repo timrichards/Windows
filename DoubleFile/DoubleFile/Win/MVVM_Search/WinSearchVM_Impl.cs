@@ -161,14 +161,8 @@ namespace DoubleFile
         {
             Done();
 
-            try
-            {
+            if (false == _bDisposed)
                 TabledString<Tabled_Files>.GenerationEnded();
-            }
-            catch (NullReferenceException)
-            {
-                Util.Assert(99875, _bDisposed);
-            }
         }
 
         void Done()
@@ -202,7 +196,7 @@ namespace DoubleFile
                         lsLVitems.Add(new LVitem_SearchVM { Directory = Directory });
                     }
                 }
-                catch (Exception ex) when (ex is ArgumentNullException || ex is NullReferenceException)
+                catch (Exception e) when ((e is ArgumentNullException) || (e is NullReferenceException))
                 {
                     Util.Assert(99878, _bDisposed);
                     _dictResults = null;

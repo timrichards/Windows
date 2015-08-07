@@ -154,7 +154,9 @@ namespace DoubleFile
             string(TabledString<T> value) => (null == value) ? null : _t?.Get(value.nIndex);
 
         public int CompareTo(object that) => CompareTo((TabledString<T>)that);
-        public int CompareTo(TabledString<T> that) => _t.CompareTo(nIndex, that.nIndex);
+        public int CompareTo(TabledString<T> that) => _t?.CompareTo(nIndex, that.nIndex) ?? 0;
+
+        static internal bool IsAlive => null != _t;
 
         static internal void Reinitialize()
         {

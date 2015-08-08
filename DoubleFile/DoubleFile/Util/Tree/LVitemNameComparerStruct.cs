@@ -11,7 +11,7 @@ namespace DoubleFile
         {
             return (x != null) &&
                 (y != null) &&
-                (false == string.IsNullOrWhiteSpace((string)x.Name)) &&
+                (false == string.IsNullOrWhiteSpace("" + x.Name)) &&
                 x.Name.Equals(y.Name);
         }
 

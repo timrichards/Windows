@@ -7,7 +7,6 @@
 
 - Assert box offset when app window partly off screen
 - Treemap selection rectangle still doesn't always know what the treemap treenode view is set at
-- VolTreeMap has focus rectangles on the progress dialog controls
 - background progress: saving project doesn't have to tie up the app.
 - Could remove ?? true: false != null
 - LocalTreeNode(TabledString<Tabled_Folders> strContent) is never called - keep it around. string passed in gets converted
@@ -22,7 +21,6 @@
 - check and remove Linq/enumeration for arrays - prob OK: tests for ICollection
 - sort search results by result; breakout by path; etc.
 - can LVitem_base be TabledString?
-- Do all non-generic WeakReferences have to be that way?
 - new LVitem_SearchVM is not created on the main thread
 - AsParallel() seems to work with LVitem_SearchVM: OrderBy in FileDictionary
 - Weighted small succeeded 7/15/15

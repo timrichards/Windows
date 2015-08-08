@@ -9,7 +9,8 @@ namespace DoubleFile
 {
     static public class ExtensionMethodsStatic_Public
     {
-        static public IDisposable LocalSubscribe<T>(this IObservable<T> source, decimal nLocation, Action<T> onNext)
+        static public IDisposable
+            LocalSubscribe<T>(this IObservable<T> source, decimal nLocation, Action<T> onNext)
         {
             return
                 source.Subscribe(t =>
@@ -26,8 +27,8 @@ namespace DoubleFile
             });
         }
 
-        static readonly IDictionary<int, Tuple<DateTime, WeakReference>> _lsSubjects = new ConcurrentDictionary<int, Tuple<DateTime, WeakReference>>();
-        static public void LocalOnNext<T>(this LocalSubject<T> subject, T value, int nOnNextAssertLoc, int nInitiator = 0)
+        static public void
+            LocalOnNext<T>(this LocalSubject<T> subject, T value, int nOnNextAssertLoc, int nInitiator = 0)
         {
             Util.Assert(nOnNextAssertLoc, 0 <= nInitiator);
 
@@ -50,16 +51,22 @@ namespace DoubleFile
                 Util.Assert(nOnNextAssertLoc, false);
             }
         }
+
+        static readonly IDictionary<int, Tuple<DateTime, WeakReference>>
+            _lsSubjects = new ConcurrentDictionary<int, Tuple<DateTime, WeakReference>>();
     }
 
     static partial class ExtensionMethodsStatic
     {
-        static internal T As<T>(this object o) where T: class => (o is T) ? (T)o : null;  // 20x faster than as p. 123
+        static internal T
+            As<T>(this object o) where T: class => (o is T) ? (T)o : null;  // 20x faster than as p. 123
 
-        static internal int LocalCompare(this string a, string b) => a.CompareTo(b);
+        static internal int
+            LocalCompare(this string a, string b) => a.CompareTo(b);
           //  string.Compare(a, b, StringComparison.Ordinal);
 
-        static internal T FirstOnlyAssert<T>(this IEnumerable<T> source)
+        static internal T
+            FirstOnlyAssert<T>(this IEnumerable<T> source)
         {
             var retVal = source.FirstOrDefault();
 #if (DEBUG)
@@ -71,7 +78,8 @@ namespace DoubleFile
             return retVal;
         }
 
-        static internal bool FirstOnlyAssert<T>(this IEnumerable<T> source, Action<T> action)
+        static internal bool
+            FirstOnlyAssert<T>(this IEnumerable<T> source, Action<T> action)
         {
             var bRetVal = false;
 
@@ -91,7 +99,8 @@ namespace DoubleFile
         }
 
         // List has its own ForEach
-        static internal void ForEach<T>(this IEnumerable<T> source, Action<T> action)           // 8 references on 7/23/15
+        static internal void
+            ForEach<T>(this IEnumerable<T> source, Action<T> action)           // 8 references on 7/23/15
         {
             if (null == source)
                 return;

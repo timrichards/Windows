@@ -23,8 +23,8 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock>
-                                <Run Text="{Binding Folder, Mode=OneWay}" FontWeight="Bold"/>
-                                <Run Text=" in " FontStyle="Italic"/>
+                                <Run Text="{Binding Folder, Mode=OneWay}" FontWeight="SemiBold"/>
+                                <Run Text=" in " FontWeight="ExtraLight"/>
                                 <Run Text="{Binding Parent, Mode=OneWay}"/>
                             </TextBlock>
                         </DataTemplate>

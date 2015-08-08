@@ -18,14 +18,16 @@ namespace DoubleFile
     {
         partial class TreeRootNodeBuilder : TreeBase
         {
-            internal TreeRootNodeBuilder(LVitem_ProjectVM volStrings, TreeBase base_in)
+            internal
+                TreeRootNodeBuilder(LVitem_ProjectVM volStrings, TreeBase base_in)
                 : base(base_in)
             {
                 _volStrings = volStrings;
                 Util.Assert(1301.2301m, _callbackWR != null);
             }
 
-            DetailsDatum TreeSubnodeDetails(LocalTreeNode treeNode)
+            DetailsDatum
+                TreeSubnodeDetails(LocalTreeNode treeNode)
             {
                 var datum = new DetailsDatum();
 
@@ -82,21 +84,25 @@ namespace DoubleFile
                 return datum;
             }
 
-            internal TreeRootNodeBuilder DoThreadFactory()
+            internal TreeRootNodeBuilder
+                DoThreadFactory()
             {
                 _thread = Util.ThreadMake(Go);
                 return this;
             }
 
-            internal void Join() => _thread.Join();
+            internal void
+                Join() => _thread.Join();
 
-            internal void Abort()
+            internal void
+                Abort()
             {
                 _bThreadAbort = true;
                 _thread.Abort();
             }
 
-            void Go()
+            void
+                Go()
             {
                 var dtStart = DateTime.Now;
 
@@ -270,13 +276,13 @@ namespace DoubleFile
                 StatusCallback(_volStrings, rootTreeNode);
 
 #if (DEBUG && FOOBAR)
-                Util.WriteLine("" + App.ReadLines(_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_File)).Sum(s => (decimal)(s.Split('\t')[knColLength]).ToUlong()));
-                Util.WriteLine("" + App.ReadLines(_volStrings.ListingFile).Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => (decimal)(s.Split('\t')[knColLength]).ToUlong()));
+                Util.WriteLine("" + _volStrings.ListingFile.ReadLines().Where(s => s.StartsWith(ksLineType_File)).Sum(s => (decimal)(s.Split('\t')[knColLength]).ToUlong()));
+                Util.WriteLine("" + _volStrings.ListingFile.ReadLines().Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => (decimal)(s.Split('\t')[knColLength]).ToUlong()));
 
                 ulong nScannedLength = 0;
 
-                File
-                    .ReadLines(_volStrings.ListingFile)
+                _volStrings.ListingFile
+                    .ReadLines()
                     .Where(s => s.StartsWith(ksLineType_Length))
                     .FirstOnlyAssert(s => nScannedLength = (s.Split('\t')[knColLength]).ToUlong());
 
@@ -302,7 +308,8 @@ namespace DoubleFile
 #endif
             }
 
-            void StatusCallback(LVitem_ProjectVM volStrings, LocalTreeNode rootNode = null, bool bError = false)
+            void
+                StatusCallback(LVitem_ProjectVM volStrings, LocalTreeNode rootNode = null, bool bError = false)
             {
                 if (null == _callbackWR)
                 {

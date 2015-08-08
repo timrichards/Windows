@@ -9,7 +9,7 @@ namespace DoubleFile
             Nodes { get; protected set; }
 
         internal virtual string
-            Text { get { return (string)_text; } set { _text = (TabledString<TabledStringType_Folders>)value; } }
+            Text { get { return "" + _text; } set { _text = (TabledString<TabledStringType_Folders>)value; } }
         TabledString<TabledStringType_Folders> _text = null;
 
         internal LocalTreeNode

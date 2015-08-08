@@ -7,12 +7,12 @@ namespace DoubleFile
     class TabledString<T> : IComparable<TabledString<T>>, IComparable
         where T : TabledStringTypesBase, new()
     {
+        public override string
+            ToString() => _t.Get(nIndex);
+
         static public explicit operator
             TabledString<T>(string value) =>
             string.IsNullOrWhiteSpace(value) ? null : new TabledString<T> { nIndex = _t.Set(value) };
-
-        static public explicit operator
-            string(TabledString<T> value) => (null == value) ? null : _t?.Get(value.nIndex);
 
         public int CompareTo(object that) => CompareTo((TabledString<T>)that);
         public int CompareTo(TabledString<T> that) => _t?.CompareTo(nIndex, that.nIndex) ?? 0;
@@ -21,14 +21,10 @@ namespace DoubleFile
             IsAlive => null != _t;
 
         static internal void
-            Reinitialize() =>
-            _t = TabledStringTypesBase.Types[new T().Type] = new TabledStringGenerating();
-
-        static internal void
             AddRef()
         {
             if (null == _t)
-                Reinitialize();
+                _t = TabledStringTypesBase.Types[new T().Type] = new TabledStringGenerating();
 
             ++_nRefCount;
         }
@@ -47,8 +43,7 @@ namespace DoubleFile
         }
 
         static internal void
-            GenerationStarting() =>
-            _t = TabledStringTypesBase.Types[new T().Type] = new TabledStringGenerating(_t);
+            GenerationStarting() => _t = TabledStringTypesBase.Types[new T().Type] = new TabledStringGenerating(_t);
 
         static internal void
             GenerationEnded()

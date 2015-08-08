@@ -70,7 +70,8 @@ namespace DoubleFile
             IndexGenerator;
         internal ConcurrentDictionary<string, int>
             DictStrings { get; private set; }
-        internal ConcurrentDictionary<int, string>
-            DictStringsRev { get; private set; }
+
+        ConcurrentDictionary<int, string>
+            DictStringsRev;
     }
 }

@@ -15,6 +15,8 @@ namespace DoubleFile
         static readonly LocalSubject<Tuple<LVitem_ProjectVM, string, string>> _goToFile = new LocalSubject<Tuple<LVitem_ProjectVM, string, string>>();
         static void GoToFileOnNext(Tuple<LVitem_ProjectVM, string, string> value) => _goToFile.LocalOnNext(value, 99982);
 
+        bool IsSearchEnabled() => IsEditBoxNonEmpty() && (null == _searchType2);
+
         internal WinSearchVM Init()
         {
             Icmd_Folders = new RelayCommand(SearchFolders, IsSearchEnabled);
@@ -33,11 +35,9 @@ namespace DoubleFile
             PathBuilder.DropRef();
         }
 
-        bool IsSearchEnabled() => IsEditBoxNonEmpty() && (null == _searchType2);
-
         void SearchFolders()
         {
-            if (Reinitialize_And_FullPathFound(SearchText))
+            if (GenerationStarting_And_FullPathFound(SearchText))
                 return;
 
             var contains = SearchListings.GetContainsFunction(Regex);
@@ -63,7 +63,7 @@ namespace DoubleFile
 
         void SearchFoldersAndFiles(bool bSearchFilesOnly = false)
         {
-            if (Reinitialize_And_FullPathFound(SearchText))
+            if (GenerationStarting_And_FullPathFound(SearchText))
                 return;
 
             (new WinProgress(new[] { "" }, new[] { _ksSearchKey }, x =>
@@ -86,7 +86,7 @@ namespace DoubleFile
                 .ShowDialog();
         }
 
-        bool Reinitialize_And_FullPathFound(string strPath)
+        bool GenerationStarting_And_FullPathFound(string strPath)
         {
             if (string.IsNullOrWhiteSpace(SearchText))
                 return true;        // found the UI doesn't block the user's attempt to search for nothing
@@ -95,7 +95,6 @@ namespace DoubleFile
                 return true;        // found there are no volumes loaded
 
             ClearItems();
-            TabledString<TabledStringType_Files>.Reinitialize();
             TabledString<TabledStringType_Files>.GenerationStarting();
 
             var result = new SearchResultsDir();
@@ -134,7 +133,7 @@ namespace DoubleFile
             }
 
             if (null != _selectedItem.Directory)
-                GoToFileOnNext(Tuple.Create((LVitem_ProjectVM)null, "" + _selectedItem.Directory, "" + _selectedItem.Filename));
+                GoToFileOnNext(Tuple.Create((LVitem_ProjectVM)null, "" + _selectedItem.Directory, "" + _selectedItem.TabledStringFilename));
             else
                 _selectedItem.LocalTreeNode.GoToFile(null);
         }
@@ -161,69 +160,71 @@ namespace DoubleFile
 
         void ISearchStatus.Done()
         {
-            Done();
-
             if (false == _bDisposed)
                 TabledString<TabledStringType_Files>.GenerationEnded();
-        }
 
-        void Done()
-        {
             _searchType2 = null;
 
-            var lsLVitems = new List<LVitem_SearchVM>();
-
-            foreach (var searchResult in _dictResults.Select(result => result.Key).OrderBy(d => d))
+            try
             {
-                if (_bDisposed)
-                    return;
+                var lsLVitems = new List<LVitem_SearchVM> { };
+                PathBuilder LastFolder = null;
+                var nPrevHasFolder = 1;
 
-                try
+                foreach (var searchResult in _dictResults.Keys.OrderBy(d => d))
                 {
-                    // SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
+                    if (_bDisposed)
+                        break;
+
+                    // SearchResults.PathBuilder has a \ at the end for folder & file search where folder matches,
+                    // because the key would dupe for file matches.
                     var Directory = PathBuilder.FactoryCreateOrFind(("" + searchResult.PathBuilder).TrimEnd('\\'));
+                    var bHasFolder = (LastFolder == Directory);
 
                     if (0 < (searchResult.ListFiles?.Count ?? 0))
                     {
-                        foreach (var strFile in searchResult.ListFiles.Keys)
+                        foreach (var tabledStringFile in searchResult.ListFiles.Keys)
                         {
                             if (_bDisposed)
-                                return;
+                                break;
 
-                            lsLVitems.Add(new LVitem_SearchVM { Directory = Directory, Filename = strFile });
+                            lsLVitems.Add(new LVitem_SearchVM
+                            {
+                                Directory = Directory,
+                                TabledStringFilename = tabledStringFile,
+                                Alternate = (bHasFolder) ? nPrevHasFolder : 0
+                            });
                         }
+
+                        nPrevHasFolder = ((false == bHasFolder) || (2 == nPrevHasFolder)) ? 1 : 2;
                     }
                     else
                     {
                         lsLVitems.Add(new LVitem_SearchVM { Directory = Directory });
+                        LastFolder = Directory;
                     }
                 }
-                catch (Exception e) when ((e is ArgumentNullException) || (e is NullReferenceException))
+
+                WinProgress.CloseForced();
+                _dictResults = null;
+
+                if ((0 < lsLVitems.Count) &&
+                    (false == _bDisposed))
                 {
-                    Util.Assert(99878, _bDisposed);
-                    _dictResults = null;
-                    return;
-                }
-                catch (OutOfMemoryException)
-                {
-                    Util.Assert(99660, false, "OutOfMemoryException in Search");
-                    _dictResults = null;
-                    return;
+                    Util.UIthread(99809, () => Add(lsLVitems, Cancel: () => _bDisposed));
                 }
             }
+            catch (Exception e) when ((e is ArgumentNullException) || (e is NullReferenceException))
+            {
+                Util.Assert(99878, _bDisposed);
+            }
+            catch (OutOfMemoryException)
+            {
+                Util.Assert(99660, false, "OutOfMemoryException in Search");
+            }
 
-            WinProgress.WithWinProgress(w =>
-                w.SetCompleted(_ksSearchKey).Close());
-
+            WinProgress.CloseForced();
             _dictResults = null;
-
-            if (0 == lsLVitems.Count)
-                return;
-
-            if (_bDisposed)
-                return;
-
-            Util.UIthread(99809, () => Add(lsLVitems, Cancel: () => _bDisposed));
         }
 
         SearchListings

@@ -27,14 +27,26 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <DataGrid Name="form_lv" Grid.Column="0">
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Alternate}" Value="1">
+                                <Setter Property="Foreground" Value="AntiqueWhite" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Alternate}" Value="2">
+                                <Setter Property="Foreground" Value="AliceBlue" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.Resources>
                 <DataGrid.Columns>
                     <DataGridTemplateColumn Header="Results" Width="{Binding WidthResults}">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock>
-                                <Run Text="{Binding FolderOrFile, Mode=OneWay}" FontWeight="Bold"/>
-                                <Run Text=" in " FontStyle="Italic"/>
-                                <Run Text="{Binding Parent, Mode=OneWay}"/>
+                                    <Run Text="{Binding FolderOrFile, Mode=OneWay}" FontWeight="SemiBold"/>
+                                    <Run Text="{Binding In, Mode=OneWay}" FontWeight="ExtraLight"/>
+                                    <Run Text="{Binding Parent, Mode=OneWay}"/>
                                 </TextBlock>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>

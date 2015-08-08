@@ -1,35 +1,33 @@
-﻿namespace DoubleFile
+﻿using System.Windows;
+
+namespace DoubleFile
 {
     class LVitem_SearchVM : ListViewItemVM_Base
     {
         internal PathBuilder Directory { get { return _datum.As<PathBuilder>(); } set { _datum = value; } }
+        internal TabledString<TabledStringType_Files> TabledStringFilename;
+
         internal LocalTreeNode LocalTreeNode { get { return _datum.As<LocalTreeNode>(); } set { _datum = value; } }
         object _datum = null;
+
+        public string In { get; private set; } = " in ";    // interned
+
+        public int Alternate { get; internal set; } = 0;
 
         public string FolderOrFile
         {
             get
             {
-                if (null != Directory)
-                {
-                    if (null != Filename)
-                    {
-                        return (string)Filename;
-                    }
-                    else
-                    {
-                        var strDirectory = "" + Directory;
-                        var nIx = strDirectory.LastIndexOf('\\');
-
-                        return (nIx < 0)
-                            ? strDirectory
-                            : strDirectory.Substring(nIx + 1);
-                    }
-                }
-                else
-                {
+                if (null != LocalTreeNode)
                     return LocalTreeNode.Text;
-                }
+
+                if (null != TabledStringFilename)
+                    return "" + TabledStringFilename;
+
+                In = null;
+                RaisePropertyChanged("In");
+                RaisePropertyChanged("Parent");
+                return "" + Directory;
             }
         }
 
@@ -37,26 +35,19 @@
         {
             get
             {
-                if (null != Directory)
-                {
-                    var strDirectory = "" + Directory;
-                    var nIx = strDirectory.LastIndexOf('\\');
+                if (null == In)
+                    return null;
 
-                    if (null != Filename)
-                    {
-                        return strDirectory;
-                    }
-                    else
-                    {
-                        return (nIx < 0)
-                            ? strDirectory
-                            : strDirectory.Substring(0, nIx);
-                    }
-                }
-                else
-                {
+                if (null != LocalTreeNode)
                     return LocalTreeNode.Parent?.FullPath;
-                }
+
+                var strDirectory = "" + Directory;
+                var nIx = strDirectory.LastIndexOf('\\');
+
+                return
+                    ((null != TabledStringFilename) || (nIx < 0))
+                    ? strDirectory
+                    : strDirectory.Substring(0, nIx);
             }
         }
 
@@ -65,7 +56,5 @@
 
         protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
         static string[] _propNamesA = null;
-
-        internal TabledString<TabledStringType_Files> Filename;
     }
 }

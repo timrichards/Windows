@@ -55,10 +55,8 @@ namespace DoubleFile
                 .Select(treeNode => new LVitem_SearchVM { LocalTreeNode = treeNode })
                 .OrderBy(lvItem => lvItem.Parent + lvItem.FolderOrFile);
 
-            if (false == ieLVitems.Any())
-                return;
-
-            Util.UIthread(99816, () => Add(ieLVitems));
+            if (ieLVitems.Any())
+                Util.UIthread(99816, () => Add(ieLVitems));
         }
 
         void SearchFoldersAndFiles(bool bSearchFilesOnly = false)
@@ -94,6 +92,7 @@ namespace DoubleFile
             if (0 == (Statics.LVprojectVM?.CanLoadCount ?? 0))
                 return true;        // found there are no volumes loaded
 
+            _bRestarted = true;
             ClearItems();
             TabledString<TabledStringType_Files>.GenerationStarting();
 
@@ -140,22 +139,8 @@ namespace DoubleFile
 
         void ISearchStatus.Status(SearchResults searchResults, bool bFirst, bool bLast)
         {
-            try
-            {
-                foreach (var result in searchResults.Results)
-                    _dictResults.Add(result, false);
-            }
-            catch (Exception ex)
-            {
-                Util.Assert(99942, false, "Exception in ISearchStatus.Status\n" +
-                    ex.GetBaseException().Message);
-
-                _searchType2?.EndThread();
-                _searchType2 = null;
-                _dictResults = null;
-                Dispose();
-                return;
-            }
+            foreach (var result in searchResults.Results)
+                _dictResults.Add(result, false);
         }
 
         void ISearchStatus.Done()
@@ -211,7 +196,8 @@ namespace DoubleFile
                 if ((0 < lsLVitems.Count) &&
                     (false == _bDisposed))
                 {
-                    Util.UIthread(99809, () => Add(lsLVitems, Cancel: () => _bDisposed));
+                    _bRestarted = false;
+                    Util.UIthread(99809, () => Add(lsLVitems, Cancel: () => _bDisposed || _bRestarted));
                 }
             }
             catch (Exception e) when ((e is ArgumentNullException) || (e is NullReferenceException))
@@ -233,6 +219,8 @@ namespace DoubleFile
             _dictResults = null;
         bool
             _bDisposed = false;
+        bool
+            _bRestarted = false;
         const string
             _ksSearchKey = "Searching";
     }

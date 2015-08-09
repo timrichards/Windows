@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading;
 using System.Linq;
 
 namespace DoubleFile
@@ -38,27 +37,24 @@ namespace DoubleFile
         }
         int SetA(string str)
         {
-            lock (DictSortedStrings)
+            lock (_dictStrings)
             {
                 int retVal = 0;
 
-                if (false == DictSortedStrings.TryGetValue(str, out retVal))
-                {
-                    retVal = Interlocked.Increment(ref _nIndexGenerator) - 1;
-                    _dictStrings[str] = retVal;
-                }
+                if (false == _dictStrings.TryGetValue(str, out retVal))                   
+                    _dictStrings[str] = retVal = _nIndexGenerator++;
 
                 return retVal;
             }
         }
 
-        internal override int
+        internal override int               // unused
             IndexOf(string str) =>
             DictSortedStrings[str];
 
         internal int
             IndexGenerator => _nIndexGenerator;
-        int _nIndexGenerator;
+        int _nIndexGenerator = 0;
 
         internal IReadOnlyDictionary<string, int>
             DictSortedStrings => (IReadOnlyDictionary<string, int>)_dictStrings;

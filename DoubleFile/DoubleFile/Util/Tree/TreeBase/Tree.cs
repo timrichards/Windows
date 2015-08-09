@@ -50,10 +50,10 @@ namespace DoubleFile
             var dtStart = DateTime.Now;
 
             foreach (var treeRoot
-                in from volStrings
+                in from lvItemProjectVM
                 in LVprojectVM.ItemsCast
-                where volStrings.CanLoad
-                select new TreeRootNodeBuilder(volStrings, this))
+                where lvItemProjectVM.CanLoad
+                select new TreeRootNodeBuilder(lvItemProjectVM, this))
             {
                 _cbagWorkers.Add(treeRoot.DoThreadFactory());
             }

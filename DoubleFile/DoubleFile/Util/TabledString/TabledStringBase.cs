@@ -3,10 +3,12 @@
     abstract class TabledStringBase
     {
         internal virtual int
-            Set(string str_in) { Util.Assert(99919, false); return -1; }
+            Set(string str_in) => Util.Assert(99919, false) ? -1 : 0;
+        internal virtual int
+            CompareTo(int nIx, int thatIx) => Util.Assert(99918, false) ? -1 : 0;
+        internal virtual string
+            Get(int nIndex) => "" + Util.Assert(99917, false);
         internal abstract int
-            CompareTo(int nIx, int thatIx);
-        internal abstract string
-            Get(int index);
+            IndexOf(string str);
     }
 }

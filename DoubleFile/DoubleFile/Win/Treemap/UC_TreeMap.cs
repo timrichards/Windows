@@ -415,7 +415,7 @@ namespace DoubleFile
                 return null;
 
             ulong nLengthDebug = 0;
-            var strListingFile = rootNodeDatum.ListingFile;
+            var strListingFile = rootNodeDatum.LVitemProjectVM.ListingFile;
             var lsFiles = new List<Tuple<string, ulong>>();
 
             foreach (var asFileLine

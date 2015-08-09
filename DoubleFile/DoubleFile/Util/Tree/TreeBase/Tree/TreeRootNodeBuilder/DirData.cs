@@ -22,18 +22,10 @@ namespace DoubleFile
                     _rootNode.Nodes.Add(str, new Node(str, nLineNo, nLength, folderScore, _rootNode));
                 }
 
-                internal LocalTreeNode AddToTree(string strNickname, out string strRootPath)
-                {
-                    string strRootPath_out = null;
-
-                    var rootTreeNode = 
-                        _rootNode.Nodes.Values
-                        .Select(rootNode => rootNode.AddToTree(strNickname, out strRootPath_out))
-                        .FirstOrDefault();
-
-                    strRootPath = strRootPath_out;
-                    return rootTreeNode;
-                }
+                internal LocalTreeNode AddToTree() =>
+                    _rootNode.Nodes.Values
+                    .Select(rootNode => rootNode.AddToTree())
+                    .FirstOrDefault();
 
                 readonly RootNode
                     _rootNode = new RootNode { };

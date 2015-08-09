@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DoubleFile
 {
@@ -17,60 +16,77 @@ namespace DoubleFile
                 return;
             }
 
-            var nCount = t.DictStrings.Count;
+            var nCount = t.DictSortedStrings.Count;
 
             Util.Assert(99922, t.IndexGenerator == nCount);
-
-            var sortedStrings = new SortedDictionary<string, int>();
-
-            try
-            {
-                sortedStrings = new SortedDictionary<string, int>(t.DictStrings);
-            }
-            catch (ArgumentException ex)
-            {
-                var lsDupes = new List<string> { };
-
-                foreach (var kvp in t.DictStrings)
-                {
-                    try
-                    {
-                        sortedStrings.Add(kvp.Key, kvp.Value);
-                    }
-                    catch (ArgumentException e)
-                    {
-                        lsDupes.Add(kvp.Key + " " + e.GetBaseException().Message);
-                    }
-                }
-
-                Util.Assert(99661, false, "ArgumentException in TabledString creating SortedDictionary\n" +
-                    ex.GetBaseException().Message + "\n" +
-                    string.Join("\n", lsDupes.Select(s => s)));
-            }
-
-            Strings = new string[nCount];
-            Sort = new int[nCount];
+            _strings = new string[nCount];
+            _sort = new int[nCount];
 
             var nIx = 0;
 
-            foreach (var kvp in sortedStrings)
+            foreach (var kvp in t.DictSortedStrings)
             {
-                Strings[nIx] = kvp.Key;
-                Sort[kvp.Value] = nIx++;
+                _strings[nIx] = kvp.Key;
+                _sort[kvp.Value] = nIx++;
             }
         }
 
         internal override int
-            Set(string str_in) { Util.Assert(99920, false); return -1; }
+            IndexOf(string str)
+        {
+            var nMin = 0;
+            var nMax = _strings.Length;
+
+            for (; ; )
+            {
+                var nShift = (nMax - nMin) >> 1;
+
+                if (0 == nShift)
+                {
+                    if ((1 == nMax) && (0 == nMin))     // zeroth
+                    {
+                        nShift = 0;
+                    }
+                    else
+                    {
+                        Util.Assert(99788, false);
+                        return -2;
+                    }
+                }
+
+                var nIx = nMin + nShift;
+
+                switch (str.LocalCompare(_strings[nIx]))
+                {
+                    case -1:
+                    {
+                        nMax = nIx;
+                        continue;
+                    }
+
+                    case 1:
+                    {
+                        nMin = nIx;
+                        continue;
+                    }
+
+                    case 0:
+                    {
+                        return nIx;
+                    }
+                }
+            }
+        }
 
         internal override int
-            CompareTo(int nIx, int thatIx) => Math.Sign(Sort[nIx] - Sort[thatIx]);
+            CompareTo(int nIx, int thatIx) => Math.Sign(_sort[nIx] - _sort[thatIx]);
         internal override string
-            Get(int nIndex) => Strings[Sort[nIndex]];
+            Get(int nIndex) => _strings[_sort[nIndex]];
 
-        internal string[]
-            Strings { get; private set; }
-        internal int[]
-            Sort { get; private set; }
+        internal IReadOnlyCollection<string>
+            Strings => _strings;
+        string[] _strings;
+
+        int[] _sort;
     }
 }

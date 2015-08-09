@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -33,13 +34,13 @@ namespace DoubleFile
         {            
             for (var nIx = 0; ; ++nIx)
             {
-                if ((PathParts.Length == nIx) ||
-                    (that.PathParts.Length == nIx))
+                if ((_pathParts.Length == nIx) ||
+                    (that._pathParts.Length == nIx))
                 {
-                    return Math.Sign(PathParts.Length - that.PathParts.Length);
+                    return Math.Sign(_pathParts.Length - that._pathParts.Length);
                 }
 
-                var nRet = PathParts[nIx].CompareTo(that.PathParts[nIx]);
+                var nRet = _pathParts[nIx].CompareTo(that._pathParts[nIx]);
 
                 if (0 != nRet)
                     return nRet;
@@ -74,10 +75,10 @@ namespace DoubleFile
                 if (string.IsNullOrWhiteSpace(s))
                     lsInts.Add(-1);
                 else
-                    lsInts.Add(FindString(s));
+                    lsInts.Add(_t.IndexOf(s));
             }
 
-            PathParts = lsInts.ToArray();
+            _pathParts = lsInts.ToArray();
         }
 
         public override string
@@ -85,62 +86,15 @@ namespace DoubleFile
         {
             var sbRet = new StringBuilder();
 
-            foreach (var nIx in PathParts)
+            foreach (var nIx in _pathParts)
             {
                 if (-1 != nIx)
-                    sbRet.Append(_t.Strings[nIx]);
+                    sbRet.Append(_t.Strings.ElementAt(nIx));
 
                 sbRet.Append('\\');
             }
 
             return ("" + sbRet).TrimEnd('\\');
-        }
-
-        static protected int
-            FindString(string str)
-        {
-            var nMin = 0;
-            var nMax = _t.Strings.Length;
-
-            for (; ; )
-            {
-                var nShift = (nMax - nMin) >> 1;
-
-                if (0 == nShift)
-                {
-                    if ((1 == nMax) && (0 == nMin))     // zeroth
-                    {
-                        nShift = 0;
-                    }
-                    else
-                    {
-                        Util.Assert(99788, false);
-                        return -2;
-                    }
-                }
-
-                var nIx = nMin + nShift;
-
-                switch (str.LocalCompare(_t.Strings[nIx]))
-                {
-                    case -1:
-                    {
-                        nMax = nIx;
-                        continue;
-                    }
-
-                    case 1:
-                    {
-                        nMin = nIx;
-                        continue;
-                    }
-
-                    case 0:
-                    {
-                        return nIx;
-                    }
-                }
-            }
         }
 
         static TabledStringGenerated
@@ -150,7 +104,6 @@ namespace DoubleFile
         static int
             _nRefCount = 0;
 
-        internal int[]
-            PathParts { get; private set; }
+        int[] _pathParts;
     }
 }

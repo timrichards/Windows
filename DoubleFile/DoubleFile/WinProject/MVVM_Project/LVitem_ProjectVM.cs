@@ -56,21 +56,10 @@ namespace DoubleFile
                     return VolumeGroup;
 
                 if (false == string.IsNullOrWhiteSpace(Nickname))
-                    return RootText(Nickname, SourcePath);
+                    return RootNodeDatum.RootText(Nickname, SourcePath);
 
                 return SourcePath;
             }
-        }
-
-        static internal string RootText(string strNickname, string strSourcePath)
-        {
-            if (string.IsNullOrWhiteSpace(strSourcePath))
-                return strNickname;
-
-            if (("" + strNickname).EndsWith(strSourcePath))
-                return strNickname;
-
-            return strNickname + " (" + strSourcePath + ")";
         }
 
         internal void SetSaved()

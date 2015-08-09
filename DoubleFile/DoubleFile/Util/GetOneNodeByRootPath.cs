@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.IO;
 
 namespace DoubleFile
 {
@@ -30,40 +31,40 @@ namespace DoubleFile
 
             foreach (var topNode in treeNodeCollection)
             {
-                var arrPath = strPath.Split(new[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
-                var rootNodeDatum = (RootNodeDatum)topNode.NodeDatum;
+                var rootNodeDatum = ((RootNodeDatum)topNode.NodeDatum);
 
                 var strNode =
-                    (2 < arrPath[0].Length)
-                    ? topNode.Text
-                    : "" + rootNodeDatum.RootPath;
+                    (Path.IsPathRooted(strPath))
+                    ? "" + rootNodeDatum.LVitemProjectVM.SourcePath.TrimEnd('\\')
+                    : topNode.Text;
 
                 if (bIgnoreCase)
                     strNode = strNode.ToLower();
 
-                var nPathLevelLength = arrPath.Length;
+                var arrPath = strPath.Split(new[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
+                var nFolderDepth = arrPath.Length;
 
                 if (strNode.Contains('\\'))
                 {
                     var nCount = strNode.Count(c => '\\' == c);
 
-                    for (var n = 0; n < nPathLevelLength - 1; ++n)
+                    for (var n = 0; n < nFolderDepth - 1; ++n)
                     {
                         if (n < nCount)
                             arrPath[0] += '\\' + arrPath[n + 1];
                     }
 
-                    for (var n = 1; n < nPathLevelLength - 1; ++n)
+                    for (var n = 1; n < nFolderDepth - 1; ++n)
                     {
                         if ((nCount + n) < arrPath.Length)
                             arrPath[n] = arrPath[nCount + n];
                     }
 
-                    if (1 < nPathLevelLength)
+                    if (1 < nFolderDepth)
                     {
-                        Util.Assert(1308.9329m, 0 < (nPathLevelLength - nCount));
-                        nPathLevelLength -= nCount;
-                        nPathLevelLength = Math.Max(0, nPathLevelLength);
+                        Util.Assert(1308.9329m, 0 < (nFolderDepth - nCount));
+                        nFolderDepth -= nCount;
+                        nFolderDepth = Math.Max(0, nFolderDepth);
                     }
                 }
 
@@ -71,17 +72,17 @@ namespace DoubleFile
                     continue;
 
                 if ((null != lvItemProjectVM) &&
-                    (lvItemProjectVM.ListingFile != rootNodeDatum.ListingFile))
+                    (lvItemProjectVM.ListingFile != rootNodeDatum.LVitemProjectVM.ListingFile))
                 {
                     continue;
                 }
 
                 nodeRet = topNode;
 
-                if ((1 < nPathLevelLength) &&
+                if ((1 < nFolderDepth) &&
                     (null != nodeRet))
                 {
-                    nodeRet = GetSubNode(nodeRet, arrPath, 1, nPathLevelLength, bIgnoreCase);
+                    nodeRet = GetSubNode(nodeRet, arrPath, 1, nFolderDepth, bIgnoreCase);
 
                     if (null != nodeRet)
                         return nodeRet;

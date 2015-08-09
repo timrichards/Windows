@@ -131,10 +131,6 @@ namespace DoubleFile
                             // The reason the directory for a folder with files gets an extra backslash is that
                             // it naturally sorts after the item containing the directory alone.
                             searchResultDir.PathBuilder = PathBuilder.FactoryCreateOrFind(strDir + '\\', Cancel: Abort);
-
-                            var a = searchResultDir.PathBuilder.PathParts;
-                            Util.Assert(99789, -1 == a[a.Length - 1]);  // a will always and b will never end with a -1.
-
                             listResults.Add(searchResultDir, false);
                             searchResultDir = null;
                         }
@@ -157,10 +153,6 @@ namespace DoubleFile
                             // b. SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
                             // Not here. The other case a above.
                             searchResultDir.PathBuilder = PathBuilder.FactoryCreateOrFind(strDir, Cancel: Abort);
-
-                            var b = searchResultDir.PathBuilder.PathParts;
-                            Util.Assert(99787, -1 != b[b.Length - 1]);  // a will always and b will never end with a -1.
-
                             listResults.Add(searchResultDir, false);
                             searchResultDir = null;
                         }

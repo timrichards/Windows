@@ -108,7 +108,7 @@ namespace DoubleFile
                     return null;     // from lambda
                 }
 
-                strListingFile = rootNodeDatum.ListingFile;
+                strListingFile = rootNodeDatum.LVitemProjectVM.ListingFile;
 
                 var nPrevDir = (int)nodeDatum.PrevLineNo;
                 var nLineNo = (int)nodeDatum.LineNo;
@@ -175,7 +175,7 @@ namespace DoubleFile
         static void GetVolumeDetail(LocalTreeNode treeNode, int nInitiator)
         {
             var rootNode = treeNode.Root;
-            var strDriveInfo = _dictVolumeInfo.TryGetValue(((RootNodeDatum)rootNode.NodeDatum).ListingFile);
+            var strDriveInfo = _dictVolumeInfo.TryGetValue(((RootNodeDatum)rootNode.NodeDatum).LVitemProjectVM.ListingFile);
 
             if ((null == _dictVolumeInfo) ||
                 (null == strDriveInfo))

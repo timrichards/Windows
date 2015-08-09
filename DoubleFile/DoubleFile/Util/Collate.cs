@@ -338,9 +338,6 @@ namespace DoubleFile
                 }
 
                 var treeNode = kvp.Value;
-
-                Util.Assert(1305.6321m, false == string.IsNullOrWhiteSpace(treeNode.Text));
-
                 var lvItem = new LVitem_ClonesVM { TreeNodes = new[] { treeNode } };
                 var nodeDatum = treeNode.NodeDatum;
 
@@ -399,7 +396,6 @@ namespace DoubleFile
                 if (0 == (nodeDatum.Clones?.Count ?? 0))
                     Util.Assert(1305.6328m, false);
 
-                Util.Assert(1305.6329m, false == string.IsNullOrWhiteSpace(treeNode.Text));
                 _lsLVsameVol.Add(nodeDatum.LVitem = new LVitem_ClonesVM { TreeNodes = nodeDatum.Clones });
             }
 
@@ -522,8 +518,8 @@ namespace DoubleFile
                             return;
                         }
 
-                        if (false == string.IsNullOrWhiteSpace(rootNodeDatum.VolumeGroup) &&
-                            (rootNodeDatum.VolumeGroup == rootNodeDatumA.VolumeGroup))
+                        if (false == string.IsNullOrWhiteSpace(rootNodeDatum.LVitemProjectVM.VolumeGroup) &&
+                            (rootNodeDatum.LVitemProjectVM.VolumeGroup == rootNodeDatumA.LVitemProjectVM.VolumeGroup))
                         {
                             continue;
                         }

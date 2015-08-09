@@ -1,5 +1,6 @@
-﻿using System.Collections.Concurrent;
+﻿using System.Collections.Generic;
 using System.Threading;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -8,28 +9,15 @@ namespace DoubleFile
         internal
             TabledStringGenerating(TabledStringBase t_ = null)
         {
-            var nThreads = Statics.LVprojectVM.CanLoadCount;
             var t = t_.As<TabledStringGenerated>();
 
-            if (null != t)
-            {
-                IndexGenerator = t.Strings.Length;
-                DictStrings = new ConcurrentDictionary<string, int>(nThreads, t.Strings.Length);
-                DictStringsRev = new ConcurrentDictionary<int, string>(nThreads, t.Strings.Length);
+            if (null == t)
+                return;
 
-                for (var nIx = 0; nIx < t.Strings.Length; ++nIx)
-                {
-                    var strA = t.Strings[nIx];
+            _nIndexGenerator = t.Strings.Count;
 
-                    DictStrings[strA] = nIx;
-                    DictStringsRev[nIx] = strA;
-                }
-            }
-            else
-            {
-                DictStrings = new ConcurrentDictionary<string, int>(nThreads, 16384);
-                DictStringsRev = new ConcurrentDictionary<int, string>(nThreads, 16384);
-            }
+            for (var nIx = 0; nIx < t.Strings.Count; ++nIx)
+                _dictStrings[t.Strings.ElementAt(nIx)] = nIx;
         }
 
         internal override int
@@ -50,28 +38,30 @@ namespace DoubleFile
         }
         int SetA(string str)
         {
-            lock (DictStrings)
-            lock (DictStringsRev)
-            return DictStrings.GetOrAdd(str, x =>
+            lock (DictSortedStrings)
             {
-                var nIx = Interlocked.Increment(ref IndexGenerator) - 1;
+                int retVal = 0;
 
-                DictStringsRev[nIx] = str;
-                return nIx;
-            });
+                if (false == DictSortedStrings.TryGetValue(str, out retVal))
+                {
+                    retVal = Interlocked.Increment(ref _nIndexGenerator) - 1;
+                    _dictStrings[str] = retVal;
+                }
+
+                return retVal;
+            }
         }
 
         internal override int
-            CompareTo(int nIx, int thatIx) => Get(nIx).LocalCompare(Get(thatIx));
-        internal override string
-            Get(int nIndex) => DictStringsRev[nIndex];
+            IndexOf(string str) =>
+            DictSortedStrings[str];
 
         internal int
-            IndexGenerator;
-        internal ConcurrentDictionary<string, int>
-            DictStrings { get; private set; }
+            IndexGenerator => _nIndexGenerator;
+        int _nIndexGenerator;
 
-        ConcurrentDictionary<int, string>
-            DictStringsRev;
+        internal IReadOnlyDictionary<string, int>
+            DictSortedStrings => (IReadOnlyDictionary<string, int>)_dictStrings;
+        IDictionary<string, int> _dictStrings = new SortedDictionary<string, int>();
     }
 }

@@ -157,36 +157,36 @@ namespace DoubleFile
         }
 
         static internal T2
-            TryGetValue<T1, T2>(this IReadOnlyDictionary<T1, T2> dict, T1 key) where T2 : class
+            TryGetValue<T1, T2>(this IReadOnlyDictionary<T1, T2> dict, T1 key)
         {
-            T2 outValue = null;
+            var outValue = default(T2);
 
             dict.TryGetValue(key, out outValue);
             return outValue;
         }
 
         static internal T2
-            TryGetValue<T1, T2>(this IDictionary<T1, T2> dict, T1 key) where T2 : class
+            TryGetValue<T1, T2>(this IDictionary<T1, T2> dict, T1 key)
         {
-            T2 outValue = null;
+            var outValue = default(T2);
 
             dict.TryGetValue(key, out outValue);
             return outValue;
         }
 
         static internal T2
-            TryGetValue<T1, T2>(this SortedDictionary<T1, T2> dict, T1 key) where T2 : class
+            TryGetValue<T1, T2>(this SortedDictionary<T1, T2> dict, T1 key)
         {
-            T2 outValue = null;
+            var outValue = default(T2);
 
             dict.TryGetValue(key, out outValue);
             return outValue;
         }
 
         static internal T2
-            TryGetValue<T1, T2>(this ConcurrentDictionary<T1, T2> dict, T1 key) where T2 : class
+            TryGetValue<T1, T2>(this ConcurrentDictionary<T1, T2> dict, T1 key)
         {
-            T2 outValue = null;
+            var outValue = default(T2);
 
             dict.TryGetValue(key, out outValue);
             return outValue;

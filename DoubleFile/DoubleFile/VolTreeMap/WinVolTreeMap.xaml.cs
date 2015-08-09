@@ -40,7 +40,7 @@ namespace DoubleFile
                 return;
             }
 
-            LocalTV.FactoryCreate(Statics.LVprojectVM);
+            LocalTV.FactoryCreate(new LV_ProjectVM(Statics.LVprojectVM));
 
             if (null == LocalTV.TopNode)
             {

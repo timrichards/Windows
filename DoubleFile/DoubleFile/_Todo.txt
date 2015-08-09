@@ -5,6 +5,8 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- starting a new search while the list is populating will list results starting from the end of the first
+- corner case: pounding search will increase memory usage
 - Assert box offset when app window partly off screen
 - Treemap selection rectangle still doesn't always know what the treemap treenode view is set at
 - background progress: saving project doesn't have to tie up the app.
@@ -36,6 +38,7 @@
 	- interned means two references to the same object (ReferenceEquals means interned)
 - Application.Current.MainWindow can be LocalMbox (when exiting app)
 - The todo list is not read-only while debugging.
+- You can set a breakpoint condition false == new System.Diagnostics.StackTrace().ToString().Contains("AddToTree")
 - You can go to type definition on var right-click
 - Use WinProgress as a model for simulating factory create: use a weak reference and assert in constructor
 	- factory create would be nice for e.g. WinProgress but then you can't use variable initializer
@@ -159,11 +162,10 @@ Specific code areas:
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
 
-99985
-99918
-99917
-99916
-99875
+99789
+99787
+99661
+99920
 99857
 99806
 99786

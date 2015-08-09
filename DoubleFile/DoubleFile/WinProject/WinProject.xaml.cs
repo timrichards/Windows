@@ -39,6 +39,8 @@ namespace DoubleFile
             if ((winProject._lvProjectVM?.LocalEquals(Statics.LVprojectVM) ?? false) &&
                 OKtoNavigate_UpdateSaveListingsLink(bSaveListings))
             {
+                Util.Assert(99875, false == ReferenceEquals(winProject._lvProjectVM, Statics.LVprojectVM));
+
                 return true;
             }
 
@@ -49,7 +51,7 @@ namespace DoubleFile
                 SaveListingsProcess.Go(Statics.LVprojectVM);
 
                 if ((0 < Statics.LVprojectVM.CanLoadCount) &&
-                    LocalTV.FactoryCreate(Statics.LVprojectVM))
+                    LocalTV.FactoryCreate(new LV_ProjectVM(Statics.LVprojectVM)))
                 {
                     winProject._lvProjectVM = new LV_ProjectVM(Statics.LVprojectVM);
                 }

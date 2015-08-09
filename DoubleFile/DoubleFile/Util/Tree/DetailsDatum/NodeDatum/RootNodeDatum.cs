@@ -2,27 +2,34 @@
 {
     class RootNodeDatum : NodeDatum
     {
-        internal readonly string ListingFile;
-        internal readonly string VolumeGroup;
-
-        internal readonly string RootPath;
-
+        internal LVitem_ProjectVM LVitemProjectVM { get; }
         internal readonly bool VolumeView;
-
         internal readonly ulong VolumeFree;
         internal readonly ulong VolumeLength;
 
+        internal string RootText(string strSourcePath) =>
+            RootText(LVitemProjectVM.Nickname, strSourcePath);
+        static internal string
+            RootText(string strNickname, string strSourcePath)
+        {
+            if (string.IsNullOrWhiteSpace(strNickname))
+                return strSourcePath;
+
+            if (("" + strNickname).EndsWith(strSourcePath))
+                return strNickname;
+
+            return strNickname + " (" + strSourcePath + ")";
+        }
+
         internal
-            RootNodeDatum(NodeDatum node, string listingFile, string strVolGroup, ulong nVolumeFree, ulong nVolumeLength, string strRootPath)
+            RootNodeDatum(NodeDatum node, LVitem_ProjectVM lvItemProjectVM,
+            ulong nVolumeFree, ulong nVolumeLength)
             : base(node)
         {
             VolumeView = true;
-
-            ListingFile = listingFile;
-            VolumeGroup = strVolGroup;
+            LVitemProjectVM = lvItemProjectVM;
             VolumeLength = nVolumeLength;
             VolumeFree = nVolumeFree;
-            RootPath = strRootPath;
         }
     }
 }

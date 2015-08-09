@@ -57,21 +57,7 @@ namespace DoubleFile
                         nodeParent._subNodes.Add(_strPath, this);
                 }
 
-                internal LocalTreeNode AddToTree(string strNickname, out string strRootPath)
-                {
-                    var rootNode = AddToTree();
-
-                    // out parameter
-                    strRootPath = rootNode.Text;
-
-                    if (string.IsNullOrWhiteSpace(strNickname))
-                        return rootNode;
-
-                    rootNode.Text = LVitem_ProjectVM.RootText(strNickname, strRootPath);
-                    return rootNode;
-                }
-
-                LocalTreeNode AddToTree()
+                internal LocalTreeNode AddToTree()
                 {
                     if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
                         return new LocalTreeNode();

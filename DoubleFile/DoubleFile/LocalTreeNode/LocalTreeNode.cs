@@ -9,8 +9,21 @@ namespace DoubleFile
             Nodes { get; protected set; }
 
         internal virtual string
-            Text { get { return "" + _text; } set { _text = (TabledString<TabledStringType_Folders>)value; } }
-        TabledString<TabledStringType_Folders> _text = null;
+            Text
+        {
+            get
+            {
+                var strText = "" + _text;
+                var rootNodeDatum = NodeDatum.As<RootNodeDatum>();
+
+                return
+                    (null != rootNodeDatum)
+                    ? rootNodeDatum.RootText(strText)
+                    : strText;
+            }
+            set { _text = (TabledString<TabledStringType_Folders>)value; }
+        }
+        TabledString<TabledStringType_Folders> _text;
 
         internal LocalTreeNode
             FirstNode => (0 < (Nodes?.Count ?? 0)) ? Nodes[0] : null;

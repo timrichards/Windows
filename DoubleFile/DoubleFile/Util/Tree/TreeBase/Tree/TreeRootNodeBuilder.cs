@@ -19,10 +19,10 @@ namespace DoubleFile
         partial class TreeRootNodeBuilder : TreeBase
         {
             internal
-                TreeRootNodeBuilder(LVitem_ProjectVM volStrings, TreeBase base_in)
+                TreeRootNodeBuilder(LVitem_ProjectVM lvItemProjectVM, TreeBase base_in)
                 : base(base_in)
             {
-                _volStrings = volStrings;
+                _lvItemProjectVM = lvItemProjectVM;
                 Util.Assert(1301.2301m, _callbackWR != null);
             }
 
@@ -106,7 +106,7 @@ namespace DoubleFile
             {
                 var dtStart = DateTime.Now;
 
-                if (_volStrings.CanLoad == false)
+                if (_lvItemProjectVM.CanLoad == false)
                 {
                     Util.Assert(1301.2307m, false);    // guaranteed by caller
                     return;
@@ -119,18 +119,18 @@ namespace DoubleFile
                     for (; ; )
                     {
                         bValid =
-                            ValidateFile(_volStrings.ListingFile)
+                            ValidateFile(_lvItemProjectVM.ListingFile)
                             .Item1;
 
                         if (bValid || bAttemptConvert)
                             break;
 
-                        if (false == LocalIsoStore.FileExists(StrFile_01(_volStrings.ListingFile)))
+                        if (false == LocalIsoStore.FileExists(StrFile_01(_lvItemProjectVM.ListingFile)))
                             break;
 
                         try
                         {
-                            LocalIsoStore.DeleteFile(StrFile_01(_volStrings.ListingFile));
+                            LocalIsoStore.DeleteFile(StrFile_01(_lvItemProjectVM.ListingFile));
                         }
                         catch (IsolatedStorageException) { }
 
@@ -139,8 +139,8 @@ namespace DoubleFile
 
                     if (false == bValid)
                     {
-                        MBoxStatic.ShowDialog("Bad file: " + _volStrings.ListingFile, "Tree");
-                        StatusCallback(_volStrings, bError: true);
+                        MBoxStatic.ShowDialog("Bad file: " + _lvItemProjectVM.ListingFile, "Tree");
+                        StatusCallback(_lvItemProjectVM, bError: true);
                         return;
                     }
                 }
@@ -150,7 +150,7 @@ namespace DoubleFile
 
                 {
                     var ieDriveInfo =
-                        _volStrings.ListingFile
+                        _lvItemProjectVM.ListingFile
                         .ReadLines()
                         .Where(s => s.StartsWith(ksLineType_VolumeInfo));
 
@@ -188,18 +188,18 @@ namespace DoubleFile
 
                     lock (_dictDriveInfo)
                     {
-                        if (null != _dictDriveInfo.TryGetValue(_volStrings.ListingFile))
+                        if (null != _dictDriveInfo.TryGetValue(_lvItemProjectVM.ListingFile))
                         {
                             Util.Assert(1301.2308m, false);
-                            _dictDriveInfo.Remove(_volStrings.ListingFile);
+                            _dictDriveInfo.Remove(_lvItemProjectVM.ListingFile);
                         }
 
-                        _dictDriveInfo.Add(_volStrings.ListingFile, ("" + strBuilder).Trim('\r', '\n'));
+                        _dictDriveInfo.Add(_lvItemProjectVM.ListingFile, ("" + strBuilder).Trim('\r', '\n'));
                     }
                 }
 
                 var dirData =
-                    _volStrings.ListingFile
+                    _lvItemProjectVM.ListingFile
                     .ReadLines()
                     .Where(s => s.StartsWith(ksLineType_Start))
                     .Select(s => new DirData((s.Split('\t')[1]).ToInt()))
@@ -213,7 +213,7 @@ namespace DoubleFile
                     ? 11
                     : 10;
 
-                foreach (var strLine in _volStrings.ListingFile.ReadLines())
+                foreach (var strLine in _lvItemProjectVM.ListingFile.ReadLines())
                 {
                     if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                         _bThreadAbort)
@@ -257,23 +257,21 @@ namespace DoubleFile
                 }
 
                 // 8s
-                Util.WriteLine("FolderScore " + (DateTime.Now - dt).TotalMilliseconds + " ms - " + _volStrings.Volume);
+                Util.WriteLine("FolderScore " + (DateTime.Now - dt).TotalMilliseconds + " ms - " + _lvItemProjectVM.Volume);
 
-                string strRootPath = null;
-                var rootTreeNode = dirData.AddToTree(_volStrings.Nickname, out strRootPath);
+                var rootTreeNode = dirData.AddToTree();
 
                 if (null != rootTreeNode)
                 {
                     rootTreeNode.NodeDatum = new RootNodeDatum(
                         rootTreeNode.NodeDatum,
-                        _volStrings.ListingFile, _volStrings.VolumeGroup,
-                        nVolFree, nVolLength,
-                        strRootPath);
+                        _lvItemProjectVM,
+                        nVolFree, nVolLength);
 
                     TreeSubnodeDetails(rootTreeNode);
                 }
 
-                StatusCallback(_volStrings, rootTreeNode);
+                StatusCallback(_lvItemProjectVM, rootTreeNode);
 
 #if (DEBUG && FOOBAR)
                 Util.WriteLine("" + _volStrings.ListingFile.ReadLines().Where(s => s.StartsWith(ksLineType_File)).Sum(s => (decimal)(s.Split('\t')[knColLength]).ToUlong()));
@@ -335,7 +333,7 @@ namespace DoubleFile
             bool
                 _bThreadAbort = false;
             readonly LVitem_ProjectVM
-                _volStrings = null;
+                _lvItemProjectVM = null;
         }
     }
 }

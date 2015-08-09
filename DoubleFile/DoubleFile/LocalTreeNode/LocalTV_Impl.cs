@@ -72,7 +72,9 @@ namespace DoubleFile
             })
                 .ShowDialog();
 
-            TabledString<TabledStringType_Folders>.GenerationEnded();
+            if (null == _topNode)
+                TabledString<TabledStringType_Folders>.GenerationEnded();
+
             return _bTreeDone;
         }
 
@@ -124,8 +126,7 @@ namespace DoubleFile
 
             lock (_rootNodes)
             {
-                // The root volume list is very small so this insert sort is viable
-                _rootNodes.Insert(_rootNodes.TakeWhile(node => 0 < rootNode.Text.LocalCompare(node.Text)).Count(), rootNode);
+                _rootNodes.Add(rootNode);
 
                 WinProgress.WithWinProgress(w => w
                     .SetProgress(_ksFolderTreeKey, _rootNodes.Count * _knProgMult));
@@ -140,6 +141,8 @@ namespace DoubleFile
                 return;
             }
 
+            TabledString<TabledStringType_Folders>.GenerationEnded();
+            _rootNodes.Sort((x, y) => x.Text.LocalCompare(y.Text));
             _topNode = _rootNodes[0];
             LocalTreeNode.SetLevel(_rootNodes);
             _tree = null;

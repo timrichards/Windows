@@ -49,19 +49,26 @@ namespace DoubleFile
 
             Reset();
 
-            var lvProjectVM = Statics.WithLVprojectVM(w => w);
-
-            if (0 < (lvProjectVM?.Items.Count ?? 0))
             {
-                SaveListingsProcess.Go(lvProjectVM);
+                var lvProjectVM = Statics.WithLVprojectVM(w => w);
 
-                var lvProjectVM_Copy = Statics.LVprojectVM_Copy;
-
-                if ((0 < lvProjectVM.CanLoadCount) &&
-                    LocalTV.FactoryCreate(lvProjectVM_Copy))
+                if (null == lvProjectVM)
                 {
-                    winProject._lvProjectVM = lvProjectVM_Copy;
+                    Statics.LVprojectVM =
+                        lvProjectVM =
+                        new LV_ProjectVM();
                 }
+
+                if (0 < lvProjectVM.Items.Count)
+                    SaveListingsProcess.Go(lvProjectVM);
+            }
+
+            var lvProjectVM_Copy = Statics.LVprojectVM_Copy;
+
+            if ((0 < lvProjectVM_Copy.CanLoadCount) &&
+                LocalTV.FactoryCreate(lvProjectVM_Copy))
+            {
+                winProject._lvProjectVM = lvProjectVM_Copy;
             }
 
             OKtoNavigate_UpdateSaveListingsLink();

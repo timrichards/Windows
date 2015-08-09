@@ -67,16 +67,22 @@ namespace DoubleFile
         PathBuilder(string strDir)
         {
             var lsInts = new List<int> { };
+            var bHitBlank = false;
 
             foreach (var s in strDir.Split('\\'))
             {
-                // Util.Assert(99880, false == string.IsNullOrWhiteSpace(s));
-                // Acceptable: search results dir
-                // if (false == string.IsNullOrWhiteSpace(s))
+                Util.Assert(99880, false == bHitBlank);
+
                 if (string.IsNullOrWhiteSpace(s))
+                {
+                    // Acceptable: search results dir trailing backslash
+                    bHitBlank = true;
                     lsInts.Add(-1);
+                }
                 else
+                {
                     lsInts.Add(_t.IndexOf(s));
+                }
             }
 
             _pathParts = lsInts.ToArray();
@@ -90,7 +96,7 @@ namespace DoubleFile
             foreach (var nIx in _pathParts)
             {
                 if (-1 != nIx)
-                    sbRet.Append(_t.Strings.ElementAt(nIx));
+                    sbRet.Append(_t.Strings[nIx]);
 
                 sbRet.Append('\\');
             }

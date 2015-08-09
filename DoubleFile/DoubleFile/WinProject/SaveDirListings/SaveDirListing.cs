@@ -234,7 +234,7 @@ namespace DoubleFile
                             lsOpenedFiles.Add(tupleA);
                         }
 
-                        IReadOnlyList<Tuple<string, ulong, string, IReadOnlyList<IReadOnlyCollection<byte>>>>
+                        IReadOnlyList<Tuple<string, ulong, string, IReadOnlyList<IReadOnlyList<byte>>>>
                             lsFileBuffers_Enqueue = null;
 
                         try
@@ -334,7 +334,7 @@ namespace DoubleFile
                 return Tuple.Create(strFile, tuple.Item2, fileHandle, strError);
             }
 
-            IEnumerable<Tuple<string, ulong, string, IReadOnlyList<IReadOnlyCollection<byte>>>>
+            IEnumerable<Tuple<string, ulong, string, IReadOnlyList<IReadOnlyList<byte>>>>
                 ReadBuffers(IEnumerable<Tuple<string, ulong, SafeFileHandle, string>> ieFileHandles)
             {
                 foreach (var tuple in ieFileHandles)
@@ -342,7 +342,7 @@ namespace DoubleFile
                     var lsRet = new List<byte[]> { };
 
                     var retval = Tuple.Create(tuple.Item1, tuple.Item2, tuple.Item4,
-                        (IReadOnlyList<IReadOnlyCollection<byte>>)lsRet);
+                        (IReadOnlyList<IReadOnlyList<byte>>)lsRet);
 
                     var fileHandle = tuple.Item3;
 
@@ -428,7 +428,7 @@ namespace DoubleFile
             }
 
             Tuple<HashTuple, HashTuple>
-                HashFile(Tuple<string, ulong, string, IReadOnlyList<IReadOnlyCollection<byte>>> tuple)
+                HashFile(Tuple<string, ulong, string, IReadOnlyList<IReadOnlyList<byte>>> tuple)
             {
                 var retval = Tuple.Create((HashTuple)null, (HashTuple)null);
                 var lsBuffer = tuple.Item4;

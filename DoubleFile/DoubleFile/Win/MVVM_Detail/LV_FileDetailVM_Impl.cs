@@ -35,7 +35,7 @@ namespace DoubleFile
 
         void Copy() => Clipboard.SetText(LocalPath);
 
-        void LV_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyCollection<string>, LocalTreeNode>, int> initiatorTuple)
+        void LV_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyList<string>, LocalTreeNode>, int> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
             var item2 = tuple?.Item2;
@@ -44,7 +44,7 @@ namespace DoubleFile
             WinDuplicatesVM_UpdateFileDetail(Tuple.Create(Tuple.Create(item2, item3), initiatorTuple.Item2));
         }
 
-        void WinDuplicatesVM_UpdateFileDetail(Tuple<Tuple<IReadOnlyCollection<string>, LocalTreeNode>, int> initiatorTuple)
+        void WinDuplicatesVM_UpdateFileDetail(Tuple<Tuple<IReadOnlyList<string>, LocalTreeNode>, int> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
 

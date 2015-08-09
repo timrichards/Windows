@@ -5,21 +5,21 @@ namespace DoubleFile
 {
     partial class LV_FilesVM : ListViewVM_Base<LVitem_FilesVM>
     {
-        static internal IObservable<Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyCollection<string>, LocalTreeNode>, int>>
+        static internal IObservable<Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyList<string>, LocalTreeNode>, int>>
             SelectedFileChanged => _selectedFileChanged;
-        static readonly LocalSubject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyCollection<string>, LocalTreeNode>> _selectedFileChanged = new LocalSubject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyCollection<string>, LocalTreeNode>>();
-        static void SelectedFileChangedOnNext(Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyCollection<string>, LocalTreeNode> value, int nInitiator)
+        static readonly LocalSubject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyList<string>, LocalTreeNode>> _selectedFileChanged = new LocalSubject<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyList<string>, LocalTreeNode>>();
+        static void SelectedFileChangedOnNext(Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyList<string>, LocalTreeNode> value, int nInitiator)
         {
             _selectedFileChanged.LocalOnNext(value, 99852, nInitiator);
             LastSelectedFile = value;
         }
-        static internal Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyCollection<string>, LocalTreeNode>
+        static internal Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyList<string>, LocalTreeNode>
             LastSelectedFile
         {
             get { return _wr.Get(lv => lv._lastSelectedFile); }
             private set { _wr.Get(lv => lv._lastSelectedFile = value); }
         }
-        Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyCollection<string>, LocalTreeNode>
+        Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyList<string>, LocalTreeNode>
             _lastSelectedFile = null;
 
         public LVitem_FilesVM SelectedItem
@@ -49,7 +49,7 @@ namespace DoubleFile
         {
             if (null != _selectedItem)
                 SelectedFileChangedOnNext(Tuple.Create(_selectedItem.LSduplicates, 
-                    (IReadOnlyCollection<string>)Array.AsReadOnly(_selectedItem.FileLine), _treeNode), nInitiator);
+                    (IReadOnlyList<string>)_selectedItem.FileLine, _treeNode), nInitiator);
             else
                 SelectedFileChangedOnNext(null, nInitiator);
         }

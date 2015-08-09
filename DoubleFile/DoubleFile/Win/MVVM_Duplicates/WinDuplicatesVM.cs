@@ -22,7 +22,7 @@ namespace DoubleFile
                     return;
 
                 UpdateFileDetailOnNext(Tuple.Create(
-                    (IReadOnlyCollection<string>)Array.AsReadOnly(value.FileLine), _treeNode), 0 /* UI Initiator */);
+                    (IReadOnlyList<string>)value.FileLine, _treeNode), 0 /* UI Initiator */);
 
                 SelectedItem_AllTriggers();
             }

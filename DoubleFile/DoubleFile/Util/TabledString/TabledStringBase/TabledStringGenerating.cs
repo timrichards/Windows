@@ -16,7 +16,7 @@ namespace DoubleFile
             _nIndexGenerator = t.Strings.Count;
 
             for (var nIx = 0; nIx < t.Strings.Count; ++nIx)
-                _dictStrings[t.Strings.ElementAt(nIx)] = nIx;
+                _dictStrings[t.Strings[nIx]] = nIx;
         }
 
         internal override int

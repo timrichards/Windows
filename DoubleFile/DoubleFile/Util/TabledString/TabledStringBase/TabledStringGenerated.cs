@@ -83,7 +83,7 @@ namespace DoubleFile
         internal override string
             Get(int nIndex) => _strings[_sort[nIndex]];
 
-        internal IReadOnlyCollection<string>
+        internal IReadOnlyList<string>
             Strings => _strings;
         string[] _strings;
 

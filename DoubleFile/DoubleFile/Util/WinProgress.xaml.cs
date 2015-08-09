@@ -188,7 +188,7 @@ namespace DoubleFile
         void
             Window_Closing(CancelEventArgs e)
         {
-            IWinProgressClosing windowClosing = null;
+            var windowClosing = WindowClosingCallback?.Get(w => w);
 
             _bClosing = Util.Closure(() =>
             {
@@ -198,12 +198,7 @@ namespace DoubleFile
                     return true;    // from lambda
                 }
 
-                WindowClosingCallback?.TryGetTarget(out windowClosing);
-
-                if (null == windowClosing)
-                    return true;    // from lambda
-
-                return false;       // from lambda
+                return (null == windowClosing);     // from lambda
             });
 
             if (_bClosing)

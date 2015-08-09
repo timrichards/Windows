@@ -36,9 +36,7 @@ namespace DoubleFile
                 return false;
             }
 
-            WinProject winProject = null;
-
-            _weakReference.TryGetTarget(out winProject);
+            var winProject = _weakReference.Get(w => w);
 
             if (Statics.WithLVprojectVM(p => p?.LocalEquals(winProject._lvProjectVM) ?? false) &&
                 OKtoNavigate_UpdateSaveListingsLink(bSaveListings))
@@ -54,6 +52,8 @@ namespace DoubleFile
 
                 if (null == lvProjectVM)
                 {
+                    Util.Assert(99942, false);
+
                     Statics.LVprojectVM =
                         lvProjectVM =
                         new LV_ProjectVM();
@@ -101,10 +101,8 @@ namespace DoubleFile
                 });
             });
 
-            WinProject winProject = null;
-
-            _weakReference.TryGetTarget(out winProject);
-            winProject._lvProjectVM = null;
+            _weakReference.Get(w =>
+                w._lvProjectVM = null);
 
             LocalTV.WithLocalTV(localTV =>
                 localTV.LocalDispose());

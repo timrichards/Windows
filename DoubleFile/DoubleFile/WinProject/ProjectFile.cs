@@ -105,15 +105,7 @@ namespace DoubleFile
                 return false;
             }
 
-            if (null == openListingFilesWR)
-            {
-                Util.Assert(99863, false);
-                return false;
-            }
-
-            IOpenListingFiles openListingFiles = null;
-
-            openListingFilesWR.TryGetTarget(out openListingFiles);
+            var openListingFiles = openListingFilesWR?.Get(w => w);
 
             if (null == openListingFiles)
             {

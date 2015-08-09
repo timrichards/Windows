@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Collections.Concurrent;
 using System.Linq;
@@ -70,15 +69,7 @@ namespace DoubleFile
                 return;
             }
 
-            if (null == _callbackWR)
-            {
-                Util.Assert(99865, false);
-                return;
-            }
-
-            ITreeStatus treeStatus = null;
-
-            _callbackWR.TryGetTarget(out treeStatus);
+            var treeStatus = _callbackWR?.Get(w => w);
 
             if (null == treeStatus)
             {

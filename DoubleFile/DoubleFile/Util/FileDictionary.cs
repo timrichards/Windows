@@ -307,15 +307,7 @@ namespace DoubleFile
 
         void StatusCallback(bool bDone = false, double nProgress = double.NaN)
         {
-            if (null == _callbackWR)
-            {
-                Util.Assert(99869, false);
-                return;
-            }
-
-            ICreateFileDictStatus createFileDictStatus = null;
-
-            _callbackWR.TryGetTarget(out createFileDictStatus);
+            var createFileDictStatus = _callbackWR?.Get(w => w);
 
             if (null == createFileDictStatus)
             {

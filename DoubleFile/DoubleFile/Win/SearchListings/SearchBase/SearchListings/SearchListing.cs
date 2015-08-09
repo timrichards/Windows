@@ -195,15 +195,7 @@ namespace DoubleFile
 
             void StatusCallback(SearchResults searchResults, bool bFirst = false, bool bLast = false)
             {
-                if (null == _callbackWR)
-                {
-                    Util.Assert(99862, false);
-                    return;
-                }
-
-                ISearchStatus searchStatus = null;
-
-                _callbackWR.TryGetTarget(out searchStatus);
+                var searchStatus = _callbackWR?.Get(w => w);
 
                 if (null == searchStatus)
                 {

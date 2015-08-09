@@ -39,15 +39,7 @@ namespace DoubleFile
             if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
                 return;
 
-            if (null == _callbackWR)
-            {
-                Util.Assert(99860, false);
-                return;
-            }
-
-            ISearchStatus searchStatus = null;
-
-            _callbackWR.TryGetTarget(out searchStatus);
+            var searchStatus = _callbackWR?.Get(w => w);
 
             if (null == searchStatus)
             {

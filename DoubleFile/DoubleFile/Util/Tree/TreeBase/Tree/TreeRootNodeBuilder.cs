@@ -309,15 +309,7 @@ namespace DoubleFile
             void
                 StatusCallback(LVitem_ProjectVM volStrings, LocalTreeNode rootNode = null, bool bError = false)
             {
-                if (null == _callbackWR)
-                {
-                    Util.Assert(99867, false);
-                    return;
-                }
-
-                ITreeStatus treeStatus = null;
-
-                _callbackWR.TryGetTarget(out treeStatus);
+                var treeStatus = _callbackWR?.Get(w => w);
 
                 if (null == treeStatus)
                 {

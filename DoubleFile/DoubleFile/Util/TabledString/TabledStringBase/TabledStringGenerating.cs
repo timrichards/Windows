@@ -41,6 +41,7 @@ namespace DoubleFile
             {
                 int retVal = 0;
 
+                // false == TryGetValue beats expected value test
                 if (false == _dictStrings.TryGetValue(str, out retVal))                   
                     _dictStrings[str] = retVal = _nIndexGenerator++;
 
@@ -54,7 +55,7 @@ namespace DoubleFile
 
         internal int
             IndexGenerator => _nIndexGenerator;
-        int _nIndexGenerator = 0;
+        int _nIndexGenerator = 0;   // left as non-prop in case of Interlocked.Increment (non-atomic? speed issue?)
 
         internal IReadOnlyDictionary<string, int>
             DictSortedStrings => (IReadOnlyDictionary<string, int>)_dictStrings;

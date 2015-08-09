@@ -21,10 +21,10 @@ namespace DoubleFile
 
         class SearchListing : SearchBase
         {
-            internal SearchListing(SearchBase searchBase, LVitem_ProjectVM volStrings)
+            internal SearchListing(SearchBase searchBase, LVitem_ProjectVM lvItemProjectVM)
                 : base(searchBase)
             {
-                _volStrings = volStrings;
+                _lvItemProjectVM = lvItemProjectVM;
             }
 
             internal SearchListing DoThreadFactory()
@@ -57,10 +57,10 @@ namespace DoubleFile
 
             void Go()
             {
-                if (false == _volStrings.CanLoad)
+                if (false == _lvItemProjectVM.CanLoad)
                     return;
 
-                using (var sr = new StreamReader(_volStrings.ListingFile.OpenFile(FileMode.Open)))
+                using (var sr = new StreamReader(_lvItemProjectVM.ListingFile.OpenFile(FileMode.Open)))
                 {
                     var strSearch = _strSearch;
                     var strCurrentNode = "" + _strCurrentNode;
@@ -111,7 +111,7 @@ namespace DoubleFile
                         {
                             if (0 < listResults.Count)
                             {
-                                StatusCallback(new SearchResults(_strSearch, _volStrings, listResults.Keys), bLast: true);
+                                StatusCallback(new SearchResults(_strSearch, _lvItemProjectVM, listResults.Keys), bLast: true);
                                 listResults = new SortedDictionary<SearchResultsDir, bool>();
                             }
 
@@ -189,7 +189,7 @@ namespace DoubleFile
                         Util.Assert(1307.8302m, null == searchResultDir);
 
                     if (0 < listResults.Count)
-                        StatusCallback(new SearchResults(_strSearch, _volStrings, listResults.Keys), bFirst: bFirst);
+                        StatusCallback(new SearchResults(_strSearch, _lvItemProjectVM, listResults.Keys), bFirst: bFirst);
                 }
             }
 
@@ -215,7 +215,7 @@ namespace DoubleFile
             }
 
             LVitem_ProjectVM
-                _volStrings = null;
+                _lvItemProjectVM = null;
             Thread
                 _thread = new Thread(() => { });
             bool

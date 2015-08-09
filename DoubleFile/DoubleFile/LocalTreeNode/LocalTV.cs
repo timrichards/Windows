@@ -56,7 +56,7 @@ namespace DoubleFile
         static internal bool
             FactoryCreate(LV_ProjectVM lvProjectVM)
         {
-            Util.Assert(99916, false == ReferenceEquals(lvProjectVM, Statics.LVprojectVM));
+            Util.Assert(99916, false == Statics.WithLVprojectVM(p => ReferenceEquals(lvProjectVM, p)));
 
             if (null != _instance)
             {

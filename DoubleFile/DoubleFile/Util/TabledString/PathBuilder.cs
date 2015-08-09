@@ -16,7 +16,8 @@ namespace DoubleFile
             if (0 < _nRefCount++)
                 return;
 
-            _dictPathParts = new ConcurrentDictionary<string, PathBuilder>(Statics.LVprojectVM.CanLoadCount, 16384);
+            _dictPathParts =
+                new ConcurrentDictionary<string, PathBuilder>(Statics.WithLVprojectVM(p => p?.CanLoadCount ?? 0), 16384);
         }
 
         static internal void

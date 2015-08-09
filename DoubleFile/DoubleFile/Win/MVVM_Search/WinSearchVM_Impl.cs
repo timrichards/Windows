@@ -69,7 +69,7 @@ namespace DoubleFile
                 _dictResults = new ConcurrentDictionary<SearchResultsDir, bool>();
 
                 _searchType2 =
-                    new SearchListings(Statics.LVprojectVM, new SearchBase
+                    new SearchListings(Statics.LVprojectVM_Copy, new SearchBase
                 (
                     SearchText,
                     SearchText.ToLower() != SearchText,
@@ -89,7 +89,7 @@ namespace DoubleFile
             if (string.IsNullOrWhiteSpace(SearchText))
                 return true;        // found the UI doesn't block the user's attempt to search for nothing
 
-            if (0 == (Statics.LVprojectVM?.CanLoadCount ?? 0))
+            if (0 == Statics.WithLVprojectVM(p => p?.CanLoadCount ?? 0))
                 return true;        // found there are no volumes loaded
 
             _bRestarted = true;

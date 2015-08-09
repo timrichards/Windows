@@ -33,8 +33,12 @@ namespace DoubleFile
         }
         LocalUserControlBase _currentPage;
 
+        static internal T
+            WithLVprojectVM<T>(Func<LV_ProjectVM, T> doSomethingWith) => doSomethingWith(_wr.Get(s => s._lvProjectVM));
         static internal LV_ProjectVM
-            LVprojectVM { get { return _wr.Get(s => s._lvProjectVM); } set { _wr.Get(s => s._lvProjectVM = value); } }
+            LVprojectVM_Copy => _wr.Get(s => new LV_ProjectVM(s._lvProjectVM));
+        static internal LV_ProjectVM
+            LVprojectVM { set { _wr.Get(s => s._lvProjectVM = value); } }
         LV_ProjectVM _lvProjectVM;
 
         static internal FileDictionary

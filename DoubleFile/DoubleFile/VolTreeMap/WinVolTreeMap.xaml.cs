@@ -30,17 +30,18 @@ namespace DoubleFile
                 return;
             }
 
-            Statics.LVprojectVM = new LV_ProjectVM { new LVitem_ProjectVM { SourcePath = dlg.SelectedPath } };
-            SaveDirListings.Hash = false;
-            SaveListingsProcess.Go(Statics.LVprojectVM);
+            var lvProjectVM = new LV_ProjectVM { new LVitem_ProjectVM { SourcePath = dlg.SelectedPath } };
 
-            if (0 == Statics.LVprojectVM.CanLoadCount)
+            SaveDirListings.Hash = false;
+            SaveListingsProcess.Go(lvProjectVM);
+
+            if (0 == lvProjectVM.CanLoadCount)
             {
                 Dispatcher.InvokeShutdown();
                 return;
             }
 
-            LocalTV.FactoryCreate(new LV_ProjectVM(Statics.LVprojectVM));
+            LocalTV.FactoryCreate(lvProjectVM);
 
             if (null == LocalTV.TopNode)
             {
@@ -48,6 +49,7 @@ namespace DoubleFile
                 return;
             }
 
+            Statics.LVprojectVM = lvProjectVM;
             new BBCodeBlock().LinkNavigator.Navigate(new Uri("/DoubleFile;component/Win/WinTreeMap.xaml", UriKind.Relative), this);
             LVitem_FilesVM.ShowDuplicates = false;
         }

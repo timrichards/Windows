@@ -13,8 +13,8 @@ namespace DoubleFile
         internal override int NumCols => NumCols_;
         internal const int NumCols_ = 1;
 
-        protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
-        static string[] _propNamesA = null;
+        protected override IReadOnlyList<string> _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
+        static IReadOnlyList<string> _propNamesA = null;
 
         internal LVitem_TreeListVM(IList<string> lsStr)
             : base(null, lsStr)

@@ -23,8 +23,8 @@ namespace DoubleFile
 
         public string ClonePaths => WithLocalTreeNode(t => t.FullPath);
 
-        protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
-        static string[] _propNamesA = null;
+        protected override IReadOnlyList<string> _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
+        static IReadOnlyList<string> _propNamesA = null;
 
         internal override int NumCols => NumCols_;
         internal const int NumCols_ = 1;

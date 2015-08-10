@@ -240,8 +240,8 @@ namespace DoubleFile
             }
         }
 
-        static readonly LinkGroup[]
-            _links =
+        static readonly IReadOnlyList<LinkGroup>
+            _links = new[]
         {
             new LinkGroup { DisplayName="Explore", Links =
             {

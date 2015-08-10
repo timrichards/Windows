@@ -190,7 +190,7 @@ namespace DoubleFile
                 StringSplitOptions.None);
 
             Util.Assert(1301.2314m,
-                new[] { 7, 8, 10, kanDIviewOrder.Length }
+                new[] { 7, 8, 10, kanDIviewOrder.Count }
                 .Contains(arrDriveInfo.Length));
 
             var asItems = new string[arrDriveInfo.Length][];
@@ -229,7 +229,7 @@ namespace DoubleFile
                 }
 
                 var ixA =
-                    (arrDriveInfo.Length == kanDIviewOrder.Length)
+                    (arrDriveInfo.Length == kanDIviewOrder.Count)
                     ? kanDIviewOrder[ix]
                     : ix;
 

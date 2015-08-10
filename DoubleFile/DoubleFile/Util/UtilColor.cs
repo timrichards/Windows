@@ -52,8 +52,8 @@ namespace DoubleFile
             return ret;
         }
 
-        static internal int GetFG_ARGB(int n) => CLUT[(n & _knCLUT_FGmask)];
-        static internal int GetBG_ARGB(int n) => CLUT[(n & _knCLUT_BGmask) >> (CLUT_Shift >> 1)];
+        static internal int GetFG_ARGB(int n) => CLUT[(int)(n & _knCLUT_FGmask)];
+        static internal int GetBG_ARGB(int n) => CLUT[(int)(n & _knCLUT_BGmask) >> (CLUT_Shift >> 1)];
         static internal int SetFG_ARGB(ref int n, int argb) => n = (int)(n & _knCLUT_BGmask) + _revCLUT[argb];
         static internal int SetBG_ARGB(ref int n, int argb) => n = (int)(n & _knCLUT_FGmask) + (_revCLUT[argb] << (CLUT_Shift >> 1));
 
@@ -66,7 +66,8 @@ namespace DoubleFile
             );
         }
 
-        readonly static int[] CLUT = new int[_knNumColors]
+        readonly static IReadOnlyList<int>
+            CLUT = new int[_knNumColors]
         {
             Empty, LightBlue, DarkGray, DarkKhaki, DarkRedBG,
             Firebrick, DarkYellowBG, LightGray, MediumSpringGreen, MediumVioletRed,

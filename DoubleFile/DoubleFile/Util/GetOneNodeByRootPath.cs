@@ -92,7 +92,8 @@ namespace DoubleFile
             return nodeRet;
         }
 
-        static LocalTreeNode GetSubNode(LocalTreeNode node, string[] pathLevel, int nLevel, int nPathLevelLength, bool bIgnoreCase)
+        static LocalTreeNode
+            GetSubNode(LocalTreeNode node, IReadOnlyList<string> pathLevel, int nLevel, int nPathLevelLength, bool bIgnoreCase)
         {
             if (null == node.Nodes)
                 return null;

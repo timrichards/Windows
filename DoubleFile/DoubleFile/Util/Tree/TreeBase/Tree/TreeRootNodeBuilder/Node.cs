@@ -15,7 +15,7 @@ namespace DoubleFile
                     string in_str,
                     uint nLineNo,
                     ulong nLength,
-                    uint[] folderScore,
+                    IReadOnlyList<uint> folderScore,
                     RootNode rootNode)
                 {
                     if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
@@ -123,7 +123,7 @@ namespace DoubleFile
                     _nLength = 0;
                 bool
                     _bUseShortPath = true;
-                uint[]
+                IReadOnlyList<uint>
                     _folderScore = new[] { 0U, 0U, 0U };  // Weighted folder scores: HashParity (random); largest; smallest
             }
         }

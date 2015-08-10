@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace DoubleFile
@@ -15,7 +15,7 @@ namespace DoubleFile
                     _rootNode.FirstLineNo = (uint)nFirstLineNo;
                 }
 
-                internal void AddToTree(string str_in, uint nLineNo, ulong nLength, uint[] folderScore)
+                internal void AddToTree(string str_in, uint nLineNo, ulong nLength, IReadOnlyList<uint> folderScore)
                 {
                     var str = str_in.TrimEnd('\\');
 

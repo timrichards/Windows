@@ -1,4 +1,4 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
 
 namespace DoubleFile
 {
@@ -54,7 +54,7 @@ namespace DoubleFile
         internal override int NumCols => NumCols_;
         internal const int NumCols_ = 0;
 
-        protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
-        static string[] _propNamesA = null;
+        protected override IReadOnlyList<string> _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
+        static IReadOnlyList<string> _propNamesA = null;
     }
 }

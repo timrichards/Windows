@@ -13,10 +13,10 @@ namespace DoubleFile
         public string Modified => FileLine[2];
         public DateTime ModifiedRaw => ("" + Modified).ToDateTime();
         public string Attributes => Util.DecodeAttributes(FileLine[3]);
-        public ulong LengthRaw => 4 < FileLine.Length ? ("" + FileLine[4]).ToUlong() : 0;
+        public ulong LengthRaw => 4 < FileLine.Count ? ("" + FileLine[4]).ToUlong() : 0;
         public string Length => Util.FormatSize(LengthRaw);
-        public string Error1 => 5 < FileLine.Length ? FileLine[5] : "";
-        public string Error2 => 6 < FileLine.Length ? FileLine[6] : "";
+        public string Error1 => 5 < FileLine.Count ? FileLine[5] : "";
+        public string Error2 => 6 < FileLine.Count ? FileLine[6] : "";
 
         public bool SameVolume
         {
@@ -35,7 +35,7 @@ namespace DoubleFile
         public bool SolitaryAndNonEmpty =>
             ShowDuplicates &&
             (0 == DuplicatesRaw) &&
-                ((FileLine.Length <= FileParse.knColLengthLV) ||                    // doesn't happen
+                ((FileLine.Count <= FileParse.knColLengthLV) ||                    // doesn't happen
                 string.IsNullOrWhiteSpace(FileLine[FileParse.knColLengthLV]) ||     // doesn't happen
                 (0 < ("" + FileLine[FileParse.knColLengthLV]).ToUlong()));
 
@@ -47,12 +47,11 @@ namespace DoubleFile
         internal override int NumCols => NumCols_;
         internal const int NumCols_ = 0;
 
-        protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
-        static string[] _propNamesA = null;
+        protected override IReadOnlyList<string> _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
+        static IReadOnlyList<string> _propNamesA = null;
 
         internal IEnumerable<FileDictionary.DuplicateStruct>
             LSduplicates = null;
-        internal string[]
-            FileLine;
+        internal IReadOnlyList<string> FileLine;
     }
 }

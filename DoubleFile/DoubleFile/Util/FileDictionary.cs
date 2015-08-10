@@ -70,7 +70,7 @@ namespace DoubleFile
         }
         bool? _allListingsHashV2 = null;
 
-        internal uint[]
+        internal IReadOnlyList<uint>
             GetFolderScorer(FileKeyTuple fileKeyTuple)
         {
             var tuple = _dictFiles.TryGetValue(fileKeyTuple);
@@ -262,7 +262,7 @@ namespace DoubleFile
                 .Where(kvp => 1 < kvp.Value.Count)
                 .OrderBy(kvp => kvp.Key.Item2)
                 .ToDictionary(kvp => kvp.Key, kvp => Tuple.Create(
-                    new[] { ++nFolderScorer, nFolderCount - nFolderScorer },
+                    (IReadOnlyList<uint>)new[] { ++nFolderScorer, nFolderCount - nFolderScorer },
                     kvp.Value.AsEnumerable()));
 
             Util.Assert(99895, 1 == nFolderCount - nFolderScorer, bTraceOnly: true);
@@ -330,7 +330,7 @@ namespace DoubleFile
             _dictLVtoItemNumber = null;
         IReadOnlyDictionary<int, LVitem_ProjectVM>
             _dictItemNumberToLV = null;
-        IReadOnlyDictionary<FileKeyTuple, Tuple<uint[], IEnumerable<int>>>
+        IReadOnlyDictionary<FileKeyTuple, Tuple<IReadOnlyList<uint>, IEnumerable<int>>>
             _dictFiles = null;
         bool
             _bListingFileWithOnlyHashV1pt0 = false;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DoubleFile
 {
@@ -11,7 +10,7 @@ namespace DoubleFile
         {
         }
 
-        static internal HashTuple FactoryCreate(byte[] abHash_in)
+        static internal HashTuple FactoryCreate(IReadOnlyList<byte> abHash_in)
         {
             var nIx = 16;
             var abHash = new byte[nIx];

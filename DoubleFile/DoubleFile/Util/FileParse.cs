@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -66,7 +67,8 @@ namespace DoubleFile
 
         internal const int knDriveInfoItems = 11;
 
-        static internal readonly string[] kasDIlabels = new string[knDriveInfoItems]
+        static internal readonly IReadOnlyList<string>
+            kasDIlabels = new string[knDriveInfoItems]
         {
             "Volume Free",
             "Volume Format",
@@ -80,18 +82,13 @@ namespace DoubleFile
             "Drive Serial #",
             "Drive Size"
         };
-        static internal readonly bool[] kabDIsizeType = new bool[knDriveInfoItems]
-        {
-            true, false, false, false, false, true, true, false, false, false, true
-        };
-        static internal readonly int[] kanDIviewOrder = new int[knDriveInfoItems]
-        {
-            9, 5, 6, 2, 0, 10, 8, 1, 3, 4, 7
-        };
-        static internal readonly int[] kanDIoptIfEqTo = new int[knDriveInfoItems]
-        {
-            -1, -1, -1, 4, -1, 0, -1, -1, -1, -1, -1
-        };
+        static internal readonly IReadOnlyList<bool>
+            kabDIsizeType = new bool[knDriveInfoItems]
+            { true, false, false, false, false, true, true, false, false, false, true };
+        static internal readonly IReadOnlyList<int>
+            kanDIviewOrder = new int[knDriveInfoItems] { 9, 5, 6, 2, 0, 10, 8, 1, 3, 4, 7 };
+        static internal readonly IReadOnlyList<int>
+            kanDIoptIfEqTo = new int[knDriveInfoItems] { -1, -1, -1, 4, -1, 0, -1, -1, -1, -1, -1 };
 
         static internal string CheckNTFS_chars(ref string strFile, bool bFile = false)
         {
@@ -117,7 +114,7 @@ namespace DoubleFile
             strFile.FileMoveToIso(strFile_01);
 
             string strLine = null;
-            long nLineNo = 0;       // lines number from one
+            var nLineNo = 0;       // lines number from one
             var bAtErrors = false;
 
             using (var file_out = new StreamWriter(LocalIsoStore.CreateFile(strFile)))
@@ -233,9 +230,10 @@ namespace DoubleFile
                 
                 if (strLine.StartsWith(ksTotalLengthLoc01))
                 {
-                    var arrLine = strLine.Split('\t');
+                    file_out.WriteLine(FormatLine(ksLineType_Length, nLineNo,
+                        FormatString(strDir: ksTotalLengthLoc,
+                        nLength: ("" + strLine.Split('\t')[knColLength01]).ToUlong())));
 
-                    file_out.WriteLine(FormatLine(ksLineType_Length, nLineNo, FormatString(strDir: ksTotalLengthLoc, nLength: ("" + arrLine[knColLength01]).ToUlong())));
                     continue;
                 }
 
@@ -270,10 +268,8 @@ namespace DoubleFile
             }
         }
 
-        static string FormatLine(string strLineType, long nLineNo, string strLine_in = null)
-        {
-            return strLineType + "\t" + nLineNo + '\t' + ("" + strLine_in).TrimEnd();
-        }
+        static string FormatLine(string strLineType, long nLineNo, string strLine_in = null) =>
+            strLineType + "\t" + nLineNo + '\t' + ("" + strLine_in).TrimEnd();
 
         static internal string FormatString(string strDir = null, string strFile = null,
             DateTime? dtCreated = null, DateTime? dtModified = null,
@@ -281,10 +277,10 @@ namespace DoubleFile
             string strError1 = null, string strError2 = null, int? nHeader = null,
             string strHashV1pt0 = null, string strHashV2 = null)
         {
-            string strCreated = "" + dtCreated;
-            string strModified = "" + dtModified;
+            var strCreated = "" + dtCreated;
+            var strModified = "" + dtModified;
 
-            string strLength =
+            var strLength =
                 (ulong.MaxValue != nLength)
                 ? "" + nLength
                 : null;
@@ -326,10 +322,10 @@ namespace DoubleFile
             if (bDbgCheck)
             {
 #if (DEBUG)
-                string[] strArray = strRet.Split('\t');
-                DateTime dtParse = DateTime.MinValue;
+                var asLine = strRet.Split('\t');
+                var dtParse = DateTime.MinValue;
 
-                if (strArray[knColLength01].Contains("Trailing whitespace") && DateTime.TryParse(strArray[1], out dtParse))
+                if (asLine[knColLength01].Contains("Trailing whitespace") && DateTime.TryParse(asLine[1], out dtParse))
                     Util.Assert(99947, false);
 #endif
             }
@@ -386,10 +382,8 @@ namespace DoubleFile
 
             lvItem.HashV2 =
                 asLines
-                .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
+                .Where(strLine => strLine.StartsWith(ksLineType_File))
                 .Select(strLine => strLine.Split('\t'))
-                .Where(asLine => 10 < asLine.Length)
-                .Take(1)
                 .Any(asLine => 11 < asLine.Length);
 
             lvItem.ScannedLength = "" + tupleValidate.Item2;
@@ -411,11 +405,9 @@ namespace DoubleFile
             return astr[2];
         }
 
-        static internal string StrFile_01(string strFile)
-        {
-            return Path.Combine(Path.GetDirectoryName(strFile),
-                Path.GetFileNameWithoutExtension(strFile) + "_01" + Path.GetExtension(strFile));
-        }
+        static internal string StrFile_01(string strFile) =>
+            Path.Combine(Path.GetDirectoryName(strFile),
+            Path.GetFileNameWithoutExtension(strFile) + "_01" + Path.GetExtension(strFile));
 
         static internal Tuple<bool, ulong, int>
             ValidateFile(string strFile)

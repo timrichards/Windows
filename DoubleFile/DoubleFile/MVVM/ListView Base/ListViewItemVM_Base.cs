@@ -144,7 +144,8 @@ namespace DoubleFile
         virtual protected int
             SearchCol => 0;
 
-        string[] PropNames
+        IReadOnlyList<string>
+            PropNames
         {
             get
             {
@@ -156,6 +157,6 @@ namespace DoubleFile
                         .ToArray());
             }
         }
-        abstract protected string[] _propNames { get; set; }
+        abstract protected IReadOnlyList<string> _propNames { get; set; }
     }
 }

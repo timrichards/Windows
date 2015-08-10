@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace DoubleFile
@@ -12,7 +13,7 @@ namespace DoubleFile
             LineNo;                                 // Found 21 bits
         internal readonly ulong
             Length;
-        internal uint[]
+        internal IReadOnlyList<uint>
             FolderScore = new[] { 0U, 0U, 0U };     // Weighted folder scores: HashParity (random); largest; smallest
 
         internal ulong
@@ -30,7 +31,7 @@ namespace DoubleFile
             TreeMapRect;
 
         internal DetailsDatum() { }
-        internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, uint[] folderScore)
+        internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, IReadOnlyList<uint> folderScore)
         {
             PrevLineNo = nPrevLineNo;
             LineNo = nLineNo;

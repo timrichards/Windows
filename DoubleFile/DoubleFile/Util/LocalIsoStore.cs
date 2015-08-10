@@ -20,7 +20,7 @@ namespace DoubleFile
 
         static internal bool
             DirectoryExists(string path) => _isoStore.DirectoryExists(path);
-        static internal string[]
+        static internal IReadOnlyList<string>
             GetFileNames(string searchPattern) => _isoStore.GetFileNames(searchPattern);
 
         static internal IsolatedStorageFileStream

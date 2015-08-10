@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace DoubleFile
 {
@@ -7,11 +8,11 @@ namespace DoubleFile
         internal FolderKeyTuple(ulong nTotalLength,
             uint nFilesInSubdirs,
             uint nDirsWithFiles,
-            uint[] folderScore)
+            IReadOnlyList<uint> folderScore)
         : base(nTotalLength, nFilesInSubdirs, nDirsWithFiles,
               folderScore[0], folderScore[1], folderScore[2])
         {
-            Util.Assert(99902, 3 == folderScore.Length);
+            Util.Assert(99902, 3 == folderScore.Count);
         }
     }
 }

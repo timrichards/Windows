@@ -4,7 +4,7 @@ namespace DoubleFile
 {
     class LVitem_FileDuplicatesVM : ListViewItemVM_Base
     {
-        internal string[] FileLine;
+        internal IReadOnlyList<string> FileLine;
         internal LVitem_ProjectVM LVitem_ProjectVM;
 
         public string Filename => FileLine[0];
@@ -13,8 +13,8 @@ namespace DoubleFile
         internal override int NumCols => NumCols_;
         internal const int NumCols_ = 1;
 
-        protected override string[] _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
-        static string[] _propNamesA = null;
+        protected override IReadOnlyList<string> _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
+        static IReadOnlyList<string> _propNamesA = null;
 
         internal LVitem_FileDuplicatesVM(IList<string> lsStr)
             : base(null, lsStr)

@@ -17,7 +17,7 @@ namespace DoubleFile
             Items => _items;
         ObservableCollection<ListViewItemVM_Base> _items = new ObservableCollection<ListViewItemVM_Base>();
         internal void
-            ClearItems() { _items = new ObservableCollection<ListViewItemVM_Base>(); RaisePropertyChanged("Items"); }
+            ClearItems() { Util.UIthread(99867, () => _items.Clear()); RaisePropertyChanged("Items"); }
 
         internal abstract int
             NumCols { get; }

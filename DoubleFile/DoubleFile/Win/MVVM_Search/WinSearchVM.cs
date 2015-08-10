@@ -4,13 +4,14 @@ namespace DoubleFile
 {
     partial class WinSearchVM : ListViewVM_Base<LVitem_SearchVM>
     {
-        public bool Regex { private get; set; }
         public ICommand Icmd_Folders { get; private set; }
         public ICommand Icmd_FoldersAndFiles { get; private set; }
         public ICommand Icmd_Files { get; private set; }
         public ICommand Icmd_GoTo { get; private set; }
 
         public string SearchText { private get; set; }
+        public bool Regex { private get; set; }
+        public bool Nicknames { private get; set; }
 
         public LVitem_SearchVM SelectedItem
         {

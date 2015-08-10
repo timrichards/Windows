@@ -19,6 +19,9 @@ namespace DoubleFile
         public int
             Alternate { get; internal set; } = 0;
 
+        static internal bool
+            RootText;
+
         public string
             FolderOrFile
         {
@@ -46,7 +49,7 @@ namespace DoubleFile
                     return null;
 
                 if (null != LocalTreeNode)
-                    return LocalTreeNode.Parent?.FullPath;
+                    return LocalTreeNode.Parent?.FullPathGet(RootText);
 
                 var strDirectory = "" + Directory;
                 var nIx = strDirectory.LastIndexOf('\\');

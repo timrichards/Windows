@@ -36,12 +36,14 @@ namespace DoubleFile
                 formEdit_search.CaretIndex = int.MaxValue;
                 formEdit_search.Focus();
                 formChk_Regex.IsChecked = _bRegex;
+                formChk_Nicknames.IsChecked = _bNicknames;
             }));
         }
 
         protected override void LocalNavigatedFrom()
         {
             _bRegex = formChk_Regex.IsChecked ?? false;
+            _bNicknames = formChk_Nicknames.IsChecked ?? false;
             _winSearchVM.Dispose();
 
             DataContext =
@@ -53,5 +55,7 @@ namespace DoubleFile
             _winSearchVM = null;
         bool
             _bRegex = false;
+        bool
+            _bNicknames = false;
     }
 }

@@ -14,6 +14,8 @@ namespace DoubleFile
             _strCurrentNode = null;
         protected readonly bool
             _bRegex = false;
+        protected readonly bool
+            _bRootText = false;
         protected readonly WeakReference<ISearchStatus>
             _callbackWR = null;
 
@@ -28,6 +30,7 @@ namespace DoubleFile
             bool bSearchFilesOnly,
             string strCurrentNode,
             bool bRegex,
+            bool bRootText,
             WeakReference<ISearchStatus> callbackWR)
         {
             _strSearch = strSearch;
@@ -36,6 +39,7 @@ namespace DoubleFile
             _folderHandling = folderHandling;               // not used
             _bSearchFilesOnly = bSearchFilesOnly;
             _strCurrentNode = strCurrentNode;
+            _bRootText = bRootText;
             _callbackWR = callbackWR;
         }
 
@@ -47,6 +51,7 @@ namespace DoubleFile
             _strCurrentNode = searchBase._strCurrentNode;
             _bRegex = searchBase._bRegex;
             _folderHandling = searchBase._folderHandling;
+            _bRootText = searchBase._bRootText;
             _callbackWR = searchBase._callbackWR;
         }
     }

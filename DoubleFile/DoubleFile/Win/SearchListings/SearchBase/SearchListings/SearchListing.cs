@@ -122,7 +122,13 @@ namespace DoubleFile
 
                         string strDir = null;
 
-                        if (bDir) strDir = arrLine[2].TrimEnd('\\');
+                        if (bDir)
+                        {
+                            strDir = arrLine[2].TrimEnd('\\');
+
+                            if (_bRootText)
+                                strDir = strDir.Replace(_lvItemProjectVM.SourcePath, _lvItemProjectVM.RootText + '\\');
+                        }
 
                         if (bDir &&
                             (null != searchResultDir))

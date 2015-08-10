@@ -18,7 +18,7 @@ namespace DoubleFile
 
                 return
                     (null != rootNodeDatum)
-                    ? rootNodeDatum.RootText(strText)
+                    ? "" + rootNodeDatum.RootText
                     : strText;
             }
             set { _text = (TabledString<TabledStringType_Folders>)value; }
@@ -84,23 +84,23 @@ namespace DoubleFile
             return this;
         }
 
-        internal string FullPath
+        internal string
+            FullPath => FullPathGet(true);
+        internal string
+            FullPathGet(bool bRootText)
         {
-            get
+            var sbPath = new StringBuilder();
+            var treeNode = this;
+
+            do
             {
-                var sbPath = new StringBuilder();
-                var treeNode = this;
-
-                do
-                {
-                    sbPath
-                        .Insert(0, '\\')
-                        .Insert(0, treeNode.Text);
-                }
-                while (null != (treeNode = treeNode.Parent));
-
-                return ("" + sbPath).TrimEnd('\\');
+                sbPath
+                    .Insert(0, '\\')
+                    .Insert(0, bRootText ? treeNode.Text : "" + treeNode._text);
             }
+            while (null != (treeNode = treeNode.Parent));
+
+            return ("" + sbPath).TrimEnd('\\');
         }
 
         internal bool IsChildOf(LocalTreeNode treeNode)

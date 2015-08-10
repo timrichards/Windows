@@ -7,19 +7,8 @@
         internal readonly ulong VolumeFree;
         internal readonly ulong VolumeLength;
 
-        internal string
-            RootText(string strSourcePath) => RootText(LVitemProjectVM.Nickname, strSourcePath);
-        static internal string
-            RootText(string strNickname, string strSourcePath)
-        {
-            if (string.IsNullOrWhiteSpace(strNickname))
-                return strSourcePath;
-
-            if (("" + strNickname).EndsWith(strSourcePath))
-                return strNickname;
-
-            return strNickname + " (" + strSourcePath + ")";
-        }
+        internal TabledString<TabledStringType_Folders>
+            RootText;
 
         internal
             RootNodeDatum(NodeDatum node, LVitem_ProjectVM lvItemProjectVM,
@@ -30,6 +19,7 @@
             LVitemProjectVM = lvItemProjectVM;
             VolumeLength = nVolumeLength;
             VolumeFree = nVolumeFree;
+            RootText = (TabledString<TabledStringType_Folders>)LVitemProjectVM.RootText;
         }
     }
 }

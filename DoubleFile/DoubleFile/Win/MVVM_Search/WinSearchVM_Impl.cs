@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Threading;
 
 namespace DoubleFile
 {
@@ -42,12 +41,14 @@ namespace DoubleFile
             if (0 == Statics.WithLVprojectVM(p => p?.CanLoadCount ?? 0))
                 return true;        // found there are no volumes loaded
 
+            LVitem_SearchVM.RootText = Nicknames;   // bool: root text is nickname or volume group based
             ClearItems();
-            TabledString<TabledStringType_Files>.GenerationStarting();  // FIXME: tidier here though folders doesn't use it
+            TabledString<TabledStringType_Files>.GenerationStarting();
 
             var result = new SearchResultsDir();
+            var treeNode = LocalTV.GetOneNodeByRootPathA(strPath, null);
 
-            if (null != LocalTV.GetOneNodeByRootPathA(strPath, null))
+            if (null != treeNode)
             {
                 result.PathBuilder = PathBuilder.FactoryCreateOrFind(strPath);
             }
@@ -59,14 +60,17 @@ namespace DoubleFile
                     return false;
 
                 result.PathBuilder = PathBuilder.FactoryCreateOrFind(strPath.Substring(0, nLastBackSlashIx));
+                treeNode = LocalTV.GetOneNodeByRootPathA("" + result.PathBuilder, null);
 
-                if (null == LocalTV.GetOneNodeByRootPathA("" + result.PathBuilder, null))
+                if (null == treeNode)
                     return false;
 
                 result.ListFiles.Add((TabledString<TabledStringType_Files>)strPath.Substring(nLastBackSlashIx + 1), false);
             }
 
-            ((ISearchStatus)this).Status(new SearchResults(strPath, null, new[] { result }));
+            var lvItemProjectVM = treeNode.Root.NodeDatum.As<RootNodeDatum>().LVitemProjectVM;
+
+            ((ISearchStatus)this).Status(new SearchResults(strPath, lvItemProjectVM, new[] { result }));
             ((ISearchStatus)this).Done();
             return true;
         }
@@ -88,9 +92,20 @@ namespace DoubleFile
         void ISearchStatus.Status(SearchResults searchResults, bool bFirst, bool bLast)
         {
             lock (_lsSearchResults)     // Each status represents a listing file, so this insert-sort is infrequent; small
-                _lsSearchResults.Insert(_lsSearchResults.TakeWhile(r =>
-                searchResults.LVitemProjectVM.SourcePath.CompareTo(r.LVitemProjectVM.SourcePath) >= 0).Count(),
-                searchResults);
+            {
+                if (Nicknames)
+                {
+                    _lsSearchResults.Insert(_lsSearchResults.TakeWhile(r =>
+                        searchResults.LVitemProjectVM.RootText.CompareTo(r.LVitemProjectVM.RootText) >= 0).Count(),
+                        searchResults);
+                }
+                else
+                {
+                    _lsSearchResults.Insert(_lsSearchResults.TakeWhile(r =>
+                        searchResults.LVitemProjectVM.SourcePath.CompareTo(r.LVitemProjectVM.SourcePath) >= 0).Count(),
+                        searchResults);
+                }
+            }
         }
 
         void ISearchStatus.Done()
@@ -203,7 +218,8 @@ namespace DoubleFile
                 : LocalTV.AllNodes
                     .Where(treeNode => treeNode.Text.ToLower().Contains(SearchText));
 
-            var ieLVitems = lsTreeNodes
+            var ieLVitems =
+                lsTreeNodes
                 .AsParallel()
                 .Select(treeNode => new LVitem_SearchVM { LocalTreeNode = treeNode })
                 .OrderBy(lvItem => lvItem.Parent + lvItem.FolderOrFile);
@@ -230,6 +246,7 @@ namespace DoubleFile
                     bSearchFilesOnly,
                     null,
                     Regex,
+                    Nicknames,
                     new WeakReference<ISearchStatus>(this)
                 ))
                     .DoThreadFactory();

@@ -27,16 +27,29 @@ namespace DoubleFile
         {
             get
             {
-                if (null != LocalTreeNode)
-                    return LocalTreeNode.Text;
+                string strRet = null;
 
-                if (null != TabledStringFilename)
-                    return "" + TabledStringFilename;
+                if (null != LocalTreeNode)
+                {
+                    var parent = LocalTreeNode.Parent;
+
+                    if (null != parent)
+                        return LocalTreeNode.Text;
+
+                    strRet = LocalTreeNode.FullPathGet(RootText);
+                }
+                else
+                {
+                    if (null != TabledStringFilename)
+                        return "" + TabledStringFilename;
+
+                    strRet = "" + Directory;
+                }
 
                 In = null;
                 RaisePropertyChanged("In");
                 RaisePropertyChanged("Parent");
-                return "" + Directory;
+                return strRet;
             }
         }
 

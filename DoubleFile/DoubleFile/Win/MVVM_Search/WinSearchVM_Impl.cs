@@ -104,8 +104,15 @@ namespace DoubleFile
 
             try
             {
-                for (var results = _lsSearchResults.FirstOrDefault(); null != results; _lsSearchResults.RemoveAt(0))
+                for (;;)
                 {
+                    var results = _lsSearchResults.FirstOrDefault();
+
+                    if (null == results)
+                        break;
+
+                    _lsSearchResults.RemoveAt(0);
+
                     if (false == _bDisposed)
                         Util.UIthread(99809, () => Add(MakeLVitems(results)));
 
@@ -118,7 +125,7 @@ namespace DoubleFile
                 }
             }
             catch (ArgumentOutOfRangeException) { } // ConfirmClose() below calls _lsSearchResults.Clear()
-            catch (InvalidOperationException) { }   // user restarted sort during Block() in ListViewItemVM_Base.Add(): enumeration can't continue
+            catch (InvalidOperationException) { }   // user restarted search during Block() in ListViewItemVM_Base.Add(): enumeration can't continue
             catch (Exception e) when ((e is ArgumentNullException) || (e is NullReferenceException))
             {
                 Util.Assert(99878, _bDisposed);

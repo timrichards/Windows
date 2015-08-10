@@ -37,7 +37,7 @@ namespace DoubleFile
             var nMin = 0;
             var nMax = _strings.Length;
 
-            for (; ; )
+            for (;;)
             {
                 var nShift = (nMax - nMin) >> 1;
 

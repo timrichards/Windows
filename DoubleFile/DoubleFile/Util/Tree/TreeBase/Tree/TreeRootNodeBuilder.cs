@@ -116,7 +116,7 @@ namespace DoubleFile
                     var bValid = false;
                     var bAttemptConvert = false;
 
-                    for (; ; )
+                    for (;;)
                     {
                         bValid =
                             ValidateFile(_lvItemProjectVM.ListingFile)

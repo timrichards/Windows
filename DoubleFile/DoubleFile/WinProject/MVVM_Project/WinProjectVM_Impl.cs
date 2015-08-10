@@ -59,7 +59,7 @@ namespace DoubleFile
         {
             string strFilename = null;
 
-            for (; ; )
+            for (;;)
             {
                 var dlg = new Microsoft.Win32.SaveFileDialog
                 {
@@ -93,7 +93,7 @@ namespace DoubleFile
         {
             var lvItemVolumeTemp = new LVitem_ProjectVM();
 
-            for (; ; )
+            for (;;)
             {
                 var newVolume = new WinVolumeNew { LVitemVolumeTemp = new LVitem_ProjectVM(lvItemVolumeTemp) };
 

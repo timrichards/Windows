@@ -21,7 +21,7 @@ namespace DoubleFile
 
         class SearchListing : SearchBase
         {
-            internal SearchListing(SearchBase searchBase, LVitem_ProjectVM lvItemProjectVM)
+            internal SearchListing(SearchBase searchBase, LVitem_ProjectVM lvItemProjectVM, Action onAbort)
                 : base(searchBase)
             {
                 _lvItemProjectVM = lvItemProjectVM;
@@ -48,6 +48,9 @@ namespace DoubleFile
 
             internal void Abort()
             {
+                if (_bThreadAbort)
+                    return;
+
                 _bThreadAbort = true;
                 _thread.Abort();
             }
@@ -127,7 +130,7 @@ namespace DoubleFile
                             // a. SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
                             // The reason the directory for a folder with files gets an extra backslash is that
                             // it naturally sorts after the item containing the directory alone.
-                            searchResultDir.PathBuilder = PathBuilder.FactoryCreateOrFind(strDir + '\\', Cancel: Abort);
+                            searchResultDir.PathBuilder = PathBuilder.FactoryCreateOrFind(strDir + '\\', Cancel: AbortAll);
                             listResults.Add(searchResultDir, false);
                             searchResultDir = null;
                         }
@@ -149,7 +152,7 @@ namespace DoubleFile
 
                             // b. SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
                             // Not here. The other case a above.
-                            searchResultDir.PathBuilder = PathBuilder.FactoryCreateOrFind(strDir, Cancel: Abort);
+                            searchResultDir.PathBuilder = PathBuilder.FactoryCreateOrFind(strDir, Cancel: AbortAll);
                             listResults.Add(searchResultDir, false);
                             searchResultDir = null;
                         }
@@ -163,7 +166,7 @@ namespace DoubleFile
 
                             if (false == TabledString<TabledStringType_Files>.IsAlive)
                             {
-                                Abort();
+                                AbortAll();
                                 return;
                             }
 
@@ -174,7 +177,7 @@ namespace DoubleFile
                             catch (Exception e) when ((e is ArgumentException) || (e is NullReferenceException))
                             {
                                 Util.Assert(99659, (false == TabledString<TabledStringType_Files>.IsAlive));
-                                Abort();
+                                AbortAll();
                                 return;
                             }
                         }
@@ -207,6 +210,8 @@ namespace DoubleFile
                 _lvItemProjectVM = null;
             Thread
                 _thread = new Thread(() => { });
+            Action
+                AbortAll = null;
             bool
                 _bThreadAbort = false;
         }

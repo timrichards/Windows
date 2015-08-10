@@ -24,7 +24,7 @@ namespace DoubleFile
         internal SearchBase(
             string strSearch, 
             bool bCaseSensitive,
-            SearchBase.FolderSpecialHandling folderHandling,
+            FolderSpecialHandling folderHandling,
             bool bSearchFilesOnly,
             string strCurrentNode,
             bool bRegex,

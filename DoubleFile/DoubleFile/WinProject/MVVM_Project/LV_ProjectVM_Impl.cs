@@ -85,7 +85,7 @@ namespace DoubleFile
                 if (FileParse.ksError == lvItemTemp.Status)
                     lvItemTemp.Status = FileParse.ksNotSaved;
 
-                for (; ; )
+                for (;;)
                 {
                     var dlg =
                         lvItemTemp.WouldSave

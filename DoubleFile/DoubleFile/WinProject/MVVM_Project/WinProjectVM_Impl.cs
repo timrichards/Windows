@@ -13,7 +13,6 @@ namespace DoubleFile
 {
     partial class WinProjectVM : IOpenListingFiles, IWinProgressClosing
     {
-        // Menu items       
         internal const string
             ListingFilter = "Double File Listing|*." + FileParse.ksFileExt_Listing + _ksAllFilesFilter;
         const string _ksProjectFilter = "Double File Project|*." + FileParse.ksFileExt_Project + _ksAllFilesFilter;
@@ -22,7 +21,8 @@ namespace DoubleFile
         internal const string
             UnsavedWarning = "You are about to lose changes to an unsaved project.";
 
-        internal void OpenProject()
+        internal void
+            OpenProject()
         {
             var bClearItems =
                 (0 == _lvVM.Items.Count) ||
@@ -52,12 +52,10 @@ namespace DoubleFile
             }
         }
 
-        internal void SaveProject()
-        {
-            SaveProject(_lvVM);
-        }
-
-        static internal void SaveProject(LV_ProjectVM lvProjectVM)
+        internal void
+            SaveProject() => SaveProject(_lvVM);
+        static internal void
+            SaveProject(LV_ProjectVM lvProjectVM)
         {
             string strFilename = null;
 
@@ -90,7 +88,8 @@ namespace DoubleFile
             }
         }
 
-        internal void NewListingFile()
+        internal void
+            NewListingFile()
         {
             var lvItemVolumeTemp = new LVitem_ProjectVM();
 
@@ -116,7 +115,8 @@ namespace DoubleFile
             }
         }
 
-        internal void OpenListingFile()
+        internal void
+            OpenListingFile()
         {
             _bUserCanceled = false;
 
@@ -231,10 +231,8 @@ namespace DoubleFile
             return bOpenedFiles;
         }
 
-        bool IOpenListingFiles.Callback(IEnumerable<string> ieFiles, bool bClearItems, Func<bool> userCanceled)
-        {
-            return OpenListingFiles(ieFiles, bClearItems, userCanceled);
-        }
+        bool IOpenListingFiles.Callback(IEnumerable<string> ieFiles, bool bClearItems, Func<bool> userCanceled) =>
+            OpenListingFiles(ieFiles, bClearItems, userCanceled);
 
         bool IWinProgressClosing.ConfirmClose()
         {

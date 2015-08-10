@@ -2,10 +2,8 @@
 using FirstFloor.ModernUI.Windows.Navigation;
 using System;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Linq;
-using System.IO;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 

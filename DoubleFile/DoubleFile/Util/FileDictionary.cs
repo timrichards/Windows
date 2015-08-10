@@ -282,8 +282,7 @@ namespace DoubleFile
             _thread = null;
         }
 
-        void Insert(IDictionary<FileKeyTuple, List<int>> dictionary, FileKeyTuple key, int lookup,
-            ref int nFolderCount)
+        void Insert(IDictionary<FileKeyTuple, List<int>> dictionary, FileKeyTuple key, int lookup, ref int nFolderCount)
         {
             var ls = dictionary.TryGetValue(key);
 

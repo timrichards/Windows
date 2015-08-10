@@ -66,7 +66,8 @@ namespace DoubleFile
             VolumeDetailUpdatedOnNext(VolumeDetailUpdated value, int nInitiator) =>
             ((LocalSubject<VolumeDetailUpdated>)VolumeDetailUpdated.Observable).LocalOnNext(value, 99844, nInitiator);
 
-        static internal bool DoThreadFactory(LocalTreeNode treeNode, int nInitiator, string strFile = null,
+        static internal bool
+            DoThreadFactory(LocalTreeNode treeNode, int nInitiator, string strFile = null,
             bool bCompareMode = false, bool bSecondComparePane = false)
         {
             if (_thread?.IsAlive ?? false)
@@ -82,7 +83,8 @@ namespace DoubleFile
             return true;
         }
 
-        static void Go(LocalTreeNode treeNode, string strFile, int nInitiator)
+        static void
+            Go(LocalTreeNode treeNode, string strFile, int nInitiator)
         {
             GetFileList(treeNode, strFile, nInitiator);
             GetFolderDetail(treeNode, nInitiator);
@@ -90,7 +92,8 @@ namespace DoubleFile
             _thread = null;
         }
 
-        static void GetFileList(LocalTreeNode treeNode, string strFile, int nInitiator)
+        static void
+            GetFileList(LocalTreeNode treeNode, string strFile, int nInitiator)
         {
             string strListingFile = null;
 
@@ -131,7 +134,8 @@ namespace DoubleFile
             FileListUpdatedOnNext(new FileListUpdated(ieFiles, strListingFile, treeNode, strFile), nInitiator);
         }
 
-        static void GetFolderDetail(LocalTreeNode treeNode, int nInitiator)
+        static void
+            GetFolderDetail(LocalTreeNode treeNode, int nInitiator)
         {
             var nodeDatum = treeNode.NodeDatum;
             var lieDetail = new List<IEnumerable<string>>();
@@ -172,7 +176,8 @@ namespace DoubleFile
             FolderDetailUpdatedOnNext(new FolderDetailUpdated(lieDetail, treeNode), nInitiator);
         }
 
-        static void GetVolumeDetail(LocalTreeNode treeNode, int nInitiator)
+        static void
+            GetVolumeDetail(LocalTreeNode treeNode, int nInitiator)
         {
             var rootNode = treeNode.Root;
             var strDriveInfo = _dictVolumeInfo.TryGetValue(((RootNodeDatum)rootNode.NodeDatum).LVitemProjectVM.ListingFile);

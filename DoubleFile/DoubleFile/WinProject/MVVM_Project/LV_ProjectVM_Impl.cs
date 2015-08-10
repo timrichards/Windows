@@ -140,13 +140,11 @@ namespace DoubleFile
             return false;
         }
 
-        internal new void Add(ListViewItemVM_Base doNotUseThisMethod, bool itIsOverloaded)
-        {
+        internal new void Add(ListViewItemVM_Base doNotUseThisMethod, bool itIsOverloaded) =>
             // making sure that LVitem_ProjectVM doesn't get interpreted as ListViewItemVM_Base
             // bQuiet is always explicitly named, so renamed it here to be sure
             // the signature remains the same which makes it a valid new: hiding the base method
             Util.Assert(99936, false);
-        }
 
         internal bool Add(LVitem_ProjectVM lvItem, bool bQuiet = false)
         {

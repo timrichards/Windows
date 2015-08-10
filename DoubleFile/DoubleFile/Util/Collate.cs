@@ -66,7 +66,7 @@ namespace DoubleFile
             double nProgressNumerator = 0;
             double nProgressDenominator = 0;
             double nProgressItem = 0;
-            const double nTotalProgressItems = 6;
+            const double knTotalProgressItems = 6;
 
             if (0 == _lsRootNodes.Count)
             {
@@ -100,7 +100,7 @@ namespace DoubleFile
 
             foreach (var kvp in _dictIgnoreNodes)
             {
-                reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem/nTotalProgressItems);
+                reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem/knTotalProgressItems);
 
                 var treeNode = kvp.Key;
                 var nodeDatum = treeNode.NodeDatum;
@@ -137,7 +137,7 @@ namespace DoubleFile
 
             foreach (var kvp in dictNodes.Reverse())
             {
-                reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
+                reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / knTotalProgressItems);
 
                 if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                     _bAborted)
@@ -231,7 +231,7 @@ namespace DoubleFile
 
             foreach (var treeNode in _lsRootNodes)
             {
-                reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
+                reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / knTotalProgressItems);
                 
                 if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                     _bAborted)
@@ -247,7 +247,7 @@ namespace DoubleFile
 
             foreach (var listNodes in dictClones.Reverse())
             {
-                reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
+                reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / knTotalProgressItems);
 
                 // load up listLVdiffVol
 
@@ -303,7 +303,7 @@ namespace DoubleFile
 
             foreach (var kvp in dictIgnoreMark)
             {
-                reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
+                reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / knTotalProgressItems);
 
                 var treeNode = kvp.Key;
                 var lvIgnoreItem = kvp.Value;
@@ -375,7 +375,7 @@ namespace DoubleFile
 
             foreach (var treeNode in lsSameVol)
             {
-                reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / nTotalProgressItems);
+                reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / knTotalProgressItems);
 
                 if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                     _bAborted)

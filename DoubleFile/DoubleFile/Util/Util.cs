@@ -77,7 +77,7 @@ namespace DoubleFile
             }
             catch (FormatException)
             {
-                Util.Assert(99933, false);
+                Util.Assert(99920, false);
             }
 
             var str = "";

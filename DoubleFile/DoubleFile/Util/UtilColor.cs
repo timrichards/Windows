@@ -38,10 +38,10 @@ namespace DoubleFile
         static internal int Red => Color.FromArgb(255, 192, 0, 0).ToArgb();
         static internal int SteelBlue => Color.SteelBlue.ToArgb();
 
-        static internal uint
-            CLUT_Mask => 0xFF;
-        static internal int
-            CLUT_Shift => (int)Math.Log(CLUT_Mask + 1, 2);
+        internal const uint
+            CLUT_Mask = 0xFF;
+        static internal readonly int
+            CLUT_Shift = (int)Math.Log(CLUT_Mask + 1, 2);
 
         static internal int Set_ARGB(int fg, int bg)
         {
@@ -62,8 +62,7 @@ namespace DoubleFile
             var abARGB = BitConverter.GetBytes(nFormsARGB);
 
             return new System.Windows.Media.SolidColorBrush(
-                System.Windows.Media.Color.FromArgb(abARGB[3], abARGB[2], abARGB[1], abARGB[0])
-            );
+                System.Windows.Media.Color.FromArgb(abARGB[3], abARGB[2], abARGB[1], abARGB[0]));
         }
 
         readonly static IReadOnlyList<int>

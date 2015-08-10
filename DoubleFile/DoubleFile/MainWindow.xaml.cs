@@ -236,7 +236,6 @@ namespace DoubleFile
                 MBoxStatic.ShowDialog(WinProjectVM.UnsavedWarning, "Quit Double File", MessageBoxButton.OKCancel)))
             {
                 e.Cancel = true;
-                return;
             }
         }
 

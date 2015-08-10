@@ -42,10 +42,7 @@ namespace DoubleFile
     static class NativeMethods
     {
         static internal int
-            Command(IntPtr wParam)
-        {
-            return wParam.ToInt32() & 0xFFF0;
-        }
+            Command(IntPtr wParam) => wParam.ToInt32() & 0xFFF0;
 
         static internal T
             Call<T>(Func<T> action, bool bAssert = false, T errorValue = default(T), decimal nAssertLoc = -1)

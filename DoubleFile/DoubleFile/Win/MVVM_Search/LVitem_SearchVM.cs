@@ -4,17 +4,23 @@ namespace DoubleFile
 {
     class LVitem_SearchVM : ListViewItemVM_Base
     {
-        internal PathBuilder Directory { get { return _datum.As<PathBuilder>(); } set { _datum = value; } }
-        internal TabledString<TabledStringType_Files> TabledStringFilename;
+        internal PathBuilder
+            Directory { get { return _datum.As<PathBuilder>(); } set { _datum = value; } }
+        internal TabledString<TabledStringType_Files>
+            TabledStringFilename;
 
-        internal LocalTreeNode LocalTreeNode { get { return _datum.As<LocalTreeNode>(); } set { _datum = value; } }
+        internal LocalTreeNode
+            LocalTreeNode { get { return _datum.As<LocalTreeNode>(); } set { _datum = value; } }
         object _datum = null;
 
-        public string In { get; private set; } = " in ";    // interned
+        public string
+            In { get; private set; } = " in ";    // interned
 
-        public int Alternate { get; internal set; } = 0;
+        public int
+            Alternate { get; internal set; } = 0;
 
-        public string FolderOrFile
+        public string
+            FolderOrFile
         {
             get
             {
@@ -31,7 +37,8 @@ namespace DoubleFile
             }
         }
 
-        public string Parent
+        public string
+            Parent
         {
             get
             {

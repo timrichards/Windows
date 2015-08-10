@@ -100,23 +100,13 @@ namespace DoubleFile
             }
         }
 
-        bool IsValidSourcePathEdit
-        {
-            get
-            {
-                return (SaveDirListings.IsGoodDriveSyntax(formEdit_SourcePath.Text) &&
-                    ((false == IsVolumeNew) || Directory.Exists(formEdit_SourcePath.Text)));
-            }
-        }
+        bool IsValidSourcePathEdit =>
+            (SaveDirListings.IsGoodDriveSyntax(formEdit_SourcePath.Text) &&
+            ((false == IsVolumeNew) || Directory.Exists(formEdit_SourcePath.Text)));
 
-        bool IsOKenabled
-        {
-            get
-            {
-                return ((string.IsNullOrWhiteSpace(formEdit_SaveListingFile.Text) || IsValidListingEdit) &&
-                    IsValidSourcePathEdit);
-            }
-        }
+        bool IsOKenabled =>
+            ((string.IsNullOrWhiteSpace(formEdit_SaveListingFile.Text) || IsValidListingEdit) &&
+            IsValidSourcePathEdit);
 
         static string CapDrive(string strPath)
         {
@@ -218,12 +208,10 @@ namespace DoubleFile
             }
         }
 
-        void BtnCancel_Click()
-        {
+        void BtnCancel_Click() =>
             Window
-                .GetWindow(uc_VolumeEdit)
-                .As<LocalModernWindowBase>()?
-                .CloseIfSimulatingModal();
-        }
+            .GetWindow(uc_VolumeEdit)
+            .As<LocalModernWindowBase>()?
+            .CloseIfSimulatingModal();
     }
 }

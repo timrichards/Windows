@@ -11,12 +11,8 @@ namespace DoubleFile
             class Node
             {
                 // can't be struct because of object ==
-                internal Node(
-                    string in_str,
-                    uint nLineNo,
-                    ulong nLength,
-                    IReadOnlyList<uint> folderScore,
-                    RootNode rootNode)
+                internal
+                    Node(string in_str, uint nLineNo, ulong nLength, IReadOnlyList<uint> folderScore, RootNode rootNode)
                 {
                     if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
                         return;
@@ -57,7 +53,8 @@ namespace DoubleFile
                         nodeParent._subNodes.Add(_strPath, this);
                 }
 
-                internal LocalTreeNode AddToTree()
+                internal LocalTreeNode
+                    AddToTree()
                 {
                     if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
                         return new LocalTreeNode();

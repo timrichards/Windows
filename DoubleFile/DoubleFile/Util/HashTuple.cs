@@ -54,9 +54,7 @@ namespace DoubleFile
             }
         }
 
-        public override string ToString()
-        {
-            return Item1.ToString("X8").PadLeft(16, '0') + Item2.ToString("X8").PadLeft(16, '0');
-        }
+        public override string ToString() =>
+            Item1.ToString("X8").PadLeft(16, '0') + Item2.ToString("X8").PadLeft(16, '0');
     }
 }

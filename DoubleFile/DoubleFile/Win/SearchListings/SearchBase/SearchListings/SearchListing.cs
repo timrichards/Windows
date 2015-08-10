@@ -44,10 +44,7 @@ namespace DoubleFile
                 return this;
             }
 
-            internal void Join()
-            {
-                _thread.Join();
-            }
+            internal void Join() =>  _thread.Join();
 
             internal void Abort()
             {

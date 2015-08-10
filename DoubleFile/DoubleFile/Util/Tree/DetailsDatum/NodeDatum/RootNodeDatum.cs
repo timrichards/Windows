@@ -7,8 +7,8 @@
         internal readonly ulong VolumeFree;
         internal readonly ulong VolumeLength;
 
-        internal string RootText(string strSourcePath) =>
-            RootText(LVitemProjectVM.Nickname, strSourcePath);
+        internal string
+            RootText(string strSourcePath) => RootText(LVitemProjectVM.Nickname, strSourcePath);
         static internal string
             RootText(string strNickname, string strSourcePath)
         {

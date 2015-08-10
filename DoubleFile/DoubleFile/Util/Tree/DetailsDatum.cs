@@ -68,12 +68,7 @@ namespace DoubleFile
             };
         }
 
-        internal FolderKeyTuple Key
-        {
-            get
-            {
-                return new FolderKeyTuple(TotalLength, FileCountTotal, DirsWithFiles, FolderScore);
-            }
-        }
+        internal FolderKeyTuple Key =>
+            new FolderKeyTuple(TotalLength, FileCountTotal, DirsWithFiles, FolderScore);
     }
 }

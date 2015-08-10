@@ -234,23 +234,23 @@ namespace DoubleFile
                 if (Statics.FileDictionary
                     .IsAborted)
                 {
-                    return true;
+                    return true;    // from lambda Util.Closure
                 }
 
                 if (_bFileDictDone &&
                     _bTreeDone)
                 {
-                    return true;
+                    return true;    // from lambda Util.Closure
                 }
 
                 Util.WriteLine("IWinProgressClosing.ConfirmClose A");
 
-                return
+                return              // from lambda Util.Closure
                     (MessageBoxResult.Yes == WinProgress.WithWinProgress(w =>
                     MBoxStatic.ShowDialog("Do you want to cancel?", w.Title, MessageBoxButton.YesNo, w)));
             }))
             {
-                return false;
+                return false;       // Iff user said no then cancel and don't close.
             }
 
             Util.WriteLine("IWinProgressClosing.ConfirmClose B");

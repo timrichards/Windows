@@ -19,8 +19,7 @@ namespace DoubleFile
             get { return _wr.Get(lv => lv._lastSelectedFile); }
             private set { _wr.Get(lv => lv._lastSelectedFile = value); }
         }
-        Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyList<string>, LocalTreeNode>
-            _lastSelectedFile = null;
+        Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyList<string>, LocalTreeNode> _lastSelectedFile = null;
 
         public LVitem_FilesVM SelectedItem
         {
@@ -48,8 +47,8 @@ namespace DoubleFile
         void SelectedItem_AllTriggers(int nInitiator)
         {
             if (null != _selectedItem)
-                SelectedFileChangedOnNext(Tuple.Create(_selectedItem.LSduplicates, 
-                    (IReadOnlyList<string>)_selectedItem.FileLine, _treeNode), nInitiator);
+                SelectedFileChangedOnNext(Tuple.Create(_selectedItem.LSduplicates,_selectedItem.FileLine, _treeNode),
+                    nInitiator);
             else
                 SelectedFileChangedOnNext(null, nInitiator);
         }

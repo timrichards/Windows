@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Media;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace DoubleFile

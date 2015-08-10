@@ -110,7 +110,7 @@ namespace DoubleFile
 
             var parentNode = Parent;
 
-            while (parentNode != null)
+            while (null != parentNode)
             {
                 if (parentNode == treeNode)
                     return true;

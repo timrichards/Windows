@@ -40,13 +40,9 @@ namespace DoubleFile
         {
             var dt = DateTime.Now;
             var nCounter = 0;
-            var blockingFrame = new LocalDispatcherFrame(99851);
 
             foreach (var item in ieItems)
             {
-                if (Dispatcher.CurrentDispatcher.HasShutdownStarted)
-                    return;
-
                 Add(item, bQuiet: true);
 
                 if (1000 > ++nCounter)
@@ -55,11 +51,7 @@ namespace DoubleFile
                 if (100 < (DateTime.Now - dt).TotalMilliseconds)
                 {
                     // When there are too many items you get UI thread lockup.
-                    // One-shot: no need to dispose
-                    Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()
-                        .LocalSubscribe(99758, x => blockingFrame.Continue = false);
-
-                    blockingFrame.PushFrameToTrue();
+                    Util.Block(33);
                     dt = DateTime.Now;
                 }
 

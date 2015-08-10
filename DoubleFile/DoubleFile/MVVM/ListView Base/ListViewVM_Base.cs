@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
+using System.Windows.Threading;
 
 namespace DoubleFile
 {
@@ -34,7 +35,7 @@ namespace DoubleFile
                 RaiseItems();
         }
 
-        internal void Add<T>(IEnumerable<T> ieItems, bool bQuiet = false, Func<bool> Cancel = null)
+        internal void Add<T>(IEnumerable<T> ieItems, bool bQuiet = false)
             where T : ListViewItemVM_Base
         {
             var dt = DateTime.Now;
@@ -43,7 +44,7 @@ namespace DoubleFile
 
             foreach (var item in ieItems)
             {
-                if (Cancel?.Invoke() ?? false)
+                if (Dispatcher.CurrentDispatcher.HasShutdownStarted)
                     return;
 
                 Add(item, bQuiet: true);

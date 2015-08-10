@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading;
 
 namespace DoubleFile
 {
@@ -92,7 +93,7 @@ namespace DoubleFile
             if (0 == Statics.WithLVprojectVM(p => p?.CanLoadCount ?? 0))
                 return true;        // found there are no volumes loaded
 
-            _bRestarted = true;
+            _lsLVitems.Clear();
             ClearItems();
             TabledString<TabledStringType_Files>.GenerationStarting();
 
@@ -152,7 +153,6 @@ namespace DoubleFile
 
             try
             {
-                var lsLVitems = new List<LVitem_SearchVM> { };
                 PathBuilder LastFolder = null;
                 var nPrevHasFolder = 1;
 
@@ -173,7 +173,7 @@ namespace DoubleFile
                             if (_bDisposed)
                                 break;
 
-                            lsLVitems.Add(new LVitem_SearchVM
+                            _lsLVitems.Add(new LVitem_SearchVM
                             {
                                 Directory = Directory,
                                 TabledStringFilename = tabledStringFile,
@@ -185,7 +185,7 @@ namespace DoubleFile
                     }
                     else
                     {
-                        lsLVitems.Add(new LVitem_SearchVM { Directory = Directory });
+                        _lsLVitems.Add(new LVitem_SearchVM { Directory = Directory });
                         LastFolder = Directory;
                     }
                 }
@@ -193,11 +193,14 @@ namespace DoubleFile
                 WinProgress.CloseForced();
                 _dictResults = null;
 
-                if ((0 < lsLVitems.Count) &&
+                if ((0 < _lsLVitems.Count) &&
                     (false == _bDisposed))
                 {
-                    _bRestarted = false;
-                    Util.UIthread(99809, () => Add(lsLVitems, Cancel: () => _bDisposed || _bRestarted));
+                    try
+                    {
+                        Util.UIthread(99809, () => Add(_lsLVitems));
+                    }
+                    catch (InvalidOperationException) { }
                 }
             }
             catch (Exception e) when ((e is ArgumentNullException) || (e is NullReferenceException))
@@ -213,14 +216,14 @@ namespace DoubleFile
             _dictResults = null;
         }
 
+        List<LVitem_SearchVM>
+            _lsLVitems = new List<LVitem_SearchVM> { };
         SearchListings
             _searchType2 = null;
         IDictionary<SearchResultsDir, bool>
             _dictResults = null;
         bool
             _bDisposed = false;
-        bool
-            _bRestarted = false;
         const string
             _ksSearchKey = "Searching";
     }

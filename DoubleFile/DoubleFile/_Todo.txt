@@ -5,7 +5,6 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
-- starting a new search while the list is populating will list results starting from the end of the first
 - corner case: pounding search will increase memory usage
 - Assert box offset when app window partly off screen
 - Treemap selection rectangle still doesn't always know what the treemap treenode view is set at

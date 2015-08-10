@@ -47,15 +47,14 @@ namespace DoubleFile
                 return;
             }
 
-            searchStatus.Done();
+            Util.ThreadMake(() => searchStatus.Done());
         }
 
-        internal void EndThread()
+        internal void Abort()
         {
             foreach (SearchListing worker in _cbagWorkers)
                 worker.Abort();
 
-            IsAborted = true;
             _thread.Abort();
         }
 
@@ -64,9 +63,6 @@ namespace DoubleFile
             _thread = Util.ThreadMake(Go);
             return this;
         }
-
-        internal bool
-            IsAborted { get; private set; }
 
         readonly LV_ProjectVM
             _lvProjectVM = null;

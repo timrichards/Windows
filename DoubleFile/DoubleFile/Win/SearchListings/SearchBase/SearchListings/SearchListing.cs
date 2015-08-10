@@ -200,7 +200,7 @@ namespace DoubleFile
                     return;
                 }
 
-                searchStatus.Status(searchResults, bFirst, bLast);
+                Util.ThreadMake(() => searchStatus.Status(searchResults, bFirst, bLast));
             }
 
             LVitem_ProjectVM

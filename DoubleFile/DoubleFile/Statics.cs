@@ -107,7 +107,7 @@ namespace DoubleFile
                 var s = "" + o;
 
                 Util.Assert(99666, false, "UnhandledException\n" +
-                    o?.Message + "\n" + t + "\n" + s);
+                    t + "\n" + o?.Message + "\n" + s);
             });
 
             // ensure that Statics is created only once

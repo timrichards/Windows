@@ -34,7 +34,8 @@ namespace DoubleFile
                 var rootNodeDatum = ((RootNodeDatum)topNode.NodeDatum);
 
                 var strNode =
-                    (Path.IsPathRooted(strPath))
+                    ((0 > strPath.IndexOfAny(Path.GetInvalidPathChars())) &&
+                    Path.IsPathRooted(strPath))
                     ? "" + rootNodeDatum.LVitemProjectVM.SourcePath.TrimEnd('\\')
                     : topNode.Text;
 

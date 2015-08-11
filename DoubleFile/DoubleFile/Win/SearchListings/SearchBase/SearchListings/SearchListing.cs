@@ -21,7 +21,7 @@ namespace DoubleFile
 
         class SearchListing : SearchBase
         {
-            internal SearchListing(SearchBase searchBase, LVitem_ProjectVM lvItemProjectVM, Action onAbort)
+            internal SearchListing(SearchBase searchBase, LVitem_ProjectExplorer lvItemProjectVM, Action onAbort)
                 : base(searchBase)
             {
                 _lvItemProjectVM = lvItemProjectVM;
@@ -215,7 +215,7 @@ namespace DoubleFile
                 Util.ThreadMake(() => searchStatus.Status(searchResults, bFirst, bLast));
             }
 
-            LVitem_ProjectVM
+            LVitem_ProjectExplorer
                 _lvItemProjectVM = null;
             Thread
                 _thread = new Thread(() => { });

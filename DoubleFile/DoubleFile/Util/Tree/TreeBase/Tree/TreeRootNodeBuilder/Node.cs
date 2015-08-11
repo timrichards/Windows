@@ -58,7 +58,6 @@ namespace DoubleFile
                         return new LocalTreeNode();
 
                     var nIndex = _strPath.LastIndexOf('\\');
-_bUseShortPath = false;
                     var strShortPath = _bUseShortPath ? _strPath.Substring(nIndex + 1) : _strPath;
                     LocalTreeNode treeNode = null;
 
@@ -73,16 +72,18 @@ _bUseShortPath = false;
                             subNode._bUseShortPath = false;
                             treeNode = subNode.AddToTree();
 
-                            // further down at new NodeDatum...
-                            _nPrevLineNo = subNode._nPrevLineNo;
-                            _nLength = subNode._nLength;
-                            _nLineNo = subNode._nLineNo;
-                            _folderScore = subNode._folderScore;
+                            // pass the culled path back to TreeRootNodeBuilder; ultimately to LVitem_ProjectVM
+                            treeNode.NodeDatum =
+                                new RootNodeDatum(new NodeDatum(new DetailsDatum(
+                                subNode._nPrevLineNo, subNode._nLineNo, subNode._nLength, subNode._folderScore)))
+                            {
+                                CulledPath = (TabledString<TabledStringType_Folders>)subNode._strPath
+                            };
+
+                            return treeNode;
                         }
-                        else
-                        {
-                            treeNode = new LocalTreeNode(strShortPath, new List<LocalTreeNode> { subNode.AddToTree() });
-                        }
+
+                        treeNode = new LocalTreeNode(strShortPath, new List<LocalTreeNode> { subNode.AddToTree() });
                     }
                     else if (1 < _subNodes.Count)
                     {
@@ -98,9 +99,6 @@ _bUseShortPath = false;
                         treeNode = new LocalTreeNode(strShortPath);
                     }
 
-                    //Utilities.Assert(1301.2305, treeNode.Text == strShortPath, "\"" + treeNode.Text + "\" != \"" + strShortPath + "\""); not true for non-root
-                    Util.Assert(1301.2306m, -1 == treeNode.SelectedImageIndex);     // sets the bitmap size
-                    treeNode.SelectedImageIndex = -1;
                     treeNode.NodeDatum = new NodeDatum(new DetailsDatum(_nPrevLineNo, _nLineNo, _nLength, _folderScore));  // this is almost but not quite always newly assigned here.
                     return treeNode;
                 }

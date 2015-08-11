@@ -18,7 +18,7 @@ namespace DoubleFile
 
                 return
                     (null != rootNodeDatum)
-                    ? "" + rootNodeDatum.RootText   // if this is a root treenode return nickname text
+                    ? "" + rootNodeDatum.LVitemProjectVM.RootText   // if this is a root treenode return nickname text
                     : strText;
             }
             set { _text = (TabledString<TabledStringType_Folders>)value; }

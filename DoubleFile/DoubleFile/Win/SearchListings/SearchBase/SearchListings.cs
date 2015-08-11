@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 
@@ -28,8 +29,8 @@ namespace DoubleFile
 
             var dtStart = DateTime.Now;
 
-            foreach (var volStrings in _lvProjectVM.ItemsCast)
-                _cbagWorkers.Add(new SearchListing(this, volStrings, Abort).DoThreadFactory());
+            foreach (var lvItemProjectVM in _lvProjectVM.Items.Cast<LVitem_ProjectExplorer>())
+                _cbagWorkers.Add(new SearchListing(this, lvItemProjectVM, Abort).DoThreadFactory());
 
             foreach (SearchListing worker in _cbagWorkers)
                 worker.Join();

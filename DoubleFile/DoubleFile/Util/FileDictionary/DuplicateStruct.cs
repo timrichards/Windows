@@ -5,7 +5,7 @@ namespace DoubleFile
     {
         internal struct DuplicateStruct
         {
-            internal LVitem_ProjectVM LVitemProjectVM;
+            internal LVitem_ProjectExplorer LVitemProjectVM;
             internal int LineNumber;
         }
     }

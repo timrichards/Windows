@@ -19,7 +19,7 @@ namespace DoubleFile
         partial class TreeRootNodeBuilder : TreeBase
         {
             internal
-                TreeRootNodeBuilder(LVitem_ProjectVM lvItemProjectVM, TreeBase base_in)
+                TreeRootNodeBuilder(LVitem_ProjectExplorer lvItemProjectVM, TreeBase base_in)
                 : base(base_in)
             {
                 _lvItemProjectVM = lvItemProjectVM;
@@ -263,6 +263,9 @@ namespace DoubleFile
 
                 if (null != rootTreeNode)
                 {
+                    _lvItemProjectVM.CulledPath = rootTreeNode.NodeDatum.As<RootNodeDatum>()
+                        ?.CulledPath;
+
                     rootTreeNode.NodeDatum = new RootNodeDatum(
                         rootTreeNode.NodeDatum,
                         _lvItemProjectVM,
@@ -324,7 +327,7 @@ namespace DoubleFile
                 _thread = new Thread(() => { });
             bool
                 _bThreadAbort = false;
-            readonly LVitem_ProjectVM
+            readonly LVitem_ProjectExplorer
                 _lvItemProjectVM = null;
         }
     }

@@ -195,6 +195,7 @@
       <DependentUpon>Introduction.xaml</DependentUpon>
     </Compile>
     <Compile Include="LocalTreeNode\LocalColorItemBase.cs" />
+    <Compile Include="LocalTreeNode\LVitem_ProjectExplorer.cs" />
     <Compile Include="Statics.cs" />
     <Compile Include="Util\LocalIsoStore.cs" />
     <Compile Include="Util\Iterator.cs" />

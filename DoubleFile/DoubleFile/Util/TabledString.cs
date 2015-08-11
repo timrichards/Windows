@@ -9,6 +9,8 @@ namespace DoubleFile
     {
         public override string
             ToString() => _t.Get(nIndex);
+        internal string
+            IfGenerated => (_t is TabledStringGenerated) ? "" + this : null;
 
         static public explicit operator
             TabledString<T>(string value) =>

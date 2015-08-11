@@ -35,8 +35,13 @@ namespace DoubleFile
         }
 
         internal LVitem_ProjectVM(LVitem_ProjectVM lvItemTemp)
-            : this(lvItemTemp?.SubItems.ToList() ?? null)
+            : this(lvItemTemp?.SubItems.ToList())
         {
+            if (null == lvItemTemp)
+                return;
+
+            LinesTotal = lvItemTemp.LinesTotal;
+            HashV2 = lvItemTemp.HashV2;
         }
 
         internal bool Include
@@ -47,22 +52,6 @@ namespace DoubleFile
 
         internal bool WouldSave => (false == _ksFileExistsCheck.Contains(Status));
         internal bool CanLoad => (Include && _ksFileExistsCheck.Contains(Status) && (FileParse.ksError != Status));
-
-        internal string
-            Volume =>
-            (false == string.IsNullOrWhiteSpace(VolumeGroup))
-            ? VolumeGroup.Replace('\\', '/')
-            : RootText;
-
-        internal string
-            RootText =>
-            (string.IsNullOrWhiteSpace(Nickname))
-            ? SourcePath
-            : (Nickname +
-            ((Nickname.EndsWith(SourcePath))
-            ? ""
-            : " (" + SourcePath.TrimEnd('\\') + ")"))
-            .Replace('\\', '/');
 
         internal void SetSaved()
         {
@@ -81,8 +70,10 @@ namespace DoubleFile
             }
         }
 
-        internal int LinesTotal;
-        internal bool HashV2;
+        internal int
+            LinesTotal;
+        internal bool 
+            HashV2;
 
         readonly string _ksFileExistsCheck = FileParse.ksUsingFile + FileParse.ksSaved;
     }

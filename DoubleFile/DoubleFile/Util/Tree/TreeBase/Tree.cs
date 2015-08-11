@@ -50,7 +50,7 @@ namespace DoubleFile
 
             foreach (var treeRoot
                 in from lvItemProjectVM
-                in LVprojectVM.ItemsCast
+                in LVprojectVM.Items.Cast<LVitem_ProjectExplorer>()
                 where lvItemProjectVM.CanLoad
                 select new TreeRootNodeBuilder(lvItemProjectVM, this))
             {

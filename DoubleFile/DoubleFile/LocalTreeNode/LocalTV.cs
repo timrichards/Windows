@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DoubleFile
 {
     partial class LocalTV
     {
+        static internal LV_ProjectVM
+            LVprojectVM => _wr.Get(s => s._lvProjectVM);
+
         static internal IReadOnlyList<LocalTreeNode>
             AllNodes => _wr.Get(o => o._allNodes);
         List<LocalTreeNode> _allNodes = new List<LocalTreeNode> { };
@@ -56,8 +60,6 @@ namespace DoubleFile
         static internal bool
             FactoryCreate(LV_ProjectVM lvProjectVM)
         {
-            Util.Assert(99916, false == Statics.WithLVprojectVM(p => ReferenceEquals(lvProjectVM, p)));
-
             if (null != _instance)
             {
                 Util.Assert(99858, false);
@@ -67,9 +69,15 @@ namespace DoubleFile
             if (0 == (lvProjectVM?.CanLoadCount ?? 0))
                 return false;
 
+            var lvProjectExplorer = new LV_ProjectVM(lvProjectVM);
+            var lvItems = lvProjectExplorer.ItemsCast.ToList();
+
+            lvProjectExplorer.ClearItems();
+            lvProjectExplorer.Add(lvItems.Select(lvItem => new LVitem_ProjectExplorer(lvItem)));
+
             _wr.SetTarget(
                 _instance =
-                new LocalTV(lvProjectVM));
+                new LocalTV(lvProjectExplorer));
 
             return WithLocalTV(localTV =>
                 localTV.DoTree());

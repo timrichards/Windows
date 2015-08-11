@@ -230,7 +230,7 @@ namespace DoubleFile
                 _lsSearchResults = new List<SearchResults>();
 
                 _searchType2 =
-                    new SearchListings(Statics.LVprojectVM_Copy, new SearchBase
+                    new SearchListings(LocalTV.LVprojectVM, new SearchBase
                 (
                     SearchText,
                     SearchText.ToLower() != SearchText,

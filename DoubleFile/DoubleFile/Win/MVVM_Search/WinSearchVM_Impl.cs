@@ -91,21 +91,8 @@ namespace DoubleFile
 
         void ISearchStatus.Status(SearchResults searchResults, bool bFirst, bool bLast)
         {
-            lock (_lsSearchResults)     // Each status represents a listing file, so this insert-sort is infrequent; small
-            {
-                if (UseNicknames)
-                {
-                    _lsSearchResults.Insert(_lsSearchResults.TakeWhile(r =>
-                        searchResults.LVitemProjectVM.RootText.CompareTo(r.LVitemProjectVM.RootText) >= 0).Count(),
-                        searchResults);
-                }
-                else
-                {
-                    _lsSearchResults.Insert(_lsSearchResults.TakeWhile(r =>
-                        searchResults.LVitemProjectVM.SourcePath.CompareTo(r.LVitemProjectVM.SourcePath) >= 0).Count(),
-                        searchResults);
-                }
-            }
+            lock (_lsSearchResults)     // Each status represents a listing file, so this lock is few and infrequent
+                _lsSearchResults.Add(searchResults);
         }
 
         void ISearchStatus.Done()
@@ -115,7 +102,12 @@ namespace DoubleFile
             if (false == _bDisposed)
                 TabledString<TabledStringType_Files>.GenerationEnded();
 
-            bool bClosed = false;   // A Nicety (CloseForced can take care of itself)
+            if (UseNicknames)
+                _lsSearchResults.Sort((x, y) => x.LVitemProjectVM.RootText.CompareTo(y.LVitemProjectVM.RootText));
+            else
+                _lsSearchResults.Sort((x, y) => x.LVitemProjectVM.SourcePath.CompareTo(y.LVitemProjectVM.SourcePath));
+
+            var bClosed = false;   // A Nicety (CloseForced can take care of itself)
 
             try
             {
@@ -174,7 +166,7 @@ namespace DoubleFile
                     break;
 
                 // SearchResults.PathBuilder has a \ at the end for folder & file search where folder matches,
-                // because the key would dupe for file matches.
+                // because the key would dupe for file matches. In actuality it's for file: without \ folder sorts first.
                 var Directory = PathBuilder.FactoryCreateOrFind(("" + searchResult.PathBuilder).TrimEnd('\\'));
                 var bHasFolder = (LastFolder == Directory);
 

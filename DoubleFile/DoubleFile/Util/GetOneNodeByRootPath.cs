@@ -42,8 +42,8 @@ namespace DoubleFile
                 if (bIgnoreCase)
                     strNode = strNode.ToLower();
 
-                var arrPath = strPath.Split(new[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
-                var nFolderDepth = arrPath.Length;
+                var asPath = strPath.Split(new[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
+                var nFolderDepth = asPath.Length;
 
                 if (strNode.Contains('\\'))
                 {
@@ -52,13 +52,13 @@ namespace DoubleFile
                     for (var n = 0; n < nFolderDepth - 1; ++n)
                     {
                         if (n < nCount)
-                            arrPath[0] += '\\' + arrPath[n + 1];
+                            asPath[0] += '\\' + asPath[n + 1];
                     }
 
                     for (var n = 1; n < nFolderDepth - 1; ++n)
                     {
-                        if ((nCount + n) < arrPath.Length)
-                            arrPath[n] = arrPath[nCount + n];
+                        if ((nCount + n) < asPath.Length)
+                            asPath[n] = asPath[nCount + n];
                     }
 
                     if (1 < nFolderDepth)
@@ -69,7 +69,7 @@ namespace DoubleFile
                     }
                 }
 
-                if (strNode != arrPath[0])
+                if (strNode != asPath[0])
                     continue;
 
                 if ((null != lvItemProjectVM) &&
@@ -83,7 +83,7 @@ namespace DoubleFile
                 if ((1 < nFolderDepth) &&
                     (null != nodeRet))
                 {
-                    nodeRet = GetSubNode(nodeRet, arrPath, 1, nFolderDepth, bIgnoreCase);
+                    nodeRet = GetSubNode(nodeRet, asPath, 1, nFolderDepth, bIgnoreCase);
 
                     if (null != nodeRet)
                         return nodeRet;
@@ -94,25 +94,25 @@ namespace DoubleFile
         }
 
         static LocalTreeNode
-            GetSubNode(LocalTreeNode node, IReadOnlyList<string> pathLevel, int nLevel, int nPathLevelLength, bool bIgnoreCase)
+            GetSubNode(LocalTreeNode node, IReadOnlyList<string> asPath, int nLevel, int nFolderDepth, bool bIgnoreCase)
         {
             if (null == node.Nodes)
                 return null;
 
-            foreach (LocalTreeNode subNode in node.Nodes)
+            foreach (var subNode in node.Nodes)
             {
                 var strText =
                     bIgnoreCase
                     ? subNode.Text.ToLower()
                     : subNode.Text;
 
-                if (strText != pathLevel[nLevel])
+                if (strText != asPath[nLevel])
                     continue;
 
-                if (++nLevel == nPathLevelLength)
-                    return subNode;
-
-                return GetSubNode(subNode, pathLevel, nLevel, nPathLevelLength, bIgnoreCase);
+                return
+                    (++nLevel == nFolderDepth)
+                    ? subNode
+                    : GetSubNode(subNode, asPath, nLevel, nFolderDepth, bIgnoreCase);
             }
 
             return null;

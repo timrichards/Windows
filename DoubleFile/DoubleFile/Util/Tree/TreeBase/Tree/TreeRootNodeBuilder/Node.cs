@@ -20,10 +20,8 @@ namespace DoubleFile
                     Util.Assert(1301.2303m, nLineNo != 0);
                     _rootNode = rootNode;
 
-                    if (in_str.EndsWith(@":\") == false)
-                    {
+                    if (false == in_str.EndsWith(@":\"))
                         Util.Assert(1301.2304m, in_str.Trim().EndsWith(@"\") == false);
-                    }
 
                     _strPath = in_str;
                     _nPrevLineNo = _rootNode.FirstLineNo;
@@ -60,6 +58,7 @@ namespace DoubleFile
                         return new LocalTreeNode();
 
                     var nIndex = _strPath.LastIndexOf('\\');
+_bUseShortPath = false;
                     var strShortPath = _bUseShortPath ? _strPath.Substring(nIndex + 1) : _strPath;
                     LocalTreeNode treeNode = null;
 
@@ -69,7 +68,7 @@ namespace DoubleFile
 
                         if (this == _rootNode.Nodes.Values.First())
                         {
-                            // cull all root node single-chains.
+                            Util.WriteLine(_strPath + " cull all root node single-chains");
                             _rootNode.Nodes = _subNodes;
                             subNode._bUseShortPath = false;
                             treeNode = subNode.AddToTree();
@@ -100,7 +99,7 @@ namespace DoubleFile
                     }
 
                     //Utilities.Assert(1301.2305, treeNode.Text == strShortPath, "\"" + treeNode.Text + "\" != \"" + strShortPath + "\""); not true for non-root
-                    Util.Assert(1301.2306m, treeNode.SelectedImageIndex == -1);     // sets the bitmap size
+                    Util.Assert(1301.2306m, -1 == treeNode.SelectedImageIndex);     // sets the bitmap size
                     treeNode.SelectedImageIndex = -1;
                     treeNode.NodeDatum = new NodeDatum(new DetailsDatum(_nPrevLineNo, _nLineNo, _nLength, _folderScore));  // this is almost but not quite always newly assigned here.
                     return treeNode;

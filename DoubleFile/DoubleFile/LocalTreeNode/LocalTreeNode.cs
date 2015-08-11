@@ -18,7 +18,7 @@ namespace DoubleFile
 
                 return
                     (null != rootNodeDatum)
-                    ? "" + rootNodeDatum.RootText
+                    ? "" + rootNodeDatum.RootText   // if this is a root treenode return nickname text
                     : strText;
             }
             set { _text = (TabledString<TabledStringType_Folders>)value; }
@@ -144,6 +144,8 @@ namespace DoubleFile
             TreeSelect.DoThreadFactory(this, 0 /* UI Initiator */, strFile);
             return this;
         }
+
+        public override string ToString() => FullPath;      // for debug
 
         internal NodeDatum
             NodeDatum;

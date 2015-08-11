@@ -41,7 +41,7 @@ namespace DoubleFile
             if (0 == Statics.WithLVprojectVM(p => p?.CanLoadCount ?? 0))
                 return true;        // found there are no volumes loaded
 
-            LVitem_SearchVM.UseNickname = UseNicknames;   // bool: root text is nickname or volume group based
+            LVitem_SearchVM.UseNickname = UseNicknames;
             ClearItems();
             TabledString<TabledStringType_Files>.GenerationStarting();
 

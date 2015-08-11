@@ -76,31 +76,33 @@ namespace DoubleFile
 
         internal LocalTreeNode DetachFromTree()
         {
+            NextNode = null;
+            Parent = null;
             Level = -1;
 
             Nodes?.ForEach(treeNode =>
                 treeNode.DetachFromTree());
 
+            Nodes = null;
             return this;
         }
 
         internal string
             FullPath => FullPathGet(true);
         internal string
-            FullPathGet(bool bRootText)
+            FullPathGet(bool UseNickname)
         {
             var sbPath = new StringBuilder();
-            var treeNode = this;
 
-            do
+            for (var treeNode = this; ; treeNode = treeNode.Parent)
             {
-                sbPath
-                    .Insert(0, '\\')
-                    .Insert(0, bRootText ? treeNode.Text : "" + treeNode._text);
-            }
-            while (null != (treeNode = treeNode.Parent));
+                if (null == treeNode.Parent)
+                    return ("" + sbPath.Insert(0, UseNickname ? treeNode.Text : "" + treeNode._text));
 
-            return ("" + sbPath).TrimEnd('\\');
+                sbPath
+                    .Insert(0, treeNode._text)
+                    .Insert(0, '\\');
+            }
         }
 
         internal bool IsChildOf(LocalTreeNode treeNode)

@@ -48,36 +48,23 @@ namespace DoubleFile
         internal bool WouldSave => (false == _ksFileExistsCheck.Contains(Status));
         internal bool CanLoad => (Include && _ksFileExistsCheck.Contains(Status) && (FileParse.ksError != Status));
 
-        internal string Volume
-        {
-            get
-            {
-                if (false == string.IsNullOrWhiteSpace(VolumeGroup))
-                    return VolumeGroup;
-
-                if (false == string.IsNullOrWhiteSpace(Nickname))
-                    return RootText;
-
-                return SourcePath;
-            }
-        }
+        internal string
+            Volume =>
+            (false == string.IsNullOrWhiteSpace(VolumeGroup))
+            ? VolumeGroup.Replace('\\', '/')
+            : (false == string.IsNullOrWhiteSpace(Nickname))
+            ? RootText      // which is based on Nickname
+            : SourcePath;
 
         internal string
-            RootText
-        {
-            get
-            {
-                if (string.IsNullOrWhiteSpace(Nickname))
-                    return SourcePath;
-
-                var sourcePathNoSlash = SourcePath.TrimEnd('\\');
-
-                if (("" + Nickname).EndsWith(sourcePathNoSlash))
-                    return Nickname;
-
-                return Nickname + " (" + sourcePathNoSlash + ")";
-            }
-        }
+            RootText =>
+            (string.IsNullOrWhiteSpace(Nickname))
+            ? SourcePath
+            : (Nickname +
+            ((Nickname.EndsWith(SourcePath))
+            ? ""
+            : " (" + SourcePath.TrimEnd('\\') + ")"))
+            .Replace('\\', '/');
 
         internal void SetSaved()
         {

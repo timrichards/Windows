@@ -5,8 +5,11 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- beating on search causes 1 in 5 no appear
+- backspace key is just like any browser: history back button
+- naving to search directly, invoking SDL, leaves SDL completed open but then does not focus on input text box
 - repeatedly scrolling to the end and cycling the Variance pages will eat up memory.
-- holding down the esc key while building the explorer will crash the app.
+- holding down the esc key while building the explorer will crash the app
 - corner case: pounding search will increase memory usage
 - Assert box offset when app window partly off screen
 - Treemap selection rectangle still doesn't always know what the treemap treenode view is set at

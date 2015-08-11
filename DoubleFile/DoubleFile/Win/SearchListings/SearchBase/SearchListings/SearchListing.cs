@@ -126,8 +126,11 @@ namespace DoubleFile
                         {
                             strDir = arrLine[2].TrimEnd('\\');
 
-                            if (_bRootText)
-                                strDir = strDir.Replace(_lvItemProjectVM.SourcePath, _lvItemProjectVM.RootText + '\\');
+                            if (_bRootText &&
+                                (_lvItemProjectVM.SourcePath != _lvItemProjectVM.RootText))
+                            {
+                                strDir = strDir.Replace(_lvItemProjectVM.SourcePath.TrimEnd('\\'), _lvItemProjectVM.RootText);
+                            }
                         }
 
                         if (bDir &&

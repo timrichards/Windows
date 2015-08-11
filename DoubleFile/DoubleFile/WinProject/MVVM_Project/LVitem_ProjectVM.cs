@@ -52,9 +52,7 @@ namespace DoubleFile
             Volume =>
             (false == string.IsNullOrWhiteSpace(VolumeGroup))
             ? VolumeGroup.Replace('\\', '/')
-            : (false == string.IsNullOrWhiteSpace(Nickname))
-            ? RootText      // which is based on Nickname
-            : SourcePath;
+            : RootText;
 
         internal string
             RootText =>

@@ -336,8 +336,10 @@ namespace DoubleFile
                 }
                 catch (Exception e)
                 {
-                    Util.Assert(99668, false, "Exception in StartProcess\n" +
-                        e.GetBaseException().Message);
+                    var b = e.GetBaseException();
+
+                    Util.Assert(99668, false, b.GetType() + " in StartProcess\n" +
+                        b.Message);
                 }
             })
             { WindowClosingCallback = new WeakReference<IWinProgressClosing>(this) })

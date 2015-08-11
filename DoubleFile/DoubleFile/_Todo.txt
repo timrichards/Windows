@@ -5,6 +5,7 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- GoTo button in Search doesn't go to file
 - beating on search causes 1 in 5 no appear
 - backspace key is just like any browser: history back button
 - naving to search directly, invoking SDL, leaves SDL completed open but then does not focus on input text box

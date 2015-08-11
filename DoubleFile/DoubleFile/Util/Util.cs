@@ -175,8 +175,10 @@ namespace DoubleFile
                     catch (ThreadAbortException) { }
                     catch (Exception e)
                     {
-                        Util.Assert(99675, false, "Exception in ParallelForEach\n" +
-                            e.GetBaseException().Message);
+                        var b = e.GetBaseException();
+
+                        Util.Assert(99675, false, b.GetType() + " in ParallelForEach\n" +
+                            b.Message);
                     }
                 });
             }

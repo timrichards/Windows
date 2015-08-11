@@ -15,7 +15,7 @@
             </Grid.ColumnDefinitions>
             <TextBox Text="{Binding SearchText, Mode=OneWayToSource}" Name="formEdit_search" Grid.Column="0" HorizontalContentAlignment="Stretch"/>
             <StackPanel Grid.Column="1" Orientation="Horizontal">
-                <CheckBox Name="formChk_Nicknames" IsChecked="{Binding Nicknames}" Grid.Column="1" Content="Nicknames" Width="Auto"/>
+                <CheckBox Name="formChk_Nicknames" IsChecked="{Binding UseNicknames}" Grid.Column="1" Content="Nicknames" Width="Auto"/>
                 <CheckBox Name="formChk_Regex" IsChecked="{Binding Regex}" Grid.Column="1" Content="Regex" Width="Auto"/>
                 <Button Command="{Binding Icmd_Folders}" Grid.Column="1" Content="Folders" Width="Auto"/>
                 <Button Command="{Binding Icmd_FoldersAndFiles}" Grid.Column="1" Content="Folders &amp; files" Width="Auto"/>

@@ -20,7 +20,7 @@ namespace DoubleFile
             Alternate { get; internal set; } = 0;
 
         static internal bool
-            RootText;
+            UseNickname;
 
         public string
             FolderOrFile
@@ -36,7 +36,7 @@ namespace DoubleFile
                     if (null != parent)
                         return LocalTreeNode.Text;
 
-                    strRet = LocalTreeNode.FullPathGet(RootText);
+                    strRet = LocalTreeNode.FullPathGet(UseNickname);
                 }
                 else
                 {
@@ -62,7 +62,7 @@ namespace DoubleFile
                     return null;
 
                 if (null != LocalTreeNode)
-                    return LocalTreeNode.Parent?.FullPathGet(RootText);
+                    return LocalTreeNode.Parent?.FullPathGet(UseNickname);
 
                 var strDirectory = "" + Directory;
                 var nIx = strDirectory.LastIndexOf('\\');

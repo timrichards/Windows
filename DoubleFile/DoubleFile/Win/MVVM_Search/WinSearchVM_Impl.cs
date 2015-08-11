@@ -41,7 +41,7 @@ namespace DoubleFile
             if (0 == Statics.WithLVprojectVM(p => p?.CanLoadCount ?? 0))
                 return true;        // found there are no volumes loaded
 
-            LVitem_SearchVM.RootText = Nicknames;   // bool: root text is nickname or volume group based
+            LVitem_SearchVM.UseNickname = UseNicknames;   // bool: root text is nickname or volume group based
             ClearItems();
             TabledString<TabledStringType_Files>.GenerationStarting();
 
@@ -93,7 +93,7 @@ namespace DoubleFile
         {
             lock (_lsSearchResults)     // Each status represents a listing file, so this insert-sort is infrequent; small
             {
-                if (Nicknames)
+                if (UseNicknames)
                 {
                     _lsSearchResults.Insert(_lsSearchResults.TakeWhile(r =>
                         searchResults.LVitemProjectVM.RootText.CompareTo(r.LVitemProjectVM.RootText) >= 0).Count(),
@@ -246,7 +246,7 @@ namespace DoubleFile
                     bSearchFilesOnly,
                     null,
                     Regex,
-                    Nicknames,
+                    UseNicknames,
                     new WeakReference<ISearchStatus>(this)
                 ))
                     .DoThreadFactory();

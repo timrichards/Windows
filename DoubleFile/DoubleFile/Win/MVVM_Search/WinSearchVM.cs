@@ -11,7 +11,7 @@ namespace DoubleFile
 
         public string SearchText { private get; set; }
         public bool Regex { private get; set; }
-        public bool Nicknames { private get; set; }
+        public bool UseNicknames { private get; set; }
 
         public LVitem_SearchVM SelectedItem
         {

@@ -7,8 +7,8 @@
         internal readonly ulong VolumeFree;
         internal readonly ulong VolumeLength;
 
-        internal TabledString<TabledStringType_Folders>
-            RootText;
+        internal TabledString<TabledStringType_Folders>     // populating this here (redundantly) sets up the string table
+            RootText;                                       // so RootText can be used in search, in PathBuilder.
 
         internal
             RootNodeDatum(NodeDatum node, LVitem_ProjectVM lvItemProjectVM,

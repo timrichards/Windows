@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace DoubleFile
@@ -20,7 +21,7 @@ namespace DoubleFile
         {
             UseNickname = bUseNickname;
 
-            _lastGets = _lastGets.Take(1024).ToList();
+            _lastGets = _lastGets.Skip(Math.Max(0, _lastGets.Count - 1024)).ToList();
             _bUpdating = true;
 
             foreach (var lvitemSearchVM in _lastGets)

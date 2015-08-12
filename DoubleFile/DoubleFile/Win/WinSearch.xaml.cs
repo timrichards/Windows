@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reactive.Linq;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -10,7 +11,10 @@ namespace DoubleFile
     {
         public WinSearch()
         {
-            InitializeComponent();            
+            InitializeComponent();
+
+            if (Statics.Namespace != GetType().Namespace)   // no project so nicknames in the VolTreeMap assembly
+                formChk_Nicknames.Visibility = Visibility.Collapsed;
         }
 
         protected override void LocalNavigatedTo()

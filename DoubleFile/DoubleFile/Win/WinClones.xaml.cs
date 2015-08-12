@@ -25,13 +25,19 @@ namespace DoubleFile
             InitializeComponent();            
         }
 
+        protected override void LocalNavigatedTo() =>
+            _bNavigatedTo = true;
+
         protected override void LocalFragmentNavigation(string strFragment)
         {
-            DataContext = 
-                _winFormsLVVM =
-                WinClonesVM.FactoryGetHolder(strFragment);
+            if (false == _bNavigatedTo)
+                _bNicknames = formChk_Nicknames.IsChecked ?? false;
+            
+            _bNavigatedTo = false;
 
-            _winFormsLVVM.UseNicknames = _bNicknames;
+            _winFormsLVVM = WinClonesVM.FactoryGetHolder(strFragment);
+            _winFormsLVVM.UseNicknames = _bNicknames;               // set before setting data context
+            DataContext = _winFormsLVVM;
 
             LocalTitle =
                 new CultureInfo("en-US", false).TextInfo            // future proof to title case
@@ -52,5 +58,7 @@ namespace DoubleFile
             _winFormsLVVM = null;
         bool
             _bNicknames = false;
+        bool
+            _bNavigatedTo = false;
     }
 }

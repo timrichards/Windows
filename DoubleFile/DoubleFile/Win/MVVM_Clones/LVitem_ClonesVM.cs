@@ -59,8 +59,8 @@ namespace DoubleFile
 
         internal LVitem_ClonesVM(IList<LocalTreeNode> treeNodes, NicknameUpdater nicknameUpdater)
         {
-            NicknameUpdater = nicknameUpdater;
             TreeNodes = treeNodes;
+            NicknameUpdater = nicknameUpdater;
 
             Icmd_NextClonePath =
                 new RelayCommand(() =>

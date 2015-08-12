@@ -66,8 +66,16 @@ namespace DoubleFile
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
 
             _nicknameUpdater = ItemsCast.Skip(1 /* marker */).Select(lvItem => lvItem.NicknameUpdater).FirstOrDefault();
-            Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater?.UpdateNicknames(UseNicknames));
-            _nicknameUpdater?.Clear();
+
+            if (null != _nicknameUpdater)
+            {
+                Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateNicknames(UseNicknames));
+                _nicknameUpdater.Clear();
+            }
+            else
+            {
+                Util.Assert(99865, false, bTraceOnly: true);
+            }
 
             return this;
         }

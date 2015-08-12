@@ -21,7 +21,7 @@
             return this;
         }
         internal string
-            CulledPath => _strCulledPath;
+            CulledPath => _strCulledPath ?? SourcePath;
         string _strCulledPath;
 
         internal string
@@ -29,12 +29,10 @@
         {
             get
             {
-                string culledPath = _strCulledPath ?? SourcePath;
-
                 var strRet = (string.IsNullOrWhiteSpace(Nickname))
-                    ? culledPath
+                    ? CulledPath
                     : (Nickname +
-                    ((Nickname.EndsWith(culledPath)) ? "" : " (" + culledPath.TrimEnd('\\') + ")"))
+                    ((Nickname.EndsWith(CulledPath)) ? "" : " (" + CulledPath.TrimEnd('\\') + ")"))
                     .Replace('\\', '/');
 
                 if (null != _strCulledPath)
@@ -49,5 +47,8 @@
                 return strRet;
             }
         }
+
+        internal string InsertNickname(PathBuilder tabledFolder) =>
+            (tabledFolder + "\\").Replace(CulledPath, RootText + '\\').TrimEnd('\\').Replace("\\\\", "\\");
     }
 }

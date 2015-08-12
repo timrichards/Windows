@@ -51,9 +51,10 @@ namespace DoubleFile
                     if (null != TabledStringFilename)
                         return "" + TabledStringFilename;
 
-                    strRet = "" + Directory;
-
-                    // Nickname
+                    strRet =
+                        (UseNickname)
+                        ? LVitemProjectVM.InsertNickname(Directory)
+                        : "" + Directory;
                 }
 
                 In = null;
@@ -74,9 +75,10 @@ namespace DoubleFile
                 if (null != LocalTreeNode)
                     return LocalTreeNode.Parent?.FullPathGet(UseNickname);
 
-                var strDirectory = "" + Directory;
-
-                // Nickname
+                var strDirectory =
+                    (UseNickname)
+                    ? LVitemProjectVM.InsertNickname(Directory)
+                    : "" + Directory;
 
                 var nIx = strDirectory.LastIndexOf('\\');
 

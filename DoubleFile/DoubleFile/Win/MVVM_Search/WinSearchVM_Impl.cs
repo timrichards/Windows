@@ -191,7 +191,12 @@ namespace DoubleFile
                 }
                 else
                 {
-                    yield return (new LVitem_SearchVM { Directory = Directory });
+                    yield return (new LVitem_SearchVM
+                    {
+                        LVitemProjectVM = searchResults.LVitemProjectVM,
+                        Directory = Directory
+                    });
+
                     LastFolder = Directory;
                 }
             }

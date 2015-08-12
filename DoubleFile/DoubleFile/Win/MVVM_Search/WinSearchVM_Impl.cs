@@ -20,6 +20,7 @@ namespace DoubleFile
             Icmd_Folders = new RelayCommand(SearchFolders, IsSearchEnabled);
             Icmd_FoldersAndFiles = new RelayCommand(() => SearchFoldersAndFiles(), IsSearchEnabled);
             Icmd_Files = new RelayCommand(() => SearchFoldersAndFiles(bSearchFilesOnly: true), IsSearchEnabled);
+            Icmd_Nicknames = new RelayCommand(ToggleNicknames);
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
             TabledString<TabledStringType_Files>.AddRef();
             PathBuilder.AddRef();
@@ -179,6 +180,7 @@ namespace DoubleFile
 
                         yield return (new LVitem_SearchVM
                         {
+                            LVitemProjectVM = searchResults.LVitemProjectVM,
                             Directory = Directory,
                             TabledStringFilename = tabledStringFilename,
                             Alternate = (bHasFolder) ? nPrevHasFolder : 0
@@ -238,7 +240,6 @@ namespace DoubleFile
                     bSearchFilesOnly,
                     null,
                     Regex,
-                    UseNicknames,
                     new WeakReference<ISearchStatus>(this)
                 ))
                     .DoThreadFactory();
@@ -247,6 +248,14 @@ namespace DoubleFile
                 WindowClosingCallback = new WeakReference<IWinProgressClosing>(this)
             })
                 .ShowDialog();
+        }
+
+        void ToggleNicknames()
+        {
+            LVitem_SearchVM.UseNickname = UseNicknames;
+
+            foreach (var lvItem in ItemsCast)
+                lvItem.RaiseNicknameChange();
         }
 
         List<SearchResults>

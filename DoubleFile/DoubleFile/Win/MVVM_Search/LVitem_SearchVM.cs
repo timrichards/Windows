@@ -4,6 +4,8 @@ namespace DoubleFile
 {
     class LVitem_SearchVM : ListViewItemVM_Base
     {
+        internal LVitem_ProjectExplorer
+            LVitemProjectVM;
         internal PathBuilder
             Directory { get { return _datum.As<PathBuilder>(); } set { _datum = value; } }
         internal TabledString<TabledStringType_Files>
@@ -21,6 +23,12 @@ namespace DoubleFile
 
         static internal bool
             UseNickname;
+        internal void 
+            RaiseNicknameChange()
+        {
+            RaisePropertyChanged("FolderOrFile");
+            RaisePropertyChanged("Parent");
+        }
 
         public string
             FolderOrFile
@@ -44,6 +52,8 @@ namespace DoubleFile
                         return "" + TabledStringFilename;
 
                     strRet = "" + Directory;
+
+                    // Nickname
                 }
 
                 In = null;
@@ -65,6 +75,9 @@ namespace DoubleFile
                     return LocalTreeNode.Parent?.FullPathGet(UseNickname);
 
                 var strDirectory = "" + Directory;
+
+                // Nickname
+
                 var nIx = strDirectory.LastIndexOf('\\');
 
                 return

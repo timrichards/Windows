@@ -5,6 +5,7 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- foreach over IList
 - AsReadOnly throws
 - Clones blue and # when only one volume is included
 - GoTo button in Search doesn't go to file
@@ -170,7 +171,6 @@ Specific code areas:
 - Source repository: http://github.com/timrichards/Windows
 
 99916
-99869
 99865
 99863
 99862

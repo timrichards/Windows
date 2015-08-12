@@ -263,12 +263,11 @@ namespace DoubleFile
 
                 if (null != rootTreeNode)
                 {
-                    _lvItemProjectVM.CulledPath = rootTreeNode.NodeDatum.As<RootNodeDatum>()
-                        ?.LVitemProjectVM.CulledPath;
-
                     rootTreeNode.NodeDatum = new RootNodeDatum(
                         rootTreeNode.NodeDatum,
-                        _lvItemProjectVM,
+                        _lvItemProjectVM.SetCulledPath(
+                            rootTreeNode.NodeDatum.As<RootNodeDatum>()
+                            ?.LVitemProjectVM.CulledPath),
                         nVolFree, nVolLength);
 
                     TreeSubnodeDetails(rootTreeNode);

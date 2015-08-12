@@ -15,7 +15,6 @@
             </Grid.ColumnDefinitions>
             <TextBox Text="{Binding SearchText, Mode=OneWayToSource}" Name="formEdit_search" Grid.Column="0" HorizontalContentAlignment="Stretch"/>
             <StackPanel Grid.Column="1" Orientation="Horizontal">
-                <CheckBox Name="formChk_Nicknames" IsChecked="{Binding UseNicknames}" Grid.Column="1" Content="Nicknames" Width="Auto"/>
                 <CheckBox Name="formChk_Regex" IsChecked="{Binding Regex}" Grid.Column="1" Content="Regex" Width="Auto"/>
                 <Button Command="{Binding Icmd_Folders}" Grid.Column="1" Content="Folders" Width="Auto"/>
                 <Button Command="{Binding Icmd_FoldersAndFiles}" Grid.Column="1" Content="Folders &amp; files" Width="Auto"/>
@@ -54,7 +53,12 @@
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
-            <Button Command="{Binding Icmd_GoTo}" Content="Go To" Margin="5,0,0,0" Grid.Column="1" Width="70" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+            <CheckBox Name="formChk_Nicknames" IsChecked="{Binding UseNicknames}" Command="{Binding Icmd_Nicknames}" Content="Nicknames" Grid.Column="1" Margin="5,0,0,0">
+                <CheckBox.LayoutTransform>
+                    <RotateTransform Angle="90" />
+                </CheckBox.LayoutTransform>
+            </CheckBox>
+            <Button Command="{Binding Icmd_GoTo}" Content="Go To" Grid.Column="1" Margin="5,0,0,0" VerticalAlignment="Bottom">
                 <Button.LayoutTransform>
                     <RotateTransform Angle="90" />
                 </Button.LayoutTransform>

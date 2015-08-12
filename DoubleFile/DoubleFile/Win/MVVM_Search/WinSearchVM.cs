@@ -7,6 +7,7 @@ namespace DoubleFile
         public ICommand Icmd_Folders { get; private set; }
         public ICommand Icmd_FoldersAndFiles { get; private set; }
         public ICommand Icmd_Files { get; private set; }
+        public ICommand Icmd_Nicknames { get; private set; }
         public ICommand Icmd_GoTo { get; private set; }
 
         public string SearchText { private get; set; }
@@ -42,8 +43,8 @@ namespace DoubleFile
         LVitem_SearchVM _selectedItem = null;
 
         public string WidthFolderOrFile => SCW;             // franken all NaN
-        public string WidthParent => SCW;                   // franken all NaN
-        public string WidthIn => SCW;                       // franken all NaN
+        public string WidthParent => SCW;
+        public string WidthIn => SCW;
 
         internal override int NumCols => LVitem_SearchVM.NumCols_;
     }

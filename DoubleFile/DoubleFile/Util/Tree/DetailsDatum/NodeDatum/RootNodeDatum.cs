@@ -11,7 +11,7 @@
             RootNodeDatum(NodeDatum node, string strCulledPath)
             : base(node)
         {
-            LVitemProjectVM = new LVitem_ProjectExplorer { CulledPath = strCulledPath };
+            LVitemProjectVM = new LVitem_ProjectExplorer().SetCulledPath(strCulledPath);
         }
 
         internal
@@ -24,7 +24,10 @@
             VolumeFree = nVolumeFree;
 
             // prime the string table for Search UX
-            var strSearchUX_throwaway = LVitemProjectVM.RootText;
+            string strSearchUX_throwaway = null;
+
+            if (TabledString<TabledStringType_Folders>.IsGenerating)    // tautology: if statement to confuse any optimizer
+                strSearchUX_throwaway = LVitemProjectVM.RootText;
         }
     }
 }

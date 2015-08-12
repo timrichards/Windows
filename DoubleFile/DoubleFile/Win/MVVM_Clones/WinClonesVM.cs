@@ -4,7 +4,10 @@ namespace DoubleFile
 {
     partial class WinClonesVM : ListViewVM_Base<LVitem_ClonesVM>
     {
+        public ICommand Icmd_Nicknames { get; private set; }
         public ICommand Icmd_GoTo { get; private set; }
+
+        public bool UseNicknames { private get; set; }
 
         public LVitem_ClonesVM SelectedItem
         {

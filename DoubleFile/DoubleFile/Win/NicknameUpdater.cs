@@ -10,7 +10,7 @@ namespace DoubleFile
     }
 
     // can't be struct because of pass-by-reference
-    class NicknameUpdater                                   // One per search ore folder window
+    class NicknameUpdater                                   // One per search or folder window
     {
         internal bool UseNickname;
 

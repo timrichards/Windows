@@ -22,11 +22,12 @@ namespace DoubleFile
                 new WinSearchVM
             {
                 IsEditBoxNonEmpty = () => false == string.IsNullOrWhiteSpace(formEdit_search.Text),
-                SearchText = strText,
                 Regex = _bRegex,
                 UseNicknames = _bNicknames
             }
                 .Init();
+
+            _winSearchVM.SearchText = strText;      // set this after DataContext
 
             // Set search text box focus
             // One-shot: no need to dispose

@@ -245,6 +245,8 @@ namespace DoubleFile
             nProgressDenominator += dictClones.Count;
             ++nProgressItem;
 
+            var nicknameUpdater = new NicknameUpdater { };
+
             foreach (var listNodes in dictClones.Reverse())
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / knTotalProgressItems);
@@ -274,7 +276,7 @@ namespace DoubleFile
                         node.ForeColor = UtilColor.LightBlue;
                 }
 
-                var lvItem = new LVitem_ClonesVM { TreeNodes = listNodes.Value };
+                var lvItem = new LVitem_ClonesVM(listNodes.Value, nicknameUpdater);
 
                 foreach (var treeNode in listNodes.Value)
                 {
@@ -338,7 +340,7 @@ namespace DoubleFile
                 }
 
                 var treeNode = kvp.Value;
-                var lvItem = new LVitem_ClonesVM { TreeNodes = new[] { treeNode } };
+                var lvItem = new LVitem_ClonesVM(new[] { treeNode }, nicknameUpdater);
                 var nodeDatum = treeNode.NodeDatum;
 
                 if (null == nodeDatum)      // added 2/13/15
@@ -396,7 +398,7 @@ namespace DoubleFile
                 if (0 == (nodeDatum.Clones?.Count ?? 0))
                     Util.Assert(1305.6328m, false);
 
-                _lsLVsameVol.Add(nodeDatum.LVitem = new LVitem_ClonesVM { TreeNodes = nodeDatum.Clones });
+                _lsLVsameVol.Add(nodeDatum.LVitem = new LVitem_ClonesVM(nodeDatum.Clones, nicknameUpdater));
             }
 
             InsertSizeMarkers(_lsLVsameVol);

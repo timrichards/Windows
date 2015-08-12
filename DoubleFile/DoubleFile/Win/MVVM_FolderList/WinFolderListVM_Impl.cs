@@ -72,6 +72,7 @@ namespace DoubleFile
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
             Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateNicknames(UseNicknames));
             _nicknameUpdater.UseNickname = UseNicknames;
+            _nicknameUpdater.Clear();
             return this;
         }
 

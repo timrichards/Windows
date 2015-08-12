@@ -7,12 +7,13 @@ namespace DoubleFile
         public bool Alternate { get; }
 
         public string Folder => LocalTreeNode.Text;
+
         public string Parent
         {
             get
             {
-                NicknameUpdater.LastGet(this);
-                return LocalTreeNode.Parent?.FullPathGet(NicknameUpdater.UseNickname);
+                _nicknameUpdater.LastGet(this);
+                return LocalTreeNode.Parent?.FullPathGet(_nicknameUpdater.UseNickname);
             }
         }
 
@@ -22,7 +23,7 @@ namespace DoubleFile
         {
             LocalTreeNode = folder;
             Alternate = bAlternate;
-            NicknameUpdater = nicknameUpdater;
+            _nicknameUpdater = nicknameUpdater;
         }
 
         internal override int NumCols => NumCols_;
@@ -31,7 +32,10 @@ namespace DoubleFile
         protected override IReadOnlyList<string> _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
         static IReadOnlyList<string> _propNamesA = null;
 
-        internal readonly LocalTreeNode LocalTreeNode;
-        readonly NicknameUpdater NicknameUpdater;
+        internal readonly LocalTreeNode
+            LocalTreeNode;
+
+        readonly NicknameUpdater
+            _nicknameUpdater;
     }
 }

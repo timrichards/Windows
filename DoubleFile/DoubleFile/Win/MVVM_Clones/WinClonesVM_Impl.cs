@@ -64,6 +64,11 @@ namespace DoubleFile
                 TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, 0));
 
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
+
+            _nicknameUpdater = ItemsCast.Skip(1 /* marker */).Select(lvItem => lvItem.NicknameUpdater).FirstOrDefault();
+            Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater?.UpdateNicknames(UseNicknames));
+            _nicknameUpdater?.Clear();
+
             return this;
         }
 
@@ -90,6 +95,8 @@ namespace DoubleFile
                 .GoToFile(null));
         }
 
+        NicknameUpdater
+            _nicknameUpdater = null;
         List<IDisposable>
             _lsDisposable = new List<IDisposable>();
     }

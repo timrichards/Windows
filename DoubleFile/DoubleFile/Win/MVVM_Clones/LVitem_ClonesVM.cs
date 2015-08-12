@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 namespace DoubleFile
 {
-    class LVitem_ClonesVM : ListViewItemVM_Base
+    class LVitem_ClonesVM : ListViewItemVM_Base, INicknameUpdater
     {
         public ICommand Icmd_NextClonePath { get; }
 
@@ -21,7 +21,16 @@ namespace DoubleFile
         public string       // includes the subject node: only note three clones or more
             Clones => (3 <= TreeNodes.Count) ? (TreeNodes.Count - 1).ToString("###,###") : null;
 
-        public string ClonePaths => WithLocalTreeNode(t => t.FullPath);
+        public string ClonePaths => WithLocalTreeNode(t =>
+        {
+            if (null == NicknameUpdater)
+                return null;    // marker item
+
+            NicknameUpdater.LastGet(this);
+            return t.FullPathGet(NicknameUpdater.UseNickname);
+        });
+
+        void INicknameUpdater.RaiseNicknameChange() => RaisePropertyChanged("ClonePaths");
 
         protected override IReadOnlyList<string> _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
         static IReadOnlyList<string> _propNamesA = null;
@@ -43,9 +52,16 @@ namespace DoubleFile
             WithLocalTreeNode<T>(Func<LocalTreeNode, T> doSomethingWith) =>
             (0 < TreeNodes.Count) ? doSomethingWith(TreeNodes[_clonePathIndex % TreeNodes.Count]) : default(T);
 
-        internal LVitem_ClonesVM(IList<string> asString = null)
+        internal LVitem_ClonesVM(IList<string> asString)
             : base(null, asString)
         {
+        }
+
+        internal LVitem_ClonesVM(IList<LocalTreeNode> treeNodes, NicknameUpdater nicknameUpdater)
+        {
+            NicknameUpdater = nicknameUpdater;
+            TreeNodes = treeNodes;
+
             Icmd_NextClonePath =
                 new RelayCommand(() =>
             {
@@ -56,5 +72,8 @@ namespace DoubleFile
         }
 
         int _clonePathIndex = 0;
+
+        internal readonly NicknameUpdater
+            NicknameUpdater;
     }
 }

@@ -31,6 +31,8 @@ namespace DoubleFile
                 _winFormsLVVM =
                 WinClonesVM.FactoryGetHolder(strFragment);
 
+            _winFormsLVVM.UseNicknames = _bNicknames;
+
             LocalTitle =
                 new CultureInfo("en-US", false).TextInfo            // future proof to title case
                 .ToTitleCase(FolderListFragments[strFragment]);
@@ -38,6 +40,7 @@ namespace DoubleFile
 
         protected override void LocalNavigatedFrom()
         {
+            _bNicknames = formChk_Nicknames.IsChecked ?? false;
             _winFormsLVVM.Dispose();
 
             DataContext =
@@ -47,5 +50,7 @@ namespace DoubleFile
 
         WinClonesVM
             _winFormsLVVM = null;
+        bool
+            _bNicknames = false;
     }
 }

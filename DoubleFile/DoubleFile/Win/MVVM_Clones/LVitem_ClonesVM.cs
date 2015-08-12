@@ -6,7 +6,7 @@ using System.Windows.Media;
 
 namespace DoubleFile
 {
-    class LVitem_ClonesVM : ListViewItemVM_Base, INicknameUpdater
+    class LVitem_ClonesVM : ListViewItemVM_Base, IListUpdater
     {
         public ICommand Icmd_NextClonePath { get; }
 
@@ -27,10 +27,10 @@ namespace DoubleFile
                 return null;    // marker item
 
             NicknameUpdater.LastGet(this);
-            return t.FullPathGet(NicknameUpdater.UseNickname);
+            return t.FullPathGet(NicknameUpdater.Value);
         });
 
-        void INicknameUpdater.RaiseNicknameChange() => RaisePropertyChanged("ClonePaths");
+        void IListUpdater.RaiseListUpdate() => RaisePropertyChanged("ClonePaths");
 
         protected override IReadOnlyList<string> _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
         static IReadOnlyList<string> _propNamesA = null;
@@ -57,7 +57,7 @@ namespace DoubleFile
         {
         }
 
-        internal LVitem_ClonesVM(IList<LocalTreeNode> treeNodes, NicknameUpdater nicknameUpdater)
+        internal LVitem_ClonesVM(IList<LocalTreeNode> treeNodes, ListUpdater<bool> nicknameUpdater)
         {
             TreeNodes = treeNodes;
             NicknameUpdater = nicknameUpdater;
@@ -73,7 +73,7 @@ namespace DoubleFile
 
         int _clonePathIndex = 0;
 
-        internal readonly NicknameUpdater
+        internal readonly ListUpdater<bool>
             NicknameUpdater;
     }
 }

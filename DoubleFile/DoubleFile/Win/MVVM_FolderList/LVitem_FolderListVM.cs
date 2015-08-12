@@ -2,7 +2,7 @@
 
 namespace DoubleFile
 {
-    class LVitem_FolderListVM : ListViewItemVM_Base, INicknameUpdater
+    class LVitem_FolderListVM : ListViewItemVM_Base, IListUpdater
     {
         public bool Alternate { get; }
 
@@ -13,13 +13,13 @@ namespace DoubleFile
             get
             {
                 _nicknameUpdater.LastGet(this);
-                return LocalTreeNode.Parent?.FullPathGet(_nicknameUpdater.UseNickname);
+                return LocalTreeNode.Parent?.FullPathGet(_nicknameUpdater.Value);
             }
         }
 
-        void INicknameUpdater.RaiseNicknameChange() => RaisePropertyChanged("Parent");
+        void IListUpdater.RaiseListUpdate() => RaisePropertyChanged("Parent");
 
-        internal LVitem_FolderListVM(LocalTreeNode folder, bool bAlternate, NicknameUpdater nicknameUpdater)
+        internal LVitem_FolderListVM(LocalTreeNode folder, bool bAlternate, ListUpdater<bool> nicknameUpdater)
         {
             LocalTreeNode = folder;
             Alternate = bAlternate;
@@ -35,7 +35,7 @@ namespace DoubleFile
         internal readonly LocalTreeNode
             LocalTreeNode;
 
-        readonly NicknameUpdater
+        readonly ListUpdater<bool>
             _nicknameUpdater;
     }
 }

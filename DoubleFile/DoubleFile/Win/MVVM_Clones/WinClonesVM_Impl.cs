@@ -69,7 +69,7 @@ namespace DoubleFile
 
             if (null != _nicknameUpdater)
             {
-                Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateNicknames(UseNicknames));
+                Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateViewport(UseNicknames));
                 _nicknameUpdater.Clear();
             }
             else
@@ -103,7 +103,7 @@ namespace DoubleFile
                 .GoToFile(null));
         }
 
-        NicknameUpdater
+        ListUpdater<bool>
             _nicknameUpdater = null;
         List<IDisposable>
             _lsDisposable = new List<IDisposable>();

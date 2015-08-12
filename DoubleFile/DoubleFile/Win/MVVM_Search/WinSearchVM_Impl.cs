@@ -20,7 +20,7 @@ namespace DoubleFile
             Icmd_Folders = new RelayCommand(SearchFolders, IsSearchEnabled);
             Icmd_FoldersAndFiles = new RelayCommand(() => SearchFoldersAndFiles(), IsSearchEnabled);
             Icmd_Files = new RelayCommand(() => SearchFoldersAndFiles(bSearchFilesOnly: true), IsSearchEnabled);
-            Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateNicknames(UseNicknames));
+            Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateViewport(UseNicknames));
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
             TabledString<TabledStringType_Files>.AddRef();
             PathBuilder.AddRef();
@@ -43,7 +43,6 @@ namespace DoubleFile
                 return true;        // found there are no volumes loaded
 
             _nicknameUpdater.Clear();
-            _nicknameUpdater.UseNickname = UseNicknames;
             ClearItems();
             TabledString<TabledStringType_Files>.GenerationStarting();
 
@@ -257,8 +256,8 @@ namespace DoubleFile
                 .ShowDialog();
         }
 
-        NicknameUpdater
-            _nicknameUpdater = new NicknameUpdater { };
+        ListUpdater<bool>
+            _nicknameUpdater = new ListUpdater<bool>();
         List<SearchResults>
             _lsSearchResults = null;
         SearchListings

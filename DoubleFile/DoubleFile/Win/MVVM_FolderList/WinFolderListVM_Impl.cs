@@ -70,8 +70,7 @@ namespace DoubleFile
         internal WinFolderListVM Init()
         {
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
-            Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateNicknames(UseNicknames));
-            _nicknameUpdater.UseNickname = UseNicknames;
+            Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateViewport(UseNicknames));
             _nicknameUpdater.Clear();
             return this;
         }
@@ -98,8 +97,8 @@ namespace DoubleFile
             _selectedItem.LocalTreeNode.GoToFile(null);
         }
 
-        NicknameUpdater
-            _nicknameUpdater = new NicknameUpdater { };
+        ListUpdater<bool>
+            _nicknameUpdater = new ListUpdater<bool>();
         List<IDisposable>
             _lsDisposable = new List<IDisposable>();
     }

@@ -239,6 +239,7 @@
     <Compile Include="Win\MVVM_FolderList\LVitem_FolderListVM.cs" />
     <Compile Include="Win\MVVM_FolderList\WinFolderListVM.cs" />
     <Compile Include="Win\MVVM_FolderList\WinFolderListVM_Impl.cs" />
+    <Compile Include="Win\NicknameUpdater.cs" />
     <Compile Include="Win\WinClones.xaml.cs">
       <DependentUpon>WinClones.xaml</DependentUpon>
     </Compile>

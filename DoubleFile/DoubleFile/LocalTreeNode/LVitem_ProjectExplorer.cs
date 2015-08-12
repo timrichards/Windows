@@ -24,7 +24,8 @@
         {
             get
             {
-                var strRet = (string.IsNullOrWhiteSpace(Nickname))
+                var strRet =
+                    (string.IsNullOrWhiteSpace(Nickname))
                     ? CulledPath
                     : (Nickname +
                     ((Nickname.EndsWith(CulledPath)) ? "" : " (" + CulledPath.TrimEnd('\\') + ")"))

@@ -5,8 +5,8 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- Application.Current.MainWindow is only accessible on the main UI thread
 - foreach over IList
-- AsReadOnly throws
 - Clones blue and # when only one volume is included
 - GoTo button in Search doesn't go to file
 - beating on search causes 1 in 5 no appear
@@ -170,7 +170,6 @@ Specific code areas:
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
 
-99916
 99865
 99863
 99862

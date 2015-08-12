@@ -15,28 +15,26 @@ namespace DoubleFile
 
         protected override void LocalNavigatedTo()
         {
+            var strText = formEdit_search.Text;
+
             DataContext =
                 _winSearchVM =
                 new WinSearchVM
             {
-                IsEditBoxNonEmpty = () => false == string.IsNullOrWhiteSpace(formEdit_search.Text)
+                IsEditBoxNonEmpty = () => false == string.IsNullOrWhiteSpace(formEdit_search.Text),
+                SearchText = strText,
+                Regex = _bRegex,
+                UseNicknames = _bNicknames
             }
                 .Init();
 
-            var strText = formEdit_search.Text;
-
-            formEdit_search.Text = "";
-
-            // Notify new vm of existing text in search box
+            // Set search text box focus
             // One-shot: no need to dispose
             Observable.Timer(TimeSpan.FromMilliseconds(100)).Timestamp()
                 .LocalSubscribe(99685, x => Util.UIthread(99791, () =>
             {
-                formEdit_search.Text = strText;
                 formEdit_search.CaretIndex = int.MaxValue;
                 formEdit_search.Focus();
-                formChk_Regex.IsChecked = _bRegex;
-                formChk_Nicknames.IsChecked = _bNicknames;
             }));
         }
 

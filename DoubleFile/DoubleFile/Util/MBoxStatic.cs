@@ -83,10 +83,11 @@ namespace DoubleFile
 
             if (null == owner)
             {
+                Util.UIthread(99916, () =>
                 owner =
                     (Statics.TopWindow is IModalWindow)
                     ? Statics.TopWindow
-                    : (ILocalWindow)Application.Current.MainWindow;
+                    : (ILocalWindow)Application.Current.MainWindow);
             } 
 
             if (owner?.LocalIsClosed ?? false)

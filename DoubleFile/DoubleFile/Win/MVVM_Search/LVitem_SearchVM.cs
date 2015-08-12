@@ -1,56 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace DoubleFile
 {
-    // can't be struct because of pass-by-reference
-    class WinSearch_Instance                                   // One per search window, inside (2.)
+    class LVitem_ProjectSearch : LVitem_ProjectExplorer             // 2. Far fewer (# listing files), inside (3.)
     {
-        internal bool UseNickname;
-
-        internal void LastGet(LVitem_SearchVM lvItemSearchVM)
-        {
-            if (_bUpdating)
-                return;
-
-            _lastGets.Add(lvItemSearchVM);
-        }
-
-        internal void UpdateNicknames(bool bUseNickname)
-        {
-            UseNickname = bUseNickname;
-
-            _lastGets = _lastGets.Skip(Math.Max(0, _lastGets.Count - 1024)).ToList();
-            _bUpdating = true;
-
-            foreach (var lvitemSearchVM in _lastGets)
-                lvitemSearchVM.RaiseNicknameChange();
-
-            _bUpdating = false;
-        }
-
-        internal void Clear() =>
-            _lastGets = new List<LVitem_SearchVM> { };
-
-        List<LVitem_SearchVM>
-            _lastGets = new List<LVitem_SearchVM> { };
-        bool
-            _bUpdating = false;
-    }
-
-    class LVitem_ProjectSearch : LVitem_ProjectExplorer        // 2. Far fewer (# listing files), inside (3.)
-    {
-        internal LVitem_ProjectSearch(LVitem_ProjectExplorer lvItemTemp, WinSearch_Instance winSearchInstance)
+        internal LVitem_ProjectSearch(LVitem_ProjectExplorer lvItemTemp, NicknameUpdater nicknameUpdater)
             : base(lvItemTemp)
         {
-            WinSearchInstance = winSearchInstance;
+            NicknameUpdater = nicknameUpdater;
         }
 
-        internal WinSearch_Instance WinSearchInstance;
+        internal NicknameUpdater NicknameUpdater;                   // One per search window, inside (2.)
     }
 
-    class LVitem_SearchVM : ListViewItemVM_Base                 // 3. Many (N)
+    class LVitem_SearchVM : ListViewItemVM_Base, INicknameUpdater   // 3. Many (N)
     {
         internal LVitem_ProjectSearch
             LVitemProjectSearch;
@@ -69,8 +32,8 @@ namespace DoubleFile
         public int
             Alternate { get; internal set; } = 0;
 
-        internal void 
-            RaiseNicknameChange()
+        void 
+            INicknameUpdater.RaiseNicknameChange()
         {
             RaisePropertyChanged("FolderOrFile");
             RaisePropertyChanged("Parent");
@@ -81,7 +44,7 @@ namespace DoubleFile
         {
             get
             {
-                LVitemProjectSearch.WinSearchInstance.LastGet(this);
+                LVitemProjectSearch.NicknameUpdater.LastGet(this);
 
                 string strRet = null;
 
@@ -92,7 +55,7 @@ namespace DoubleFile
                     if (null != parent)
                         return LocalTreeNode.Text;
 
-                    strRet = LocalTreeNode.FullPathGet(LVitemProjectSearch.WinSearchInstance.UseNickname);
+                    strRet = LocalTreeNode.FullPathGet(LVitemProjectSearch.NicknameUpdater.UseNickname);
                 }
                 else
                 {
@@ -100,7 +63,7 @@ namespace DoubleFile
                         return "" + TabledStringFilename;
 
                     strRet =
-                        (LVitemProjectSearch.WinSearchInstance.UseNickname)
+                        (LVitemProjectSearch.NicknameUpdater.UseNickname)
                         ? LVitemProjectSearch.InsertNickname(Directory)
                         : "" + Directory;
                 }
@@ -121,10 +84,10 @@ namespace DoubleFile
                     return null;
 
                 if (null != LocalTreeNode)
-                    return LocalTreeNode.Parent?.FullPathGet(LVitemProjectSearch.WinSearchInstance.UseNickname);
+                    return LocalTreeNode.Parent?.FullPathGet(LVitemProjectSearch.NicknameUpdater.UseNickname);
 
                 var strDirectory =
-                    (LVitemProjectSearch.WinSearchInstance.UseNickname)
+                    (LVitemProjectSearch.NicknameUpdater.UseNickname)
                     ? LVitemProjectSearch.InsertNickname(Directory)
                     : "" + Directory;
 

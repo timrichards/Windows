@@ -21,12 +21,12 @@ namespace DoubleFile
                         return bAlt;
 
                     nPrev = nFolderScore;
-                    return bAlt = !bAlt;
+                    return bAlt = (false == bAlt);
                 };
 
                 Util.UIthread(99828, () => Add(LocalTV.AllNodes
                     .OrderByDescending(folder => folder.NodeDatum.FolderScore[nFolderScoreIndex])
-                    .Select(folder => new LVitem_FolderListVM { LocalTreeNode = folder, Alternate = Alternate(folder) })));
+                    .Select(folder => new LVitem_FolderListVM(folder, Alternate(folder), _nicknameUpdater))));
             };
 
             switch (strFragment)
@@ -70,6 +70,8 @@ namespace DoubleFile
         internal WinFolderListVM Init()
         {
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
+            Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateNicknames(UseNicknames));
+            _nicknameUpdater.UseNickname = UseNicknames;
             return this;
         }
 
@@ -95,6 +97,8 @@ namespace DoubleFile
             _selectedItem.LocalTreeNode.GoToFile(null);
         }
 
+        NicknameUpdater
+            _nicknameUpdater = new NicknameUpdater { };
         List<IDisposable>
             _lsDisposable = new List<IDisposable>();
     }

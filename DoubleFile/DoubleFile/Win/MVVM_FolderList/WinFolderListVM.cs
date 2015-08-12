@@ -4,7 +4,10 @@ namespace DoubleFile
 {
     partial class WinFolderListVM : ListViewVM_Base<LVitem_FolderListVM>
     {
+        public ICommand Icmd_Nicknames { get; private set; }
         public ICommand Icmd_GoTo { get; private set; }
+
+        public bool UseNicknames { private get; set; }
 
         public LVitem_FolderListVM SelectedItem
         {

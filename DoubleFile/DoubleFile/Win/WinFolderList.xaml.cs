@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Reactive.Linq;
 
 namespace DoubleFile
 {
@@ -25,11 +27,19 @@ namespace DoubleFile
             InitializeComponent();            
         }
 
+        protected override void LocalNavigatedTo() =>
+            _bNavigatedTo = true;
+
         protected override void LocalFragmentNavigation(string strFragment)
         {
+            if (false == _bNavigatedTo)
+                _bNicknames = formChk_Nicknames.IsChecked ?? false;
+
+            _bNavigatedTo = false;
+
             DataContext = 
                 _winFolderListVM =
-                new WinFolderListVM(strFragment)
+                new WinFolderListVM(strFragment) { UseNicknames = _bNicknames }
                 .Init();
 
             LocalTitle =
@@ -39,6 +49,7 @@ namespace DoubleFile
 
         protected override void LocalNavigatedFrom()
         {
+            _bNicknames = formChk_Nicknames.IsChecked ?? false;
             _winFolderListVM.Dispose();
 
             DataContext =
@@ -48,5 +59,9 @@ namespace DoubleFile
 
         WinFolderListVM
             _winFolderListVM = null;
+        bool
+            _bNicknames = false;
+        bool
+            _bNavigatedTo = false;
     }
 }

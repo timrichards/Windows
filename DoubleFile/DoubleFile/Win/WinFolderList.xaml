@@ -32,7 +32,12 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Button Command="{Binding Icmd_GoTo}" Content="Go To" Margin="5,0,0,0" Grid.Column="1" VerticalAlignment="Bottom">
+        <CheckBox Name="formChk_Nicknames" IsChecked="{Binding UseNicknames}" Command="{Binding Icmd_Nicknames}" Content="Nicknames" Grid.Column="1" Margin="5,0,0,0">
+            <CheckBox.LayoutTransform>
+                <RotateTransform Angle="90" />
+            </CheckBox.LayoutTransform>
+        </CheckBox>
+        <Button Command="{Binding Icmd_GoTo}" Content="Go To" Grid.Column="1" Margin="5,0,0,0" VerticalAlignment="Bottom">
             <Button.LayoutTransform>
                 <RotateTransform Angle="90" />
             </Button.LayoutTransform>

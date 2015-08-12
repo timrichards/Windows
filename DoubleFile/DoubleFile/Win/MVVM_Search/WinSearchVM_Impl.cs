@@ -42,7 +42,7 @@ namespace DoubleFile
             if (0 == Statics.WithLVprojectVM(p => p?.CanLoadCount ?? 0))
                 return true;        // found there are no volumes loaded
 
-            LVitem_SearchVM.UseNickname = UseNicknames;
+            _winSearchInstance.UseNickname = UseNicknames;
             ClearItems();
             TabledString<TabledStringType_Files>.GenerationStarting();
 
@@ -160,6 +160,7 @@ namespace DoubleFile
         {
             PathBuilder LastFolder = null;
             var nPrevHasFolder = 1;
+            var lvItemSearchExplorer = new LVitem_SearchExplorer(searchResults.LVitemProjectVM, _winSearchInstance);
 
             foreach (var searchResult in searchResults.Results)
             {
@@ -180,7 +181,7 @@ namespace DoubleFile
 
                         yield return (new LVitem_SearchVM
                         {
-                            LVitemProjectVM = searchResults.LVitemProjectVM,
+                            LVitemSearchExplorer = lvItemSearchExplorer,
                             Directory = Directory,
                             TabledStringFilename = tabledStringFilename,
                             Alternate = (bHasFolder) ? nPrevHasFolder : 0
@@ -193,7 +194,7 @@ namespace DoubleFile
                 {
                     yield return (new LVitem_SearchVM
                     {
-                        LVitemProjectVM = searchResults.LVitemProjectVM,
+                        LVitemSearchExplorer = lvItemSearchExplorer,
                         Directory = Directory
                     });
 
@@ -257,12 +258,14 @@ namespace DoubleFile
 
         void ToggleNicknames()
         {
-            LVitem_SearchVM.UseNickname = UseNicknames;
+            _winSearchInstance.UseNickname = UseNicknames;
 
             foreach (var lvItem in ItemsCast)
                 lvItem.RaiseNicknameChange();
         }
 
+        WinSearch_Instance
+            _winSearchInstance = new WinSearch_Instance { };
         List<SearchResults>
             _lsSearchResults = null;
         SearchListings

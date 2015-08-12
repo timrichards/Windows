@@ -7,22 +7,17 @@
         {
         }
 
+        internal LVitem_ProjectExplorer(LVitem_ProjectExplorer lvItemTemp)
+            : base(lvItemTemp)
+        {
+            _strCulledPath = lvItemTemp._strCulledPath;
+        }
+
         internal string
             Volume =>
             (string.IsNullOrWhiteSpace(VolumeGroup))
             ? RootText
             : VolumeGroup.Replace('\\', '/');
-
-        internal LVitem_ProjectExplorer
-            SetCulledPath(string strCulledPath)
-        {
-            Util.Assert(99869, null == _strCulledPath);
-            _strCulledPath = strCulledPath;
-            return this;
-        }
-        internal string
-            CulledPath => _strCulledPath ?? SourcePath;
-        string _strCulledPath;
 
         internal string
             RootText
@@ -48,7 +43,21 @@
             }
         }
 
-        internal string InsertNickname(PathBuilder tabledFolder) =>
+        internal string
+            InsertNickname(PathBuilder tabledFolder) =>
             (tabledFolder + "\\").Replace(CulledPath, RootText + '\\').TrimEnd('\\').Replace("\\\\", "\\");
+
+        internal LVitem_ProjectExplorer
+            SetCulledPath(string strCulledPath)
+        {
+            Util.Assert(99869, null == _strCulledPath);
+            _strCulledPath = strCulledPath;
+            return this;
+        }
+        internal string
+            CulledPath => _strCulledPath ?? SourcePath;
+
+        string
+            _strCulledPath;
     }
 }

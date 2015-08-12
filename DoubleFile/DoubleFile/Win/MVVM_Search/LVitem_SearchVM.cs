@@ -2,10 +2,27 @@
 
 namespace DoubleFile
 {
-    class LVitem_SearchVM : ListViewItemVM_Base
+    // can't be struct because of pass-by-reference
+    class WinSearch_Instance                                   // One per search window, inside (2.)
     {
-        internal LVitem_ProjectExplorer
-            LVitemProjectVM;
+        internal bool UseNickname;
+    }
+
+    class LVitem_SearchExplorer : LVitem_ProjectExplorer        // 2. Far fewer (# listing files), inside (3.)
+    {
+        internal LVitem_SearchExplorer(LVitem_ProjectExplorer lvItemTemp, WinSearch_Instance winSearchInstance)
+            : base(lvItemTemp)
+        {
+            WinSearchInstance = winSearchInstance;
+        }
+
+        internal WinSearch_Instance WinSearchInstance;
+    }
+
+    class LVitem_SearchVM : ListViewItemVM_Base                 // 3. Many (N)
+    {
+        internal LVitem_SearchExplorer
+            LVitemSearchExplorer;
         internal PathBuilder
             Directory { get { return _datum.As<PathBuilder>(); } set { _datum = value; } }
         internal TabledString<TabledStringType_Files>
@@ -21,8 +38,6 @@ namespace DoubleFile
         public int
             Alternate { get; internal set; } = 0;
 
-        static internal bool
-            UseNickname;
         internal void 
             RaiseNicknameChange()
         {
@@ -44,7 +59,7 @@ namespace DoubleFile
                     if (null != parent)
                         return LocalTreeNode.Text;
 
-                    strRet = LocalTreeNode.FullPathGet(UseNickname);
+                    strRet = LocalTreeNode.FullPathGet(LVitemSearchExplorer.WinSearchInstance.UseNickname);
                 }
                 else
                 {
@@ -52,8 +67,8 @@ namespace DoubleFile
                         return "" + TabledStringFilename;
 
                     strRet =
-                        (UseNickname)
-                        ? LVitemProjectVM.InsertNickname(Directory)
+                        (LVitemSearchExplorer.WinSearchInstance.UseNickname)
+                        ? LVitemSearchExplorer.InsertNickname(Directory)
                         : "" + Directory;
                 }
 
@@ -73,11 +88,11 @@ namespace DoubleFile
                     return null;
 
                 if (null != LocalTreeNode)
-                    return LocalTreeNode.Parent?.FullPathGet(UseNickname);
+                    return LocalTreeNode.Parent?.FullPathGet(LVitemSearchExplorer.WinSearchInstance.UseNickname);
 
                 var strDirectory =
-                    (UseNickname)
-                    ? LVitemProjectVM.InsertNickname(Directory)
+                    (LVitemSearchExplorer.WinSearchInstance.UseNickname)
+                    ? LVitemSearchExplorer.InsertNickname(Directory)
                     : "" + Directory;
 
                 var nIx = strDirectory.LastIndexOf('\\');

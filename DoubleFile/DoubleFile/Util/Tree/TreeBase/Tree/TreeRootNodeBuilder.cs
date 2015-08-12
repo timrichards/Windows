@@ -264,7 +264,7 @@ namespace DoubleFile
                 if (null != rootTreeNode)
                 {
                     _lvItemProjectVM.CulledPath = rootTreeNode.NodeDatum.As<RootNodeDatum>()
-                        ?.CulledPath;
+                        ?.LVitemProjectVM.CulledPath;
 
                     rootTreeNode.NodeDatum = new RootNodeDatum(
                         rootTreeNode.NodeDatum,

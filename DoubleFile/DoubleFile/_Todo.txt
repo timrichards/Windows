@@ -5,6 +5,7 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- AsReadOnly throws
 - Clones blue and # when only one volume is included
 - GoTo button in Search doesn't go to file
 - beating on search causes 1 in 5 no appear

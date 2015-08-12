@@ -7,13 +7,11 @@
         internal readonly ulong VolumeFree;
         internal readonly ulong VolumeLength;
 
-        internal TabledString<TabledStringType_Folders>
-            CulledPath;
-
-        internal                                            // CulledPath
-            RootNodeDatum(NodeDatum node)                   // using this
-            : base(node)                                    // constructor
+        internal
+            RootNodeDatum(NodeDatum node, string strCulledPath)
+            : base(node)
         {
+            LVitemProjectVM = new LVitem_ProjectExplorer { CulledPath = strCulledPath };
         }
 
         internal
@@ -24,6 +22,9 @@
             LVitemProjectVM = lvItemProjectVM;
             VolumeLength = nVolumeLength;
             VolumeFree = nVolumeFree;
+
+            // prime the string table for Search UX
+            var strSearchUX_throwaway = LVitemProjectVM.RootText;
         }
     }
 }

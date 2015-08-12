@@ -1,32 +1,44 @@
-﻿
-using System.Linq;
-
-namespace DoubleFile
+﻿namespace DoubleFile
 {
     class LVitem_ProjectExplorer : LVitem_ProjectVM
     {
-        internal LVitem_ProjectExplorer(LVitem_ProjectVM lvItemTemp)
+        internal LVitem_ProjectExplorer(LVitem_ProjectVM lvItemTemp = null)
             : base(lvItemTemp)
         {
         }
 
         internal string
             Volume =>
-            (false == string.IsNullOrWhiteSpace(VolumeGroup))
-            ? VolumeGroup.Replace('\\', '/')
-            : RootText;
+            (string.IsNullOrWhiteSpace(VolumeGroup))
+            ? RootText
+            : VolumeGroup.Replace('\\', '/');
 
-        string _culledPath => CulledPath?.IfGenerated ?? SourcePath;
+        internal string CulledPath;
 
         internal string
-            RootText =>
-            (string.IsNullOrWhiteSpace(Nickname))
-            ? _culledPath
-            : (Nickname +
-            ((Nickname.EndsWith(_culledPath)) ? "" : " (" + _culledPath.TrimEnd('\\') + ")"))
-            .Replace('\\', '/');
+            RootText
+        {
+            get
+            {
+                string culledPath = CulledPath ?? SourcePath;
 
-        internal TabledString<TabledStringType_Folders>
-            CulledPath { set; private get; }
+                var strRet = (string.IsNullOrWhiteSpace(Nickname))
+                    ? culledPath
+                    : (Nickname +
+                    ((Nickname.EndsWith(culledPath)) ? "" : " (" + culledPath.TrimEnd('\\') + ")"))
+                    .Replace('\\', '/');
+
+                if (null != CulledPath)
+                {
+                    // prime the string table for Search UX
+                    TabledString<TabledStringType_Folders> strSearchUX_throwaway = null;
+
+                    if (TabledString<TabledStringType_Folders>.IsGenerating)
+                        strSearchUX_throwaway = (TabledString<TabledStringType_Folders>)strRet;
+                }
+
+                return strRet;
+            }
+        }
     }
 }

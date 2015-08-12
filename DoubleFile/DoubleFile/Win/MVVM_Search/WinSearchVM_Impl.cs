@@ -20,7 +20,7 @@ namespace DoubleFile
             Icmd_Folders = new RelayCommand(SearchFolders, IsSearchEnabled);
             Icmd_FoldersAndFiles = new RelayCommand(() => SearchFoldersAndFiles(), IsSearchEnabled);
             Icmd_Files = new RelayCommand(() => SearchFoldersAndFiles(bSearchFilesOnly: true), IsSearchEnabled);
-            Icmd_Nicknames = new RelayCommand(ToggleNicknames);
+            Icmd_Nicknames = new RelayCommand(() => _winSearchInstance.UpdateNicknames(UseNicknames));
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
             TabledString<TabledStringType_Files>.AddRef();
             PathBuilder.AddRef();
@@ -42,6 +42,7 @@ namespace DoubleFile
             if (0 == Statics.WithLVprojectVM(p => p?.CanLoadCount ?? 0))
                 return true;        // found there are no volumes loaded
 
+            _winSearchInstance.Clear();
             _winSearchInstance.UseNickname = UseNicknames;
             ClearItems();
             TabledString<TabledStringType_Files>.GenerationStarting();
@@ -160,7 +161,7 @@ namespace DoubleFile
         {
             PathBuilder LastFolder = null;
             var nPrevHasFolder = 1;
-            var lvItemSearchExplorer = new LVitem_SearchExplorer(searchResults.LVitemProjectVM, _winSearchInstance);
+            var lvItemProjectSearch = new LVitem_ProjectSearch(searchResults.LVitemProjectVM, _winSearchInstance);
 
             foreach (var searchResult in searchResults.Results)
             {
@@ -181,7 +182,7 @@ namespace DoubleFile
 
                         yield return (new LVitem_SearchVM
                         {
-                            LVitemSearchExplorer = lvItemSearchExplorer,
+                            LVitemProjectSearch = lvItemProjectSearch,
                             Directory = Directory,
                             TabledStringFilename = tabledStringFilename,
                             Alternate = (bHasFolder) ? nPrevHasFolder : 0
@@ -194,7 +195,7 @@ namespace DoubleFile
                 {
                     yield return (new LVitem_SearchVM
                     {
-                        LVitemSearchExplorer = lvItemSearchExplorer,
+                        LVitemProjectSearch = lvItemProjectSearch,
                         Directory = Directory
                     });
 
@@ -254,14 +255,6 @@ namespace DoubleFile
                 WindowClosingCallback = new WeakReference<IWinProgressClosing>(this)
             })
                 .ShowDialog();
-        }
-
-        void ToggleNicknames()
-        {
-            _winSearchInstance.UseNickname = UseNicknames;
-
-            foreach (var lvItem in ItemsCast)
-                lvItem.RaiseNicknameChange();
         }
 
         WinSearch_Instance

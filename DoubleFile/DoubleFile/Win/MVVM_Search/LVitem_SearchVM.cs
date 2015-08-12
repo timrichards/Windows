@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -6,11 +7,40 @@ namespace DoubleFile
     class WinSearch_Instance                                   // One per search window, inside (2.)
     {
         internal bool UseNickname;
+
+        internal void LastGet(LVitem_SearchVM lvItemSearchVM)
+        {
+            if (_bUpdating)
+                return;
+
+            _lastGets.Add(lvItemSearchVM);
+        }
+
+        internal void UpdateNicknames(bool bUseNickname)
+        {
+            UseNickname = bUseNickname;
+
+            _lastGets = _lastGets.Take(1024).ToList();
+            _bUpdating = true;
+
+            foreach (var lvitemSearchVM in _lastGets)
+                lvitemSearchVM.RaiseNicknameChange();
+
+            _bUpdating = false;
+        }
+
+        internal void Clear() =>
+            _lastGets = new List<LVitem_SearchVM> { };
+
+        List<LVitem_SearchVM>
+            _lastGets = new List<LVitem_SearchVM> { };
+        bool
+            _bUpdating = false;
     }
 
-    class LVitem_SearchExplorer : LVitem_ProjectExplorer        // 2. Far fewer (# listing files), inside (3.)
+    class LVitem_ProjectSearch : LVitem_ProjectExplorer        // 2. Far fewer (# listing files), inside (3.)
     {
-        internal LVitem_SearchExplorer(LVitem_ProjectExplorer lvItemTemp, WinSearch_Instance winSearchInstance)
+        internal LVitem_ProjectSearch(LVitem_ProjectExplorer lvItemTemp, WinSearch_Instance winSearchInstance)
             : base(lvItemTemp)
         {
             WinSearchInstance = winSearchInstance;
@@ -21,8 +51,8 @@ namespace DoubleFile
 
     class LVitem_SearchVM : ListViewItemVM_Base                 // 3. Many (N)
     {
-        internal LVitem_SearchExplorer
-            LVitemSearchExplorer;
+        internal LVitem_ProjectSearch
+            LVitemProjectSearch;
         internal PathBuilder
             Directory { get { return _datum.As<PathBuilder>(); } set { _datum = value; } }
         internal TabledString<TabledStringType_Files>
@@ -50,6 +80,8 @@ namespace DoubleFile
         {
             get
             {
+                LVitemProjectSearch.WinSearchInstance.LastGet(this);
+
                 string strRet = null;
 
                 if (null != LocalTreeNode)
@@ -59,7 +91,7 @@ namespace DoubleFile
                     if (null != parent)
                         return LocalTreeNode.Text;
 
-                    strRet = LocalTreeNode.FullPathGet(LVitemSearchExplorer.WinSearchInstance.UseNickname);
+                    strRet = LocalTreeNode.FullPathGet(LVitemProjectSearch.WinSearchInstance.UseNickname);
                 }
                 else
                 {
@@ -67,8 +99,8 @@ namespace DoubleFile
                         return "" + TabledStringFilename;
 
                     strRet =
-                        (LVitemSearchExplorer.WinSearchInstance.UseNickname)
-                        ? LVitemSearchExplorer.InsertNickname(Directory)
+                        (LVitemProjectSearch.WinSearchInstance.UseNickname)
+                        ? LVitemProjectSearch.InsertNickname(Directory)
                         : "" + Directory;
                 }
 
@@ -88,11 +120,11 @@ namespace DoubleFile
                     return null;
 
                 if (null != LocalTreeNode)
-                    return LocalTreeNode.Parent?.FullPathGet(LVitemSearchExplorer.WinSearchInstance.UseNickname);
+                    return LocalTreeNode.Parent?.FullPathGet(LVitemProjectSearch.WinSearchInstance.UseNickname);
 
                 var strDirectory =
-                    (LVitemSearchExplorer.WinSearchInstance.UseNickname)
-                    ? LVitemSearchExplorer.InsertNickname(Directory)
+                    (LVitemProjectSearch.WinSearchInstance.UseNickname)
+                    ? LVitemProjectSearch.InsertNickname(Directory)
                     : "" + Directory;
 
                 var nIx = strDirectory.LastIndexOf('\\');

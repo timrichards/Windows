@@ -38,7 +38,7 @@ namespace DoubleFile
 
         public void Dispose() => Util.LocalDispose(_lsDisposable);
 
-        List<IDisposable>
+        readonly IList<IDisposable>
             _lsDisposable = new List<IDisposable>();
     }
 }

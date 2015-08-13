@@ -9,19 +9,20 @@ namespace DoubleFile
         internal WinFolderListVM(string strFragment)
         {
             var nPrev = uint.MaxValue;
-            var bAlt = false;
+            var bAlternate = false;
 
             Action<int> AddFolders = nFolderScoreIndex =>
             {
-                Func<LocalTreeNode, bool> Alternate = folder =>
+                Func<LocalTreeNode, bool>
+                    Alternate = folder =>
                 {
                     var nFolderScore = folder.NodeDatum.FolderScore[nFolderScoreIndex];
 
                     if (nPrev == nFolderScore)
-                        return bAlt;
+                        return bAlternate;
 
                     nPrev = nFolderScore;
-                    return bAlt = (false == bAlt);
+                    return bAlternate = (false == bAlternate);
                 };
 
                 Util.UIthread(99828, () => Add(LocalTV.AllNodes
@@ -72,6 +73,7 @@ namespace DoubleFile
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
             Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateViewport(UseNicknames));
             _nicknameUpdater.Clear();
+            _nicknameUpdater.UpdateViewport(UseNicknames);
             return this;
         }
 
@@ -97,9 +99,9 @@ namespace DoubleFile
             _selectedItem.LocalTreeNode.GoToFile(null);
         }
 
-        ListUpdater<bool>
+        readonly ListUpdater<bool>
             _nicknameUpdater = new ListUpdater<bool>();
-        List<IDisposable>
+        readonly IList<IDisposable>
             _lsDisposable = new List<IDisposable>();
     }
 }

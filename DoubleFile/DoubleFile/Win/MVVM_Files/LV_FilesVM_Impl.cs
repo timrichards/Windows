@@ -105,9 +105,9 @@ namespace DoubleFile
 
         LocalTreeNode
             _treeNode = null;
-        List<IDisposable>
+        readonly IList<IDisposable>
             _lsDisposable = new List<IDisposable>();
-        static WeakReference<LV_FilesVM>
+        static readonly WeakReference<LV_FilesVM>
             _wr = new WeakReference<LV_FilesVM>(null);
     }
 }

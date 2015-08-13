@@ -167,7 +167,7 @@ namespace DoubleFile
             _cts = new CancellationTokenSource();
         LocalTreeNode
             _treeNode = null;
-        List<IDisposable>
+        readonly IList<IDisposable>
             _lsDisposable = new List<IDisposable>();
     }
 }

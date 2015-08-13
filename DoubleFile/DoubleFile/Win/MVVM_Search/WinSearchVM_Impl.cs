@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 
@@ -21,6 +22,7 @@ namespace DoubleFile
             Icmd_FoldersAndFiles = new RelayCommand(() => SearchFoldersAndFiles(), IsSearchEnabled);
             Icmd_Files = new RelayCommand(() => SearchFoldersAndFiles(bSearchFilesOnly: true), IsSearchEnabled);
             Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateViewport(UseNicknames));
+            _nicknameUpdater.UpdateViewport(UseNicknames);
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
             TabledString<TabledStringType_Files>.AddRef();
             PathBuilder.AddRef();
@@ -55,10 +57,10 @@ namespace DoubleFile
             }
             else
             {
-                var nLastBackSlashIx = strPath.LastIndexOf('\\');
-
-                if (2 > nLastBackSlashIx)
+                if (false == Path.IsPathRooted(strPath))
                     return false;
+
+                var nLastBackSlashIx = strPath.LastIndexOf('\\');
 
                 result.PathBuilder = PathBuilder.FactoryCreateOrFind(strPath.Substring(0, nLastBackSlashIx));
                 treeNode = LocalTV.GetOneNodeByRootPathA("" + result.PathBuilder, null);
@@ -100,8 +102,13 @@ namespace DoubleFile
         {
             _searchType2 = null;
 
-            if (false == _bDisposed)
-                TabledString<TabledStringType_Files>.GenerationEnded();
+            if (_bDisposed)
+            {
+                WinProgress.CloseForced();
+                return;
+            }
+
+            TabledString<TabledStringType_Files>.GenerationEnded();
 
             if (UseNicknames)
                 _lsSearchResults.Sort((x, y) => x.LVitemProjectVM.RootText.CompareTo(y.LVitemProjectVM.RootText));
@@ -174,30 +181,21 @@ namespace DoubleFile
 
                 if (0 < (searchResult.ListFiles?.Count ?? 0))
                 {
-                    foreach (var tabledStringFilename in searchResult.ListFiles.Keys)
+                    foreach (var tabledFilename in searchResult.ListFiles.Keys)
                     {
                         if (_bDisposed)
                             break;
 
-                        yield return (new LVitem_SearchVM
-                        {
-                            LVitemProjectSearch = lvItemProjectSearch,
-                            Directory = Directory,
-                            TabledStringFilename = tabledStringFilename,
-                            Alternate = (bHasFolder) ? nPrevHasFolder : 0
-                        });
+                        yield return
+                            new LVitem_SearchVM(lvItemProjectSearch, Directory,
+                            tabledFilename, (bHasFolder) ? nPrevHasFolder : 0);
                     }
 
                     nPrevHasFolder = ((false == bHasFolder) || (2 == nPrevHasFolder)) ? 1 : 2;
                 }
                 else
                 {
-                    yield return (new LVitem_SearchVM
-                    {
-                        LVitemProjectSearch = lvItemProjectSearch,
-                        Directory = Directory
-                    });
-
+                    yield return new LVitem_SearchVM(lvItemProjectSearch, Directory);
                     LastFolder = Directory;
                 }
             }
@@ -221,7 +219,7 @@ namespace DoubleFile
             var ieLVitems =
                 lsTreeNodes
                 .AsParallel()
-                .Select(treeNode => new LVitem_SearchVM { LocalTreeNode = treeNode })
+                .Select(treeNode => new LVitem_SearchVM(treeNode))
                 .OrderBy(lvItem => lvItem.Parent + lvItem.FolderOrFile);
 
             if (ieLVitems.Any())

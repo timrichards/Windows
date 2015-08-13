@@ -1180,7 +1180,7 @@ namespace DoubleFile
         LocalTreeNode
             _prevNode = null;
 
-        List<IDisposable>
+        readonly IList<IDisposable>
             _lsDisposable = new List<IDisposable>();
     }
 }

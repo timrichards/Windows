@@ -113,7 +113,7 @@ namespace DoubleFile
 
         LV_ProjectVM
             _lvProjectVM = null;
-        static WeakReference<WinProject>
+        static readonly WeakReference<WinProject>
             _weakReference = new WeakReference<WinProject>(null);
     }
 }

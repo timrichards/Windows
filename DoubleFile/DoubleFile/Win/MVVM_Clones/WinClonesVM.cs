@@ -41,8 +41,8 @@ namespace DoubleFile
             TopItem;
 
         public string WidthFolder => SCW;                   // franken all NaN
-        public string WidthClones => SCW;                   // franken all NaN
-        public string WidthClonePaths => SCW;               // franken all NaN
+        public string WidthClones => SCW;
+        public string WidthClonePaths => SCW;
 
         internal override int NumCols => LVitem_ClonesVM.NumCols_;
     }

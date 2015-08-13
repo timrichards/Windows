@@ -38,15 +38,15 @@ namespace DoubleFile
         internal override int NumCols => NumCols_;
         internal const int NumCols_ = 1;
 
-        internal TabledString<TabledStringType_Folders>
-            Name;
-        //internal LocalLVitem
-        //    IgnoreLVItem;
         internal IList<LocalTreeNode>
             TreeNodes = new LocalTreeNode[0];
 
-        internal int
-            Index = 0;
+        internal int            // currently unused: when this pretended to be a WinForms ListViewItem
+            Index = 0;          // LVitemNameComparerStruct.MarkItemsFrom1notIn2 for compare mode: set lv.TopItem
+        internal TabledString<TabledStringType_Folders>
+            Name;               // kinda ditto
+        //internal LocalLVitem
+        //    IgnoreLVItem;
 
         internal T
             WithLocalTreeNode<T>(Func<LocalTreeNode, T> doSomethingWith) =>

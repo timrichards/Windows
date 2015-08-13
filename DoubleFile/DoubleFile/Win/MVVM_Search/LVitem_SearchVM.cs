@@ -10,27 +10,47 @@ namespace DoubleFile
             NicknameUpdater = nicknameUpdater;
         }
 
-        internal ListUpdater<bool> NicknameUpdater;             // One per search window, inside (2.)
+        internal readonly ListUpdater<bool> NicknameUpdater;    // One per search window, inside (2.)
     }
 
     class LVitem_SearchVM : ListViewItemVM_Base, IListUpdater   // 3. Many (N)
     {
-        internal LVitem_ProjectSearch
+        internal readonly LVitem_ProjectSearch
             LVitemProjectSearch;
+
         internal PathBuilder
-            Directory { get { return _datum.As<PathBuilder>(); } set { _datum = value; } }
-        internal TabledString<TabledStringType_Files>
+            Directory => _datum.As<PathBuilder>();
+        internal readonly TabledString<TabledStringType_Files>
             TabledStringFilename;
 
         internal LocalTreeNode
-            LocalTreeNode { get { return _datum.As<LocalTreeNode>(); } set { _datum = value; } }
-        object _datum = null;
+            LocalTreeNode => _datum.As<LocalTreeNode>();
+        readonly object _datum = null;
 
         public string
             In { get; private set; } = " in ";    // interned
 
         public int
-            Alternate { get; internal set; } = 0;
+            Alternate { get; } = 0;
+
+        internal LVitem_SearchVM(LVitem_ProjectSearch lvItemProjectSearch, PathBuilder directory)
+        {
+            LVitemProjectSearch = lvItemProjectSearch;
+            _datum = directory;
+        }
+
+        internal LVitem_SearchVM(LVitem_ProjectSearch lvItemProjectSearch, PathBuilder directory,
+            TabledString<TabledStringType_Files> tabledFilename, int nAlternate)
+            : this(lvItemProjectSearch, directory)
+        {
+            TabledStringFilename = tabledFilename;
+            Alternate = nAlternate;
+        }
+
+        internal LVitem_SearchVM(LocalTreeNode localTreeNode)
+        {
+            _datum = localTreeNode;
+        }
 
         void 
             IListUpdater.RaiseListUpdate()
@@ -94,7 +114,7 @@ namespace DoubleFile
                 var nIx = strDirectory.LastIndexOf('\\');
 
                 return
-                    ((null != TabledStringFilename) || (nIx < 0))
+                    ((null != TabledStringFilename) || (0 > nIx))
                     ? strDirectory
                     : strDirectory.Substring(0, nIx);
             }

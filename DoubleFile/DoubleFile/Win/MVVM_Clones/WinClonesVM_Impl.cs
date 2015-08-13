@@ -71,6 +71,7 @@ namespace DoubleFile
             {
                 Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateViewport(UseNicknames));
                 _nicknameUpdater.Clear();
+                _nicknameUpdater.UpdateViewport(UseNicknames);
             }
             else
             {
@@ -80,7 +81,11 @@ namespace DoubleFile
             return this;
         }
 
-        public void Dispose() => Util.LocalDispose(_lsDisposable);
+        public void Dispose()
+        {
+            _nicknameUpdater.Clear();
+            Util.LocalDispose(_lsDisposable);
+        }
 
         void TreeSelect_FolderDetailUpdated(Tuple<TreeSelect.FolderDetailUpdated, int> initiatorTuple)
         {
@@ -105,7 +110,7 @@ namespace DoubleFile
 
         ListUpdater<bool>
             _nicknameUpdater = null;
-        List<IDisposable>
+        readonly IList<IDisposable>
             _lsDisposable = new List<IDisposable>();
     }
 }

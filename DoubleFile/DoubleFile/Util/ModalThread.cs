@@ -94,7 +94,7 @@ namespace DoubleFile
 
             static internal T
                 WithPush<T>(Func<Push, T> doSomethingWith) => _wr.Get(p => doSomethingWith(p));
-            static WeakReference<Push> _wr = new WeakReference<Push>(null);
+            static readonly WeakReference<Push> _wr = new WeakReference<Push>(null);
             Push _prevPush;
 
             static int _nRefCount = 0;

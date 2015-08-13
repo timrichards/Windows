@@ -158,7 +158,7 @@ namespace DoubleFile
             _lvProjectVM = null;
         readonly double
             _knProgMult = 0;
-        List<IDisposable>
+        readonly IList<IDisposable>
             _lsDisposable = new List<IDisposable>();
     }
 }

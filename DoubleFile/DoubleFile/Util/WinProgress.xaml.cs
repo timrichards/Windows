@@ -240,7 +240,7 @@ namespace DoubleFile
 
         internal static T
             WithWinProgress<T>(Func<WinProgress, T> doSomethingWith) => _wr.Get(o => doSomethingWith(o));
-        static WeakReference<WinProgress> _wr = new WeakReference<WinProgress>(null);
+        static readonly WeakReference<WinProgress> _wr = new WeakReference<WinProgress>(null);
         
         readonly LV_ProgressVM
             _lv = new LV_ProgressVM();

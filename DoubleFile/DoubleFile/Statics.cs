@@ -210,7 +210,7 @@ namespace DoubleFile
             });
         }
 
-        static WeakReference<Statics> _wr = new WeakReference<Statics>(null);
+        static readonly WeakReference<Statics> _wr = new WeakReference<Statics>(null);
 
         // SimulatingModal flag
 

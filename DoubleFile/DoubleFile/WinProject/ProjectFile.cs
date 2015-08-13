@@ -424,7 +424,7 @@ namespace DoubleFile
             _bProcessing = false;
         bool
             _bUserCanceled = false;
-        List<IDisposable>
+        readonly IList<IDisposable>
             _lsDisposable = new List<IDisposable>();
 
         string

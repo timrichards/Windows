@@ -86,7 +86,7 @@ namespace DoubleFile
             RaiseItems();
         }
 
-        List<IDisposable>
+        readonly IList<IDisposable>
             _lsDisposable = new List<IDisposable>();
     }
 }

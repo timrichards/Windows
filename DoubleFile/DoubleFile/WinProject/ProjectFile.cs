@@ -49,6 +49,8 @@ namespace DoubleFile
                     {
                         if (Directory.Exists(_tempPath))
                             Directory.Delete(_tempPath, true);
+
+                        break;
                     }
                     catch (IOException)
                     {

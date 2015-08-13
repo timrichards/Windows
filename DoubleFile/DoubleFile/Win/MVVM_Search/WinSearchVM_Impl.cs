@@ -53,7 +53,10 @@ namespace DoubleFile
 
             if (null != treeNode)
             {
-                result.PathBuilder = PathBuilder.FactoryCreateOrFind(treeNode.FullPath);    // strPath failed with \\
+                Util.UIthread(99862, () =>
+                    Add(new LVitem_SearchVM(new LVitem_ProjectSearch(treeNode.Root.NodeDatum.As<RootNodeDatum>().LVitemProjectVM, _nicknameUpdater), treeNode)));
+
+                return true;
             }
             else
             {
@@ -221,8 +224,9 @@ namespace DoubleFile
 
             var ieLVitems =
                 lsTreeNodes
-                .AsParallel()
-                .Select(treeNode => new LVitem_SearchVM(treeNode))
+                .GroupBy(treeNode => treeNode.Root)
+                .Select(g => new { lvItemProjectVM = new LVitem_ProjectSearch(g.Key.NodeDatum.As<RootNodeDatum>().LVitemProjectVM, _nicknameUpdater), treeNodes = g.AsEnumerable() })
+                .SelectMany(g => g.treeNodes, (g, treeNode) => new LVitem_SearchVM(g.lvItemProjectVM, treeNode))
                 .OrderBy(lvItem => lvItem.Parent + lvItem.FolderOrFile);
 
             if (ieLVitems.Any())

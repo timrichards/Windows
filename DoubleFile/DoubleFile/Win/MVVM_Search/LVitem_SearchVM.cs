@@ -47,8 +47,9 @@ namespace DoubleFile
             Alternate = nAlternate;
         }
 
-        internal LVitem_SearchVM(LocalTreeNode localTreeNode)
+        internal LVitem_SearchVM(LVitem_ProjectSearch lvItemProjectSearch, LocalTreeNode localTreeNode)
         {
+            LVitemProjectSearch = lvItemProjectSearch;
             _datum = localTreeNode;
         }
 

@@ -53,7 +53,7 @@ namespace DoubleFile
 
             if (null != treeNode)
             {
-                result.PathBuilder = PathBuilder.FactoryCreateOrFind(treeNode.Text);    // strPath failed with \\
+                result.PathBuilder = PathBuilder.FactoryCreateOrFind(treeNode.FullPath);    // strPath failed with \\
             }
             else
             {
@@ -76,8 +76,7 @@ namespace DoubleFile
 
             var lvItemProjectVM = treeNode.Root.NodeDatum.As<RootNodeDatum>().LVitemProjectVM;
 
-            _lsSearchResults = new List<SearchResults> { };
-            ((ISearchStatus)this).Status(new SearchResults(strPath, lvItemProjectVM, new[] { result }));
+            _lsSearchResults = new List<SearchResults> { new SearchResults(strPath, lvItemProjectVM, new[] { result }) };
             ((ISearchStatus)this).Done();
             return true;
         }

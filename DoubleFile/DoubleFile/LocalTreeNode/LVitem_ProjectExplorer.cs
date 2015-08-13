@@ -31,14 +31,11 @@
                     ((Nickname.EndsWith(CulledPath)) ? "" : " (" + CulledPath.TrimEnd('\\') + ")"))
                     .Replace('\\', '/');
 
-                if (null != _strCulledPath)
-                {
-                    // prime the string table for Search UX
-                    TabledString<TabledStringType_Folders> strSearchUX_throwaway = null;
+                // prime the string table for Search UX
+                TabledString<TabledStringType_Folders> strSearchUX_throwaway = null;
 
-                    if (TabledString<TabledStringType_Folders>.IsGenerating)    // useful if statement; confuse any optimizer
-                        strSearchUX_throwaway = (TabledString<TabledStringType_Folders>)strRet;
-                }
+                if (TabledString<TabledStringType_Folders>.IsGenerating)    // useful if statement; confuse any optimizer
+                    strSearchUX_throwaway = (TabledString<TabledStringType_Folders>)strRet;
 
                 return strRet;
             }

@@ -24,7 +24,7 @@ namespace DoubleFile
                     var b = e.GetBaseException();
 
                     Util.Assert(nLocation, false, b.GetType() + " in LocalSubscribe\n" +
-                        b.Message);
+                        b.Message + "\n" + b.StackTrace);
                 }
             });
         }

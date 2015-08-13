@@ -35,6 +35,11 @@ namespace DoubleFile
                     {
                         Go();
                     }
+                    catch (ArgumentException e)
+                    {
+                        Util.Assert(99863, false, "ArgumentException in SearchListing\n" +
+                            e.GetBaseException().Message);
+                    }
                     catch (OutOfMemoryException)
                     {
                         Util.Assert(99921, false, "OutOfMemoryException in SearchListing");

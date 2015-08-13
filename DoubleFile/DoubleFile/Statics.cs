@@ -95,8 +95,12 @@ namespace DoubleFile
             {
                 args.EventArgs.Handled = true;
 
+                var o = args.EventArgs.Exception.GetBaseException();
+                var t = o.GetType();
+                var s = "" + o;
+
                 Util.Assert(99665, false, "DispatcherUnhandledException\n" +
-                    args.EventArgs.Exception.GetBaseException().Message);
+                    t + "\n" + o?.Message + "\n" + s + "\n" + o?.StackTrace);
             });
 
             Observable.FromEventPattern<UnhandledExceptionEventArgs>(AppDomain.CurrentDomain, "UnhandledException")
@@ -107,7 +111,7 @@ namespace DoubleFile
                 var s = "" + o;
 
                 Util.Assert(99666, false, "UnhandledException\n" +
-                    t + "\n" + o?.Message + "\n" + s);
+                    t + "\n" + o?.Message + "\n" + s + "\n" + o?.StackTrace);
             });
 
             // ensure that Statics is created only once

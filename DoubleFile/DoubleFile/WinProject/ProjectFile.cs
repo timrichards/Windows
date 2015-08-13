@@ -339,7 +339,7 @@ namespace DoubleFile
                     var b = e.GetBaseException();
 
                     Util.Assert(99668, false, b.GetType() + " in StartProcess\n" +
-                        b.Message);
+                        b.Message + "\n" + b.StackTrace);
                 }
             })
             { WindowClosingCallback = new WeakReference<IWinProgressClosing>(this) })

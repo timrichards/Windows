@@ -53,12 +53,15 @@ namespace DoubleFile
 
             if (null != treeNode)
             {
-                result.PathBuilder = PathBuilder.FactoryCreateOrFind(strPath);
+                result.PathBuilder = PathBuilder.FactoryCreateOrFind(treeNode.Text);    // strPath failed with \\
             }
             else
             {
-                if (false == Path.IsPathRooted(strPath))
+                if (false ==
+                    ((0 > strPath.IndexOfAny(Path.GetInvalidPathChars())) && Path.IsPathRooted(strPath)))
+                {
                     return false;
+                }
 
                 var nLastBackSlashIx = strPath.LastIndexOf('\\');
 
@@ -73,6 +76,7 @@ namespace DoubleFile
 
             var lvItemProjectVM = treeNode.Root.NodeDatum.As<RootNodeDatum>().LVitemProjectVM;
 
+            _lsSearchResults = new List<SearchResults> { };
             ((ISearchStatus)this).Status(new SearchResults(strPath, lvItemProjectVM, new[] { result }));
             ((ISearchStatus)this).Done();
             return true;

@@ -178,13 +178,16 @@ namespace DoubleFile
                         var b = e.GetBaseException();
 
                         Util.Assert(99675, false, b.GetType() + " in ParallelForEach\n" +
-                            b.Message);
+                            b.Message + "\n" + b.StackTrace);
                     }
                 });
             }
-            catch (AggregateException)
+            catch (AggregateException e)
             {
-                Util.Assert(99669, false, "AggragateException in ParallelForEach");
+                var b = e.GetBaseException();
+
+                Util.Assert(99669, false, "AggragateException in ParallelForEach\n" +
+                    b.Message + "\n" + b.StackTrace);
             }
             catch (OperationCanceledException)
             {

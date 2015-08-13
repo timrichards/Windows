@@ -41,8 +41,21 @@ namespace DoubleFile
 
         public void Dispose()
         {
-            if (Directory.Exists(_tempPath))
-                Directory.Delete(_tempPath, true);
+            Util.ThreadMake(() =>
+            {
+                for (int i = 0; i < 5; ++i)
+                {
+                    try
+                    {
+                        if (Directory.Exists(_tempPath))
+                            Directory.Delete(_tempPath, true);
+                    }
+                    catch (IOException)
+                    {
+                        Util.Block(100);
+                    }
+                }
+            });
 
             Util.LocalDispose(_lsDisposable);
         }
@@ -115,13 +128,17 @@ namespace DoubleFile
 
             var lsFilenames = new List<string> { };
 
-            foreach (var strFilename in Directory.GetFiles(_tempPath))
+            try
             {
-                var strNewFilename = LocalIsoStore.TempDir + Path.GetFileName(strFilename);
+                foreach (var strFilename in Directory.GetFiles(_tempPath))
+                {
+                    var strNewFilename = LocalIsoStore.TempDir + Path.GetFileName(strFilename);
 
-                lsFilenames.Add(strNewFilename);
-                strFilename.FileMoveToIso(strNewFilename);
+                    lsFilenames.Add(strNewFilename);
+                    strFilename.FileMoveToIso(strNewFilename);
+                }
             }
+            catch (FileNotFoundException) { return false; }     // canceled
 
             var bRet = openListingFiles.Callback
             (
@@ -329,6 +346,9 @@ namespace DoubleFile
             {
                 try
                 {
+                    if (false == Directory.Exists(_process.StartInfo.WorkingDirectory))
+                        Directory.CreateDirectory(_process.StartInfo.WorkingDirectory);
+
                     _sbError.AppendLine(DateTime.Now.ToLongTimeString().PadRight(80, '-'));
                     _bProcessing = true;
                     _process.Start();

@@ -222,16 +222,35 @@ namespace DoubleFile
                 : LocalTV.AllNodes
                     .Where(treeNode => treeNode.Text.ToLower().Contains(SearchText));
 
-            var ieLVitems =
-                lsTreeNodes
-                .GroupBy(treeNode => treeNode.Root)
-                .Select(g => new { lvItemProjectVM = new LVitem_ProjectSearch(g.Key.NodeDatum.As<RootNodeDatum>().LVitemProjectVM, _nicknameUpdater), g = g })
-                .SelectMany(g => g.g, (g, treeNode) => new LVitem_SearchVM(g.lvItemProjectVM, treeNode))
-                .OrderBy(lvItem => lvItem.LocalTreeNode.FullPathGet(_nicknameUpdater.Value))
-                .ToList();
 
-            if (ieLVitems.Any())
-                Util.UIthread(99816, () => Add(ieLVitems));
+            (new WinProgress(new[] { "" }, new[] { _ksSearchKey }, x =>
+            {
+                Util.ThreadMake(() =>
+                {
+                    var blockingFrame = new LocalDispatcherFrame(99860);
+                    IEnumerable<ListViewItemVM_Base> ieLVitems = null;
+
+                    Util.ThreadMake(() =>
+                    {
+                        ieLVitems =
+                            lsTreeNodes
+                            .GroupBy(treeNode => treeNode.Root)
+                            .Select(g => new { lvItemProjectVM = new LVitem_ProjectSearch(g.Key.NodeDatum.As<RootNodeDatum>().LVitemProjectVM, _nicknameUpdater), g = g })
+                            .SelectMany(g => g.g, (g, treeNode) => new LVitem_SearchVM(g.lvItemProjectVM, treeNode))
+                            .OrderBy(lvItem => lvItem.LocalTreeNode.FullPathGet(_nicknameUpdater.Value))
+                            .ToList();
+
+                        blockingFrame.Continue = false;
+                    });
+
+                    blockingFrame.PushFrameTrue();
+                    WinProgress.CloseForced();
+
+                    if (ieLVitems.Any())
+                        Util.UIthread(99816, () => Add(ieLVitems));
+                });
+            }))
+                .ShowDialog();
         }
 
         void SearchFoldersAndFiles(bool bSearchFilesOnly = false)

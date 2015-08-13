@@ -150,7 +150,7 @@ namespace DoubleFile
             }));
 
             using (new Push())
-                _blockingFrame.PushFrameToTrue();
+                _blockingFrame.PushFrameTrue();
 
             Push.AssertAllClear();
             DarkWindow.ShowDarkWindows = true;

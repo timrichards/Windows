@@ -8,7 +8,7 @@ namespace DoubleFile
     {
         internal LocalDispatcherFrame(decimal nLocation) : base(true) { _nLocation = nLocation; }
 
-        internal void PushFrameToTrue()
+        internal void PushFrameTrue()
         {
             _dispatcherFrames.TryAdd(this, false);
 

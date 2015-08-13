@@ -40,7 +40,7 @@ namespace DoubleFile
             Observable.Timer(napTime).Timestamp()
                 .Subscribe(x => blockingFrame.Continue = false);
 
-            blockingFrame.PushFrameToTrue();
+            blockingFrame.PushFrameTrue();
         }
 
         static internal void
@@ -228,7 +228,7 @@ namespace DoubleFile
                     // fast operation (e.g. OnPropertyChanged()) may exit Invoke() before this line is even hit:
                     // 2 then 1 not the reverse.
                     if (blockingFrame.Continue)             // 1
-                        blockingFrame.PushFrameToTrue();
+                        blockingFrame.PushFrameTrue();
                 }
             }
             catch (TaskCanceledException) { }

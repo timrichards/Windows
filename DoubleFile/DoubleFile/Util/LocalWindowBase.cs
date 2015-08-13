@@ -234,7 +234,7 @@ namespace DoubleFile
             if (false == LocalIsClosing)
             {
                 base.Show();
-                _blockingFrame.PushFrameToTrue();
+                _blockingFrame.PushFrameTrue();
             }
 
             return LocalDialogResult;

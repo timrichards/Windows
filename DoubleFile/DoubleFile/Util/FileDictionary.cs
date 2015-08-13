@@ -120,7 +120,7 @@ namespace DoubleFile
             IsAborted = false;
 
             _thread = Util.ThreadMake(() => { Go(); _blockingFrame.Continue = false; });
-            _blockingFrame.PushFrameToTrue();
+            _blockingFrame.PushFrameTrue();
             return this;
         }
 

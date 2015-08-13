@@ -260,7 +260,7 @@ namespace DoubleFile
                         // Expect block to be false: reading buffers from disk is The limiting factor. Opening files is
                         // slow too, which makes it even less likely to block. Allow block. It does get hit a handful of times.
                         if (blockWhileHashingPreviousBatch.Continue)
-                            blockWhileHashingPreviousBatch.PushFrameToTrue();
+                            blockWhileHashingPreviousBatch.PushFrameTrue();
 
                         blockWhileHashingPreviousBatch.Continue = true;
 

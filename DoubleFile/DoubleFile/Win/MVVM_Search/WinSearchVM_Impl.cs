@@ -225,9 +225,10 @@ namespace DoubleFile
             var ieLVitems =
                 lsTreeNodes
                 .GroupBy(treeNode => treeNode.Root)
-                .Select(g => new { lvItemProjectVM = new LVitem_ProjectSearch(g.Key.NodeDatum.As<RootNodeDatum>().LVitemProjectVM, _nicknameUpdater), treeNodes = g.AsEnumerable() })
-                .SelectMany(g => g.treeNodes, (g, treeNode) => new LVitem_SearchVM(g.lvItemProjectVM, treeNode))
-                .OrderBy(lvItem => lvItem.Parent + lvItem.FolderOrFile);
+                .Select(g => new { lvItemProjectVM = new LVitem_ProjectSearch(g.Key.NodeDatum.As<RootNodeDatum>().LVitemProjectVM, _nicknameUpdater), g = g })
+                .SelectMany(g => g.g, (g, treeNode) => new LVitem_SearchVM(g.lvItemProjectVM, treeNode))
+                .OrderBy(lvItem => lvItem.LocalTreeNode.FullPathGet(_nicknameUpdater.Value))
+                .ToList();
 
             if (ieLVitems.Any())
                 Util.UIthread(99816, () => Add(ieLVitems));

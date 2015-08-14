@@ -49,7 +49,8 @@ namespace DoubleFile
                     }
                     else
                     {
-                        throw new ArgumentException(IndexOf_Exception);
+                        Util.Assert(99788, false);
+                        return -2;
                     }
                 }
 
@@ -87,8 +88,5 @@ namespace DoubleFile
         string[] _strings;
 
         int[] _sort;
-
-        internal const string
-           IndexOf_Exception = "99788";
     }
 }

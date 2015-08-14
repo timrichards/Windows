@@ -5,7 +5,7 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
-- full path search can't do files: GetOneNodeByRootPathA.
+- Detail doesn't listen for selected file change_selectedItem.LVitemProjectSearch
 - Application.Current.MainWindow is only accessible on the main UI thread
 - foreach over IList
 - Clones blue and # when only one volume is included

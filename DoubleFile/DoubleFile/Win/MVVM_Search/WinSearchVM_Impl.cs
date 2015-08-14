@@ -65,18 +65,7 @@ namespace DoubleFile
                 if (0 > nLastBackSlashIx)
                     return false;
 
-                PathBuilder pathBuilder = null;
-
-                try
-                {
-                    pathBuilder = PathBuilder.FactoryCreateOrFind(strPath.Substring(0, nLastBackSlashIx));
-                }
-                catch (ArgumentException e) when (TabledStringGenerated.IndexOf_Exception == e.Message)
-                {
-                    return false;
-                }
-
-                treeNode = LocalTV.GetOneNodeByRootPathA("" + pathBuilder, null);
+                treeNode = LocalTV.GetOneNodeByRootPathA(strPath.Substring(0, nLastBackSlashIx), null);
 
                 if (null == treeNode)
                     return false;

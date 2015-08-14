@@ -82,9 +82,8 @@ namespace DoubleFile
             MonitorFromWindow(NativeWindow w, uint dwFlags) => MonitorFromWindow((IntPtr)w, dwFlags);
 
         [DllImport("user32.dll", SetLastError = true)]
-        static internal extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
-        //static internal bool
-        //    GetWindowRect(NativeWindow w, out RECT lpRect) => GetWindowRect((IntPtr)w, out lpRect);
+        static internal extern bool
+            GetWindowRect(IntPtr hwnd, out RECT lpRect);
 
         [DllImport("user32.dll", SetLastError = true)]
         static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, int uFlags);
@@ -101,7 +100,8 @@ namespace DoubleFile
 
         [DllImport("kernel32.dll", SetLastError=true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static internal extern bool CloseHandle(IntPtr hObject);
+        static internal extern bool
+            CloseHandle(IntPtr hObject);
         
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal struct
@@ -216,29 +216,29 @@ namespace DoubleFile
         static internal NativeWindow
             GetWindow(NativeWindow w, uint wCmd) => GetWindow((IntPtr)w, wCmd);
 
-        internal static IList<NativeWindow> GetAllSystemDialogs()
+        internal static IList<NativeWindow>
+            GetAllSystemDialogs()
         {
             var searchData = new SearchData { };
 
-            _lsRet = new List<NativeWindow>();
             EnumWindows(EnumProcTitleAll, ref searchData);
-            return _lsRet;
+            return searchData.lsRet;
         }
-
         static bool EnumProcTitleAll(IntPtr hWnd, ref SearchData searchData)
         {
             var sb = new StringBuilder(1024);
 
             GetClassName(hWnd, sb, sb.Capacity);
 
-            if (false == ("" + sb).StartsWith("#32770"))    // class name can be suffixed " (Debug)"
-                _lsRet.Add(hWnd);   // Found the wnd, keep enumerating though
+            if (("" + sb).StartsWith("#32770"))    // class name can be suffixed " (Debug)"
+                searchData.lsRet.Add(hWnd);   // Found the wnd, keep enumerating though
 
             return true;
         }
-
-        static IList<NativeWindow> _lsRet = null;
-        public class SearchData { }
+        public class SearchData
+        {
+            internal IList<NativeWindow> lsRet = new List<NativeWindow> { };
+        }
         private delegate bool EnumWindowsProc(IntPtr hWnd, ref SearchData data);
 
         [DllImport("user32.dll")]

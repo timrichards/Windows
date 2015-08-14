@@ -357,17 +357,18 @@ namespace DoubleFile
                 .ToList();
 
             var nativeMainWindow = (NativeWindow)Application.Current.MainWindow;
+            var systemDialogs = NativeMethods.GetAllSystemDialogs();
 
-            foreach (var systemDialog in
-                NativeMethods
-                .GetAllSystemDialogs())
+            foreach (var systemDialog in systemDialogs)
             {
-                var owner = NativeMethods.GetWindow(systemDialog, NativeMethods.GW_OWNER);
+                var owner = systemDialog;
+
+                owner = NativeMethods.GetWindow(owner, NativeMethods.GW_OWNER);
 
                 if (owner.Equals(IntPtr.Zero))
                     continue;
 
-                owner = NativeMethods.GetWindow(systemDialog, NativeMethods.GW_OWNER);
+                owner = NativeMethods.GetWindow(owner, NativeMethods.GW_OWNER);
 
                 if (owner.Equals(IntPtr.Zero))
                     continue;

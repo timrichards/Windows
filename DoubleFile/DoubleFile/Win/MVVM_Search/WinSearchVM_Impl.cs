@@ -60,20 +60,28 @@ namespace DoubleFile
             }
             else
             {
-                if (false ==
-                    ((0 > strPath.IndexOfAny(Path.GetInvalidPathChars())) && Path.IsPathRooted(strPath)))
+                var nLastBackSlashIx = strPath.LastIndexOf('\\');
+
+                if (0 > nLastBackSlashIx)
+                    return false;
+
+                PathBuilder pathBuilder = null;
+
+                try
+                {
+                    pathBuilder = PathBuilder.FactoryCreateOrFind(strPath.Substring(0, nLastBackSlashIx));
+                }
+                catch (ArgumentException e) when (TabledStringGenerated.IndexOf_Exception == e.Message)
                 {
                     return false;
                 }
 
-                var nLastBackSlashIx = strPath.LastIndexOf('\\');
-
-                result.PathBuilder = PathBuilder.FactoryCreateOrFind(strPath.Substring(0, nLastBackSlashIx));
-                treeNode = LocalTV.GetOneNodeByRootPathA("" + result.PathBuilder, null);
+                treeNode = LocalTV.GetOneNodeByRootPathA("" + pathBuilder, null);
 
                 if (null == treeNode)
                     return false;
 
+                result.PathBuilder = PathBuilder.FactoryCreateOrFind(treeNode.FullPathGet(false));
                 result.ListFiles.Add((TabledString<TabledStringType_Files>)strPath.Substring(nLastBackSlashIx + 1), false);
             }
 
@@ -93,7 +101,7 @@ namespace DoubleFile
             }
 
             if (null != _selectedItem.Directory)
-                GoToFileOnNext(Tuple.Create((LVitem_ProjectVM)null, "" + _selectedItem.Directory, "" + _selectedItem.TabledStringFilename));
+                GoToFileOnNext(Tuple.Create((LVitem_ProjectVM)_selectedItem.LVitemProjectSearch, "" + _selectedItem.Directory, "" + _selectedItem.TabledStringFilename));
             else
                 _selectedItem.LocalTreeNode.GoToFile(null);
         }
@@ -221,7 +229,6 @@ namespace DoubleFile
                     .Where(treeNode => contains(treeNode.Text, SearchText))
                 : LocalTV.AllNodes
                     .Where(treeNode => treeNode.Text.ToLower().Contains(SearchText));
-
 
             (new WinProgress(new[] { "" }, new[] { _ksSearchKey }, x =>
             {

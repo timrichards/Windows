@@ -233,10 +233,10 @@ namespace DoubleFile
             if (VK_ESCAPE != (int)msg.wParam)
                 return;
 
-            if (0 == ((int)msg.lParam & 0x40000000))
+            if (0 == ((int)msg.lParam & (1 << 30)))
                 return;           // previous state is not key down
 
-            if (0 == ((int)msg.lParam & 0xFFFF))
+            if (0 == ((int)msg.lParam & ((1 << 16) - 1)))
                 return;           // repeat count is zero, jic
 
             handled = true;

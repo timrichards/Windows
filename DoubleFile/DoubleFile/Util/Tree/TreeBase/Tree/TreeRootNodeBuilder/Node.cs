@@ -72,11 +72,14 @@ namespace DoubleFile
                             subNode._bUseShortPath = false;
                             treeNode = subNode.AddToTree();
 
-                            // pass the culled path back to TreeRootNodeBuilder; ultimately to LVitem_ProjectExplorer
-                            treeNode.NodeDatum =
-                                new RootNodeDatum(new NodeDatum(new DetailsDatum(
-                                subNode._nPrevLineNo, subNode._nLineNo, subNode._nLength, subNode._folderScore)),
-                                subNode._strPath);
+                            if (false == treeNode.NodeDatum is RootNodeDatum)
+                            {
+                                // pass the culled path back to TreeRootNodeBuilder; ultimately to LVitem_ProjectExplorer
+                                treeNode.NodeDatum =
+                                    new RootNodeDatum(new NodeDatum(new DetailsDatum(
+                                    subNode._nPrevLineNo, subNode._nLineNo, subNode._nLength, subNode._folderScore)),
+                                    subNode._strPath);
+                            }
 
                             return treeNode;
                         }

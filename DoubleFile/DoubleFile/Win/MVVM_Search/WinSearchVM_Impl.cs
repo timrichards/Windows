@@ -243,7 +243,7 @@ namespace DoubleFile
                         blockingFrame.Continue = false;     // 2
                     });
 
-                    // fast operation may exit Invoke() before this line is even hit:
+                    // fast operation may exit ThreadMake() before this line is even hit:
                     // 2 then 1 not the reverse.
                     if (blockingFrame.Continue)             // 1
                         blockingFrame.PushFrameTrue();

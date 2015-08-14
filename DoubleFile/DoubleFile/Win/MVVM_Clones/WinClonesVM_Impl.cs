@@ -75,7 +75,7 @@ namespace DoubleFile
             }
             else
             {
-                Util.Assert(99865, false, bTraceOnly: true);
+                Util.Assert(99865, 0 == Items.Count, bTraceOnly: true);
             }
 
             return this;
@@ -83,7 +83,7 @@ namespace DoubleFile
 
         public void Dispose()
         {
-            _nicknameUpdater.Clear();
+            _nicknameUpdater?.Clear();
             Util.LocalDispose(_lsDisposable);
         }
 

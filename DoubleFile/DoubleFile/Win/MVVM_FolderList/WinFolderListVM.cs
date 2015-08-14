@@ -38,7 +38,8 @@ namespace DoubleFile
         LVitem_FolderListVM _selectedItem = null;
 
         public string WidthFolder => SCW;                  // franken all NaN
-        public string WidthParent => SCW;                  // franken all NaN
+        public string WidthParent => SCW;
+        public string WidthIn => SCW;
 
         internal override int NumCols => LVitem_FolderListVM.NumCols_;
     }

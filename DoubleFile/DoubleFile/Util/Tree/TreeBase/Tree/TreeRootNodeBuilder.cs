@@ -79,7 +79,9 @@ namespace DoubleFile
                         lsTreeNodes.Add(treeNode);
                 }
                 else if (0 < nodeDatum.TotalLength)
+                {
                     _dictNodes[nodeDatum.Key] = new List<LocalTreeNode> { treeNode };
+                }
 
                 return datum;
             }
@@ -257,7 +259,7 @@ namespace DoubleFile
                 }
 
                 // 8s
-                Util.WriteLine("FolderScore " + (DateTime.Now - dt).TotalMilliseconds + " ms - " + _lvItemProjectVM.Volume);
+                Util.WriteLine("FolderScore " + (DateTime.Now - dt).TotalMilliseconds + " ms - " + _lvItemProjectVM.SourcePath);
 
                 var rootTreeNode = dirData.AddToTree();
 

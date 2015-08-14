@@ -8,12 +8,24 @@ namespace DoubleFile
 
         public string Folder => LocalTreeNode.Text;
 
+        public string
+            In { get; private set; } = " in ";    // interned
+
         public string Parent
         {
             get
             {
                 _nicknameUpdater.LastGet(this);
-                return LocalTreeNode.Parent?.FullPathGet(_nicknameUpdater.Value);
+
+                var strRet = LocalTreeNode.Parent?.FullPathGet(_nicknameUpdater.Value);
+
+                if (null == strRet)
+                {
+                    In = null;
+                    RaisePropertyChanged("In");
+                }
+
+                return strRet;
             }
         }
 

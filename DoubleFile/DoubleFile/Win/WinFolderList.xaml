@@ -24,7 +24,7 @@
                         <DataTemplate>
                             <TextBlock>
                                 <Run Text="{Binding Folder, Mode=OneWay}" FontWeight="SemiBold"/>
-                                <Run Text=" in " FontWeight="ExtraLight"/>
+                                <Run Text="{Binding In, Mode=OneWay}" FontWeight="ExtraLight"/>
                                 <Run Text="{Binding Parent, Mode=OneWay}"/>
                             </TextBlock>
                         </DataTemplate>

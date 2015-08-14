@@ -35,8 +35,7 @@ namespace DoubleFile
             
             _bNavigatedTo = false;
 
-            _winFormsLVVM = WinClonesVM.FactoryGetHolder(strFragment);
-            _winFormsLVVM.UseNicknames = _bNicknames;               // set before setting data context
+            _winFormsLVVM = WinClonesVM.FactoryGetHolder(strFragment, _bNicknames);
             DataContext = _winFormsLVVM;
 
             LocalTitle =

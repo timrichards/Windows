@@ -15,7 +15,7 @@ namespace DoubleFile
         {
         }
 
-        internal static WinClonesVM FactoryGetHolder(string strFragment)
+        internal static WinClonesVM FactoryGetHolder(string strFragment, bool bUseNicknames)
         {
             WinClonesVM localLVVM = null;
 
@@ -51,10 +51,10 @@ namespace DoubleFile
 
             return
                 localLVVM
-                .Init();
+                .Init(bUseNicknames);
         }
 
-        WinClonesVM Init()
+        WinClonesVM Init(bool bUseNicknames)
         {
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99700, TreeSelect_FolderDetailUpdated));
 
@@ -71,6 +71,7 @@ namespace DoubleFile
             {
                 Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateViewport(UseNicknames));
                 _nicknameUpdater.Clear();
+                UseNicknames = bUseNicknames;
                 _nicknameUpdater.UpdateViewport(UseNicknames);
             }
             else

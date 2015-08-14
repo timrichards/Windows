@@ -4,10 +4,10 @@ namespace DoubleFile
 {
     class LVitem_FolderListVM : ListViewItemVM_Base, IListUpdater
     {
-        public bool Alternate { get; }
-
-        public string Folder => LocalTreeNode.Text;
-
+        public bool
+            Alternate { get; }
+        public string
+            Folder => LocalTreeNode.Text;
         public string
             In { get; private set; } = " in ";    // interned
 
@@ -15,17 +15,17 @@ namespace DoubleFile
         {
             get
             {
-                _nicknameUpdater.LastGet(this);
+                var parent = LocalTreeNode.Parent;
 
-                var strRet = LocalTreeNode.Parent?.FullPathGet(_nicknameUpdater.Value);
-
-                if (null == strRet)
+                if (null != parent)
                 {
-                    In = null;
-                    RaisePropertyChanged("In");
+                    _nicknameUpdater.LastGet(this);
+                    return parent.FullPathGet(_nicknameUpdater.Value);
                 }
 
-                return strRet;
+                In = null;
+                RaisePropertyChanged("In");
+                return null;
             }
         }
 

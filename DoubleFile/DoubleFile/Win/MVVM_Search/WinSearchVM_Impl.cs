@@ -227,7 +227,7 @@ namespace DoubleFile
             {
                 Util.ThreadMake(() =>
                 {
-                    var blockingFrame = new LocalDispatcherFrame(99860);
+                    var blockingFrame = new LocalDispatcherFrame(99860) { Continue = true };
                     IEnumerable<ListViewItemVM_Base> ieLVitems = null;
 
                     Util.ThreadMake(() =>
@@ -240,10 +240,14 @@ namespace DoubleFile
                             .OrderBy(lvItem => lvItem.LocalTreeNode.FullPathGet(_nicknameUpdater.Value))
                             .ToList();
 
-                        blockingFrame.Continue = false;
+                        blockingFrame.Continue = false;     // 2
                     });
 
-                    blockingFrame.PushFrameTrue();
+                    // fast operation may exit Invoke() before this line is even hit:
+                    // 2 then 1 not the reverse.
+                    if (blockingFrame.Continue)             // 1
+                        blockingFrame.PushFrameTrue();
+
                     WinProgress.CloseForced();
 
                     if (ieLVitems.Any())

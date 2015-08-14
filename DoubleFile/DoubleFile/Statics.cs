@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.IsolatedStorage;
 using System.Reactive.Linq;
 using System.Windows.Threading;
+using System.Windows.Interop;
 
 namespace DoubleFile
 {
@@ -153,9 +154,16 @@ namespace DoubleFile
             _lockTempIsoDir = LocalIsoStore.LockFile(lockFilename);
             LocalIsoStore.CreateDirectory(LocalIsoStore.TempDir);
 
+            // Do not allow the Esc key to repeat
+            ComponentDispatcher.ThreadPreprocessMessage += ComponentDispatcher_ThreadPreprocessMessage;
+
+            // set up App parameters, starting with the Exit event; then the App events for CanFlashWindow_ResetsIt etc.
+
             Observable.FromEventPattern(app, "Exit")
                 .LocalSubscribe(99670, x =>
             {
+                ComponentDispatcher.ThreadPreprocessMessage -= ComponentDispatcher_ThreadPreprocessMessage;
+
                 _lockTempIsoDir.Dispose();
 
                 foreach (var strFilename in LocalIsoStore.GetFileNames(LocalIsoStore.TempDir + @"\*.*"))
@@ -172,8 +180,6 @@ namespace DoubleFile
 
                 CleanupTemp();
             });
-
-            // set up App parameters, starting with the App events for CanFlashWindow_ResetsIt etc.
 
             AppActivated = true;      // Application_Activated() seemed to work but jic
 
@@ -212,6 +218,28 @@ namespace DoubleFile
             {
                 Source = new Uri(strSource, UriKind.Relative)
             });
+        }
+
+        private void ComponentDispatcher_ThreadPreprocessMessage(ref MSG msg, ref bool handled)
+        {
+            // Do not allow the Esc key to repeat
+
+            const int WM_KEYDOWN = 0x100;
+            const int VK_ESCAPE = 0x1B;
+
+            if (WM_KEYDOWN != msg.message)
+                return;
+
+            if (VK_ESCAPE != (int)msg.wParam)
+                return;
+
+            if (0 == ((int)msg.lParam & 0x40000000))
+                return;           // previous state is not key down
+
+            if (0 == ((int)msg.lParam & 0xFFFF))
+                return;           // repeat count is zero, jic
+
+            handled = true;
         }
 
         static readonly WeakReference<Statics> _wr = new WeakReference<Statics>(null);

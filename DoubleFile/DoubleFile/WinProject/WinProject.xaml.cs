@@ -18,14 +18,21 @@ namespace DoubleFile
                 SelectedItems = () => form_lv.SelectedItems.Cast<LVitem_ProjectVM>()
             };
 
-            DataContext = new WinProjectVM(lvProjectVM);
-            _weakReference.SetTarget(this);
-
             form_lv.DataContext =
                 Statics.LVprojectVM =
                 lvProjectVM;
 
+            DataContext =
+                _winProjectVM =
+                new WinProjectVM(lvProjectVM);
+
             LV_ProjectVM.Modified.LocalSubscribe(99720, x => Reset());
+            _weakReference.SetTarget(this);
+        }
+
+        ~WinProject()
+        {
+            _winProjectVM.Dispose();
         }
 
         static internal bool OKtoNavigate_BuildExplorer(bool bSaveListings)
@@ -113,6 +120,8 @@ namespace DoubleFile
 
         LV_ProjectVM
             _lvProjectVM = null;
+        WinProjectVM
+            _winProjectVM = null;
         static readonly WeakReference<WinProject>
             _weakReference = new WeakReference<WinProject>(null);
     }

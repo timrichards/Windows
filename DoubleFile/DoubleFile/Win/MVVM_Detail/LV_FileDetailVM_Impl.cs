@@ -12,7 +12,6 @@ namespace DoubleFile
             Icmd_Copy = new RelayCommand(Copy, () => false == string.IsNullOrWhiteSpace(LocalPath));
             _lsDisposable.Add(WinDuplicatesVM.UpdateFileDetail.LocalSubscribe(99709, WinDuplicatesVM_UpdateFileDetail));
             _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.LocalSubscribe(99708, LV_FilesVM_SelectedFileChanged));
-            _lsDisposable.Add(TreeSelect.FileListUpdated.Observable.LocalSubscribe(99857, TreeSelect_FileListUpdated));
 
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99707, initiatorTuple =>
             {
@@ -35,11 +34,6 @@ namespace DoubleFile
         public void Dispose() => Util.LocalDispose(_lsDisposable);
 
         void Copy() => Clipboard.SetText(LocalPath);
-
-        void TreeSelect_FileListUpdated(Tuple<TreeSelect.FileListUpdated, int> initiatorTuple)
-        {
-            var tuple = initiatorTuple.Item1;
-        }
 
         void LV_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyList<string>, LocalTreeNode>, int> initiatorTuple)
         {

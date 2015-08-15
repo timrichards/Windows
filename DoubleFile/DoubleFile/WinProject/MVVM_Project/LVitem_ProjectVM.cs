@@ -27,14 +27,16 @@ namespace DoubleFile
         protected override IReadOnlyList<string> _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
         static IReadOnlyList<string> _propNamesA = null;
 
-        internal LVitem_ProjectVM(IList<string> lsStr = null)
+        internal
+            LVitem_ProjectVM(IList<string> lsStr = null)
             : base(null, lsStr)
         {
             if (null == Status)
                 Status = FileParse.ksNotSaved;
         }
 
-        internal LVitem_ProjectVM(LVitem_ProjectVM lvItemTemp)
+        internal
+            LVitem_ProjectVM(LVitem_ProjectVM lvItemTemp)
             : this(lvItemTemp?.SubItems.ToList())
         {
             if (null == lvItemTemp)
@@ -44,16 +46,21 @@ namespace DoubleFile
             HashV2 = lvItemTemp.HashV2;
         }
 
-        internal bool Include
+        internal bool
+            Include
         {
             get { return (IncludeYN == FileParse.ksIncludeYes); }
             set { IncludeYN = (value ? FileParse.ksIncludeYes : FileParse.ksIncludeNo); } 
         }
 
-        internal bool WouldSave => (false == _ksFileExistsCheck.Contains(Status));
-        internal bool CanLoad => (Include && _ksFileExistsCheck.Contains(Status) && (FileParse.ksError != Status));
+        internal bool
+            WouldSave => (false == _ksFileExistsCheck.Contains(Status));
+        internal bool
+            CanLoad => (Include && _ksFileExistsCheck.Contains(Status) && (FileParse.ksError != Status));
 
-        internal void SetSaved()
+        // "Saved" is an unlikely term: it means that the volume's been scanned. Different from metadata here been serialized
+        internal void
+            SetSaved()
         {
             LVitem_ProjectVM lvItem = null;
 
@@ -68,6 +75,29 @@ namespace DoubleFile
             {
                 Status = FileParse.ksError;
             }
+        }
+
+        internal string
+            Serialize() => string.Join("\t", SubItems);
+
+        internal bool
+            Deserialize(string str)
+        {
+            if (LocalEquals(new LVitem_ProjectVM(str.Split('\t'))   // Do not optimize str.Split: array used as is by LV item
+            {
+                ListingFile = ListingFile,
+                IncludeYN = IncludeYN,
+                VolumeGroup = VolumeGroup
+            }))
+            {
+                var lvItemTemp = new LVitem_ProjectVM(str.Split('\t'));
+
+                IncludeYN = lvItemTemp.IncludeYN;
+                VolumeGroup = lvItemTemp.VolumeGroup;
+                return true;
+            }
+
+            return false;
         }
 
         internal int

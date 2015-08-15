@@ -17,14 +17,14 @@ namespace DoubleFile
     {
         internal FileDictionary()
         {
-            // ProjectFile.OnOpenedProject += Deserialize;
             // ProjectFile.OnSavingProject += Serialize;
+            // ProjectFile.OnOpenedProject += Deserialize;
         }
 
         public void Dispose()
         {
-            // ProjectFile.OnOpenedProject -= Deserialize;
             // ProjectFile.OnSavingProject -= Serialize;
+            // ProjectFile.OnOpenedProject -= Deserialize;
         }
 
         internal void

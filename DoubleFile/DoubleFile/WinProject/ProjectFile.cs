@@ -26,17 +26,17 @@ namespace DoubleFile
         static readonly string _tempPath = Path.GetTempPath() + LocalIsoStore.TempDir.TrimEnd('\\') + "_" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + '\\';
 
         static internal bool
-            OpenProject(string strProjectFilename, WeakReference<IOpenListingFiles> openListingFilesWR, bool bClearItems)
-        {
-            using (var projectFile = new ProjectFile())
-                return projectFile.OpenProject_(strProjectFilename, openListingFilesWR, bClearItems);
-        }
-
-        static internal bool
             SaveProject(LV_ProjectVM lvProjectVM, string strProjectFilename)
         {
             using (var projectFile = new ProjectFile())
                 return projectFile.SaveProject_(lvProjectVM, strProjectFilename);
+        }
+
+        static internal bool
+            OpenProject(string strProjectFilename, WeakReference<IOpenListingFiles> openListingFilesWR, bool bClearItems)
+        {
+            using (var projectFile = new ProjectFile())
+                return projectFile.OpenProject_(strProjectFilename, openListingFilesWR, bClearItems);
         }
 
         public void Dispose()
@@ -90,6 +90,166 @@ namespace DoubleFile
 
             _lsDisposable.Add(Observable.FromEventPattern<DataReceivedEventArgs>(_process, "ErrorDataReceived")
                 .LocalSubscribe(99724, args => { Util.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); }));
+        }
+
+        bool SaveProject_(LV_ProjectVM lvProjectVM, string strProjectFilename)
+        {
+            var lsSourceFiles = new List<string> { };
+            var lsListingFiles_Check = new List<string> { };
+            var bUnsavedListings = false;
+
+            foreach (var volStrings in lvProjectVM.ItemsCast)
+            {
+                if (volStrings.WouldSave)
+                {
+                    bUnsavedListings = true;
+                    continue;
+                }
+
+                var strNewName = Path.GetFileName(volStrings.ListingFile);
+
+                if (lsListingFiles_Check.Contains(strNewName))
+                {
+                    var bSuccess = false;
+                    const int knMaxAttempts = 16;
+
+                    for (var n = 0; n < knMaxAttempts; ++n)
+                    {
+                        strNewName = Path.GetFileNameWithoutExtension(volStrings.ListingFile) +
+                            "_" + n.ToString("00") + Path.GetExtension(volStrings.ListingFile);
+
+                        if (false == lsListingFiles_Check.Contains(strNewName))
+                        {
+                            bSuccess = true;
+                            break;
+                        }
+                    }
+
+                    if (bSuccess)
+                    {
+                        strNewName = LocalIsoStore.TempDir + strNewName;
+                        LocalIsoStore.CopyFile(volStrings.ListingFile, strNewName);
+                        volStrings.ListingFile = strNewName;
+                    }
+                }
+
+                lsSourceFiles.Add(volStrings.ListingFile);
+                lsListingFiles_Check.Add(Path.GetFileName(volStrings.ListingFile));
+            }
+
+            bool bIsEmpty = 0 == lsSourceFiles.Count;
+
+            if (bUnsavedListings || bIsEmpty)
+            {
+                MBoxStatic.ShowDialog("One or more volumes in the project have not yet had directory listings saved for it." +
+                    " Click an explorer link at the top of the window to start saving directory listings of your drives.",
+                    "Save Project");
+
+                if (bIsEmpty)
+                    return false;
+            }
+
+            var sbSource = new StringBuilder();
+            var strPath = Path.GetDirectoryName(lsSourceFiles[0]) + '\\';
+
+            lsSourceFiles.AddRange(OnSavingProject?
+                .GetInvocationList()
+                .Select(onSavingProject => "" + onSavingProject.DynamicInvoke()));
+
+            foreach (var strFilenameRO in lsSourceFiles)
+            {
+                var strSourceFilename = strFilenameRO;
+
+                if (strFilenameRO.StartsWith(LocalIsoStore.TempDir))
+                {
+                    strSourceFilename = strFilenameRO.Replace(strPath, "");
+
+                    using (var sr = new StreamReader(LocalIsoStore.OpenFile(strFilenameRO, FileMode.Open)))
+                    using (var sw = new StreamWriter(File.OpenWrite(_tempPath + '\\' + strSourceFilename)))
+                        Util.CopyStream(sr, sw);
+                }
+
+                sbSource.Append("\"").Append(strSourceFilename).Append("\" ");
+            }
+
+            var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
+            var bRet = true;
+            var str7z = strProjectFilename + ".7z";
+
+            if (File.Exists(str7z))
+                File.Delete(str7z);
+
+            if (false == StartProcess("Saving project", strProjectFileNoPath,
+                _tempPath,
+                "a \"" + str7z + "\" " + sbSource + " -mx=3 -md=128m",
+                () => SaveProcessExited(out bRet, strProjectFilename)))
+            {
+                SaveProjectFailedToStartProcess(strProjectFilename, lsSourceFiles);
+                bRet = false;
+            }
+
+            return bRet;
+        }
+
+        void SaveProcessExited(out bool bRet, string strProjectFilename)
+        {
+            var bErr = ReportAnyErrors(_process, "Saving",
+                new Win32Exception(Marshal.GetLastWin32Error()).Message);
+
+            if (bErr || _bUserCanceled)
+            {
+                bRet = false;
+                return;
+            }
+
+            if (File.Exists(strProjectFilename))
+                File.Delete(strProjectFilename);
+
+            File.Move(strProjectFilename + ".7z", strProjectFilename);
+            _bProcessing = false;
+            bRet = true;
+            
+            WinProgress.WithWinProgress(w =>
+                w.SetCompleted(Path.GetFileName(strProjectFilename)));
+        }
+
+        void SaveProjectFailedToStartProcess(string strProjectFilename, List<string> lsListingFiles)
+        {
+            var strDir = strProjectFilename;
+            var strMessage = "";
+            var bSuccess = false;
+            const int knMaxAttempts = 16;
+            var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
+
+            for (var n = 0; n < knMaxAttempts; ++n)
+            {
+                if (knMaxAttempts - 1 == n)
+                    strDir = _tempPath.TrimEnd('\\') + "_" + strProjectFileNoPath;
+
+                try
+                {
+                    Directory.CreateDirectory(strDir);
+                    bSuccess = true;
+                    break;
+                }
+                catch { }
+
+                strDir = strProjectFilename + "_" + n.ToString("00");
+            }
+
+            if (bSuccess)
+            {
+                foreach (var listingFile in lsListingFiles)
+                {
+                    using (var sr = new StreamReader(LocalIsoStore.OpenFile(listingFile, FileMode.Open)))
+                    using (var sw = new StreamWriter(File.OpenWrite(strDir + '\\' + Path.GetFileName(listingFile))))
+                        Util.CopyStream(sr, sw);
+                }
+
+                strMessage = " Copied the listing files to\n" + strDir;
+            }
+
+            MBoxStatic.ShowDialog("Couldn't save the project." + strMessage, "Save Project");
         }
 
         bool OpenProject_(string strProjectFilename, WeakReference<IOpenListingFiles> openListingFilesWR, bool bClearItems)
@@ -165,168 +325,6 @@ namespace DoubleFile
             WinProgress.CloseForced();
             _bProcessing = false;
             return bRet && (false == _bUserCanceled);
-        }
-
-        bool SaveProject_(LV_ProjectVM lvProjectVM, string strProjectFilename)
-        {
-            var lsListingFiles = new List<string>();
-            var lsListingFiles_Check = new List<string>();
-            var bUnsavedListings = false;
-
-            foreach (var volStrings in lvProjectVM.ItemsCast)
-            {
-                if (volStrings.WouldSave)
-                {
-                    bUnsavedListings = true;
-                    continue;
-                }
-
-                var strNewName = Path.GetFileName(volStrings.ListingFile);
-
-                if (lsListingFiles_Check.Contains(strNewName))
-                {
-                    var bSuccess = false;
-                    const int knMaxAttempts = 16;
-
-                    for (var n = 0; n < knMaxAttempts; ++n)
-                    {
-                        strNewName = Path.GetFileNameWithoutExtension(volStrings.ListingFile) +
-                            "_" + n.ToString("00") + Path.GetExtension(volStrings.ListingFile);
-
-                        if (false == lsListingFiles_Check.Contains(strNewName))
-                        {
-                            bSuccess = true;
-                            break;
-                        }
-                    }
-
-                    if (bSuccess)
-                    {
-                        strNewName = LocalIsoStore.TempDir + strNewName;
-                        LocalIsoStore.CopyFile(volStrings.ListingFile, strNewName);
-                        volStrings.ListingFile = strNewName;
-                    }
-                }
-
-                lsListingFiles.Add(volStrings.ListingFile);
-                lsListingFiles_Check.Add(Path.GetFileName(volStrings.ListingFile));
-            }
-
-            bool bIsEmpty = 0 == lsListingFiles.Count;
-
-            if (bUnsavedListings || bIsEmpty)
-            {
-                MBoxStatic.ShowDialog("One or more volumes in the project have not yet had directory listings saved for it." +
-                    " Click an explorer link at the top of the window to start saving directory listings of your drives.",
-                    "Save Project");
-
-                if (bIsEmpty)
-                    return false;
-            }
-
-            var sbSource = new StringBuilder();
-            var strPath = Path.GetDirectoryName(lsListingFiles[0]) + '\\';
-
-            foreach (var listingFile in lsListingFiles)
-            {
-                var strSourceFilename = listingFile;
-
-                if (listingFile.StartsWith(LocalIsoStore.TempDir))
-                {
-                    strSourceFilename = listingFile.Replace(strPath, "");
-
-                    using (var sr = new StreamReader(LocalIsoStore.OpenFile(listingFile, FileMode.Open)))
-                    using (var sw = new StreamWriter(File.OpenWrite(_tempPath + '\\' + strSourceFilename)))
-                        Util.CopyStream(sr, sw);
-                }
-
-                sbSource.Append("\"").Append(strSourceFilename).Append("\" ");
-            }
-
-            OnSavingProject?
-                .GetInvocationList()
-                .Select(onSavingProject => "" + onSavingProject.DynamicInvoke())
-                .ForEach(strFilename =>
-                sbSource.Append("\"").Append(strFilename.Replace(strPath, "")).Append("\" "));
-
-            var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
-            var bRet = true;
-            var str7z = strProjectFilename + ".7z";
-
-            if (File.Exists(str7z))
-                File.Delete(str7z);
-
-            if (false == StartProcess("Saving project", strProjectFileNoPath,
-                _tempPath,
-                "a \"" + str7z + "\" " + sbSource + " -mx=3 -md=128m",
-                () => SaveProcessExited(out bRet, strProjectFilename)))
-            {
-                SaveProjectFailedToStartProcess(strProjectFilename, lsListingFiles);
-                bRet = false;
-            }
-
-            return bRet;
-        }
-
-        void SaveProcessExited(out bool bRet, string strProjectFilename)
-        {
-            var bErr = ReportAnyErrors(_process, "Saving",
-                new Win32Exception(Marshal.GetLastWin32Error()).Message);
-
-            if (bErr || _bUserCanceled)
-            {
-                bRet = false;
-                return;
-            }
-
-            if (File.Exists(strProjectFilename))
-                File.Delete(strProjectFilename);
-
-            File.Move(strProjectFilename + ".7z", strProjectFilename);
-            _bProcessing = false;
-            bRet = true;
-            
-            WinProgress.WithWinProgress(w =>
-                w.SetCompleted(Path.GetFileName(strProjectFilename)));
-        }
-
-        void SaveProjectFailedToStartProcess(string strProjectFilename, List<string> lsListingFiles)
-        {
-            var strDir = strProjectFilename;
-            var strMessage = "";
-            var bSuccess = false;
-            const int knMaxAttempts = 16;
-            var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
-
-            for (var n = 0; n < knMaxAttempts; ++n)
-            {
-                if (knMaxAttempts - 1 == n)
-                    strDir = _tempPath.TrimEnd('\\') + "_" + strProjectFileNoPath;
-
-                try
-                {
-                    Directory.CreateDirectory(strDir);
-                    bSuccess = true;
-                    break;
-                }
-                catch { }
-
-                strDir = strProjectFilename + "_" + n.ToString("00");
-            }
-
-            if (bSuccess)
-            {
-                foreach (var listingFile in lsListingFiles)
-                {
-                    using (var sr = new StreamReader(LocalIsoStore.OpenFile(listingFile, FileMode.Open)))
-                    using (var sw = new StreamWriter(File.OpenWrite(strDir + '\\' + Path.GetFileName(listingFile))))
-                        Util.CopyStream(sr, sw);
-                }
-
-                strMessage = " Copied the listing files to\n" + strDir;
-            }
-
-            MBoxStatic.ShowDialog("Couldn't save the project." + strMessage, "Save Project");
         }
 
         bool StartProcess(string status, string strProjectFileNoPath,

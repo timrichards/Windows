@@ -9,26 +9,15 @@ namespace DoubleFile
 {
     partial class LV_ProjectVM
     {
-        public Visibility Visible
-        {
-            get
-            {
-                bool bIsEmpty = 0 == Items.Count;
-
-                MainWindow.WithMainWindowA(mainWindow =>
-                    mainWindow.ShowLinks(bIsEmpty));
-
-                return bIsEmpty ? Visibility.Hidden : Visibility.Visible;
-            }
-        }
-
         static internal IObservable<Tuple<bool, int>>   // bool is a no-op: generic placeholder
             Modified => _modified;
         static readonly LocalSubject<bool> _modified = new LocalSubject<bool>();
         static readonly int _nModifiedOnNextAssertLoc = 99838;
-        internal void SetModified() => _modified.LocalOnNext(false, _nModifiedOnNextAssertLoc);
+        internal void
+            SetModified() => _modified.LocalOnNext(false, _nModifiedOnNextAssertLoc);
 
-        internal int CanLoadCount => ItemsCast.Where(item => item.CanLoad).Count();
+        internal int
+            CanLoadCount => ItemsCast.Where(item => item.CanLoad).Count();
 
         internal bool
             Unsaved
@@ -44,7 +33,8 @@ namespace DoubleFile
         }
         bool _unsaved = false;
 
-        internal LV_ProjectVM(LV_ProjectVM lvProjectVM = null)
+        internal
+            LV_ProjectVM(LV_ProjectVM lvProjectVM = null)
         {
             if (null == lvProjectVM)
                 return;
@@ -54,7 +44,26 @@ namespace DoubleFile
             RaisePropertyChanged("Visible");
         }
 
-        internal bool AlreadyInProject(string strFilename, LVitem_ProjectVM lvCurrentItem = null, bool bQuiet = false)
+        internal new void
+            Add(ListViewItemVM_Base doNotUseThisMethod, bool itIsOverloaded) =>
+            // making sure that LVitem_ProjectVM doesn't get interpreted as ListViewItemVM_Base
+            // bQuiet is always explicitly named, so renamed it here to be sure
+            // the signature remains the same which makes it a valid new: hiding the base method
+            Util.Assert(99936, false);
+
+        internal bool
+            Add(LVitem_ProjectVM lvItem, bool bQuiet = false)
+        {
+            if (AlreadyInProject(lvItem.ListingFile))
+                return false;
+
+            base.Add(lvItem, bQuiet);
+            RaisePropertyChanged("Visible");
+            return true;
+        }
+
+        internal bool
+            AlreadyInProject(string strFilename, LVitem_ProjectVM lvCurrentItem = null, bool bQuiet = false)
         {
             if (string.IsNullOrWhiteSpace(strFilename))
                 return false;
@@ -75,7 +84,21 @@ namespace DoubleFile
             return bAlreadyInProject;
         }
 
-        internal void EditListingFile()
+        internal bool
+            ContainsUnsavedPath(string strPath)
+        {
+            if (string.IsNullOrWhiteSpace(strPath))
+                return false;
+
+            var s = strPath.ToLower();
+
+            return ItemsCast
+                .Where(item => (item.SourcePath.ToLower() == s) && item.WouldSave)
+                .FirstOnlyAssert(x => MBoxStatic.ShowDialog("Source path is already set to be scanned.", "Add Listing File"));
+        }
+
+        internal void
+            EditListingFile()
         {
             SelectedItems()
                 .FirstOnlyAssert(lvItem =>
@@ -126,57 +149,8 @@ namespace DoubleFile
             });
         }
 
-        internal bool FileExists(string strListingFile)
-        {
-            if (LocalIsoStore.FileExists(strListingFile) &&
-                ((false == strListingFile.StartsWith(LocalIsoStore.TempDir)) || FileParse.ValidateFile(strListingFile).Item1))
-            {
-                MBoxStatic.ShowDialog("Listing file exists. Please manually delete it using the Save Listing\n" +
-                    "File dialog by clicking the icon button after this alert closes.", "New Listing File");
-
-                return true;
-            }
-
-            return false;
-        }
-
-        internal new void Add(ListViewItemVM_Base doNotUseThisMethod, bool itIsOverloaded) =>
-            // making sure that LVitem_ProjectVM doesn't get interpreted as ListViewItemVM_Base
-            // bQuiet is always explicitly named, so renamed it here to be sure
-            // the signature remains the same which makes it a valid new: hiding the base method
-            Util.Assert(99936, false);
-
-        internal bool Add(LVitem_ProjectVM lvItem, bool bQuiet = false)
-        {
-            if (AlreadyInProject(lvItem.ListingFile))
-                return false;
-
-            base.Add(lvItem, bQuiet);
-            RaisePropertyChanged("Visible");
-            return true;
-        }
-
-        internal void RemoveListingFile()
-        {
-            if (SelectedItems().Any(lvItem => lvItem.WouldSave) &&
-                (MessageBoxResult.Yes !=
-                MBoxStatic.ShowDialog("Selected listings have not been saved. Continue?", "Remove Listing File",
-                MessageBoxButton.YesNo)))
-            {
-                return;
-            }
-
-            SelectedItems()
-                .ToList()
-                .ForEach(lvItem => Items.Remove(lvItem));
-
-            _unsaved = 0 < Items.Count;
-            SetModified();
-            RaisePropertyChanged("Visible");
-            WinProject.OKtoNavigate_UpdateSaveListingsLink();
-        }
-
-        internal void EditVolumeGroupLabel()
+        internal void
+            EditVolumeGroupLabel()
         {
             var dlg = new WinVolumeGroup
             {
@@ -205,27 +179,23 @@ namespace DoubleFile
             }
         }
 
-        internal void ToggleInclude()
+        internal bool
+            FileExists(string strListingFile)
         {
-            SelectedItems()
-                .ForEach(lvItem => lvItem.Include = (false == lvItem.Include));
+            if (LocalIsoStore.FileExists(strListingFile) &&
+                ((false == strListingFile.StartsWith(LocalIsoStore.TempDir)) || FileParse.ValidateFile(strListingFile).Item1))
+            {
+                MBoxStatic.ShowDialog("Listing file exists. Please manually delete it using the Save Listing\n" +
+                    "File dialog by clicking the icon button after this alert closes.", "New Listing File");
 
-            Unsaved = true;
+                return true;
+            }
+
+            return false;
         }
 
-        internal bool ContainsUnsavedPath(string strPath)
-        {
-            if (string.IsNullOrWhiteSpace(strPath))
-                return false;
-
-            var s = strPath.ToLower();
-
-            return ItemsCast
-                .Where(item => (item.SourcePath.ToLower() == s) && item.WouldSave)
-                .FirstOnlyAssert(x => MBoxStatic.ShowDialog("Source path is already set to be scanned.", "Add Listing File"));
-        }
-
-        bool ModifyListingFile(LVitem_ProjectVM lvItem_Orig, LVitem_ProjectVM lvItemVolumeTemp, char driveLetter)
+        bool
+            ModifyListingFile(LVitem_ProjectVM lvItem_Orig, LVitem_ProjectVM lvItemVolumeTemp, char driveLetter)
         {
             var bDriveModel_Todo = ("" + lvItem_Orig.DriveModel != "" + lvItemVolumeTemp.DriveModel);
             var bDriveSerial_Todo = ("" + lvItem_Orig.DriveSerial != "" + lvItemVolumeTemp.DriveSerial);
@@ -366,6 +336,36 @@ namespace DoubleFile
             }
 
             return true;
+        }
+
+        internal void
+            RemoveListingFile()
+        {
+            if (SelectedItems().Any(lvItem => lvItem.WouldSave) &&
+                (MessageBoxResult.Yes !=
+                MBoxStatic.ShowDialog("Selected listings have not been saved. Continue?", "Remove Listing File",
+                MessageBoxButton.YesNo)))
+            {
+                return;
+            }
+
+            SelectedItems()
+                .ToList()
+                .ForEach(lvItem => Items.Remove(lvItem));
+
+            _unsaved = 0 < Items.Count;
+            SetModified();
+            RaisePropertyChanged("Visible");
+            WinProject.OKtoNavigate_UpdateSaveListingsLink();
+        }
+
+        internal void
+            ToggleInclude()
+        {
+            SelectedItems()
+                .ForEach(lvItem => lvItem.Include = (false == lvItem.Include));
+
+            Unsaved = true;
         }
     }
 }

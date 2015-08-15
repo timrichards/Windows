@@ -18,6 +18,7 @@ namespace DoubleFile
         public ICommand Icmd_VolumeGroup { get; }
 
         internal WinProjectVM(LV_ProjectVM lvVM)
+            : this()
         {
             _lvVM = lvVM;
 

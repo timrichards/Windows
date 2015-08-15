@@ -11,7 +11,7 @@ using System.Windows.Input;
 
 namespace DoubleFile
 {
-    partial class WinProjectVM : IOpenListingFiles, IWinProgressClosing
+    partial class WinProjectVM : IOpenListingFiles, IWinProgressClosing, IDisposable
     {
         internal const string
             ListingFilter = "Double File Listing|*." + FileParse.ksFileExt_Listing + _ksAllFilesFilter;
@@ -20,6 +20,49 @@ namespace DoubleFile
 
         internal const string
             UnsavedWarning = "You are about to lose changes to an unsaved project.";
+
+        internal WinProjectVM()
+        {
+            ProjectFile.OnSavingProject += Serialize;
+            ProjectFile.OnOpenedProject += Deserialize;
+        }
+
+        public void Dispose()
+        {
+            ProjectFile.OnSavingProject -= Serialize;
+            ProjectFile.OnOpenedProject -= Deserialize;
+        }
+
+        string Serialize()
+        {
+            using (var sw = new StreamWriter(LocalIsoStore.OpenFile(Metadata, FileMode.Create)))
+                sw.Write(string.Join("\n", _lvVM.ItemsCast.Select(lvItem => lvItem.Serialize())));
+
+            return Metadata;
+        }
+
+        void Deserialize()
+        {
+            if (false == Metadata.FileExists())
+                return;
+
+            var asLVitems = _lvVM.ItemsCast.ToList();
+
+            foreach (var strLine in LocalIsoStore.ReadLines(Metadata))
+            {
+                for (int i = 0; i < asLVitems.Count; ++i)
+                {
+                    if (asLVitems[i].Deserialize(strLine))
+                    {
+                        asLVitems.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
+
+            Util.Assert(99857, 0 == asLVitems.Count);
+            LocalIsoStore.DeleteFile(Metadata);
+        }
 
         internal void
             OpenProject()
@@ -244,5 +287,8 @@ namespace DoubleFile
 
         bool
             _bUserCanceled = false;
+
+        static readonly string
+            Metadata = LocalIsoStore.TempDir + "metadata";
     }
 }

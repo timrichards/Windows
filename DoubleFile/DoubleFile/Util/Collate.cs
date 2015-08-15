@@ -268,9 +268,10 @@ namespace DoubleFile
                 }
 
                 if (1 == nClones)
-                    continue;           // keep the same-vol
+                    continue;               // keep the same-vol
 
-                if (2 < nClones)        // includes the subject node: only note three clones or more
+                if ((3 <= nClones) &&       // includes the subject node: only note three clones or more
+                    (UtilColor.SteelBlue == listNodes.Value[0].ForeColor))  // otherwise it'd be FireBrick: all one volume
                 {
                     foreach (var node in listNodes.Value)
                         node.ForeColor = UtilColor.LightBlue;

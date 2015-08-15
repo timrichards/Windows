@@ -5,11 +5,9 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
-- Extra backslash selecting nickname when none for root directory
-- Detail doesn't listen for selected file change_selectedItem.LVitemProjectSearch
+- Detail doesn't listen for selected file change
 - Application.Current.MainWindow is only accessible on the main UI thread
 - foreach over IList
-- Clones blue and # when only one volume is included
 - GoTo button in Search doesn't go to file
 - beating on search causes 1 in 5 no appear
 - backspace key is just like any browser: history back button

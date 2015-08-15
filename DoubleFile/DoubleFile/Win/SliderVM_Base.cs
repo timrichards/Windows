@@ -25,6 +25,10 @@
 
                 Maximum = nMaximum;
                 RaisePropertyChanged("Maximum");
+
+                if (Value > Maximum)
+                    Value = Maximum;
+
                 _deepNode = value;
             }
         }

@@ -35,7 +35,7 @@ namespace DoubleFile
 
         string Serialize()
         {
-            using (var sw = new StreamWriter(LocalIsoStore.OpenFile(Metadata, FileMode.Create)))
+            using (var sw = new StreamWriter(Metadata.OpenFile(FileMode.Create)))
                 sw.Write(string.Join("\n", _lvVM.ItemsCast.Select(lvItem => lvItem.Serialize())));
 
             return Metadata;
@@ -48,7 +48,7 @@ namespace DoubleFile
 
             var asLVitems = _lvVM.ItemsCast.ToList();
 
-            foreach (var strLine in LocalIsoStore.ReadLines(Metadata))
+            foreach (var strLine in Metadata.ReadLines())
             {
                 for (int i = 0; i < asLVitems.Count; ++i)
                 {

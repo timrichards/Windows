@@ -2,10 +2,9 @@
 - tree map doesn't always show up at all; slow calc etc
 - large file tree map blacks out switching between items 1 and 2 - item 1 has bitmap size of 1152: loaded too slow for it.
 - wpf treemap
-- fix slider in tree list
 
 - GoTo file only works with file list open
-- Detail doesn't listen for selected file change
+	- Detail doesn't listen for selected file change
 - Application.Current.MainWindow is only accessible on the main UI thread
 - foreach over IList
 - beating on search causes 1 in 5 no appear

@@ -5,6 +5,7 @@
 - Todo: save volume group.\nTodo: save include y/n
 - fix slider in tree list
 
+- Extra backslash selecting nickname when none for root directory
 - Detail doesn't listen for selected file change_selectedItem.LVitemProjectSearch
 - Application.Current.MainWindow is only accessible on the main UI thread
 - foreach over IList
@@ -125,7 +126,7 @@
 
 - Count property is very slow on Dictionary even though it's an ICollection. List and stack to be trusted?
 - Replace First() with FirstOnlyAssert()
-- ToEnumerable() in FileDictionary cut 60MB off and did not take any time to make.
+- AsEnumerable() in FileDictionary cut 60MB off and did not take any time to make.
 - TotalMilliseconds gotcha
 - look for 0 ==    > 0 <   == 0   < 0 >  Count property;   etc.
 	The Length property is guaranteed to be a O(1) operation.
@@ -170,7 +171,6 @@ Specific code areas:
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
 
-99857
 99851
 99806
 99789

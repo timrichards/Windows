@@ -53,7 +53,7 @@
             return this;
         }
         internal string
-            CulledPath => _strCulledPath ?? SourcePath;
+            CulledPath => _strCulledPath ?? SourcePath.TrimEnd('\\');
 
         string
             _strCulledPath;

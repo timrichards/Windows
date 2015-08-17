@@ -1,4 +1,5 @@
 ﻿using FirstFloor.ModernUI.Windows.Controls;
+using System.Reactive.Linq;
 
 namespace DoubleFile
 {
@@ -10,6 +11,9 @@ namespace DoubleFile
         public ExtraWindow()
         {
             InitializeComponent();
+
+            //Observable.FromEventPattern(this, "Loaded")
+            //    .LocalSubscribe(0, x => form_Overlay.IsOverlayContentVisible = true);
         }
     }
 }

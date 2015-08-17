@@ -100,9 +100,7 @@ namespace DoubleFile
                 _restart = false;
 
                 Util.UIthread(99888, () =>
-                    msgBoxRet =
-                    (_messageBox = new LocalMbox(owner, strMessage, strTitle, buttons ?? MessageBoxButton.OK))
-                    .ShowDialog());
+                    msgBoxRet = MainWindow.WithMainWindow(w => w.ShowMessagebox(strMessage, strTitle, buttons)));
 
                 if (_restart)
                     Util.Block(250);

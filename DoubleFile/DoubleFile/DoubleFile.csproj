@@ -231,6 +231,9 @@
     <Compile Include="Util\Win32Screen\RECT.cs" />
     <Compile Include="Util\Win32Screen\SWP.cs" />
     <Compile Include="Util\Win32Screen\Win32Screen.cs" />
+    <Compile Include="Util\WinDarkMessage.xaml.cs">
+      <DependentUpon>WinDarkMessage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="VolTreeMap\WinVolTreeMap.xaml.cs">
       <DependentUpon>WinVolTreeMap.xaml</DependentUpon>
     </Compile>
@@ -465,6 +468,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Assets\LocalModernWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Assets\LocalStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -494,6 +501,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Assets\WinVolumeEdit.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Util\WinDarkMessage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

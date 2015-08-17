@@ -210,6 +210,7 @@ namespace DoubleFile
             {
                 "/FirstFloor.ModernUI;component/Assets/ModernUI.xaml",
                 "/DoubleFile;component/Assets/LocalBlankWindow.xaml",
+                "/DoubleFile;component/Assets/LocalModernWindow.xaml",
                 "/DoubleFile;component/Assets/LocalMUIdark.xaml",
                 "/DoubleFile;component/Assets/Strings.xaml",
                 "/DoubleFile;component/Assets/LocalStyles.xaml"

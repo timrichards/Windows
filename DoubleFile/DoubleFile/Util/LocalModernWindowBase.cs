@@ -3,12 +3,25 @@ using System;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Interop;
 
 namespace DoubleFile
 {
     abstract public class LocalModernWindowBase : ModernWindow, ILocalWindow
     {
+        internal MessageBoxResult
+            ShowMessagebox(string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
+        {
+            Util.UIthread(0, () =>
+            {
+                Activate();
+            });
+
+            return ((WinDarkMessage)((FrameworkElement)Template.LoadContent()).FindName("DarkMessage"))
+                .ShowMessagebox(strMessage, strTitle, buttons);
+        }
+
         internal bool LocalIsClosing { get; private set; }
         public bool LocalIsClosed { get; private set; } = true;
 

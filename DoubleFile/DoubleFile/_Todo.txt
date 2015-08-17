@@ -3,6 +3,9 @@
 - large file tree map blacks out switching between items 1 and 2 - item 1 has bitmap size of 1152: loaded too slow for it.
 - wpf treemap
 
+- shouldn't be impossible to find 2 year old jpg of eq settings
+- can't resize treelist panes
+- replace DarkWindow with flyouts
 - GoTo file only works with file list open
 	- Detail doesn't listen for selected file change
 - Application.Current.MainWindow is only accessible on the main UI thread
@@ -101,7 +104,6 @@
 - should the 2-pass listing save go out to the fs twice or just cache all the filenames?
 - Remove WidthListingFile and redo the ListingFile setter to internal - same goes for progress dialog though
 - replace properties with converters
-- replace DarkWindow with flyouts
 - minimize progress/messagebox to task bar?
 - Automatically add Width properties from LV base - not really worth making an expando out of it
 

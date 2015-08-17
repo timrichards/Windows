@@ -27,7 +27,7 @@
                 RaisePropertyChanged("Maximum");
 
                 if (Value > Maximum)
-                    Value = Maximum;
+                    Value = Maximum;    // Do not raise property changed.
 
                 _deepNode = value;
             }

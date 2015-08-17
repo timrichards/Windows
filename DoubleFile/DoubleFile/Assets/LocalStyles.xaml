@@ -91,28 +91,4 @@
     <Style x:Key="LocalTextBlock" TargetType="TextBlock" BasedOn="{StaticResource Heading2}">
         <Setter Property="FontWeight" Value="Normal" />
     </Style>
-
-    <Style TargetType="Grid" x:Key="VisibleAnimation" BasedOn="{StaticResource {x:Type Grid}}">
-        <Setter Property="Cursor" Value="Arrow"/>
-        <!--<Style.Triggers>
-            <Trigger Property="Visibility" Value="Visible">
-                <Trigger.EnterActions>
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.2"/>
-                        </Storyboard>
-                    </BeginStoryboard>
-                </Trigger.EnterActions>
-            </Trigger>
-            <Trigger Property="Visibility" Value="Collapsed">
-                <Trigger.EnterActions>
-                    <BeginStoryboard>
-                        <Storyboard BeginTime="0" Duration="0:0:0.2">
-                            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="0:0:0.2"/>
-                        </Storyboard>
-                    </BeginStoryboard>
-                </Trigger.EnterActions>
-            </Trigger>
-        </Style.Triggers>-->
-    </Style>
 </ResourceDictionary>

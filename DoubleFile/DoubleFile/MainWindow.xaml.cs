@@ -8,7 +8,6 @@ using System.Diagnostics;           // DEBUG
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;                    // false == DEBUG
-using System.Windows.Controls;
 
 namespace DoubleFile
 {
@@ -80,10 +79,6 @@ namespace DoubleFile
             Init = null;
             InitializeComponent();
             //Util.Assert(0, false);      // test ability to assert from the primordial soup
-
-            //((FrameworkElement)Template.FindName("WindowBorder", this)).Visibility = Visibility.Visible;
-            //((FrameworkElement)Template.FindName("LayoutRoot", this)).Visibility = Visibility.Visible;
-            //((FrameworkElement)Template.FindName("form_Darken", this)).Visibility = Visibility.Visible;
 
             Observable.FromEventPattern(this, "Loaded")
                 .LocalSubscribe(99760, Window_Loaded);
@@ -171,8 +166,6 @@ namespace DoubleFile
 
         void Window_Loaded(EventPattern<object> obj)
         {
- //           form_Overlay.IsOverlayContentVisible = true;
-
 #if (DEBUG)
             //#warning DEBUG is defined.
             Util.Assert(99998, Debugger.IsAttached, "Debugger is not attached!");

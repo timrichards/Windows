@@ -13,23 +13,25 @@ namespace DoubleFile
         public ICommand Icmd_OK { get; private set; }
         public ICommand Icmd_Cancel { get; private set; }
 
-        // "Darkened" dependency property
         public static Visibility GetDarkened(DependencyObject obj) => (Visibility)obj.GetValue(DarkenedProperty);
         public static void SetDarkened(DependencyObject obj, Visibility value) => obj.SetValue(DarkenedProperty, value);
         public static readonly DependencyProperty DarkenedProperty = DependencyProperty.RegisterAttached(
             "Darkened", typeof(Visibility), typeof(LocalModernWindowBase), new FrameworkPropertyMetadata(Visibility.Collapsed));
 
-        // "ShowMessagebox" dependency property
         public static Visibility GetShowMessagebox(DependencyObject obj) => (Visibility)obj.GetValue(ShowMessageboxProperty);
         public static void SetShowMessagebox(DependencyObject obj, Visibility value) => obj.SetValue(ShowMessageboxProperty, value);
         public static readonly DependencyProperty ShowMessageboxProperty = DependencyProperty.RegisterAttached(
             "ShowMessagebox", typeof(Visibility), typeof(LocalModernWindowBase), new FrameworkPropertyMetadata(Visibility.Collapsed));
 
-        // "MessageboxText" dependency property
         public static string GetMessageboxText(DependencyObject obj) => (string)obj.GetValue(MessageboxTextProperty);
         public static void SetMessageboxText(DependencyObject obj, string value) => obj.SetValue(MessageboxTextProperty, value);
         public static readonly DependencyProperty MessageboxTextProperty = DependencyProperty.RegisterAttached(
             "MessageboxText", typeof(string), typeof(LocalModernWindowBase), new FrameworkPropertyMetadata(null));
+
+        public static Visibility GetShowProgress(DependencyObject obj) => (Visibility)obj.GetValue(ShowProgressProperty);
+        public static void SetShowProgress(DependencyObject obj, Visibility value) => obj.SetValue(ShowProgressProperty, value);
+        public static readonly DependencyProperty ShowProgressProperty = DependencyProperty.RegisterAttached(
+            "ShowProgress", typeof(Visibility), typeof(LocalModernWindowBase), new FrameworkPropertyMetadata(Visibility.Collapsed));
 
         internal MessageBoxResult
             ShowMessagebox(string strMessage, string strTitle = null, MessageBoxButton? buttons = null)

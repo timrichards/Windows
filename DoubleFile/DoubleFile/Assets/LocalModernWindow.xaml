@@ -171,11 +171,12 @@
                                               Data="F1 M1,10 L3,10 M5,10 L7,10 M9,10 L11,10 M2,9 L2,11 M6,9 L6,11 M10,9 L10,11 M5,6 L7,6 M9,6 L11,6 M6,5 L6,7 M10,5 L10,7 M9,2 L11,2 M10,1 L10,3" />
                                     </Grid>
 
-                                    <Grid Visibility="{TemplateBinding local:LocalModernWindowBase.Darkened}" Grid.RowSpan="999" Grid.ColumnSpan="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                        <Grid.Background>
+                                    <local:LocalContentPresenter Visibility="{TemplateBinding local:LocalModernWindowBase.Darkened}" Grid.RowSpan="999" Grid.ColumnSpan="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Grid>
+                                            <Grid.Background>
                                             <SolidColorBrush Color="Black" Opacity=".4"/>
                                         </Grid.Background>
-                                        <Grid Visibility="{TemplateBinding local:LocalModernWindowBase.ShowMessagebox}" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                        <local:LocalContentPresenter Visibility="{TemplateBinding local:LocalModernWindowBase.ShowMessagebox}" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                                             <Border BorderThickness="1" BorderBrush="Black" Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                                     Height="170" MinHeight="170">
                                                 <Grid>
@@ -199,12 +200,12 @@
                                                     <Button Command="{Binding Icmd_Cancel}" Grid.Column="2" Content="Cancel" Grid.Row="2" Width="75" Height="Auto" IsCancel="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
                                                 </Grid>
                                             </Border>
-                                        </Grid>
-                                        <Grid Visibility="{TemplateBinding local:LocalModernWindowBase.ShowProgress}" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                        </local:LocalContentPresenter>
+                                        <local:LocalContentPresenter Visibility="{TemplateBinding local:LocalModernWindowBase.ShowProgress}" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                                             <Border BorderThickness="1" BorderBrush="Black" Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                                                     Height="50" MinHeight="50">
                                                 <Grid>
-                                                    <ListView Name="formLV_Progress" ItemsSource="{Binding Items}" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top">
+                                                    <ListView ItemsSource="{Binding Items}" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top">
                                                         <ListView.Resources>
                                                             <Style TargetType="{x:Type ListViewItem}">
                                                                 <Setter Property="Foreground" Value="Black" />
@@ -232,8 +233,9 @@
                                                     </Button>
                                                 </Grid>
                                             </Border>
-                                        </Grid>
+                                        </local:LocalContentPresenter>
                                     </Grid>
+                                    </local:LocalContentPresenter>
                                 </Grid>
                             </AdornerDecorator>
                         </Border>

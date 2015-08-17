@@ -6,12 +6,7 @@ namespace DoubleFile
     {
         static internal T DesignModeOK<T>(T retVal)
         {
-            if (false ==
-                DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
-            {
-                Util.Assert(99876, false);
-            }
-
+            Util.Assert(99876, DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()));
             return retVal;
         }
     }

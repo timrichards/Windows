@@ -171,8 +171,35 @@
                                               Data="F1 M1,10 L3,10 M5,10 L7,10 M9,10 L11,10 M2,9 L2,11 M6,9 L6,11 M10,9 L10,11 M5,6 L7,6 M9,6 L11,6 M6,5 L6,7 M10,5 L10,7 M9,2 L11,2 M10,1 L10,3" />
                                     </Grid>
 
-                                    <local:WinDarkMessage x:Name="DarkMessage" Visibility="{TemplateBinding local:WinDarkMessage.Darkened}" Grid.RowSpan="999" Grid.ColumnSpan="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-
+                                    <Grid Visibility="{TemplateBinding local:LocalModernWindowBase.Darkened}" Grid.RowSpan="999" Grid.ColumnSpan="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Grid.Background>
+                                            <SolidColorBrush Color="Black" Opacity=".4"/>
+                                        </Grid.Background>
+                                        <Grid Visibility="{TemplateBinding local:LocalModernWindowBase.ShowMessagebox}" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                            <Border BorderThickness="1" BorderBrush="Black" Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="28"/>
+                                                        <RowDefinition />
+                                                        <RowDefinition Height="32"/>
+                                                        <RowDefinition Height="10"/>
+                                                    </Grid.RowDefinitions>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="64"/>
+                                                        <ColumnDefinition/>
+                                                        <ColumnDefinition Width="85"/>
+                                                        <ColumnDefinition Width="10"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Image HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="1" Source="/DoubleFile;component/Assets/ic_error_black_18dp.png" Width="32" Margin="0,0,5,0"/>
+                                                    <ScrollViewer HorizontalAlignment="Stretch" Foreground="Black" VerticalAlignment="Stretch" Height="Auto" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,0,20,0">
+                                                        <TextBlock Text="{TemplateBinding local:LocalModernWindowBase.MessageboxText}" Style="{StaticResource LocalTextBlock}" TextWrapping="WrapWithOverflow"/>
+                                                    </ScrollViewer>
+                                                    <Button Command="{Binding Icmd_OK}" Grid.Column="1" Content="OK" Grid.Row="2" Width="75" Height="Auto" IsDefault="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+                                                    <Button Command="{Binding Icmd_Cancel}" Grid.Column="2" Content="Cancel" Grid.Row="2" Width="75" Height="Auto" IsCancel="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+                                                </Grid>
+                                            </Border>
+                                        </Grid>
+                                    </Grid>
                                 </Grid>
                             </AdornerDecorator>
                         </Border>

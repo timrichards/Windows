@@ -278,12 +278,12 @@ namespace DoubleFile
                 StatusCallback(_lvItemProjectVM, rootTreeNode);
 
 #if (DEBUG && FOOBAR)
-                Util.WriteLine("" + _volStrings.ListingFile.ReadLines().Where(s => s.StartsWith(ksLineType_File)).Sum(s => (decimal)(s.Split('\t')[knColLength]).ToUlong()));
-                Util.WriteLine("" + _volStrings.ListingFile.ReadLines().Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => (decimal)(s.Split('\t')[knColLength]).ToUlong()));
+                Util.WriteLine("" + _lvItemProjectVM.ListingFile.ReadLines().Where(s => s.StartsWith(ksLineType_File)).Sum(s => (decimal)(s.Split('\t')[knColLength]).ToUlong()));
+                Util.WriteLine("" + _lvItemProjectVM.ListingFile.ReadLines().Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => (decimal)(s.Split('\t')[knColLength]).ToUlong()));
 
                 ulong nScannedLength = 0;
 
-                _volStrings.ListingFile
+                _lvItemProjectVM.ListingFile
                     .ReadLines()
                     .Where(s => s.StartsWith(ksLineType_Length))
                     .FirstOnlyAssert(s => nScannedLength = (s.Split('\t')[knColLength]).ToUlong());
@@ -303,10 +303,10 @@ namespace DoubleFile
                 if (nScannedLength != nTotalLength)
                 {
                     Util.WriteLine("" + nTotalLength);
-                    Util.Assert(1301.23101m, false, "nScannedLength != nTotalLength\n" + _volStrings.ListingFile, bTraceOnly: true);
+                    Util.Assert(1301.23101m, false, "nScannedLength != nTotalLength\n" + _lvItemProjectVM.ListingFile, bTraceOnly: true);
                 }
 
-                Util.WriteLine(_volStrings.ListingFile + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");
+                Util.WriteLine(_lvItemProjectVM.ListingFile + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");
 #endif
             }
 

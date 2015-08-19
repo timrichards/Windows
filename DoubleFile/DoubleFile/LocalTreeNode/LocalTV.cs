@@ -73,7 +73,7 @@ namespace DoubleFile
             var lvItems = lvProjectExplorer.ItemsCast.ToList();
 
             lvProjectExplorer.ClearItems();
-            lvProjectExplorer.Add(lvItems.Select(lvItem => new LVitem_ProjectExplorer(lvItem)));
+            lvProjectExplorer.Add(lvItems.Select(lvItem => new LVitemProject_Explorer(lvItem)));
 
             _wr.SetTarget(
                 _instance =

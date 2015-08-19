@@ -13,7 +13,7 @@ namespace DoubleFile
         {
             InitializeComponent();
 
-            if (Statics.Namespace != GetType().Namespace)   // no project so nicknames in the VolTreeMap assembly
+            if (Statics.Namespace != GetType().Namespace)   // no project so no nicknames in the VolTreeMap assembly
                 formChk_Nicknames.Visibility = Visibility.Collapsed;
         }
 

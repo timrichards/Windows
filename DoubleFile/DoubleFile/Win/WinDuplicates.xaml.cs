@@ -14,11 +14,16 @@
         {
             DataContext =
                 _winDuplicatesVM =
-                new WinDuplicatesVM();
+                new WinDuplicatesVM
+            {
+                UseNicknames = _bNicknames
+            }
+                .Init();
         }
 
         protected override void LocalNavigatedFrom()
         {
+            _bNicknames = formChk_Nicknames.IsChecked ?? false;
             _winDuplicatesVM.Dispose();
 
             DataContext =
@@ -28,5 +33,7 @@
 
         WinDuplicatesVM
             _winDuplicatesVM = null;
+        bool
+            _bNicknames = false;
     }
 }

@@ -2,21 +2,10 @@
 
 namespace DoubleFile
 {
-    class LVitem_ProjectSearch : LVitem_ProjectExplorer         // 2. Far fewer (# listing files), inside (3.)
+    class LVitem_SearchVM : ListViewItemVM_Base, IListUpdater
     {
-        internal LVitem_ProjectSearch(LVitem_ProjectExplorer lvItemTemp, ListUpdater<bool> nicknameUpdater)
-            : base(lvItemTemp)
-        {
-            NicknameUpdater = nicknameUpdater;
-        }
-
-        internal readonly ListUpdater<bool> NicknameUpdater;    // One per search window, inside (2.)
-    }
-
-    class LVitem_SearchVM : ListViewItemVM_Base, IListUpdater   // 3. Many (N)
-    {
-        internal readonly LVitem_ProjectSearch
-            LVitemProjectSearch;
+        internal readonly LVitemProject_Updater<bool>
+            LVitemProject_Updater;
 
         internal PathBuilder
             Directory => _datum.As<PathBuilder>();
@@ -33,13 +22,13 @@ namespace DoubleFile
         public int
             Alternate { get; } = 0;
 
-        internal LVitem_SearchVM(LVitem_ProjectSearch lvItemProjectSearch, PathBuilder directory)
+        internal LVitem_SearchVM(LVitemProject_Updater<bool> lvItemProjectUpdater, PathBuilder directory)
         {
-            LVitemProjectSearch = lvItemProjectSearch;
+            LVitemProject_Updater = lvItemProjectUpdater;
             _datum = directory;
         }
 
-        internal LVitem_SearchVM(LVitem_ProjectSearch lvItemProjectSearch, PathBuilder directory,
+        internal LVitem_SearchVM(LVitemProject_Updater<bool> lvItemProjectSearch, PathBuilder directory,
             TabledString<TabledStringType_Files> tabledFilename, int nAlternate)
             : this(lvItemProjectSearch, directory)
         {
@@ -47,9 +36,9 @@ namespace DoubleFile
             Alternate = nAlternate;
         }
 
-        internal LVitem_SearchVM(LVitem_ProjectSearch lvItemProjectSearch, LocalTreeNode localTreeNode)
+        internal LVitem_SearchVM(LVitemProject_Updater<bool> lvItemProjectSearch, LocalTreeNode localTreeNode)
         {
-            LVitemProjectSearch = lvItemProjectSearch;
+            LVitemProject_Updater = lvItemProjectSearch;
             _datum = localTreeNode;
         }
 
@@ -65,7 +54,7 @@ namespace DoubleFile
         {
             get
             {
-                LVitemProjectSearch.NicknameUpdater.LastGet(this);
+                LVitemProject_Updater.ListUpdater.LastGet(this);
 
                 string strRet = null;
 
@@ -76,7 +65,7 @@ namespace DoubleFile
                     if (null != parent)
                         return LocalTreeNode.Text;
 
-                    strRet = LocalTreeNode.FullPathGet(LVitemProjectSearch.NicknameUpdater.Value);
+                    strRet = LocalTreeNode.FullPathGet(LVitemProject_Updater.ListUpdater.Value);
                 }
                 else
                 {
@@ -84,8 +73,8 @@ namespace DoubleFile
                         return "" + TabledStringFilename;
 
                     strRet =
-                        (LVitemProjectSearch.NicknameUpdater.Value)
-                        ? LVitemProjectSearch.InsertNickname(Directory)
+                        (LVitemProject_Updater.ListUpdater.Value)
+                        ? LVitemProject_Updater.InsertNickname("" + Directory)
                         : "" + Directory;
                 }
 
@@ -105,11 +94,11 @@ namespace DoubleFile
                     return null;
 
                 if (null != LocalTreeNode)
-                    return LocalTreeNode.Parent?.FullPathGet(LVitemProjectSearch.NicknameUpdater.Value);
+                    return LocalTreeNode.Parent?.FullPathGet(LVitemProject_Updater.ListUpdater.Value);
 
                 var strDirectory =
-                    (LVitemProjectSearch.NicknameUpdater.Value)
-                    ? LVitemProjectSearch.InsertNickname(Directory)
+                    (LVitemProject_Updater.ListUpdater.Value)
+                    ? LVitemProject_Updater.InsertNickname("" + Directory)
                     : "" + Directory;
 
                 var nIx = strDirectory.LastIndexOf('\\');

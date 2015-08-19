@@ -2,7 +2,7 @@
 {
     class RootNodeDatum : NodeDatum
     {
-        internal LVitem_ProjectExplorer LVitemProjectVM { get; }
+        internal LVitemProject_Explorer LVitemProjectVM { get; }
         internal readonly bool VolumeView;
         internal readonly ulong VolumeFree;
         internal readonly ulong VolumeLength;
@@ -11,11 +11,11 @@
             RootNodeDatum(NodeDatum node, string strCulledPath)
             : base(node)
         {
-            LVitemProjectVM = new LVitem_ProjectExplorer().SetCulledPath(strCulledPath);
+            LVitemProjectVM = new LVitemProject_Explorer().SetCulledPath(strCulledPath);
         }
 
         internal
-            RootNodeDatum(NodeDatum node, LVitem_ProjectExplorer lvItemProjectVM, ulong nVolumeFree, ulong nVolumeLength)
+            RootNodeDatum(NodeDatum node, LVitemProject_Explorer lvItemProjectVM, ulong nVolumeFree, ulong nVolumeLength)
             : base(node)
         {
             VolumeView = true;

@@ -2,13 +2,31 @@
 
 namespace DoubleFile
 {
-    class LVitem_FileDuplicatesVM : ListViewItemVM_Base
+    class LVitem_FileDuplicatesVM : ListViewItemVM_Base, IListUpdater
     {
         internal IReadOnlyList<string> FileLine;
-        internal LVitem_ProjectVM LVitem_ProjectVM;
+        internal LVitemProject_Updater<bool> LVitemProject_Updater;
 
-        public string Filename => FileLine[0];
-        public string Path { get { return SubItems[0]; } private set { SetProperty(0, value); } }
+        public string
+            Filename => FileLine[0];
+
+        public string
+            Path
+        {
+            get
+            {
+                LVitemProject_Updater.ListUpdater.LastGet(this);
+
+                return
+                    (LVitemProject_Updater.ListUpdater.Value)
+                    ? LVitemProject_Updater.InsertNickname(SubItems[0])
+                    : SubItems[0];
+            }
+
+            private set { SetProperty(0, value); }
+        }
+
+        void IListUpdater.RaiseListUpdate() => RaisePropertyChanged("Path");
 
         internal override int NumCols => NumCols_;
         internal const int NumCols_ = 1;

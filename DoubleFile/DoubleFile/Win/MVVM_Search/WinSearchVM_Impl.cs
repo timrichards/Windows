@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 
@@ -54,7 +53,7 @@ namespace DoubleFile
             if (null != treeNode)
             {
                 Util.UIthread(99862, () =>
-                    Add(new LVitem_SearchVM(new LVitem_ProjectSearch(treeNode.Root.NodeDatum.As<RootNodeDatum>().LVitemProjectVM, _nicknameUpdater), treeNode)));
+                    Add(new LVitem_SearchVM(new LVitemProject_Updater<bool>(treeNode.Root.NodeDatum.As<RootNodeDatum>().LVitemProjectVM, _nicknameUpdater), treeNode)));
 
                 return true;
             }
@@ -90,7 +89,7 @@ namespace DoubleFile
             }
 
             if (null != _selectedItem.Directory)
-                GoToFileOnNext(Tuple.Create((LVitem_ProjectVM)_selectedItem.LVitemProjectSearch, "" + _selectedItem.Directory, "" + _selectedItem.TabledStringFilename));
+                GoToFileOnNext(Tuple.Create((LVitem_ProjectVM)_selectedItem.LVitemProject_Updater, "" + _selectedItem.Directory, "" + _selectedItem.TabledStringFilename));
             else
                 _selectedItem.LocalTreeNode.GoToFile(null);
         }
@@ -170,7 +169,7 @@ namespace DoubleFile
         {
             PathBuilder LastFolder = null;
             var nPrevHasFolder = 1;
-            var lvItemProjectSearch = new LVitem_ProjectSearch(searchResults.LVitemProjectVM, _nicknameUpdater);
+            var lvItemProjectSearch = new LVitemProject_Updater<bool>(searchResults.LVitemProjectVM, _nicknameUpdater);
 
             foreach (var searchResult in searchResults.Results)
             {
@@ -231,7 +230,7 @@ namespace DoubleFile
                         ieLVitems =
                             lsTreeNodes
                             .GroupBy(treeNode => treeNode.Root)
-                            .Select(g => new { lvItemProjectVM = new LVitem_ProjectSearch(g.Key.NodeDatum.As<RootNodeDatum>().LVitemProjectVM, _nicknameUpdater), g = g })
+                            .Select(g => new { lvItemProjectVM = new LVitemProject_Updater<bool>(g.Key.NodeDatum.As<RootNodeDatum>().LVitemProjectVM, _nicknameUpdater), g = g })
                             .SelectMany(g => g.g, (g, treeNode) => new LVitem_SearchVM(g.lvItemProjectVM, treeNode))
                             .OrderBy(lvItem => lvItem.LocalTreeNode.FullPathGet(_nicknameUpdater.Value))
                             .ToList();

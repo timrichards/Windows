@@ -1,13 +1,13 @@
 ﻿namespace DoubleFile
 {
-    class LVitem_ProjectExplorer : LVitem_ProjectVM
+    class LVitemProject_Explorer : LVitem_ProjectVM
     {
-        internal LVitem_ProjectExplorer(LVitem_ProjectVM lvItemTemp = null)
+        internal LVitemProject_Explorer(LVitem_ProjectVM lvItemTemp = null)
             : base(lvItemTemp)
         {
         }
 
-        internal LVitem_ProjectExplorer(LVitem_ProjectExplorer lvItemTemp)
+        internal LVitemProject_Explorer(LVitemProject_Explorer lvItemTemp)
             : base(lvItemTemp)
         {
             _strCulledPath = lvItemTemp._strCulledPath;
@@ -42,10 +42,10 @@
         }
 
         internal string
-            InsertNickname(PathBuilder tabledFolder) =>
-            (tabledFolder + "\\").Replace(CulledPath, RootText + '\\').TrimEnd('\\').Replace("\\\\", "\\");
+            InsertNickname(string strFolder) =>
+            (strFolder + "\\").Replace(CulledPath, RootText + '\\').TrimEnd('\\').Replace("\\\\", "\\");
 
-        internal LVitem_ProjectExplorer
+        internal LVitemProject_Explorer
             SetCulledPath(string strCulledPath)
         {
             Util.Assert(99869, null == _strCulledPath);

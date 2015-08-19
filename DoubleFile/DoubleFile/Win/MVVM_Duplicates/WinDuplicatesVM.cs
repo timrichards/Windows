@@ -6,7 +6,10 @@ namespace DoubleFile
 {
     partial class WinDuplicatesVM : ListViewVM_Base<LVitem_FileDuplicatesVM>
     {
-        public ICommand Icmd_GoTo { get; }
+        public ICommand Icmd_Nicknames { get; private set; }
+        public ICommand Icmd_GoTo { get; private set; }
+
+        public bool UseNicknames { private get; set; }
 
         public LVitem_FileDuplicatesVM SelectedItem
         {

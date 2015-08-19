@@ -29,7 +29,7 @@ namespace DoubleFile
 
             var dtStart = DateTime.Now;
 
-            foreach (var lvItemProjectVM in _lvProjectVM.Items.Cast<LVitem_ProjectExplorer>())
+            foreach (var lvItemProjectVM in _lvProjectVM.Items.Cast<LVitemProject_Explorer>())
                 _cbagWorkers.Add(new SearchListing(this, lvItemProjectVM, Abort).DoThreadFactory());
 
             foreach (SearchListing worker in _cbagWorkers)

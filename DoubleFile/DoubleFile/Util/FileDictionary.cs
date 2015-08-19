@@ -143,11 +143,11 @@ namespace DoubleFile
 
             var nLVitems = 0;
 
-            var dictLVtoItemNumber = new Dictionary<LVitem_ProjectExplorer, int>();
-            var dictItemNumberToLV = new Dictionary<int, LVitem_ProjectExplorer>();
+            var dictLVtoItemNumber = new Dictionary<LVitemProject_Explorer, int>();
+            var dictItemNumberToLV = new Dictionary<int, LVitemProject_Explorer>();
 
             foreach (var lvItem
-                in _LVprojectVM.Items.Cast<LVitem_ProjectExplorer>()
+                in _LVprojectVM.Items.Cast<LVitemProject_Explorer>()
                 .Where(lvItem => lvItem.CanLoad)
                 .OrderBy(lvItem => lvItem.SourcePath))
             {
@@ -169,7 +169,7 @@ namespace DoubleFile
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                 .LocalSubscribe(99757, x => StatusCallback(nProgress: nProgress/(double) nLVitems)))
             Util.ParallelForEach(
-                _LVprojectVM.Items.Cast<LVitem_ProjectExplorer>()
+                _LVprojectVM.Items.Cast<LVitemProject_Explorer>()
                 .Where(lvItem => lvItem.CanLoad), new ParallelOptions{ CancellationToken = cts.Token }, lvItem =>
             {
                 if (IsAborted)
@@ -325,9 +325,9 @@ namespace DoubleFile
         const uint
             _knItemVMmask = 0xFF000000;
 
-        IReadOnlyDictionary<LVitem_ProjectExplorer, int>
+        IReadOnlyDictionary<LVitemProject_Explorer, int>
             _dictLVtoItemNumber = null;
-        IReadOnlyDictionary<int, LVitem_ProjectExplorer>
+        IReadOnlyDictionary<int, LVitemProject_Explorer>
             _dictItemNumberToLV = null;
         IReadOnlyDictionary<FileKeyTuple, Tuple<IReadOnlyList<uint>, IEnumerable<int>>>
             _dictFiles = null;

@@ -10,7 +10,7 @@ namespace DoubleFile
     {
         public ICommand Icmd_NextClonePath { get; }
 
-        public Visibility VisibilityOnClones => 1 < (TreeNodes?.Count ?? 0) ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility VisibilityOnClones => 2 <= (TreeNodes?.Count ?? 0) ? Visibility.Visible : Visibility.Collapsed;
 
         // marker node if treenode not present
         public string Folder => WithLocalTreeNode(t => t)?.Text ?? SubItems[0];
@@ -21,7 +21,8 @@ namespace DoubleFile
         public string       // includes the subject node: only note three clones or more
             Clones => (3 <= TreeNodes.Count) ? (TreeNodes.Count - 1).ToString("###,###") : null;
 
-        public string ClonePaths => WithLocalTreeNode(t =>
+        public string
+            ClonePaths => WithLocalTreeNode(t =>
         {
             if (null == NicknameUpdater)
                 return null;    // marker item

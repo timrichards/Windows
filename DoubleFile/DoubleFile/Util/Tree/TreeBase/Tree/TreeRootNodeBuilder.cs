@@ -19,7 +19,7 @@ namespace DoubleFile
         partial class TreeRootNodeBuilder : TreeBase
         {
             internal
-                TreeRootNodeBuilder(LVitem_ProjectExplorer lvItemProjectVM, TreeBase base_in)
+                TreeRootNodeBuilder(LVitemProject_Explorer lvItemProjectVM, TreeBase base_in)
                 : base(base_in)
             {
                 _lvItemProjectVM = lvItemProjectVM;
@@ -328,7 +328,7 @@ namespace DoubleFile
                 _thread = new Thread(() => { });
             bool
                 _bThreadAbort = false;
-            readonly LVitem_ProjectExplorer
+            readonly LVitemProject_Explorer
                 _lvItemProjectVM = null;
         }
     }

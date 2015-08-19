@@ -6,13 +6,13 @@ namespace DoubleFile
     {
         internal readonly TabledString<TabledStringType_Files>
             StrSearch = null;
-        internal readonly LVitem_ProjectExplorer
+        internal readonly LVitemProject_Explorer
             LVitemProjectVM = null;
         internal readonly IEnumerable<SearchResultsDir>
             Results = null;
 
         internal
-            SearchResults(string strSearch, LVitem_ProjectExplorer lvItemProjectVM, IEnumerable<SearchResultsDir> listResults)
+            SearchResults(string strSearch, LVitemProject_Explorer lvItemProjectVM, IEnumerable<SearchResultsDir> listResults)
         {
             StrSearch = (TabledString<TabledStringType_Files>)strSearch;
             LVitemProjectVM = lvItemProjectVM;

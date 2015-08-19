@@ -20,15 +20,20 @@ namespace DoubleFile
         static readonly LocalSubject<Tuple<IReadOnlyList<string>, LocalTreeNode>> _updateFileDetail = new LocalSubject<Tuple<IReadOnlyList<string>, LocalTreeNode>>();
         static void UpdateFileDetailOnNext(Tuple<IReadOnlyList<string>, LocalTreeNode> value, int nInitiator) => _updateFileDetail.LocalOnNext(value, 99847, nInitiator);
 
-        internal WinDuplicatesVM()
+        internal WinDuplicatesVM
+            Init()
         {
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
+            Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateViewport(UseNicknames));
+            _nicknameUpdater.UpdateViewport(UseNicknames);
             _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.LocalSubscribe(99704, LV_FilesVM_SelectedFileChanged));
 
             var lastSelectedFile = LV_FilesVM.LastSelectedFile;
 
             if (null != lastSelectedFile)
                 LV_FilesVM_SelectedFileChanged(Tuple.Create(lastSelectedFile, 0));
+
+            return this;
         }
 
         public void Dispose() => Util.LocalDispose(_lsDisposable);
@@ -136,7 +141,7 @@ namespace DoubleFile
                                     .Skip(3)                    // makes this an LV line: knColLengthLV
                                     .ToArray(),
 
-                                LVitem_ProjectVM = g.Key
+                                LVitemProject_Updater = new LVitemProject_Updater<bool>(g.Key, _nicknameUpdater)
                             });
                         }
 
@@ -160,9 +165,11 @@ namespace DoubleFile
                 return;
             }
 
-            GoToFileOnNext(Tuple.Create(_selectedItem.LVitem_ProjectVM, _selectedItem.Path, _selectedItem.Filename));
+            GoToFileOnNext(Tuple.Create((LVitem_ProjectVM)_selectedItem.LVitemProject_Updater, _selectedItem.SubItems[0], _selectedItem.Filename));
         }
 
+        ListUpdater<bool>
+            _nicknameUpdater = new ListUpdater<bool>();
         CancellationTokenSource
             _cts = new CancellationTokenSource();
         LocalTreeNode

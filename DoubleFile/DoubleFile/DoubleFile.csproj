@@ -195,7 +195,7 @@
       <DependentUpon>Introduction.xaml</DependentUpon>
     </Compile>
     <Compile Include="LocalTreeNode\LocalColorItemBase.cs" />
-    <Compile Include="LocalTreeNode\LVitem_ProjectExplorer.cs" />
+    <Compile Include="LocalTreeNode\LVitemProject_Explorer.cs" />
     <Compile Include="Statics.cs" />
     <Compile Include="Util\LocalContentPresenter.cs" />
     <Compile Include="Util\LocalIsoStore.cs" />
@@ -235,6 +235,7 @@
     <Compile Include="VolTreeMap\WinVolTreeMap.xaml.cs">
       <DependentUpon>WinVolTreeMap.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Win\LVitemProject_Updater.cs" />
     <Compile Include="Win\MVVM_Clones\WinClonesVM_Impl.cs" />
     <Compile Include="Win\MVVM_Clones\WinClonesVM.cs" />
     <Compile Include="Win\MVVM_FolderList\LVitem_FolderListVM.cs" />

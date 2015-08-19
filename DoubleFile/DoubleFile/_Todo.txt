@@ -3,7 +3,7 @@
 - large file tree map blacks out switching between items 1 and 2 - item 1 has bitmap size of 1152: loaded too slow for it.
 - wpf treemap
 
-- nicknames on duplicates
+- treemap sits in front of overlay - may have to lose forms treemap before doing overlay modal
 - shouldn't be impossible to find 2 year old jpg of eq settings
 - can't resize treelist panes
 - replace DarkWindow with flyouts

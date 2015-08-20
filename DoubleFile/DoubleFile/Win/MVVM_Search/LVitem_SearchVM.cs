@@ -22,23 +22,23 @@ namespace DoubleFile
         public int
             Alternate { get; } = 0;
 
-        internal LVitem_SearchVM(LVitemProject_Updater<bool> lvItemProjectUpdater, PathBuilder directory)
+        internal LVitem_SearchVM(LVitemProject_Updater<bool> lvItemProject_Updater, PathBuilder directory)
         {
-            LVitemProject_Updater = lvItemProjectUpdater;
+            LVitemProject_Updater = lvItemProject_Updater;
             _datum = directory;
         }
 
-        internal LVitem_SearchVM(LVitemProject_Updater<bool> lvItemProjectSearch, PathBuilder directory,
+        internal LVitem_SearchVM(LVitemProject_Updater<bool> lvItemProject_Updater, PathBuilder directory,
             TabledString<TabledStringType_Files> tabledFilename, int nAlternate)
-            : this(lvItemProjectSearch, directory)
+            : this(lvItemProject_Updater, directory)
         {
             TabledStringFilename = tabledFilename;
             Alternate = nAlternate;
         }
 
-        internal LVitem_SearchVM(LVitemProject_Updater<bool> lvItemProjectSearch, LocalTreeNode localTreeNode)
+        internal LVitem_SearchVM(LVitemProject_Updater<bool> lvItemProject_Updater, LocalTreeNode localTreeNode)
         {
-            LVitemProject_Updater = lvItemProjectSearch;
+            LVitemProject_Updater = lvItemProject_Updater;
             _datum = localTreeNode;
         }
 

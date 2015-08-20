@@ -111,9 +111,10 @@ namespace DoubleFile
                 var nLine = 0;
                 var lsFilesInDir = new List<string>();
                 var nMatchLine = lsLineNumbers[0];
+                var lvItemProject_Updater = new LVitemProject_Updater<bool>(g.Key, _nicknameUpdater);
 
                 foreach (var strLine
-                    in g.Key.ListingFile
+                    in lvItemProject_Updater.ListingFile
                     .ReadLines())
                 {
                     if (_cts.IsCancellationRequested)
@@ -141,7 +142,7 @@ namespace DoubleFile
                                     .Skip(3)                    // makes this an LV line: knColLengthLV
                                     .ToArray(),
 
-                                LVitemProject_Updater = new LVitemProject_Updater<bool>(g.Key, _nicknameUpdater)
+                                LVitemProject_Updater = lvItemProject_Updater
                             });
                         }
 

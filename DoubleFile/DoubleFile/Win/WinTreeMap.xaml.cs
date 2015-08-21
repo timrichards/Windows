@@ -46,9 +46,8 @@ namespace DoubleFile
         {
             _ucTreeMap.Dispose();
 
-            _ucTreeMap = null;
-
-            DataContext = null;
+            DataContext = 
+                _ucTreeMap = null;
         }
 
         WinTreeMapVM

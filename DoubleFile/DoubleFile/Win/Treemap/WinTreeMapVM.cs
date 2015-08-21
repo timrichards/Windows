@@ -24,9 +24,9 @@ namespace DoubleFile
                 {
                     ImageSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
                         _BackgroundImage.GetHbitmap(), 
-                        IntPtr.Zero, 
+                        IntPtr.Zero,
                         System.Windows.Int32Rect.Empty, 
-                        System.Windows.Media.Imaging.BitmapSizeOptions.FromWidthAndHeight((int)_sizeTranslate.Width, (int)_sizeTranslate.Height))
+                        System.Windows.Media.Imaging.BitmapSizeOptions.FromWidthAndHeight(_BackgroundImage.Width, _BackgroundImage.Height))
 
                         // PInvoke Dispose that Hbitmap handle is Required.
                 };
@@ -56,13 +56,13 @@ namespace DoubleFile
 
         public WinTreeMapVM()
         {
-            var bMouseDown = false;
+            //var bMouseDown = false;
 
-            _lsDisposable.Add(Observable.FromEventPattern(this, "MouseDown")
-                .LocalSubscribe(99698, x => bMouseDown = true));
+            //_lsDisposable.Add(Observable.FromEventPattern(this, "MouseDown")
+            //    .LocalSubscribe(99698, x => bMouseDown = true));
 
-            _lsDisposable.Add(Observable.FromEventPattern<MouseEventArgs>(this, "MouseUp")
-                .LocalSubscribe(99697, args => { if (bMouseDown) form_tmapUserCtl_MouseUp(args.EventArgs.Location); bMouseDown = false; }));
+            //_lsDisposable.Add(Observable.FromEventPattern<MouseEventArgs>(this, "MouseUp")
+            //    .LocalSubscribe(99697, args => { if (bMouseDown) form_tmapUserCtl_MouseUp(args.EventArgs.Location); bMouseDown = false; }));
 
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99696, initiatorTuple =>
             {

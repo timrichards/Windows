@@ -313,7 +313,7 @@
     <Compile Include="Util\TreeSelect.cs" />
     <Compile Include="Util\FolderKeyTuple.cs" />
     <Compile Include="Util\Tree\LVitemFileTag.cs" />
-    <Compile Include="Win\Treemap\UC_TreeMap.cs" />
+    <Compile Include="Win\Treemap\WinTreeMapVM.cs" />
     <Compile Include="Util\UtilColor.cs" />
     <Compile Include="Util\FileDictionary.cs" />
     <Compile Include="Util\FileDictionary\DuplicateStruct.cs" />

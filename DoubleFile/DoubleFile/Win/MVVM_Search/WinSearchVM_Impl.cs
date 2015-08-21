@@ -280,7 +280,7 @@ namespace DoubleFile
                 .ShowDialog();
         }
 
-        ListUpdater<bool>
+        readonly ListUpdater<bool>
             _nicknameUpdater = new ListUpdater<bool>();
         List<SearchResults>
             _lsSearchResults = null;

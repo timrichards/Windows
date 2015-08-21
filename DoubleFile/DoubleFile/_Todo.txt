@@ -5,7 +5,6 @@
 
 - treemap sits in front of overlay - may have to lose forms treemap before doing overlay modal
 - shouldn't be impossible to find 2 year old jpg of eq settings
-- can't resize treelist panes
 - replace DarkWindow with flyouts
 - GoTo file only works with file list open
 	- Detail doesn't listen for selected file change

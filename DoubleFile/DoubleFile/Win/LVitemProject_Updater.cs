@@ -8,6 +8,6 @@
             ListUpdater = listUpdater;
         }
 
-        internal readonly ListUpdater<T> ListUpdater;           // One per search window, inside (2.)
+        internal readonly ListUpdater<T> ListUpdater;           // One per LV, inside (2.)
     }
 }

@@ -5,8 +5,9 @@
         LocalTitle="Tree List">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.Resources>
@@ -20,12 +21,13 @@
                 <DataGridTextColumn Header="Sibling folders" Binding="{Binding Folder}" Width="{Binding WidthFolder}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid Grid.Column="1" Name="formLV_Children">
+        <GridSplitter Grid.Column="1" Background="Transparent" Width="3"/>
+        <DataGrid Grid.Column="2" Name="formLV_Children">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Folders here" Binding="{Binding Folder}" Width="{Binding WidthFolder}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <Grid Grid.Column="2" Name="form_gridChildrenCtls">
+        <Grid Grid.Column="3" Name="form_gridChildrenCtls">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition Height="Auto" />

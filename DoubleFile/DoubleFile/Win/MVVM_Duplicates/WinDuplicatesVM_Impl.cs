@@ -169,7 +169,7 @@ namespace DoubleFile
             GoToFileOnNext(Tuple.Create((LVitem_ProjectVM)_selectedItem.LVitemProject_Updater, _selectedItem.SubItems[0], _selectedItem.Filename));
         }
 
-        ListUpdater<bool>
+        readonly ListUpdater<bool>
             _nicknameUpdater = new ListUpdater<bool>();
         CancellationTokenSource
             _cts = new CancellationTokenSource();

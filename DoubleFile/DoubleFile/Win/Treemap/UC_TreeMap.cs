@@ -10,9 +10,30 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    [System.ComponentModel.DesignerCategory("Code")]
-    class UC_TreeMap : UserControl
+    class UC_TreeMap : ObservableObjectBase, IDisposable
     {
+        public System.Windows.Media.Brush
+            Background
+        {
+            get
+            {
+                if (null == _BackgroundImage)
+                    return null;
+
+                return new System.Windows.Media.ImageBrush
+                {
+                    ImageSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                        _BackgroundImage.GetHbitmap(), 
+                        IntPtr.Zero, 
+                        System.Windows.Int32Rect.Empty, 
+                        System.Windows.Media.Imaging.BitmapSizeOptions.FromWidthAndHeight((int)_sizeTranslate.Width, (int)_sizeTranslate.Height))
+                };
+            }
+        }
+        Bitmap _BackgroundImage;
+
+        void Invalidate(Rectangle r = default(Rectangle)) => RaisePropertyChanged("Background");
+
         static internal IObservable<Tuple<string, int>>
             SelectedFile => _selectedFile;
         static readonly LocalSubject<string> _selectedFile = new LocalSubject<string>();
@@ -28,15 +49,6 @@ namespace DoubleFile
 
         public UC_TreeMap()
         {
-            DoubleBuffered = true;
-            SetStyle(ControlStyles.DoubleBuffer |
-                ControlStyles.UserPaint |
-                ControlStyles.AllPaintingInWmPaint,
-                true);
-            BackgroundImageLayout = ImageLayout.Stretch;
-            Dock = DockStyle.Fill;
-            BackColor = Color.Transparent;
-
             var bMouseDown = false;
 
             _lsDisposable.Add(Observable.FromEventPattern(this, "MouseDown")
@@ -59,11 +71,8 @@ namespace DoubleFile
 
             _lsDisposable.Add(LV_TreeListChildrenVM.TreeListChildSelected.LocalSubscribe(99695, LV_TreeListChildrenVM_TreeListChildSelected));
             _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.LocalSubscribe(99694, LV_FilesVM_SelectedFileChanged));
-        }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
+            // Stuff below was in the OnLoad method
 
             _lsDisposable.Add(Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(33)).Timestamp()    // 30 FPS
                 .LocalSubscribe(99693, x =>
@@ -119,7 +128,7 @@ namespace DoubleFile
             _bClearingSelection = false;
         }
 
-        protected override void Dispose(bool disposing)
+        public void Dispose()
         {
             Util.LocalDispose(_lsDisposable);
 
@@ -132,8 +141,6 @@ namespace DoubleFile
                 _selChildNode = null;
                 _prevNode = null;
             });
-
-            base.Dispose(disposing);
         }
 
         internal LocalTreeNode ZoomOrTooltip(Point pt_in)
@@ -471,10 +478,8 @@ namespace DoubleFile
             };
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        void OnPaint(PaintEventArgs e)
         {
-            base.OnPaint(e);
-
             if (null != _selChildNode)
             {
                 e.Graphics.FillRectangle(
@@ -533,9 +538,8 @@ namespace DoubleFile
             e.Graphics.FillPie(brush, r_A, 180 + nAnimFrame, 90);
         }
 
-        protected override void OnSizeChanged(EventArgs e)
+        internal void OnSizeChanged(EventArgs e)
         {
-            base.OnSizeChanged(e);
             TranslateSize();
             _prevNode = null;
             ClearSelection();
@@ -587,13 +591,13 @@ namespace DoubleFile
                 var dtStart_A = DateTime.Now;
 
                 _rectBitmap = new Rectangle(0, 0, nPxPerSide, nPxPerSide);
-                BackgroundImage = new Bitmap(_rectBitmap.Size.Width, _rectBitmap.Size.Height);
+                _BackgroundImage = new Bitmap(_rectBitmap.Size.Width, _rectBitmap.Size.Height);
 
                 var bgcontext = BufferedGraphicsManager.Current;
 
                 bgcontext.MaximumBuffer = _rectBitmap.Size;
                 _bg?.Dispose();
-                _bg = bgcontext.Allocate(Graphics.FromImage(BackgroundImage), _rectBitmap);
+                _bg = bgcontext.Allocate(Graphics.FromImage(_BackgroundImage), _rectBitmap);
                 TranslateSize();
                 Util.WriteLine("Size bitmap " + nPxPerSide + " " + (DateTime.Now - dtStart_A).TotalMilliseconds / 1000d + " seconds.");
             }
@@ -644,7 +648,7 @@ namespace DoubleFile
         void TranslateSize()
         {
             SizeF sizeBitmap = _rectBitmap.Size;
-            SizeF size = Size;
+            SizeF size = new SizeF(1024, 1024);
 
             _sizeTranslate = new SizeF(size.Width / sizeBitmap.Width, size.Height / sizeBitmap.Height);
         }

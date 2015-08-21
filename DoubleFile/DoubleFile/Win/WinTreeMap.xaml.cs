@@ -18,13 +18,18 @@ namespace DoubleFile
 
         protected override void LocalNavigatedTo()
         {
-            _host.Child =
-                _ucTreeMap =
+            _ucTreeMap =
                 new UC_TreeMap()
             {
                 LocalOwner = Application.Current.MainWindow,
                 TreeMapVM = new WinTreeMapVM()
             };
+
+            Observable.FromEventPattern<SizeChangedEventArgs>(this, "SizeChanged")
+                .LocalSubscribe(99806, x =>
+            {
+
+            });
 
             DataContext = _ucTreeMap.TreeMapVM;
 
@@ -43,9 +48,7 @@ namespace DoubleFile
         {
             _ucTreeMap.Dispose();
 
-            _host.Child =
-                _ucTreeMap =
-                null;
+            _ucTreeMap = null;
 
             DataContext = null;
         }

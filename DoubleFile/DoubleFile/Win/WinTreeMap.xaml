@@ -8,7 +8,7 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <WindowsFormsHost Name="_host" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        <Canvas Background="{Binding Background}" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         <Slider Name="form_slider" Grid.Column="1" Value="{Binding Value}" Maximum="{Binding Maximum}"
                 IsSnapToTickEnabled="True"
                 LargeChange="1" SmallChange="1" TickFrequency="1"

@@ -4,8 +4,9 @@
 - wpf treemap
 
 - treemap sits in front of overlay - may have to lose forms treemap before doing overlay modal
+	- replace DarkWindow with overlay
+	- allow moving the window when darkened
 - shouldn't be impossible to find 2 year old jpg of eq settings
-- replace DarkWindow with flyouts
 - GoTo file only works with file list open
 	- Detail doesn't listen for selected file change
 - Application.Current.MainWindow is only accessible on the main UI thread
@@ -64,7 +65,6 @@
 - What is the distribution of sums of "random" hash folder score?
 - Why are some folders white? Why do some folders not say they're duplicated?
 - PresentationCore.dll: FormatException; InvalidCastException; ArgumentException (see output window)
-- allow moving the window when darkened
 - New Listing File dialog flashes when system choose folder dialog is shown
 - tool tip to tree map title bar area
 - go to button in tree map
@@ -169,10 +169,6 @@ Specific code areas:
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
 
-99806
-99789
-99787
-99786
 99785
 99758
 99683

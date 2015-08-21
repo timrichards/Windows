@@ -36,7 +36,7 @@ namespace DoubleFile
         internal MessageBoxResult
             ShowMessagebox(string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
         {
-            Util.UIthread(0, () =>
+            Util.UIthread(99789, () =>
             {
                 Activate();
 
@@ -50,12 +50,12 @@ namespace DoubleFile
             _dispatcherFrame_MessageBox.PushFrameTrue();
             return _messageboxResult;
         }
-        LocalDispatcherFrame _dispatcherFrame_MessageBox = new LocalDispatcherFrame(0);
+        LocalDispatcherFrame _dispatcherFrame_MessageBox = new LocalDispatcherFrame(99786);
         MessageBoxResult _messageboxResult = MessageBoxResult.None;
 
         void Messagebox_Close()
         {
-            Util.UIthread(0, () =>
+            Util.UIthread(99787, () =>
             {
                 Application.Current.Windows.OfType<ModernWindow>()
                     .ForEach(w => SetDarkened(w, Visibility.Collapsed));

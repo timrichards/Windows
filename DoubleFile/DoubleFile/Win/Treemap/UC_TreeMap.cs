@@ -10,7 +10,7 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    class UC_TreeMap : ObservableObjectBase, IDisposable
+    class WinTreeMapVM : SliderVM_Base<ListViewItemVM_Base>, IDisposable
     {
         public System.Windows.Media.Brush
             Background
@@ -27,12 +27,21 @@ namespace DoubleFile
                         IntPtr.Zero, 
                         System.Windows.Int32Rect.Empty, 
                         System.Windows.Media.Imaging.BitmapSizeOptions.FromWidthAndHeight((int)_sizeTranslate.Width, (int)_sizeTranslate.Height))
+
+                        // PInvoke Dispose that Hbitmap handle is Required.
                 };
             }
         }
         Bitmap _BackgroundImage;
 
         void Invalidate(Rectangle r = default(Rectangle)) => RaisePropertyChanged("Background");
+
+        internal override int NumCols => 0;
+
+        internal IObservable<Tuple<LocalTreeNode, int>>
+            TreeNodeCallback => _treeNodeCallback;
+        readonly LocalSubject<LocalTreeNode> _treeNodeCallback = new LocalSubject<LocalTreeNode>();
+        internal override void GoTo(LocalTreeNode treeNode) => _treeNodeCallback.LocalOnNext(treeNode, 99853);
 
         static internal IObservable<Tuple<string, int>>
             SelectedFile => _selectedFile;
@@ -44,10 +53,8 @@ namespace DoubleFile
 
         internal System.Windows.Window
             LocalOwner = null;
-        internal WinTreeMapVM
-            TreeMapVM = null;
 
-        public UC_TreeMap()
+        public WinTreeMapVM()
         {
             var bMouseDown = false;
 
@@ -86,7 +93,7 @@ namespace DoubleFile
                     Invalidate(_rectCenter);
             }));
 
-            _lsDisposable.Add(TreeMapVM.TreeNodeCallback.LocalSubscribe(99692, TreeMapVM_TreeNodeCallback));
+            _lsDisposable.Add(TreeNodeCallback.LocalSubscribe(99692, TreeMapVM_TreeNodeCallback));
         }
 
         void InvalidatePushRef(Action action)
@@ -153,7 +160,7 @@ namespace DoubleFile
 
             ClearSelection(bDontCloseTooltip: true);
 
-            if (null == TreeMapVM.TreeNode)
+            if (null == TreeNode)
                 return null;
 
             if (_rectCenter.Contains(pt_in))   // click once to hide goofball. Click again within 5 seconds to return to the deep node.
@@ -166,7 +173,7 @@ namespace DoubleFile
                 else if (DateTime.Now - _dtHideGoofball < TimeSpan.FromSeconds(5))
                 {
                     _dtHideGoofball = DateTime.MinValue;
-                    return TreeMapVM.DeepNode;
+                    return DeepNode;
                 }
             }
 
@@ -180,7 +187,7 @@ namespace DoubleFile
             Util.Closure(() =>
             {
                 {
-                    var nodeDatum = TreeMapVM.TreeNode.NodeDatum;
+                    var nodeDatum = TreeNode.NodeDatum;
 
                     if (null == nodeDatum)      // added 2/13/15
                     {
@@ -201,16 +208,16 @@ namespace DoubleFile
                     }
                 }
 
-                var prevNode_A = _prevNode ?? TreeMapVM.TreeNode;
+                var prevNode_A = _prevNode ?? TreeNode;
 
                 if (null != (nodeRet = FindMapNode(prevNode_A, pt)))
                     return;         // from lambda
 
-                if (_prevNode?.IsChildOf(TreeMapVM.TreeNode) ?? false)
+                if (_prevNode?.IsChildOf(TreeNode) ?? false)
                 {
                     var nodeUplevel = _prevNode.Parent;
 
-                    while (nodeUplevel?.IsChildOf(TreeMapVM.TreeNode) ?? false)
+                    while (nodeUplevel?.IsChildOf(TreeNode) ?? false)
                     {
                         if (null != (nodeRet = FindMapNode(nodeUplevel, pt)))
                             return;     // from lambda
@@ -221,12 +228,12 @@ namespace DoubleFile
 
                 Util.Assert(99882,
                     (null == _prevNode) ||
-                    (false == TreeMapVM.TreeNode.IsChildOf(_prevNode)));
+                    (false == TreeNode.IsChildOf(_prevNode)));
 
-                if (null != (nodeRet = FindMapNode(TreeMapVM.TreeNode, pt)))
+                if (null != (nodeRet = FindMapNode(TreeNode, pt)))
                     return;         // from lambda
 
-                nodeRet = TreeMapVM.TreeNode;
+                nodeRet = TreeNode;
 
                 if (bVolumeView)
                     return;         // from lambda
@@ -250,7 +257,7 @@ namespace DoubleFile
 
             if (ReferenceEquals(nodeRet, _prevNode))
             {
-                nodeRet = TreeMapVM.TreeNode;
+                nodeRet = TreeNode;
                 bFilesHere = false;
             }
 
@@ -269,7 +276,7 @@ namespace DoubleFile
                 return;
             }
 
-            if (false == ReferenceEquals(TreeMapVM.TreeNode, treeNodeChild.Parent))
+            if (false == ReferenceEquals(TreeNode, treeNodeChild.Parent))
                 return;
 
             SelRectAndTooltip(treeNodeChild, initiatorTuple.Item2, bFile: false);
@@ -488,7 +495,7 @@ namespace DoubleFile
             }
 
             if ((null == _deepNodeDrawn) ||
-                ReferenceEquals(_deepNodeDrawn, TreeMapVM.TreeNode))
+                ReferenceEquals(_deepNodeDrawn, TreeNode))
             {
                 _rectCenter = Rectangle.Empty;
                 return;
@@ -578,8 +585,8 @@ namespace DoubleFile
 
         void Render(LocalTreeNode treeNode)
         {
-            if (false == (TreeMapVM.DeepNode?.IsChildOf(treeNode) ?? false))
-                TreeMapVM.DeepNode = treeNode;
+            if (false == (DeepNode?.IsChildOf(treeNode) ?? false))
+                DeepNode = treeNode;
 
             var nPxPerSide = (treeNode.SelectedImageIndex < 0)
                 ? 2048
@@ -605,7 +612,7 @@ namespace DoubleFile
             var dtStart = DateTime.Now;
 
             ClearSelection();
-            TreeMapVM.TreeNode = treeNode;
+            TreeNode = treeNode;
             _ieRenderActions = DrawTreemap();
 
             Util.UIthread(99823, () =>
@@ -688,7 +695,7 @@ namespace DoubleFile
             if (rc.Width <= 0 || rc.Height <= 0)
                 return null;
 
-            var nodeDatum = TreeMapVM.TreeNode.NodeDatum;
+            var nodeDatum = TreeNode.NodeDatum;
 
             if (null == nodeDatum)      // added 2/13/15
             {
@@ -698,7 +705,7 @@ namespace DoubleFile
 
             return
                 (nodeDatum.TotalLength > 0)
-                ? new Recurse().Render(TreeMapVM.TreeNode, rc, TreeMapVM.DeepNode, out _deepNodeDrawn)
+                ? new Recurse().Render(TreeNode, rc, DeepNode, out _deepNodeDrawn)
                 : new[] { new FillRectangle { Brush = Brushes.Wheat, rc = rc } };
         }
 

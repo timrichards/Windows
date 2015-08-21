@@ -13,16 +13,16 @@ namespace DoubleFile
             InitializeComponent();
 
             Observable.FromEventPattern(form_slider, "LostMouseCapture")
-                .LocalSubscribe(99682, x => _ucTreeMap?.TreeMapVM.LostMouseCapture());
+                .LocalSubscribe(99682, x => _ucTreeMap?.LostMouseCapture());
         }
 
         protected override void LocalNavigatedTo()
         {
-            _ucTreeMap =
-                new UC_TreeMap()
+            DataContext =
+                _ucTreeMap =
+                new WinTreeMapVM
             {
                 LocalOwner = Application.Current.MainWindow,
-                TreeMapVM = new WinTreeMapVM()
             };
 
             Observable.FromEventPattern<SizeChangedEventArgs>(this, "SizeChanged")
@@ -30,8 +30,6 @@ namespace DoubleFile
             {
 
             });
-
-            DataContext = _ucTreeMap.TreeMapVM;
 
             var treeNode = LocalTV.TopNode;
             var folderDetail = LocalTV.TreeSelect_FolderDetail;
@@ -41,7 +39,7 @@ namespace DoubleFile
             else
                 treeNode = folderDetail.treeNode;
 
-            _ucTreeMap.TreeMapVM.GoTo(treeNode);
+            _ucTreeMap.GoTo(treeNode);
         }
 
         protected override void LocalNavigatedFrom()
@@ -53,7 +51,7 @@ namespace DoubleFile
             DataContext = null;
         }
 
-        UC_TreeMap
+        WinTreeMapVM
             _ucTreeMap = null;
     }
 }

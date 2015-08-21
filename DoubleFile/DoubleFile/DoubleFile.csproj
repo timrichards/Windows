@@ -274,7 +274,6 @@
       <DependentUpon>WinTreeList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Win\MVVM_TreeList\LV_TreeListSiblingsVM.cs" />
-    <Compile Include="Win\Treemap\WinTreeMapVM.cs" />
     <Compile Include="Win\Treemap\LocalTreeMapNode.cs" />
     <Compile Include="Util\Tree\DetailsDatum.cs" />
     <Compile Include="Win\Treemap\WinTooltip.xaml.cs">

@@ -24,9 +24,7 @@ namespace DoubleFile
                 if (null == value)
                     return;
 
-                UpdateFileDetailOnNext(Tuple.Create(
-                    (IReadOnlyList<string>)value.FileLine, _treeNode), 0 /* UI Initiator */);
-
+                UpdateFileDetailOnNext(Tuple.Create(value.FileLine, _treeNode), 0 /* UI Initiator */);
                 SelectedItem_AllTriggers();
             }
         }

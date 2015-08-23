@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Input;
 
 namespace DoubleFile
 {
@@ -47,8 +48,10 @@ namespace DoubleFile
 
         public Visibility VisibilityOnDuplicates => (ShowDuplicates && (0 != DuplicatesRaw)) ? Visibility.Visible : Visibility.Collapsed;
 
+        public ICommand Icmd_NextDuplicate { get; }
+
         public string
-            Duplicate => "Duplicate";
+            Duplicate => LSdupDirFileLines[_dupIndex % LSdupDirFileLines.Count][1];
         public string
             In { get; private set; } = " in ";    // interned
 
@@ -56,7 +59,7 @@ namespace DoubleFile
         {
             get
             {
-                return "Parent";
+                return LSdupDirFileLines[_dupIndex % LSdupDirFileLines.Count][0];
             }
         }
 
@@ -66,8 +69,23 @@ namespace DoubleFile
         protected override IReadOnlyList<string> _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
         static IReadOnlyList<string> _propNamesA = null;
 
+        internal LVitem_FilesVM()
+        {
+            Icmd_NextDuplicate =
+                new RelayCommand(() =>
+            {
+                ++_dupIndex;
+                RaisePropertyChanged("Duplicate");
+                RaisePropertyChanged("Parent");
+            });
+        }
+
         internal IEnumerable<FileDictionary.DuplicateStruct>
             LSduplicates = null;
-        internal IReadOnlyList<string> FileLine;
+        internal IReadOnlyList<string>
+            FileLine;
+        internal IList<IReadOnlyList<string>>
+            LSdupDirFileLines = null;
+        int _dupIndex = 0;
     }
 }

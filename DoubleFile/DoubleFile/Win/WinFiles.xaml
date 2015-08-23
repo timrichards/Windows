@@ -35,7 +35,7 @@
                                                     ItemsPanel="{TemplateBinding ItemsPanel}"
                                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                             <StackPanel Style="{StaticResource VisibilityOnSelected}" Orientation="Horizontal" Background="Black">
-                                                <Button Command="{Binding Icmd_NextDuplicatesPath}" Padding="0" Margin="0,0,5,0">
+                                                <Button Command="{Binding Icmd_NextDuplicate}" Padding="0" Margin="0,0,5,0">
                                                     <Image Source="/DoubleFile;component/Assets/ic_skip_next_white_18dp.png" Height="18"/>
                                                 </Button>
                                                 <TextBlock>

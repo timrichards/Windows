@@ -21,6 +21,20 @@ namespace DoubleFile
 
         public void Dispose() => Util.LocalDispose(_lsDisposable);
 
+        internal override IEnumerable<LVitem_FilesVM>
+            this[string s_in]
+        {
+            get
+            {
+                if (null == s_in)
+                    return null;
+            
+                var s = s_in.ToLower();
+
+                return ItemsCast.Where(o => ("" + o.Filename).ToLower().Equals(s));
+            }
+        }
+
         void TreeSelect_FileListUpdated(Tuple<TreeSelect.FileListUpdated, int> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
@@ -88,19 +102,6 @@ namespace DoubleFile
 
             this[initiatorTuple.Item1].FirstOnlyAssert(fileVM =>
                 SelectedItem_Set(fileVM, initiatorTuple.Item2));
-        }
-
-        internal override IEnumerable<LVitem_FilesVM> this[string s_in]
-        {
-            get
-            {
-                if (null == s_in)
-                    return null;
-            
-                var s = s_in.ToLower();
-
-                return ItemsCast.Where(o => ("" + o.Filename).ToLower().Equals(s));
-            }
         }
 
         LocalTreeNode

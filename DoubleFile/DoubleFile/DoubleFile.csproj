@@ -237,6 +237,7 @@
     <Compile Include="Win\LVitemProject_Updater.cs" />
     <Compile Include="Win\MVVM_Clones\WinClonesVM_Impl.cs" />
     <Compile Include="Win\MVVM_Clones\WinClonesVM.cs" />
+    <Compile Include="Win\MVVM_Files\LV_FilesVM_Duplicates.cs" />
     <Compile Include="Win\MVVM_FolderList\LVitem_FolderListVM.cs" />
     <Compile Include="Win\MVVM_FolderList\WinFolderListVM.cs" />
     <Compile Include="Win\MVVM_FolderList\WinFolderListVM_Impl.cs" />

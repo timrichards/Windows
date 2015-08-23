@@ -1,5 +1,8 @@
-﻿using System.Reactive.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Reactive.Linq;
 using System.Windows;
+using System.Windows.Input;
 
 namespace DoubleFile
 {
@@ -25,6 +28,22 @@ namespace DoubleFile
                 LocalOwner = Application.Current.MainWindow,
             };
 
+            _lsDisposable.Add(_ucTreeMap);
+
+            var bMouseDown = false;
+
+            _lsDisposable.Add(Observable.FromEventPattern(this, "MouseDown")
+                .LocalSubscribe(99698, x => bMouseDown = true));
+
+            _lsDisposable.Add(Observable.FromEventPattern<MouseButtonEventArgs>(this, "MouseUp")
+                .LocalSubscribe(99697, args =>
+            {
+                if (bMouseDown)
+                    _ucTreeMap.form_tmapUserCtl_MouseUp(args.EventArgs.GetPosition(this));
+
+                bMouseDown = false;
+            }));
+
             Observable.FromEventPattern<SizeChangedEventArgs>(this, "SizeChanged")
                 .LocalSubscribe(99806, x =>
             {
@@ -44,7 +63,7 @@ namespace DoubleFile
 
         protected override void LocalNavigatedFrom()
         {
-            _ucTreeMap.Dispose();
+            Util.LocalDispose(_lsDisposable);
 
             DataContext = 
                 _ucTreeMap = null;
@@ -52,5 +71,7 @@ namespace DoubleFile
 
         WinTreeMapVM
             _ucTreeMap = null;
+        readonly IList<IDisposable>
+            _lsDisposable = new List<IDisposable>();
     }
 }

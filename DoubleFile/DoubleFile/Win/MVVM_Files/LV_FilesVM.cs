@@ -63,6 +63,10 @@ namespace DoubleFile
         public string WidthError1 => SCW;
         public string WidthError2 => SCW;
 
+        public string WidthDuplicate => SCW;                   // franken all NaN
+        public string WidthIn => SCW;
+        public string WidthParent => SCW;
+
         internal override int NumCols => LVitem_FilesVM.NumCols_;
     }
 }

@@ -16,10 +16,55 @@
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
+                <Style x:Key="VisibilityOnSelected" TargetType="{x:Type StackPanel}">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGridRow}}, Path=IsSelected}" Value="True">
+                            <Setter Property="Visibility" Value="{Binding VisibilityOnDuplicates}"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+                <Style TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type DataGridRow}">
+                                <Border>
+                                    <SelectiveScrollingGrid>
+                                        <StackPanel>
+                                            <DataGridCellsPresenter Grid.Column="1"
+                                                    ItemsPanel="{TemplateBinding ItemsPanel}"
+                                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                            <StackPanel Style="{StaticResource VisibilityOnSelected}" Orientation="Horizontal" Background="Black">
+                                                <Button Command="{Binding Icmd_NextDuplicatesPath}" Padding="0" Margin="0,0,5,0">
+                                                    <Image Source="/DoubleFile;component/Assets/ic_skip_next_white_18dp.png" Height="18"/>
+                                                </Button>
+                                                <TextBlock>
+                                                    <Run Text="{Binding Duplicate, Mode=OneWay}" FontWeight="SemiBold"/>
+                                                    <Run Text="{Binding In, Mode=OneWay}" FontWeight="ExtraLight"/>
+                                                    <Run Text="{Binding Parent, Mode=OneWay}"/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </SelectiveScrollingGrid>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
             </DataGrid.Resources>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="File name" Binding="{Binding Filename}" Width="{Binding WidthFilename}"/>
-                <DataGridTextColumn Header="Duplicates" Binding="{Binding Duplicates}" SortMemberPath="DuplicatesRaw" Width="{Binding WidthDuplicates}"/>
+
+                <DataGridTemplateColumn Header="Duplicates" SortMemberPath="DuplicatesRaw" Width="{Binding WidthDuplicates}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Duplicates}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
                 <DataGridTextColumn Header="Length" Binding="{Binding Length}" SortMemberPath="LengthRaw" Width="{Binding WidthLength}"/>
                 <DataGridTextColumn Header="Created" Binding="{Binding Created}" SortMemberPath="CreatedRaw" Width="{Binding WidthCreated}"/>
                 <DataGridTextColumn Header="Modified" Binding="{Binding Modified}" SortMemberPath="ModifiedRaw" Width="{Binding WidthModified}"/>

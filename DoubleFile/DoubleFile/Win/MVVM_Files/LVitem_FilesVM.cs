@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -35,7 +36,7 @@ namespace DoubleFile
         public bool SolitaryAndNonEmpty =>
             ShowDuplicates &&
             (0 == DuplicatesRaw) &&
-                ((FileLine.Count <= FileParse.knColLengthLV) ||                    // doesn't happen
+                ((FileLine.Count <= FileParse.knColLengthLV) ||                     // doesn't happen
                 string.IsNullOrWhiteSpace(FileLine[FileParse.knColLengthLV]) ||     // doesn't happen
                 (0 < ("" + FileLine[FileParse.knColLengthLV]).ToUlong()));
 
@@ -43,6 +44,21 @@ namespace DoubleFile
             ((ShowDuplicates && (0 != DuplicatesRaw))
             ? "" + DuplicatesRaw : "") + (_SameVolume ? " all on the same volume." : "");
         public int DuplicatesRaw { get; internal set; }
+
+        public Visibility VisibilityOnDuplicates => (ShowDuplicates && (0 != DuplicatesRaw)) ? Visibility.Visible : Visibility.Collapsed;
+
+        public string
+            Duplicate => "Duplicate";
+        public string
+            In { get; private set; } = " in ";    // interned
+
+        public string Parent
+        {
+            get
+            {
+                return "Parent";
+            }
+        }
 
         internal override int NumCols => NumCols_;
         internal const int NumCols_ = 0;

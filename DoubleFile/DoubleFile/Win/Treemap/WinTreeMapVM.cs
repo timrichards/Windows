@@ -7,11 +7,15 @@ using System.Drawing.Drawing2D;
 using System.Threading;
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
+using System.Runtime.InteropServices;
 
 namespace DoubleFile
 {
     class WinTreeMapVM : SliderVM_Base<ListViewItemVM_Base>, IDisposable
     {
+        [DllImport("gdi32")]
+        static extern int DeleteObject(IntPtr o);
+
         public System.Windows.Media.Brush
             Background
         {
@@ -20,16 +24,19 @@ namespace DoubleFile
                 if (null == _BackgroundImage)
                     return null;
 
-                return new System.Windows.Media.ImageBrush
+                var hBitmap =  _BackgroundImage.GetHbitmap();
+
+                var imageBrush = new System.Windows.Media.ImageBrush
                 {
                     ImageSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                        _BackgroundImage.GetHbitmap(), 
+                        hBitmap, 
                         IntPtr.Zero,
                         System.Windows.Int32Rect.Empty, 
                         System.Windows.Media.Imaging.BitmapSizeOptions.FromWidthAndHeight(_BackgroundImage.Width, _BackgroundImage.Height))
-
-                        // PInvoke Dispose that Hbitmap handle is Required.
                 };
+
+                DeleteObject(hBitmap);
+                return imageBrush;
             }
         }
         Bitmap _BackgroundImage;
@@ -56,14 +63,6 @@ namespace DoubleFile
 
         public WinTreeMapVM()
         {
-            //var bMouseDown = false;
-
-            //_lsDisposable.Add(Observable.FromEventPattern(this, "MouseDown")
-            //    .LocalSubscribe(99698, x => bMouseDown = true));
-
-            //_lsDisposable.Add(Observable.FromEventPattern<MouseEventArgs>(this, "MouseUp")
-            //    .LocalSubscribe(99697, args => { if (bMouseDown) form_tmapUserCtl_MouseUp(args.EventArgs.Location); bMouseDown = false; }));
-
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99696, initiatorTuple =>
             {
                 if (LV_TreeListChildrenVM.kChildSelectedOnNext == initiatorTuple.Item2)
@@ -106,9 +105,9 @@ namespace DoubleFile
                 Invalidate();
         }
 
-        void form_tmapUserCtl_MouseUp(Point ptLocation)
+        internal void form_tmapUserCtl_MouseUp(System.Windows.Point ptLocation)
         {
-            var treeNode = ZoomOrTooltip(ptLocation);
+            var treeNode = ZoomOrTooltip(new Point((int)ptLocation.X, (int)ptLocation.Y));
 
             if (null != treeNode)
                 LocalTV.SelectedNode = treeNode;
@@ -655,7 +654,7 @@ namespace DoubleFile
         void TranslateSize()
         {
             SizeF sizeBitmap = _rectBitmap.Size;
-            SizeF size = new SizeF(1024, 1024);
+            SizeF size = new SizeF(2048, 2048);
 
             _sizeTranslate = new SizeF(size.Width / sizeBitmap.Width, size.Height / sizeBitmap.Height);
         }

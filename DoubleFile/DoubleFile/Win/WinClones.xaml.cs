@@ -25,8 +25,7 @@ namespace DoubleFile
             InitializeComponent();            
         }
 
-        protected override void LocalNavigatedTo() =>
-            _bNavigatedTo = true;
+        protected override void LocalNavigatedTo() =>  _bNavigatedTo = true;
 
         protected override void LocalFragmentNavigation(string strFragment)
         {
@@ -34,7 +33,6 @@ namespace DoubleFile
                 _bNicknames = formChk_Nicknames.IsChecked ?? false;
             
             _bNavigatedTo = false;
-
             _winFormsLVVM = WinClonesVM.FactoryGetHolder(strFragment, _bNicknames);
             DataContext = _winFormsLVVM;
 

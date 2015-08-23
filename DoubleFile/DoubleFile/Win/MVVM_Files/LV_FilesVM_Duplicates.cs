@@ -22,11 +22,17 @@ namespace DoubleFile
 
 //            UpdateFileDetailOnNext(Tuple.Create(asFileLine, _treeNode), initiatorTuple.Item2);
 
+            if (null == _selectedItem.LSduplicates)
+                return;
+
             Util.ThreadMake(() => 
             {
                 try
                 {
+                    _selectedItem.DupIndex = 0;
                     TreeFileSelChanged();
+                    RaisePropertyChanged("Duplicate");
+                    RaisePropertyChanged("Parent");
                 }
                 catch (OperationCanceledException) { }
             });

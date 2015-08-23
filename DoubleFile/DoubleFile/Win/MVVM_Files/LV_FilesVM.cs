@@ -58,7 +58,7 @@ namespace DoubleFile
         }
         LVitem_FilesVM _selectedItem = null;
 
-        public string WidthFilename => SCW;                  // franken all NaN
+        public string WidthFilename => SCW;                     // franken all NaN
         public string WidthDuplicates => SCW;
         public string WidthCreated => SCW;
         public string WidthModified => SCW;
@@ -67,7 +67,7 @@ namespace DoubleFile
         public string WidthError1 => SCW;
         public string WidthError2 => SCW;
 
-        public string WidthDuplicate => SCW;                   // franken all NaN
+        public string WidthDuplicate => SCW;
         public string WidthIn => SCW;
         public string WidthParent => SCW;
 

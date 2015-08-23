@@ -20,7 +20,8 @@ namespace DoubleFile
         public string Error1 => 5 < FileLine.Count ? FileLine[5] : "";
         public string Error2 => 6 < FileLine.Count ? FileLine[6] : "";
 
-        public bool SameVolume
+        public bool
+            SameVolume
         {
             get { return _SameVolume; }
             internal set
@@ -34,16 +35,15 @@ namespace DoubleFile
         }
         bool _SameVolume = false;
 
-        public bool SolitaryAndNonEmpty =>
-            ShowDuplicates &&
-            (0 == DuplicatesRaw) &&
+        public bool
+            SolitaryAndNonEmpty =>
+            ShowDuplicates && (0 == DuplicatesRaw) &&
                 ((FileLine.Count <= FileParse.knColLengthLV) ||                     // doesn't happen
                 string.IsNullOrWhiteSpace(FileLine[FileParse.knColLengthLV]) ||     // doesn't happen
                 (0 < ("" + FileLine[FileParse.knColLengthLV]).ToUlong()));
 
-        public string Duplicates =>
-            ((ShowDuplicates && (0 != DuplicatesRaw))
-            ? "" + DuplicatesRaw : "") + (_SameVolume ? " all on the same volume." : "");
+        public string
+            Duplicates => ((ShowDuplicates && (0 != DuplicatesRaw)) ? "" + DuplicatesRaw : "") + (_SameVolume ? " all on the same volume." : "");
         public int DuplicatesRaw { get; internal set; }
 
         public Visibility VisibilityOnDuplicates => (ShowDuplicates && (0 != DuplicatesRaw)) ? Visibility.Visible : Visibility.Collapsed;
@@ -51,7 +51,7 @@ namespace DoubleFile
         public ICommand Icmd_NextDuplicate { get; }
 
         public string
-            Duplicate => LSdupDirFileLines[_dupIndex % LSdupDirFileLines.Count][1];
+            Duplicate => LSdupDirFileLines[DupIndex % LSdupDirFileLines.Count][1];
         public string
             In { get; private set; } = " in ";    // interned
 
@@ -59,7 +59,7 @@ namespace DoubleFile
         {
             get
             {
-                return LSdupDirFileLines[_dupIndex % LSdupDirFileLines.Count][0];
+                return LSdupDirFileLines[DupIndex % LSdupDirFileLines.Count][0];
             }
         }
 
@@ -74,7 +74,7 @@ namespace DoubleFile
             Icmd_NextDuplicate =
                 new RelayCommand(() =>
             {
-                ++_dupIndex;
+                ++DupIndex;
                 RaisePropertyChanged("Duplicate");
                 RaisePropertyChanged("Parent");
             });
@@ -86,6 +86,6 @@ namespace DoubleFile
             FileLine;
         internal IList<IReadOnlyList<string>>
             LSdupDirFileLines = null;
-        int _dupIndex = 0;
+        internal int DupIndex = 0;
     }
 }

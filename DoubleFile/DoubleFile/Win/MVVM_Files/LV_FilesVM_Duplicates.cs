@@ -10,17 +10,10 @@ namespace DoubleFile
 {
     partial class LV_FilesVM : IDisposable
     {
-        //static internal IObservable<Tuple<Tuple<IReadOnlyList<string>, LocalTreeNode>, int>>
-        //    UpdateFileDetail => _updateFileDetail;
-        //static readonly LocalSubject<Tuple<IReadOnlyList<string>, LocalTreeNode>> _updateFileDetail = new LocalSubject<Tuple<IReadOnlyList<string>, LocalTreeNode>>();
-        //static void UpdateFileDetailOnNext(Tuple<IReadOnlyList<string>, LocalTreeNode> value, int nInitiator) => _updateFileDetail.LocalOnNext(value, 99847, nInitiator);
-
-        void ShowDuplicates()
+        void ShowDuplicates_SelectedFileChangedOnNext(int nInitiator)
         {
             Util.Write("I");
             _cts.Cancel();
-
-//            UpdateFileDetailOnNext(Tuple.Create(asFileLine, _treeNode), initiatorTuple.Item2);
 
             if (null == _selectedItem.LSduplicates)
                 return;
@@ -31,10 +24,12 @@ namespace DoubleFile
                 {
                     _selectedItem.DupIndex = 0;
                     TreeFileSelChanged();
-                    RaisePropertyChanged("Duplicate");
-                    RaisePropertyChanged("Parent");
+                    _selectedItem.RaisePropertyChanged("Duplicate");
+                    _selectedItem.RaisePropertyChanged("Parent");
                 }
                 catch (OperationCanceledException) { }
+
+                SelectedFileChangedOnNext(new SelectedFileChanged(_selectedItem.LSdupDirFileLines, _selectedItem.FileLine, _treeNode), nInitiator);
             });
         }
 
@@ -61,7 +56,7 @@ namespace DoubleFile
                 }
             }
 
-            var lsDupDirFileLines = new ConcurrentBag<IReadOnlyList<string>> { };
+            var lsDupDirFileLines = new ConcurrentBag<Tuple<LVitemProject_Updater<bool>, IReadOnlyList<string>>> { };
 
             Util.ParallelForEach(
                 _selectedItem.LSduplicates
@@ -78,9 +73,10 @@ namespace DoubleFile
                 var nLine = 0;
                 var lsFilesInDir = new List<string>();
                 var nMatchLine = lsLineNumbers[0];
+                var lvItemProject_Updater = new LVitemProject_Updater<bool>(g.Key, null);
 
                 foreach (var strLine
-                    in g.Key.ListingFile
+                    in lvItemProject_Updater.ListingFile
                     .ReadLines())
                 {
                     if (_cts.IsCancellationRequested)
@@ -108,7 +104,7 @@ namespace DoubleFile
                                 .ToArray();
 
                             asLine[0] = strLine.Split('\t')[2];
-                            lsDupDirFileLines.Add(asLine);
+                            lsDupDirFileLines.Add(Tuple.Create(lvItemProject_Updater, (IReadOnlyList<string>)asLine));
                         }
 
                         lsFilesInDir.Clear();

@@ -76,7 +76,7 @@ namespace DoubleFile
             }));
 
             _lsDisposable.Add(LV_TreeListChildrenVM.TreeListChildSelected.LocalSubscribe(99695, LV_TreeListChildrenVM_TreeListChildSelected));
-            _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.LocalSubscribe(99694, LV_FilesVM_SelectedFileChanged));
+            _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.Observable.LocalSubscribe(99694, LV_FilesVM_SelectedFileChanged));
 
             // Stuff below was in the OnLoad method
 
@@ -281,7 +281,7 @@ namespace DoubleFile
             SelRectAndTooltip(treeNodeChild, initiatorTuple.Item2, bFile: false);
         }
 
-        void LV_FilesVM_SelectedFileChanged(Tuple<Tuple<IEnumerable<FileDictionary.DuplicateStruct>, IReadOnlyList<string>, LocalTreeNode>, int> initiatorTuple)
+        void LV_FilesVM_SelectedFileChanged(Tuple<LV_FilesVM.SelectedFileChanged, int> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
 
@@ -293,13 +293,13 @@ namespace DoubleFile
                 return;
             }
 
-            if (null == tuple.Item3.NodeDatum.TreeMapFiles)     // TODO: Why would this be null?
+            if (null == tuple.treeNode.NodeDatum.TreeMapFiles)     // TODO: Why would this be null?
                 return;
 
             bool bCloseTooltip = true;
 
-            tuple.Item2.First(strFile =>
-                tuple.Item3.NodeDatum.TreeMapFiles.Nodes
+            tuple.fileLine.FirstOrDefault(strFile =>
+                tuple.treeNode.NodeDatum.TreeMapFiles.Nodes
                 .Where(treeNodeA => treeNodeA.Text == strFile)
                 .Where(treeNodeA => treeNodeA is LocalTreeMapFileNode)
                 .FirstOnlyAssert(fileNode =>

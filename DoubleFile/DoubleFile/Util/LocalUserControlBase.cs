@@ -24,8 +24,9 @@ namespace DoubleFile
         virtual protected void LocalFragmentNavigation(string strFragment) { }
         string _strFragment = null;
 
-        public void OnNavigatedFrom(NavigationEventArgs e) => LocalNavigatedFrom();
+        public void OnNavigatedFrom(NavigationEventArgs e) { if (false == _bNavigatedFromAlready) LocalNavigatedFrom(); }
         virtual protected void LocalNavigatedFrom() { }
+        bool _bNavigatedFromAlready = false;
 
         public void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -100,6 +101,7 @@ namespace DoubleFile
                 if (this != Statics.CurrentPage)
                     return;     // from lambda
 
+                _bNavigatedFromAlready = false;
                 LocalNavigatedTo();
                 LocalFragmentNavigation(_strFragment);
                 MainWindow.UpdateTitleLinks((LocalModernWindowBase)Application.Current.MainWindow);
@@ -107,6 +109,8 @@ namespace DoubleFile
 
             if (CantDupeThisUsercontrol)
             {
+                LocalNavigatedFrom();
+                _bNavigatedFromAlready = true;
                 Content = new WinExtraWindow { WindowExtra = window };
                 MainWindow.UpdateTitleLinks((LocalModernWindowBase)Application.Current.MainWindow);
             }

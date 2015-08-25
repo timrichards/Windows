@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Reactive.Linq;
 
 namespace DoubleFile
@@ -42,11 +39,11 @@ namespace DoubleFile
         {
             var tuple = initiatorTuple.Item1;
 
-            _treeNode = tuple.treeNode;
+            _treeNode = tuple?.treeNode;
             SelectedItem_Set(null);
             ClearItems();
 
-            if (null == tuple.lsDupDirFileLines)
+            if (null == tuple?.lsDupDirFileLines)
                 return;
 
             Util.UIthread(99812, () =>

@@ -1,16 +1,15 @@
-﻿using System;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
 namespace DoubleFile
 {
-    partial class WinDuplicatesVM : ListViewVM_Base<LVitem_FileDuplicatesVM>
+    partial class UC_FolderListVM : ListViewVM_Base<LVitem_FolderListVM>
     {
         public ICommand Icmd_Nicknames { get; private set; }
         public ICommand Icmd_GoTo { get; private set; }
 
         public bool UseNicknames { private get; set; }
 
-        public LVitem_FileDuplicatesVM SelectedItem
+        public LVitem_FolderListVM SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -20,14 +19,11 @@ namespace DoubleFile
 
                 _selectedItem = value;
 
-                if (null == value)
-                    return;
-
-                UpdateFileDetailOnNext(Tuple.Create(value.FileLine, _treeNode), 0 /* UI Initiator */);
-                SelectedItem_AllTriggers();
+                if (null != _selectedItem)
+                    SelectedItem_AllTriggers();
             }
         }
-        internal void SelectedItem_Set(LVitem_FileDuplicatesVM value)
+        internal void SelectedItem_Set(LVitem_FolderListVM value)
         {
             if (value == _selectedItem)
                 return;
@@ -39,11 +35,12 @@ namespace DoubleFile
         void SelectedItem_AllTriggers()
         {
         }
-        LVitem_FileDuplicatesVM _selectedItem = null;
+        LVitem_FolderListVM _selectedItem = null;
 
-        public string WidthFilename => SCW;       // franken all NaN
-        public string WidthPath => SCW;
+        public string WidthFolder => SCW;                   // franken all NaN
+        public string WidthIn => SCW;
+        public string WidthParent => SCW;
 
-        internal override int NumCols => LVitem_FileDuplicatesVM.NumCols_;
+        internal override int NumCols => LVitem_FolderListVM.NumCols_;
     }
 }

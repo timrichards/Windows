@@ -30,7 +30,7 @@ namespace DoubleFile
             }
         }
 
-        static internal void MarkItemsFrom1notIn2(WinClonesVM lv1, WinClonesVM lv2)
+        static internal void MarkItemsFrom1notIn2(UC_ClonesVM lv1, UC_ClonesVM lv2)
         {
             if ((0 == lv1.Items.Count) || (0 == lv2.Items.Count))
                 return;
@@ -43,7 +43,7 @@ namespace DoubleFile
             //    item.ForeColor = UtilColor.Red;
         }
 
-        static internal void SetTopItem(WinClonesVM lv1, WinClonesVM lv2)
+        static internal void SetTopItem(UC_ClonesVM lv1, UC_ClonesVM lv2)
         {
             if ((0 < (lv1.TopItem?.Index ?? 1)) ||
                 (null == lv2.TopItem))

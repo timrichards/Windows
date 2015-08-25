@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    partial class WinDuplicatesVM : IDisposable
+    partial class UC_DuplicatesVM : IDisposable
     {
         static internal IObservable<Tuple<Tuple<LVitem_ProjectVM, string, string>, int>>
             GoToFile => _goToFile;
@@ -17,7 +17,7 @@ namespace DoubleFile
         static readonly LocalSubject<Tuple<IReadOnlyList<string>, LocalTreeNode>> _updateFileDetail = new LocalSubject<Tuple<IReadOnlyList<string>, LocalTreeNode>>();
         static void UpdateFileDetailOnNext(Tuple<IReadOnlyList<string>, LocalTreeNode> value, int nInitiator) => _updateFileDetail.LocalOnNext(value, 99847, nInitiator);
 
-        internal WinDuplicatesVM
+        internal UC_DuplicatesVM
             Init()
         {
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);

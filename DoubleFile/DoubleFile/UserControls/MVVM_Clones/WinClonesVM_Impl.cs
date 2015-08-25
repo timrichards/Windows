@@ -4,20 +4,20 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    partial class WinClonesVM : IDisposable
+    partial class UC_ClonesVM : IDisposable
     {
         // The create/dispose model is different for this class than anywhere else.
         // The class is created 3x in LocalTV using this empty constructor, and held there statically.
         // WinClones.xaml.cs will call upon FactoryGetHolder on each LocalNavigatedTo(), and then
         // calls Dispose() on the static object, UX-repeating this cycle without ever destroying
         // the three objects created by this default constructor.
-        internal WinClonesVM()
+        internal UC_ClonesVM()
         {
         }
 
-        internal static WinClonesVM FactoryGetHolder(string strFragment, bool bUseNicknames)
+        internal static UC_ClonesVM FactoryGetHolder(string strFragment, bool bUseNicknames)
         {
-            WinClonesVM localLVVM = null;
+            UC_ClonesVM localLVVM = null;
 
             switch (strFragment)
             {
@@ -54,7 +54,7 @@ namespace DoubleFile
                 .Init(bUseNicknames);
         }
 
-        WinClonesVM Init(bool bUseNicknames)
+        UC_ClonesVM Init(bool bUseNicknames)
         {
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99700, TreeSelect_FolderDetailUpdated));
 

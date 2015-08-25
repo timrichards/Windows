@@ -15,7 +15,7 @@
         {
             DataContext =
                 _winDuplicatesVM =
-                new WinDuplicatesVM
+                new UC_DuplicatesVM
             {
                 UseNicknames = _bNicknames
             }
@@ -32,7 +32,7 @@
                 null;
         }
 
-        WinDuplicatesVM
+        UC_DuplicatesVM
             _winDuplicatesVM = null;
         bool
             _bNicknames = false;

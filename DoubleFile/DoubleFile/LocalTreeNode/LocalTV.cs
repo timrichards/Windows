@@ -29,17 +29,17 @@ namespace DoubleFile
         }
         LocalTreeNode _selectedNode = null;
 
-        static internal WinClonesVM
+        static internal UC_ClonesVM
             Clones => _wr.Get(o => o._clones);
-        WinClonesVM _clones = new WinClonesVM();
+        UC_ClonesVM _clones = new UC_ClonesVM();
 
-        static internal WinClonesVM
+        static internal UC_ClonesVM
             SameVol => _wr.Get(o => o._sameVol);
-        WinClonesVM _sameVol = new WinClonesVM();
+        UC_ClonesVM _sameVol = new UC_ClonesVM();
 
-        static internal WinClonesVM
+        static internal UC_ClonesVM
             Solitary => _wr.Get(o => o._solitary);
-        WinClonesVM _solitary = new WinClonesVM();
+        UC_ClonesVM _solitary = new UC_ClonesVM();
 
         static internal IReadOnlyDictionary<string, string>
             DictVolumeInfo => _wr.Get(o => o._dictVolumeInfo);
@@ -91,8 +91,8 @@ namespace DoubleFile
             if (0 < (lvProjectVM?.CanLoadCount ?? 0))
                 TabledString<TabledStringType_Folders>.AddRef();
 
-            _lsDisposable.Add(WinDuplicatesVM.GoToFile.LocalSubscribe(99766, WinDuplicatesVM_GoToFile));
-            _lsDisposable.Add(WinSearchVM.GoToFile.LocalSubscribe(99765, WinSearchVM_GoToFile));
+            _lsDisposable.Add(UC_DuplicatesVM.GoToFile.LocalSubscribe(99766, WinDuplicatesVM_GoToFile));
+            _lsDisposable.Add(UC_SearchVM.GoToFile.LocalSubscribe(99765, WinSearchVM_GoToFile));
             _lsDisposable.Add(TreeSelect.FileListUpdated.Observable.LocalSubscribe(99764, v => _treeSelect_FileList = v.Item1));
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99763, v => _treeSelect_FolderDetail = v.Item1));
             _lsDisposable.Add(TreeSelect.VolumeDetailUpdated.Observable.LocalSubscribe(99762, v => _treeSelect_VolumeDetail = v.Item1));

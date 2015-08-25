@@ -231,76 +231,76 @@
     <Compile Include="Util\Win32Screen\RECT.cs" />
     <Compile Include="Util\Win32Screen\SWP.cs" />
     <Compile Include="Util\Win32Screen\Win32Screen.cs" />
-    <Compile Include="VolTreeMap\WinVolTreeMap.xaml.cs">
-      <DependentUpon>WinVolTreeMap.xaml</DependentUpon>
+    <Compile Include="VolTreeMap\UC_VolTreeMap.xaml.cs">
+      <DependentUpon>UC_VolTreeMap.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Win\LVitemProject_Updater.cs" />
-    <Compile Include="Win\MVVM_Clones\WinClonesVM_Impl.cs" />
-    <Compile Include="Win\MVVM_Clones\WinClonesVM.cs" />
-    <Compile Include="Win\MVVM_Files\LV_FilesVM_Duplicates.cs" />
-    <Compile Include="Win\MVVM_FolderList\LVitem_FolderListVM.cs" />
-    <Compile Include="Win\MVVM_FolderList\WinFolderListVM.cs" />
-    <Compile Include="Win\MVVM_FolderList\WinFolderListVM_Impl.cs" />
-    <Compile Include="Win\ListUpdater.cs" />
-    <Compile Include="Win\UC_Clones.xaml.cs">
+    <Compile Include="UserControls\LVitemProject_Updater.cs" />
+    <Compile Include="UserControls\MVVM_Clones\WinClonesVM_Impl.cs" />
+    <Compile Include="UserControls\MVVM_Clones\WinClonesVM.cs" />
+    <Compile Include="UserControls\MVVM_Files\LV_FilesVM_Duplicates.cs" />
+    <Compile Include="UserControls\MVVM_FolderList\LVitem_FolderListVM.cs" />
+    <Compile Include="UserControls\MVVM_FolderList\WinFolderListVM.cs" />
+    <Compile Include="UserControls\MVVM_FolderList\WinFolderListVM_Impl.cs" />
+    <Compile Include="UserControls\ListUpdater.cs" />
+    <Compile Include="UserControls\UC_Clones.xaml.cs">
       <DependentUpon>UC_Clones.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Win\UC_FolderList.xaml.cs">
+    <Compile Include="UserControls\UC_FolderList.xaml.cs">
       <DependentUpon>UC_FolderList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Win\MVVM_Search\LVitem_SearchVM.cs" />
-    <Compile Include="Win\MVVM_Search\WinSearchVM_Impl.cs" />
-    <Compile Include="Win\MVVM_Search\WinSearchVM.cs" />
-    <Compile Include="Win\MVVM_TreeList\LVitem_TreeListVM.cs" />
-    <Compile Include="Win\MVVM_TreeList\LV_TreeListChildrenVM.cs" />
+    <Compile Include="UserControls\MVVM_Search\LVitem_SearchVM.cs" />
+    <Compile Include="UserControls\MVVM_Search\WinSearchVM_Impl.cs" />
+    <Compile Include="UserControls\MVVM_Search\WinSearchVM.cs" />
+    <Compile Include="UserControls\MVVM_TreeList\LVitem_TreeListVM.cs" />
+    <Compile Include="UserControls\MVVM_TreeList\LV_TreeListChildrenVM.cs" />
     <Compile Include="Util\GetOneNodeByRootPath.cs" />
-    <Compile Include="Win\SliderVM_Base.cs" />
-    <Compile Include="Win\UC_TreeMap.xaml.cs">
+    <Compile Include="UserControls\SliderVM_Base.cs" />
+    <Compile Include="UserControls\UC_TreeMap.xaml.cs">
       <DependentUpon>UC_TreeMap.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Win\UC_Detail.xaml.cs">
+    <Compile Include="UserControls\UC_Detail.xaml.cs">
       <DependentUpon>UC_Detail.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Win\UC_Duplicates.xaml.cs">
+    <Compile Include="UserControls\UC_Duplicates.xaml.cs">
       <DependentUpon>UC_Duplicates.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Win\UC_Files.xaml.cs">
+    <Compile Include="UserControls\UC_Files.xaml.cs">
       <DependentUpon>UC_Files.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Win\UC_Search.xaml.cs">
+    <Compile Include="UserControls\UC_Search.xaml.cs">
       <DependentUpon>UC_Search.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Win\UC_TreeList.xaml.cs">
+    <Compile Include="UserControls\UC_TreeList.xaml.cs">
       <DependentUpon>UC_TreeList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Win\MVVM_TreeList\LV_TreeListSiblingsVM.cs" />
-    <Compile Include="Win\Treemap\LocalTreeMapNode.cs" />
+    <Compile Include="UserControls\MVVM_TreeList\LV_TreeListSiblingsVM.cs" />
+    <Compile Include="UserControls\Treemap\LocalTreeMapNode.cs" />
     <Compile Include="Util\Tree\DetailsDatum.cs" />
-    <Compile Include="Win\Treemap\WinTooltip.xaml.cs">
+    <Compile Include="UserControls\Treemap\WinTooltip.xaml.cs">
       <DependentUpon>WinTooltip.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Win\MVVM_Detail\LVitem_FolderDetailVM.cs" />
-    <Compile Include="Win\MVVM_Detail\LVitem_VolumeDetail.cs" />
-    <Compile Include="Win\MVVM_Detail\LVitem_FileDetailVM.cs" />
-    <Compile Include="Win\MVVM_Detail\LV_FolderDetailVM_Impl.cs" />
-    <Compile Include="Win\MVVM_Detail\LV_FolderDetailVM.cs" />
-    <Compile Include="Win\MVVM_Detail\LV_VolumeDetailVM.cs" />
-    <Compile Include="Win\MVVM_Detail\LV_FileDetailVM.cs" />
-    <Compile Include="Win\MVVM_Detail\LV_VolumeDetailVM_Impl.cs" />
-    <Compile Include="Win\MVVM_Detail\LV_FileDetailVM_Impl.cs" />
-    <Compile Include="Win\MVVM_Duplicates\LVitem_FileDuplicatesVM.cs" />
-    <Compile Include="Win\MVVM_Duplicates\WinDuplicatesVM.cs" />
-    <Compile Include="Win\MVVM_Duplicates\WinDuplicatesVM_Impl.cs" />
+    <Compile Include="UserControls\MVVM_Detail\LVitem_FolderDetailVM.cs" />
+    <Compile Include="UserControls\MVVM_Detail\LVitem_VolumeDetail.cs" />
+    <Compile Include="UserControls\MVVM_Detail\LVitem_FileDetailVM.cs" />
+    <Compile Include="UserControls\MVVM_Detail\LV_FolderDetailVM_Impl.cs" />
+    <Compile Include="UserControls\MVVM_Detail\LV_FolderDetailVM.cs" />
+    <Compile Include="UserControls\MVVM_Detail\LV_VolumeDetailVM.cs" />
+    <Compile Include="UserControls\MVVM_Detail\LV_FileDetailVM.cs" />
+    <Compile Include="UserControls\MVVM_Detail\LV_VolumeDetailVM_Impl.cs" />
+    <Compile Include="UserControls\MVVM_Detail\LV_FileDetailVM_Impl.cs" />
+    <Compile Include="UserControls\MVVM_Duplicates\LVitem_FileDuplicatesVM.cs" />
+    <Compile Include="UserControls\MVVM_Duplicates\WinDuplicatesVM.cs" />
+    <Compile Include="UserControls\MVVM_Duplicates\WinDuplicatesVM_Impl.cs" />
     <Compile Include="Util\Collate.cs" />
     <Compile Include="Util\Collate\AddTreeToList.cs" />
     <Compile Include="Util\Collate\InsertSizeMarkerStatic.cs" />
     <Compile Include="Util\CountNodes.cs" />
-    <Compile Include="Win\MVVM_Clones\LVitem_ClonesVM.cs" />
-    <Compile Include="Win\SearchListings\SearchBase.cs" />
-    <Compile Include="Win\SearchListings\SearchBase\SearchListings.cs" />
-    <Compile Include="Win\SearchListings\SearchBase\SearchListings\SearchListing.cs" />
-    <Compile Include="Win\SearchListings\SearchResults.cs" />
-    <Compile Include="Win\SearchListings\SearchResultsDir.cs" />
+    <Compile Include="UserControls\MVVM_Clones\LVitem_ClonesVM.cs" />
+    <Compile Include="UserControls\SearchListings\SearchBase.cs" />
+    <Compile Include="UserControls\SearchListings\SearchBase\SearchListings.cs" />
+    <Compile Include="UserControls\SearchListings\SearchBase\SearchListings\SearchListing.cs" />
+    <Compile Include="UserControls\SearchListings\SearchResults.cs" />
+    <Compile Include="UserControls\SearchListings\SearchResultsDir.cs" />
     <Compile Include="Util\Tree\DetailsDatum\NodeDatum.cs" />
     <Compile Include="Util\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
     <Compile Include="Util\Tree\LVitemNameComparerStruct.cs" />
@@ -313,37 +313,37 @@
     <Compile Include="Util\TreeSelect.cs" />
     <Compile Include="Util\FolderKeyTuple.cs" />
     <Compile Include="Util\Tree\LVitemFileTag.cs" />
-    <Compile Include="Win\Treemap\WinTreeMapVM.cs" />
+    <Compile Include="UserControls\Treemap\WinTreeMapVM.cs" />
     <Compile Include="Util\UtilColor.cs" />
     <Compile Include="Util\FileDictionary.cs" />
     <Compile Include="Util\FileDictionary\DuplicateStruct.cs" />
     <Compile Include="Util\FileKeyTuple.cs" />
     <Compile Include="Util\HashTuple.cs" />
-    <Compile Include="Win\MVVM_Files\LVitem_FilesVM.cs" />
-    <Compile Include="Win\MVVM_Files\LV_FilesVM.cs" />
-    <Compile Include="Win\MVVM_Files\LV_FilesVM_Impl.cs" />
+    <Compile Include="UserControls\MVVM_Files\LVitem_FilesVM.cs" />
+    <Compile Include="UserControls\MVVM_Files\LV_FilesVM.cs" />
+    <Compile Include="UserControls\MVVM_Files\LV_FilesVM_Impl.cs" />
     <Compile Include="LocalTreeNode\LocalTreeNode.cs" />
-    <Compile Include="Win\MVVM_TreeView\TreeViewItemVM.cs" />
+    <Compile Include="UserControls\MVVM_TreeView\TreeViewItemVM.cs" />
     <Compile Include="LocalTreeNode\LocalTV.cs" />
-    <Compile Include="Win\MVVM_TreeView\TreeViewVM.cs">
+    <Compile Include="UserControls\MVVM_TreeView\TreeViewVM.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="LocalTreeNode\LocalTV_Impl.cs" />
-    <Compile Include="Win\UC_TreeView.xaml.cs">
+    <Compile Include="UserControls\UC_TreeView.xaml.cs">
       <DependentUpon>UC_TreeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Util\LocalWindowBase.cs" />
-    <Compile Include="WinProject\MVVM_Project\LV_ProjectVM_Impl.cs" />
-    <Compile Include="WinProject\SaveDirListings\SaveDirListing.cs">
+    <Compile Include="UC_Project\MVVM_Project\LV_ProjectVM_Impl.cs" />
+    <Compile Include="UC_Project\SaveDirListings\SaveDirListing.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinProject\SaveDirListings\SaveDirListings.cs">
+    <Compile Include="UC_Project\SaveDirListings\SaveDirListings.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinProject\SaveDirListings\SaveListingsProcess.cs">
+    <Compile Include="UC_Project\SaveDirListings\SaveListingsProcess.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinProject\SaveDirListings\TraverseTreeBase.cs">
+    <Compile Include="UC_Project\SaveDirListings\TraverseTreeBase.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\FileParse.cs" />
@@ -351,17 +351,17 @@
     <Compile Include="MVVM\ObservableObject_OwnerWindow.cs" />
     <Compile Include="Util\MVVM_WinProgress\LVitem_ProgressVM.cs" />
     <Compile Include="Util\MVVM_WinProgress\LV_ProgressVM.cs" />
-    <Compile Include="WinProject\MVVM_Project\LV_ProjectVM.cs" />
-    <Compile Include="WinProject\MVVM_Project\WinProjectVM_Impl.cs" />
-    <Compile Include="WinProject\MVVM_Project\LVitem_ProjectVM.cs" />
-    <Compile Include="WinProject\DriveSerialStatic.cs" />
+    <Compile Include="UC_Project\MVVM_Project\LV_ProjectVM.cs" />
+    <Compile Include="UC_Project\MVVM_Project\WinProjectVM_Impl.cs" />
+    <Compile Include="UC_Project\MVVM_Project\LVitem_ProjectVM.cs" />
+    <Compile Include="UC_Project\DriveSerialStatic.cs" />
     <Compile Include="Util\MBoxStatic.cs" />
-    <Compile Include="WinProject\ProjectFile.cs" />
+    <Compile Include="UC_Project\ProjectFile.cs" />
     <Compile Include="Util\TabledString.cs" />
     <Compile Include="Util\Util.cs" />
-    <Compile Include="WinProject\Win32FindFileStatic.cs" />
+    <Compile Include="UC_Project\Win32FindFileStatic.cs" />
     <Compile Include="Util\ExtensionMethodsStatic.cs" />
-    <Compile Include="WinProject\MVVM_Project\WinProjectVM.cs">
+    <Compile Include="UC_Project\MVVM_Project\WinProjectVM.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="App.xaml.cs">
@@ -372,39 +372,39 @@
       <DependentUpon>WinProgress.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinProject\UC_Project.xaml.cs">
+    <Compile Include="UC_Project\UC_Project.xaml.cs">
       <DependentUpon>UC_Project.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WinProject\WinVolumeEdit\MVVM_UC_VolumeEdit\UC_VolumeEditVM.cs">
+    <Compile Include="UC_Project\WinVolumeEdit\MVVM_UC_VolumeEdit\UC_VolumeEditVM.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinProject\WinVolumeEdit\MVVM_UC_VolumeEdit\UC_VolumeEditVM_Impl.cs">
+    <Compile Include="UC_Project\WinVolumeEdit\MVVM_UC_VolumeEdit\UC_VolumeEditVM_Impl.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinProject\WinVolumeEdit\UC_VolumeEdit.xaml.cs">
+    <Compile Include="UC_Project\WinVolumeEdit\UC_VolumeEdit.xaml.cs">
       <DependentUpon>UC_VolumeEdit.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinProject\WinVolumeEdit\UC_VolumeGroup.xaml.cs">
+    <Compile Include="UC_Project\WinVolumeEdit\UC_VolumeGroup.xaml.cs">
       <DependentUpon>UC_VolumeGroup.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinProject\WinVolumeEdit\WinVolumeEdit.xaml.cs">
+    <Compile Include="UC_Project\WinVolumeEdit\WinVolumeEdit.xaml.cs">
       <DependentUpon>WinVolumeEdit.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinProject\WinVolumeEdit\WinVolumeEditBase.cs">
+    <Compile Include="UC_Project\WinVolumeEdit\WinVolumeEditBase.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinProject\WinVolumeEdit\WinVolumeGroup.xaml.cs">
+    <Compile Include="UC_Project\WinVolumeEdit\WinVolumeGroup.xaml.cs">
       <DependentUpon>WinVolumeGroup.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinProject\WinVolumeEdit\WinVolumeNew.xaml.cs">
+    <Compile Include="UC_Project\WinVolumeEdit\WinVolumeNew.xaml.cs">
       <DependentUpon>WinVolumeNew.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Win\UC_ExtraWindow.xaml.cs">
+    <Compile Include="UserControls\UC_ExtraWindow.xaml.cs">
       <DependentUpon>UC_ExtraWindow.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -505,47 +505,47 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="VolTreeMap\WinVolTreeMap.xaml">
+    <Page Include="VolTreeMap\UC_VolTreeMap.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Win\UC_Clones.xaml">
+    <Page Include="UserControls\UC_Clones.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Win\UC_FolderList.xaml">
+    <Page Include="UserControls\UC_FolderList.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Win\UC_TreeMap.xaml">
+    <Page Include="UserControls\UC_TreeMap.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Win\UC_Detail.xaml">
+    <Page Include="UserControls\UC_Detail.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Win\UC_Duplicates.xaml">
+    <Page Include="UserControls\UC_Duplicates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Win\UC_Files.xaml">
+    <Page Include="UserControls\UC_Files.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Win\UC_Search.xaml">
+    <Page Include="UserControls\UC_Search.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Win\UC_TreeList.xaml">
+    <Page Include="UserControls\UC_TreeList.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Win\Treemap\WinTooltip.xaml">
+    <Page Include="UserControls\Treemap\WinTooltip.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Win\UC_TreeView.xaml">
+    <Page Include="UserControls\UC_TreeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -553,31 +553,31 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WinProject\UC_Project.xaml">
+    <Page Include="UC_Project\UC_Project.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="WinProject\WinVolumeEdit\UC_VolumeEdit.xaml">
+    <Page Include="UC_Project\WinVolumeEdit\UC_VolumeEdit.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WinProject\WinVolumeEdit\UC_VolumeGroup.xaml">
+    <Page Include="UC_Project\WinVolumeEdit\UC_VolumeGroup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WinProject\WinVolumeEdit\WinVolumeEdit.xaml">
+    <Page Include="UC_Project\WinVolumeEdit\WinVolumeEdit.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WinProject\WinVolumeEdit\WinVolumeGroup.xaml">
+    <Page Include="UC_Project\WinVolumeEdit\WinVolumeGroup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WinProject\WinVolumeEdit\WinVolumeNew.xaml">
+    <Page Include="UC_Project\WinVolumeEdit\WinVolumeNew.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Win\UC_ExtraWindow.xaml">
+    <Page Include="UserControls\UC_ExtraWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -589,10 +589,10 @@
     <Resource Include="Assets\ic_save_white_18dp.png" />
     <Resource Include="Assets\ic_error_black_18dp.png" />
     <Resource Include="Assets\ic_skip_next_white_18dp.png" />
-    <Content Include="WinProject\7z920x86\7z.dll">
+    <Content Include="UC_Project\7z920x86\7z.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="WinProject\7z920x86\7z.exe">
+    <Content Include="UC_Project\7z920x86\7z.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="_Todo.txt" />

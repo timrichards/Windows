@@ -4,9 +4,9 @@ using System.Collections.Generic;
 
 namespace DoubleFile
 {
-    partial class WinFolderListVM : IDisposable
+    partial class UC_FolderListVM : IDisposable
     {
-        internal WinFolderListVM(string strFragment)
+        internal UC_FolderListVM(string strFragment)
         {
             var nPrev = uint.MaxValue;
             var bAlternate = false;
@@ -68,7 +68,7 @@ namespace DoubleFile
                 TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, 0));
         }
 
-        internal WinFolderListVM Init()
+        internal UC_FolderListVM Init()
         {
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
             Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateViewport(UseNicknames));

@@ -23,7 +23,7 @@ namespace DoubleFile
 
             DataContext =
                 _winSearchVM =
-                new WinSearchVM
+                new UC_SearchVM
             {
                 IsEditBoxNonEmpty = () => false == string.IsNullOrWhiteSpace(formEdit_search.Text),
                 Regex = _bRegex,
@@ -54,7 +54,7 @@ namespace DoubleFile
                 null;
         }
 
-        WinSearchVM
+        UC_SearchVM
             _winSearchVM = null;
         bool
             _bRegex = false;

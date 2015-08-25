@@ -2,19 +2,14 @@
 
 namespace DoubleFile
 {
-    partial class WinSearchVM : ListViewVM_Base<LVitem_SearchVM>
+    partial class UC_ClonesVM : ListViewVM_Base<LVitem_ClonesVM>
     {
-        public ICommand Icmd_Folders { get; private set; }
-        public ICommand Icmd_FoldersAndFiles { get; private set; }
-        public ICommand Icmd_Files { get; private set; }
         public ICommand Icmd_Nicknames { get; private set; }
         public ICommand Icmd_GoTo { get; private set; }
 
-        public string SearchText { private get; set; }
-        public bool Regex { private get; set; }
         public bool UseNicknames { private get; set; }
 
-        public LVitem_SearchVM SelectedItem
+        public LVitem_ClonesVM SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -28,7 +23,7 @@ namespace DoubleFile
                     SelectedItem_AllTriggers();
             }
         }
-        internal void SelectedItem_Set(LVitem_SearchVM value)
+        internal void SelectedItem_Set(LVitem_ClonesVM value)
         {
             if (value == _selectedItem)
                 return;
@@ -40,12 +35,15 @@ namespace DoubleFile
         void SelectedItem_AllTriggers()
         {
         }
-        LVitem_SearchVM _selectedItem = null;
+        LVitem_ClonesVM _selectedItem = null;
 
-        public string WidthFolderOrFile => SCW;             // franken all NaN
-        public string WidthIn => SCW;
-        public string WidthParent => SCW;
+        internal LVitem_ClonesVM
+            TopItem;
 
-        internal override int NumCols => LVitem_SearchVM.NumCols_;
+        public string WidthFolder => SCW;                   // franken all NaN
+        public string WidthClones => SCW;
+        public string WidthClonePaths => SCW;
+
+        internal override int NumCols => LVitem_ClonesVM.NumCols_;
     }
 }

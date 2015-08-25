@@ -6,39 +6,35 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinFolderList.xaml
     /// </summary>
-    partial class UC_FolderList
+    partial class UC_Clones
     {
         static internal readonly IReadOnlyDictionary<string, string>
             FolderListFragments = new Dictionary<string, string>
         {
-            {FolderListLarge  , "ANOVA weighted large" },   // These are all menu case (sentence case), even though
-            {FolderListSmall  , "ANOVA weighted small" },   // M:UI makes them all caps: future proof.
-            {FolderListRandom , "ANOVA weighted random"}
+            {FolderListSolitary,    "Solitary"      },
+            {FolderListSameVol,     "Same volume"   },
+            {FolderListClones,      "Clones"        }
         };
 
-        internal const string FolderListLarge = "large";
-        internal const string FolderListSmall = "small";
-        internal const string FolderListRandom = "random";
+        internal const string FolderListSolitary = "solitary";
+        internal const string FolderListSameVol = "sameVol";
+        internal const string FolderListClones = "clones";
 
-        public UC_FolderList()
+        public UC_Clones()
         {
             InitializeComponent();            
         }
 
-        protected override void LocalNavigatedTo() =>
-            _bNavigatedTo = true;
+        protected override void LocalNavigatedTo() =>  _bNavigatedTo = true;
 
         protected override void LocalFragmentNavigation(string strFragment)
         {
             if (false == _bNavigatedTo)
                 _bNicknames = formChk_Nicknames.IsChecked ?? false;
-
+            
             _bNavigatedTo = false;
-
-            DataContext = 
-                _winFolderListVM =
-                new WinFolderListVM(strFragment) { UseNicknames = _bNicknames }
-                .Init();
+            _winFormsLVVM = UC_ClonesVM.FactoryGetHolder(strFragment, _bNicknames);
+            DataContext = _winFormsLVVM;
 
             LocalTitle =
                 new CultureInfo("en-US", false).TextInfo            // future proof to title case
@@ -48,15 +44,15 @@ namespace DoubleFile
         protected override void LocalNavigatedFrom()
         {
             _bNicknames = formChk_Nicknames.IsChecked ?? false;
-            _winFolderListVM.Dispose();
+            _winFormsLVVM.Dispose();
 
             DataContext =
-                _winFolderListVM =
+                _winFormsLVVM =
                 null;
         }
 
-        WinFolderListVM
-            _winFolderListVM = null;
+        UC_ClonesVM
+            _winFormsLVVM = null;
         bool
             _bNicknames = false;
         bool

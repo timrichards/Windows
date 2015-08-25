@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    partial class WinSearchVM : IDisposable, ISearchStatus, IWinProgressClosing
+    partial class UC_SearchVM : IDisposable, ISearchStatus, IWinProgressClosing
     {
         internal Func<bool> IsEditBoxNonEmpty = null;
         bool IsSearchEnabled() => IsEditBoxNonEmpty() && (null == _searchType2);
@@ -15,7 +15,7 @@ namespace DoubleFile
         static readonly LocalSubject<Tuple<LVitem_ProjectVM, string, string>> _goToFile = new LocalSubject<Tuple<LVitem_ProjectVM, string, string>>();
         static void GoToFileOnNext(Tuple<LVitem_ProjectVM, string, string> value) => _goToFile.LocalOnNext(value, 99982);
 
-        internal WinSearchVM Init()
+        internal UC_SearchVM Init()
         {
             Icmd_Folders = new RelayCommand(SearchFolders, IsSearchEnabled);
             Icmd_FoldersAndFiles = new RelayCommand(() => SearchFoldersAndFiles(), IsSearchEnabled);

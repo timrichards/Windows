@@ -3,16 +3,16 @@
     /// <summary>
     /// Interaction logic for WinTreeView.xaml
     /// </summary>
-    partial class WinTreeView
+    partial class UC_TreeView
     {
-        public WinTreeView()
+        public UC_TreeView()
         {
             InitializeComponent();
         }
 
         protected override void LocalNavigatedTo()
         {
-            var items = TreeViewVM.FactoryCreate();
+            var items = UC_TreeViewVM.FactoryCreate();
 
             form_tv.DataContext = items;
 

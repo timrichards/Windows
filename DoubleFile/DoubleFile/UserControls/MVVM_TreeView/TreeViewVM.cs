@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 
 namespace DoubleFile
 {
-    class TreeViewVM
+    class UC_TreeViewVM
     {
         internal TreeViewItemVM
             SelectedItem { get; set; }
@@ -12,10 +12,10 @@ namespace DoubleFile
 
         static internal ObservableCollection<TreeViewItemVM>
             FactoryCreate() =>
-            new TreeViewVM(LocalTV.RootNodes)
+            new UC_TreeViewVM(LocalTV.RootNodes)
             ._Items;
 
-        TreeViewVM(IEnumerable<LocalTreeNode> rootNodes)
+        UC_TreeViewVM(IEnumerable<LocalTreeNode> rootNodes)
         {
             var nIndex = -1;
 

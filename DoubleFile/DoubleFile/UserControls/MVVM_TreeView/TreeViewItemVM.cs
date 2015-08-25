@@ -16,7 +16,7 @@ namespace DoubleFile
 
         internal readonly TreeViewItemVM
             _Parent = null;
-        internal readonly TreeViewVM
+        internal readonly UC_TreeViewVM
             _TVVM = null;
         internal readonly LocalTreeNode
             _datum = null;
@@ -144,11 +144,11 @@ namespace DoubleFile
         }
         bool _isSelected = false;
 
-        internal TreeViewItemVM(TreeViewVM tvvm, LocalTreeNode datum_in, int nIndex)
+        internal TreeViewItemVM(UC_TreeViewVM tvvm, LocalTreeNode datum_in, int nIndex)
             : this(tvvm, datum_in, null, nIndex)
         { }
 
-        TreeViewItemVM(TreeViewVM tvvm, LocalTreeNode datum_in,
+        TreeViewItemVM(UC_TreeViewVM tvvm, LocalTreeNode datum_in,
             TreeViewItemVM parent, int nIndex)
         {
             _TVVM = tvvm;

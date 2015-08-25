@@ -235,12 +235,12 @@
       <DependentUpon>UC_VolTreeMap.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\LVitemProject_Updater.cs" />
-    <Compile Include="UserControls\MVVM_Clones\WinClonesVM_Impl.cs" />
-    <Compile Include="UserControls\MVVM_Clones\WinClonesVM.cs" />
+    <Compile Include="UserControls\MVVM_Clones\UC_ClonesVM_Impl.cs" />
+    <Compile Include="UserControls\MVVM_Clones\UC_ClonesVM.cs" />
     <Compile Include="UserControls\MVVM_Files\LV_FilesVM_Duplicates.cs" />
     <Compile Include="UserControls\MVVM_FolderList\LVitem_FolderListVM.cs" />
-    <Compile Include="UserControls\MVVM_FolderList\WinFolderListVM.cs" />
-    <Compile Include="UserControls\MVVM_FolderList\WinFolderListVM_Impl.cs" />
+    <Compile Include="UserControls\MVVM_FolderList\UC_FolderListVM.cs" />
+    <Compile Include="UserControls\MVVM_FolderList\UC_FolderListVM_Impl.cs" />
     <Compile Include="UserControls\ListUpdater.cs" />
     <Compile Include="UserControls\UC_Clones.xaml.cs">
       <DependentUpon>UC_Clones.xaml</DependentUpon>
@@ -249,8 +249,8 @@
       <DependentUpon>UC_FolderList.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\MVVM_Search\LVitem_SearchVM.cs" />
-    <Compile Include="UserControls\MVVM_Search\WinSearchVM_Impl.cs" />
-    <Compile Include="UserControls\MVVM_Search\WinSearchVM.cs" />
+    <Compile Include="UserControls\MVVM_Search\UC_SearchVM_Impl.cs" />
+    <Compile Include="UserControls\MVVM_Search\UC_SearchVM.cs" />
     <Compile Include="UserControls\MVVM_TreeList\LVitem_TreeListVM.cs" />
     <Compile Include="UserControls\MVVM_TreeList\LV_TreeListChildrenVM.cs" />
     <Compile Include="Util\GetOneNodeByRootPath.cs" />
@@ -289,8 +289,8 @@
     <Compile Include="UserControls\MVVM_Detail\LV_VolumeDetailVM_Impl.cs" />
     <Compile Include="UserControls\MVVM_Detail\LV_FileDetailVM_Impl.cs" />
     <Compile Include="UserControls\MVVM_Duplicates\LVitem_FileDuplicatesVM.cs" />
-    <Compile Include="UserControls\MVVM_Duplicates\WinDuplicatesVM.cs" />
-    <Compile Include="UserControls\MVVM_Duplicates\WinDuplicatesVM_Impl.cs" />
+    <Compile Include="UserControls\MVVM_Duplicates\UC_DuplicatesVM.cs" />
+    <Compile Include="UserControls\MVVM_Duplicates\UC_DuplicatesVM_Impl.cs" />
     <Compile Include="Util\Collate.cs" />
     <Compile Include="Util\Collate\AddTreeToList.cs" />
     <Compile Include="Util\Collate\InsertSizeMarkerStatic.cs" />

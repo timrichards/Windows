@@ -7,9 +7,9 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinSearch.xaml
     /// </summary>
-    partial class WinSearch
+    partial class UC_Search
     {
-        public WinSearch()
+        public UC_Search()
         {
             InitializeComponent();
 

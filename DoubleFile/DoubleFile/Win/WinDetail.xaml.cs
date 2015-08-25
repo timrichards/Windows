@@ -5,9 +5,9 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinDetail.xaml
     /// </summary>
-    partial class WinDetail
+    partial class UC_Detail
     {
-        public WinDetail()
+        public UC_Detail()
         {
             InitializeComponent();
         }

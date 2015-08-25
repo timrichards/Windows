@@ -6,7 +6,6 @@ using System.Windows.Controls;
 using System.Linq;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Windows;
 
 namespace DoubleFile
 {
@@ -31,7 +30,9 @@ namespace DoubleFile
         public void OnNavigatedTo(NavigationEventArgs e)
         {
             Statics.CurrentPage = this;
-            LocalNavigatedTo();
+
+            if (false == _bNavigatedFromAlready)
+                LocalNavigatedTo();
         }
         virtual protected void LocalNavigatedTo() { }
 
@@ -53,7 +54,7 @@ namespace DoubleFile
                 if (MainWindow.SaveListingsFakeKey == strSource)
                     bSaveListings = true;
 
-                if ((false == WinProject.OKtoNavigate_BuildExplorer(bSaveListings)) ||
+                if ((false == UC_Project.OKtoNavigate_BuildExplorer(bSaveListings)) ||
                     bSaveListings)
                 {
                     e.Cancel = true;
@@ -104,15 +105,15 @@ namespace DoubleFile
                 _bNavigatedFromAlready = false;
                 LocalNavigatedTo();
                 LocalFragmentNavigation(_strFragment);
-                MainWindow.UpdateTitleLinks((LocalModernWindowBase)Application.Current.MainWindow);
+                MainWindow.UpdateTitleLinks();
             });
 
             if (CantDupeThisUsercontrol)
             {
                 LocalNavigatedFrom();
                 _bNavigatedFromAlready = true;
-                Content = new WinExtraWindow { WindowExtra = window };
-                MainWindow.UpdateTitleLinks((LocalModernWindowBase)Application.Current.MainWindow);
+                Content = new UC_ExtraWindow { WindowExtra = window };
+                MainWindow.UpdateTitleLinks();
             }
 
             window.Show();

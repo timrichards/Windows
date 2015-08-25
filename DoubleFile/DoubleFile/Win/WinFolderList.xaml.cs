@@ -6,7 +6,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinFolderList.xaml
     /// </summary>
-    partial class WinFolderList
+    partial class UC_FolderList
     {
         static internal readonly IReadOnlyDictionary<string, string>
             FolderListFragments = new Dictionary<string, string>
@@ -20,7 +20,7 @@ namespace DoubleFile
         internal const string FolderListSmall = "small";
         internal const string FolderListRandom = "random";
 
-        public WinFolderList()
+        public UC_FolderList()
         {
             InitializeComponent();            
         }

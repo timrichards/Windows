@@ -14,6 +14,11 @@ namespace DoubleFile
     {
         internal T Value { get; private set; }
 
+        internal ListUpdater(Decimal nAssertLoc)
+        {
+            _nAssertLoc = nAssertLoc;
+        }
+
         internal void LastGet(IListUpdater lastGet)
         {
             if (false == _bUpdating)
@@ -39,5 +44,7 @@ namespace DoubleFile
             _lastGets = new List<IListUpdater>();
         bool
             _bUpdating = false;
+        Decimal
+            _nAssertLoc = -1;
     }
 }

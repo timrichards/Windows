@@ -245,7 +245,7 @@ namespace DoubleFile
             nProgressDenominator += dictClones.Count;
             ++nProgressItem;
 
-            var nicknameUpdater = new ListUpdater<bool>();
+            var nicknameUpdater = new ListUpdater<bool>(99676);
 
             foreach (var listNodes in dictClones.Reverse())
             {

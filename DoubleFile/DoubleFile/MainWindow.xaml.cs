@@ -31,7 +31,7 @@ namespace DoubleFile
             {
                 if (false == _bFolderListLinkCheck)
                 {
-                    Util.Assert(99886, 3 == WinFolderList.FolderListFragments.Count);
+                    Util.Assert(99886, 3 == UC_FolderList.FolderListFragments.Count);
                     _bFolderListLinkCheck = true;
                 }
 
@@ -47,7 +47,7 @@ namespace DoubleFile
             {
                 if (false == _bFormsLV_LinkCheck)
                 {
-                    Util.Assert(99782, 3 == WinClones.FolderListFragments.Count);
+                    Util.Assert(99782, 3 == UC_Clones.FolderListFragments.Count);
                     _bFormsLV_LinkCheck = true;
                 }
 
@@ -98,14 +98,16 @@ namespace DoubleFile
             if (null != bListingsToSave)
                 _bListingsToSave = bListingsToSave.Value;
 
-            UpdateTitleLinks(this);
+            UpdateTitleLinks();
 #if DEBUG
             TitleLinks.Add(_advancedLink);
 #endif
         }
 
-        static internal void UpdateTitleLinks(LocalModernWindowBase mainWindow)
+        static internal void UpdateTitleLinks()
         {
+            var mainWindow = (LocalModernWindowBase)Application.Current.MainWindow;
+
             mainWindow.TitleLinks = new LinkCollection();
 
             WithMainWindowA(w =>
@@ -116,13 +118,13 @@ namespace DoubleFile
 
             var currentPage = Statics.CurrentPage;
 
-            if (currentPage is WinProject)
+            if (currentPage is UC_Project)
                 return;
 
             if (currentPage is Introduction)
                 return;
 
-            if (currentPage.Content is WinExtraWindow)
+            if (currentPage.Content is UC_ExtraWindow)
                 return;
 
             mainWindow.TitleLinks.Add(_extraWindowLink);
@@ -261,15 +263,15 @@ namespace DoubleFile
             }},
             new LinkGroup { DisplayName="Variance", Links =
             {
-                new FolderListLink(WinFolderList.FolderListFragments.ElementAt(0)),
-                new FolderListLink(WinFolderList.FolderListFragments.ElementAt(1)),
-                new FolderListLink(WinFolderList.FolderListFragments.ElementAt(2)),
+                new FolderListLink(UC_FolderList.FolderListFragments.ElementAt(0)),
+                new FolderListLink(UC_FolderList.FolderListFragments.ElementAt(1)),
+                new FolderListLink(UC_FolderList.FolderListFragments.ElementAt(2)),
             }},
             new LinkGroup { DisplayName="Clones", Links =
             {
-                new ClonesLink(WinClones.FolderListFragments.ElementAt(0)),
-                new ClonesLink(WinClones.FolderListFragments.ElementAt(1)),
-                new ClonesLink(WinClones.FolderListFragments.ElementAt(2))
+                new ClonesLink(UC_Clones.FolderListFragments.ElementAt(0)),
+                new ClonesLink(UC_Clones.FolderListFragments.ElementAt(1)),
+                new ClonesLink(UC_Clones.FolderListFragments.ElementAt(2))
             }},
             new LinkGroup { DisplayName="Files", Links =
             {

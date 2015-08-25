@@ -281,7 +281,7 @@ namespace DoubleFile
         }
 
         readonly ListUpdater<bool>
-            _nicknameUpdater = new ListUpdater<bool>();
+            _nicknameUpdater = new ListUpdater<bool>(99662);
         List<SearchResults>
             _lsSearchResults = null;
         SearchListings

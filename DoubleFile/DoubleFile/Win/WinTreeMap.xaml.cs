@@ -9,9 +9,9 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinTreeMap.xaml
     /// </summary>
-    public partial class WinTreeMap
+    public partial class UC_TreeMap
     {
-        public WinTreeMap()
+        public UC_TreeMap()
         {
             InitializeComponent();
 

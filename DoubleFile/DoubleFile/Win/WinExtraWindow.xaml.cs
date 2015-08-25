@@ -5,11 +5,11 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinTreeMap.xaml
     /// </summary>
-    public partial class WinExtraWindow
+    public partial class UC_ExtraWindow
     {
         internal ILocalWindow WindowExtra = null;
 
-        public WinExtraWindow()
+        public UC_ExtraWindow()
         {
             InitializeComponent();
 

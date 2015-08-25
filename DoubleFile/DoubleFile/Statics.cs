@@ -27,7 +27,7 @@ namespace DoubleFile
                         return s;   // from lambda
 
                     s._currentPage = value;
-                    MainWindow.UpdateTitleLinks((LocalModernWindowBase)Application.Current.MainWindow);
+                    MainWindow.UpdateTitleLinks();
                     return s;       // from lambda
                 });
             }

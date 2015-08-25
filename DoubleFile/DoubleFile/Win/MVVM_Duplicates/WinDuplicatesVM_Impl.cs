@@ -81,7 +81,7 @@ namespace DoubleFile
         }
 
         readonly ListUpdater<bool>
-            _nicknameUpdater = new ListUpdater<bool>();
+            _nicknameUpdater = new ListUpdater<bool>(99683);
         LocalTreeNode
             _treeNode = null;
         readonly IList<IDisposable>

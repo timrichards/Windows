@@ -6,7 +6,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinFolderList.xaml
     /// </summary>
-    partial class WinClones
+    partial class UC_Clones
     {
         static internal readonly IReadOnlyDictionary<string, string>
             FolderListFragments = new Dictionary<string, string>
@@ -20,7 +20,7 @@ namespace DoubleFile
         internal const string FolderListSameVol = "sameVol";
         internal const string FolderListClones = "clones";
 
-        public WinClones()
+        public UC_Clones()
         {
             InitializeComponent();            
         }

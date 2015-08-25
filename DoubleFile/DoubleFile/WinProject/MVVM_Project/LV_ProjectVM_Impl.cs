@@ -356,7 +356,7 @@ namespace DoubleFile
             _unsaved = 0 < Items.Count;
             SetModified();
             RaisePropertyChanged("Visible");
-            WinProject.OKtoNavigate_UpdateSaveListingsLink();
+            UC_Project.OKtoNavigate_UpdateSaveListingsLink();
         }
 
         internal void

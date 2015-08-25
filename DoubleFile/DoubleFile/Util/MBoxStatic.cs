@@ -118,7 +118,7 @@ namespace DoubleFile
             _nLastAssertLoc = -1;
         static DateTime
             _dtLastAssert = DateTime.MinValue;
-        static LocalMbox
+        static WinMessagebox
             _messageBox = null;
         static bool
             _restart = false;

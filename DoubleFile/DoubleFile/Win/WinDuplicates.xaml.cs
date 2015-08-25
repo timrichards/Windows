@@ -3,9 +3,9 @@
     /// <summary>
     /// Interaction logic for WinDuplicates.xaml
     /// </summary>
-    partial class WinDuplicates
+    partial class UC_Duplicates
     {
-        public WinDuplicates()
+        public UC_Duplicates()
         {
             InitializeComponent();
             CantDupeThisUsercontrol = true;

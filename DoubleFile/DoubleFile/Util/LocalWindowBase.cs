@@ -212,7 +212,7 @@ namespace DoubleFile
                 return null;
             }
 
-            if ((false == this is LocalMbox) &&
+            if ((false == this is WinMessagebox) &&
                 (false == this is IDarkWindow))     // IDarkWindow will never be modern window.
             {
                 MBoxStatic.Restart();

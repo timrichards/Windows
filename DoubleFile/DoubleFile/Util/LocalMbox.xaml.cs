@@ -9,7 +9,7 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for LocalMbox.xaml
     /// </summary>
-    public partial class LocalMbox : IModalWindow
+    public partial class WinMessagebox : IModalWindow
     {
         internal string Message
         {
@@ -49,7 +49,7 @@ namespace DoubleFile
         }
         MessageBoxButton _buttons = MessageBoxButton.OKCancel;
 
-        public LocalMbox()
+        public WinMessagebox()
         {
             if (false ==
                 DesignerProperties.GetIsInDesignMode(new DependencyObject()))
@@ -58,7 +58,7 @@ namespace DoubleFile
             }
         }
 
-        internal LocalMbox(ILocalWindow owner, string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
+        internal WinMessagebox(ILocalWindow owner, string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
         {
             try
             {

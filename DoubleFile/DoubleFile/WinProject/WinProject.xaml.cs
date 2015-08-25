@@ -5,9 +5,9 @@ using System.Windows;
 
 namespace DoubleFile
 {
-    partial class WinProject
+    partial class UC_Project
     {
-        public WinProject()
+        public UC_Project()
         {
             InitializeComponent();
 
@@ -119,7 +119,7 @@ namespace DoubleFile
 
         LV_ProjectVM
             _lvProjectVM = null;
-        static readonly WeakReference<WinProject>
-            _weakReference = new WeakReference<WinProject>(null);
+        static readonly WeakReference<UC_Project>
+            _weakReference = new WeakReference<UC_Project>(null);
     }
 }

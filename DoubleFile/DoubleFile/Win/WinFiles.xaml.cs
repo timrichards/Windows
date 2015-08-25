@@ -3,9 +3,9 @@
     /// <summary>
     /// Interaction logic for WinFiles.xaml
     /// </summary>
-    partial class WinFiles
+    partial class UC_Files
     {
-        public WinFiles()
+        public UC_Files()
         {
             InitializeComponent();
             CantDupeThisUsercontrol = true;

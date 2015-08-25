@@ -21,21 +21,21 @@ namespace DoubleFile
 
             switch (strFragment)
             {
-                case WinClones.FolderListSolitary:
+                case UC_Clones.FolderListSolitary:
                 {
                     Util.WriteLine("FolderListUnique");
                     localLVVM = LocalTV.Solitary;
                     break;
                 }
 
-                case WinClones.FolderListSameVol:
+                case UC_Clones.FolderListSameVol:
                 {
                     Util.WriteLine("FolderListSameVol");
                     localLVVM = LocalTV.SameVol;
                     break;
                 }
 
-                case WinClones.FolderListClones:
+                case UC_Clones.FolderListClones:
                 {
                     Util.WriteLine("FolderListClones");
                     localLVVM = LocalTV.Clones;

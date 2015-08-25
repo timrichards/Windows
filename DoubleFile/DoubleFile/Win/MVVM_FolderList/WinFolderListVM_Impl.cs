@@ -32,21 +32,21 @@ namespace DoubleFile
 
             switch (strFragment)
             {
-                case WinFolderList.FolderListLarge:
+                case UC_FolderList.FolderListLarge:
                 {
                     AddFolders(1);
                     Util.WriteLine("FolderListLarge");
                     break;
                 }
 
-                case WinFolderList.FolderListSmall:
+                case UC_FolderList.FolderListSmall:
                 {
                     AddFolders(2);
                     Util.WriteLine("FolderListSmall");
                     break;
                 }
 
-                case WinFolderList.FolderListRandom:
+                case UC_FolderList.FolderListRandom:
                 {
                     AddFolders(0);
                     Util.WriteLine("FolderListRandom");
@@ -100,7 +100,7 @@ namespace DoubleFile
         }
 
         readonly ListUpdater<bool>
-            _nicknameUpdater = new ListUpdater<bool>();
+            _nicknameUpdater = new ListUpdater<bool>(99667);
         readonly IList<IDisposable>
             _lsDisposable = new List<IDisposable>();
     }

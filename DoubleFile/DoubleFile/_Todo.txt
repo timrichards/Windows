@@ -73,6 +73,8 @@
 	- factory create would be nice for e.g. WinProgress but then you can't use variable initializer
 - Use SearchListings as a model for derived class constructor
 	- Derived class constructors can't assign to readonly protected member vars
+	- Nor can they assign to base class { get; }, which makes such useless in abstract class?
+- Abstract and base statics are not unique in each derived class. Generic base statics are.
 - directory listings preserve display case, which is irrespective: NTFS usage is always case insensitive.
 	Regex is case sensitive because the regex iteself might be: user can inline case-insensitve.
 - Rename set methods to MethodSet(): hard to find: e.g. AbortSet() in WinProgress
@@ -189,10 +191,6 @@ Specific code areas:
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
 
-99683
-99676
-99667
-99662
 99661
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down

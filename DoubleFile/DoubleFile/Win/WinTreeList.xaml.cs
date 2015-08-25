@@ -5,9 +5,9 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinTreeList.xaml
     /// </summary>
-    public partial class WinTreeList
+    public partial class UC_TreeList
     {
-        public WinTreeList()
+        public UC_TreeList()
         {
             InitializeComponent();
 

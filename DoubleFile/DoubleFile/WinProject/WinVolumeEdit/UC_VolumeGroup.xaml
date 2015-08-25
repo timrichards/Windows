@@ -4,7 +4,7 @@
              Background="White">
     <Grid>
         <Grid.Resources>
-            <ResourceDictionary Source="/DoubleFile;component/Assets/WinVolumeEdit.xaml"/>
+            <ResourceDictionary Source="/DoubleFile;component/Assets/VolumeEdit_Styles.xaml"/>
         </Grid.Resources>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="65"/>

@@ -8,9 +8,9 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for WinTreeMap.xaml
     /// </summary>
-    public partial class WinVolTreeMap
+    public partial class UC_VolTreeMap
     {
-        public WinVolTreeMap()
+        public UC_VolTreeMap()
         {
             InitializeComponent();
         }
@@ -50,7 +50,7 @@ namespace DoubleFile
             }
 
             Statics.LVprojectVM = lvProjectVM;
-            new BBCodeBlock().LinkNavigator.Navigate(new Uri("/DoubleFile;component/Win/WinTreeMap.xaml", UriKind.Relative), this);
+            new BBCodeBlock().LinkNavigator.Navigate(new Uri("/UserControls/UC_TreeMap.xaml", UriKind.Relative), this);
             LVitem_FilesVM.ShowDuplicates = false;
         }
     }

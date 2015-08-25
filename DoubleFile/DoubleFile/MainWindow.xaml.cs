@@ -35,7 +35,7 @@ namespace DoubleFile
                     _bFolderListLinkCheck = true;
                 }
 
-                Source = new Uri("/Win/WinFolderList.xaml#" + kvp.Key, UriKind.Relative);
+                Source = new Uri("/UserControls/UC_FolderList.xaml#" + kvp.Key, UriKind.Relative);
                 DisplayName = kvp.Value;
             }
         }
@@ -51,7 +51,7 @@ namespace DoubleFile
                     _bFormsLV_LinkCheck = true;
                 }
 
-                Source = new Uri("/Win/WinClones.xaml#" + kvp.Key, UriKind.Relative);
+                Source = new Uri("/UserControls/UC_Clones.xaml#" + kvp.Key, UriKind.Relative);
                 DisplayName = kvp.Value;
             }
         }
@@ -88,7 +88,7 @@ namespace DoubleFile
 
             MenuLinkGroups.Add(new LinkGroup { DisplayName="Welcome", Links =
             {
-                new MyLink("View project", "/WinProject/WinProject.xaml"),
+                new MyLink("View project", "/UC_Project/UC_Project.xaml"),
                 new MyLink("Introduction", "/Introduction.xaml")
             }});
         }
@@ -257,9 +257,9 @@ namespace DoubleFile
         {
             new LinkGroup { DisplayName="Explore", Links =
             {
-                new MyLink("Tree map", "/Win/WinTreeMap.xaml"),
-                new MyLink("Folders", "/Win/WinTreeView.xaml"),
-                new MyLink("Tree list", "/Win/WinTreeList.xaml")
+                new MyLink("Tree map", "/UserControls/UC_TreeMap.xaml"),
+                new MyLink("Folders", "/UserControls/UC_TreeView.xaml"),
+                new MyLink("Tree list", "/UserControls/UC_TreeList.xaml")
             }},
             new LinkGroup { DisplayName="Variance", Links =
             {
@@ -275,16 +275,16 @@ namespace DoubleFile
             }},
             new LinkGroup { DisplayName="Files", Links =
             {
-                new MyLink("Files in folder", "/Win/WinFiles.xaml"),
-                new MyLink("Duplicates", "/Win/WinDuplicates.xaml")
+                new MyLink("Files in folder", "/UserControls/UC_Files.xaml"),
+                new MyLink("Duplicates", "/UserControls/UC_Duplicates.xaml")
             }},
             new LinkGroup { DisplayName="Search", Links =
             {
-                new MyLink("Search", "/Win/WinSearch.xaml")
+                new MyLink("Search", "/UserControls/UC_Search.xaml")
             }},
             new LinkGroup { DisplayName="Detailed info", Links =
             {
-                new MyLink("Detailed info", "/Win/WinDetail.xaml")
+                new MyLink("Detailed info", "/UserControls/UC_Detail.xaml")
             }}
         };
 

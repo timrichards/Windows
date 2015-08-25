@@ -214,8 +214,8 @@
     </Compile>
     <Compile Include="Util\ILocalWindow.cs" />
     <Compile Include="Util\LocalDispatcherFrame.cs" />
-    <Compile Include="Util\LocalMbox.xaml.cs">
-      <DependentUpon>LocalMbox.xaml</DependentUpon>
+    <Compile Include="Util\WinMessagebox.xaml.cs">
+      <DependentUpon>WinMessagebox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Util\LocalModernWindowBase.cs" />
     <Compile Include="Util\LocalSubject.cs" />
@@ -242,11 +242,11 @@
     <Compile Include="Win\MVVM_FolderList\WinFolderListVM.cs" />
     <Compile Include="Win\MVVM_FolderList\WinFolderListVM_Impl.cs" />
     <Compile Include="Win\ListUpdater.cs" />
-    <Compile Include="Win\WinClones.xaml.cs">
-      <DependentUpon>WinClones.xaml</DependentUpon>
+    <Compile Include="Win\UC_Clones.xaml.cs">
+      <DependentUpon>UC_Clones.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Win\WinFolderList.xaml.cs">
-      <DependentUpon>WinFolderList.xaml</DependentUpon>
+    <Compile Include="Win\UC_FolderList.xaml.cs">
+      <DependentUpon>UC_FolderList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Win\MVVM_Search\LVitem_SearchVM.cs" />
     <Compile Include="Win\MVVM_Search\WinSearchVM_Impl.cs" />
@@ -255,23 +255,23 @@
     <Compile Include="Win\MVVM_TreeList\LV_TreeListChildrenVM.cs" />
     <Compile Include="Util\GetOneNodeByRootPath.cs" />
     <Compile Include="Win\SliderVM_Base.cs" />
-    <Compile Include="Win\WinTreeMap.xaml.cs">
-      <DependentUpon>WinTreeMap.xaml</DependentUpon>
+    <Compile Include="Win\UC_TreeMap.xaml.cs">
+      <DependentUpon>UC_TreeMap.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Win\WinDetail.xaml.cs">
-      <DependentUpon>WinDetail.xaml</DependentUpon>
+    <Compile Include="Win\UC_Detail.xaml.cs">
+      <DependentUpon>UC_Detail.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Win\WinDuplicates.xaml.cs">
-      <DependentUpon>WinDuplicates.xaml</DependentUpon>
+    <Compile Include="Win\UC_Duplicates.xaml.cs">
+      <DependentUpon>UC_Duplicates.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Win\WinFiles.xaml.cs">
-      <DependentUpon>WinFiles.xaml</DependentUpon>
+    <Compile Include="Win\UC_Files.xaml.cs">
+      <DependentUpon>UC_Files.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Win\WinSearch.xaml.cs">
-      <DependentUpon>WinSearch.xaml</DependentUpon>
+    <Compile Include="Win\UC_Search.xaml.cs">
+      <DependentUpon>UC_Search.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Win\WinTreeList.xaml.cs">
-      <DependentUpon>WinTreeList.xaml</DependentUpon>
+    <Compile Include="Win\UC_TreeList.xaml.cs">
+      <DependentUpon>UC_TreeList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Win\MVVM_TreeList\LV_TreeListSiblingsVM.cs" />
     <Compile Include="Win\Treemap\LocalTreeMapNode.cs" />
@@ -329,8 +329,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="LocalTreeNode\LocalTV_Impl.cs" />
-    <Compile Include="Win\WinTreeView.xaml.cs">
-      <DependentUpon>WinTreeView.xaml</DependentUpon>
+    <Compile Include="Win\UC_TreeView.xaml.cs">
+      <DependentUpon>UC_TreeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Util\LocalWindowBase.cs" />
     <Compile Include="WinProject\MVVM_Project\LV_ProjectVM_Impl.cs" />
@@ -372,8 +372,8 @@
       <DependentUpon>WinProgress.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WinProject\WinProject.xaml.cs">
-      <DependentUpon>WinProject.xaml</DependentUpon>
+    <Compile Include="WinProject\UC_Project.xaml.cs">
+      <DependentUpon>UC_Project.xaml</DependentUpon>
     </Compile>
     <Compile Include="WinProject\WinVolumeEdit\MVVM_UC_VolumeEdit\UC_VolumeEditVM.cs">
       <SubType>Code</SubType>
@@ -404,8 +404,8 @@
       <DependentUpon>WinVolumeNew.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Win\WinExtraWindow.xaml.cs">
-      <DependentUpon>WinExtraWindow.xaml</DependentUpon>
+    <Compile Include="Win\UC_ExtraWindow.xaml.cs">
+      <DependentUpon>UC_ExtraWindow.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -497,11 +497,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Util\LocalMbox.xaml">
+    <Page Include="Util\WinMessagebox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Assets\WinVolumeEdit.xaml">
+    <Page Include="Assets\VolumeEdit_Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -509,35 +509,35 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Win\WinClones.xaml">
+    <Page Include="Win\UC_Clones.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Win\WinFolderList.xaml">
+    <Page Include="Win\UC_FolderList.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Win\WinTreeMap.xaml">
+    <Page Include="Win\UC_TreeMap.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Win\WinDetail.xaml">
+    <Page Include="Win\UC_Detail.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Win\WinDuplicates.xaml">
+    <Page Include="Win\UC_Duplicates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Win\WinFiles.xaml">
+    <Page Include="Win\UC_Files.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Win\WinSearch.xaml">
+    <Page Include="Win\UC_Search.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Win\WinTreeList.xaml">
+    <Page Include="Win\UC_TreeList.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -545,7 +545,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Win\WinTreeView.xaml">
+    <Page Include="Win\UC_TreeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -553,7 +553,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WinProject\WinProject.xaml">
+    <Page Include="WinProject\UC_Project.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -577,7 +577,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Win\WinExtraWindow.xaml">
+    <Page Include="Win\UC_ExtraWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

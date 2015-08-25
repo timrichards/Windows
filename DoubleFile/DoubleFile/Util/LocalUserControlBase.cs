@@ -43,7 +43,7 @@ namespace DoubleFile
             if ("/Introduction.xaml" == strSource)
                 return;
 
-            if ("/WinProject/WinProject.xaml" == strSource)
+            if ("/UC_Project/UC_Project.xaml" == strSource)
                 return;
 
             // use-case: VolTreeMap project shares assembly

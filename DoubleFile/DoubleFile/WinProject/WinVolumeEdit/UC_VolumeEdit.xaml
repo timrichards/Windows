@@ -6,7 +6,7 @@
             Name="uc_VolumeEdit">
     <Grid>
         <Grid.Resources>
-            <ResourceDictionary Source="/DoubleFile;component/Assets/WinVolumeEdit.xaml"/>
+            <ResourceDictionary Source="/DoubleFile;component/Assets/VolumeEdit_Styles.xaml"/>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>

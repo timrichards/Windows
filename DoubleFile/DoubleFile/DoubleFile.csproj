@@ -404,6 +404,9 @@
       <DependentUpon>WinVolumeNew.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Win\WinExtraWindow.xaml.cs">
+      <DependentUpon>WinExtraWindow.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -573,6 +576,10 @@
     <Page Include="WinProject\WinVolumeEdit\WinVolumeNew.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Win\WinExtraWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>

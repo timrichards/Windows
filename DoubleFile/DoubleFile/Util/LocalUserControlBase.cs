@@ -67,13 +67,12 @@ namespace DoubleFile
             if (MainWindow.ExtraWindowFakeKey != strSource)
                 return;
 
-            var page = Statics.CurrentPage;
-            var content = (LocalUserControlBase)Activator.CreateInstance(page.GetType());
+            var content = (LocalUserControlBase)Activator.CreateInstance(GetType());
 
             var window = new ExtraWindow
             {
                 Content = content,
-                Title = page.LocalTitle,
+                Title = LocalTitle,
             };
 
             Observable.FromEventPattern(window, "Loaded")
@@ -89,8 +88,16 @@ namespace DoubleFile
             {
                 content.LocalNavigatedFrom();
                 content.LocalWindowClosed();
+                Content = ((LocalUserControlBase)Activator.CreateInstance(GetType())).Content;
+
+                if (Statics.CurrentPage != this)
+                    return;     // from lambda
+
+                LocalNavigatedTo();
+                LocalFragmentNavigation(_strFragment);
             });
 
+            Content = new WinExtraWindow { WindowExtra = window };
             window.Show();
             e.Cancel = true;
         }

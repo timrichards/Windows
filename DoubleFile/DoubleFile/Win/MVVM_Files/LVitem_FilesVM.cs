@@ -51,7 +51,7 @@ namespace DoubleFile
         public ICommand Icmd_NextDuplicate { get; }
 
         public string
-            Duplicate => LSdupDirFileLines[DupIndex % LSdupDirFileLines.Count].Item2[1];
+            Duplicate => LSdupDirFileLines?[DupIndex % LSdupDirFileLines.Count].Item2[1];
         public string
             In { get; private set; } = " in ";    // interned
 
@@ -59,7 +59,7 @@ namespace DoubleFile
         {
             get
             {
-                return LSdupDirFileLines[DupIndex % LSdupDirFileLines.Count].Item2[0];
+                return LSdupDirFileLines?[DupIndex % LSdupDirFileLines.Count].Item2[0];
             }
         }
 

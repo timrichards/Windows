@@ -111,6 +111,9 @@ namespace DoubleFile
             if (currentPage is Introduction)
                 return;
 
+            if (currentPage is WinExtraWindow)
+                return;
+
             TitleLinks.Add(_extraWindowLink);
 #if DEBUG
             TitleLinks.Add(_advancedLink);

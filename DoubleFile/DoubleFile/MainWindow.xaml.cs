@@ -95,13 +95,24 @@ namespace DoubleFile
 
         internal void UpdateTitleLinks(bool? bListingsToSave = null)
         {
-            TitleLinks = new LinkCollection();
-
             if (null != bListingsToSave)
                 _bListingsToSave = bListingsToSave.Value;
 
-            if (_bListingsToSave)
-                TitleLinks.Add(_saveListingsLink);
+            UpdateTitleLinks(this);
+#if DEBUG
+            TitleLinks.Add(_advancedLink);
+#endif
+        }
+
+        static internal void UpdateTitleLinks(LocalModernWindowBase mainWindow)
+        {
+            mainWindow.TitleLinks = new LinkCollection();
+
+            WithMainWindowA(w =>
+            {
+                if (w._bListingsToSave)
+                    w.TitleLinks.Add(_saveListingsLink);
+            });
 
             var currentPage = Statics.CurrentPage;
 
@@ -111,13 +122,10 @@ namespace DoubleFile
             if (currentPage is Introduction)
                 return;
 
-            if (currentPage is WinExtraWindow)
+            if (currentPage.Content is WinExtraWindow)
                 return;
 
-            TitleLinks.Add(_extraWindowLink);
-#if DEBUG
-            TitleLinks.Add(_advancedLink);
-#endif
+            mainWindow.TitleLinks.Add(_extraWindowLink);
         }
 
         static internal void

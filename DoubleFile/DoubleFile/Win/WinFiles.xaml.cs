@@ -8,6 +8,7 @@
         public WinFiles()
         {
             InitializeComponent();
+            CantDupeThisUsercontrol = true;
         }
 
         protected override void LocalNavigatedTo()

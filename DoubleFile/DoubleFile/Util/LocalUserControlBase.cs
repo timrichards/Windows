@@ -6,12 +6,15 @@ using System.Windows.Controls;
 using System.Linq;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace DoubleFile
 {
     public abstract class LocalUserControlBase : UserControl, IContent
     {
         public string LocalTitle { get; set; }
+
+        internal bool CantDupeThisUsercontrol = false;
 
         public void OnFragmentNavigation(FragmentNavigationEventArgs e)
         {
@@ -88,16 +91,26 @@ namespace DoubleFile
             {
                 content.LocalNavigatedFrom();
                 content.LocalWindowClosed();
+
+                if (false == CantDupeThisUsercontrol)
+                    return;
+
                 Content = ((LocalUserControlBase)Activator.CreateInstance(GetType())).Content;
 
-                if (Statics.CurrentPage != this)
+                if (this != Statics.CurrentPage)
                     return;     // from lambda
 
                 LocalNavigatedTo();
                 LocalFragmentNavigation(_strFragment);
+                MainWindow.UpdateTitleLinks((LocalModernWindowBase)Application.Current.MainWindow);
             });
 
-            Content = new WinExtraWindow { WindowExtra = window };
+            if (CantDupeThisUsercontrol)
+            {
+                Content = new WinExtraWindow { WindowExtra = window };
+                MainWindow.UpdateTitleLinks((LocalModernWindowBase)Application.Current.MainWindow);
+            }
+
             window.Show();
             e.Cancel = true;
         }

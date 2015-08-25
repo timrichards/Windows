@@ -17,6 +17,8 @@ namespace DoubleFile
 
             Observable.FromEventPattern(form_slider, "LostMouseCapture")
                 .LocalSubscribe(99682, x => _ucTreeMap?.LostMouseCapture());
+
+            CantDupeThisUsercontrol = true;
         }
 
         protected override void LocalNavigatedTo()

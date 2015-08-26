@@ -30,8 +30,13 @@
                             <ControlTemplate TargetType="{x:Type DataGridRow}">
                                 <Border>
                                     <SelectiveScrollingGrid>
-                                        <StackPanel>
-                                            <DataGridCellsPresenter Grid.Column="1"
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="1">
+                                            <DataGridCellsPresenter
                                                     ItemsPanel="{TemplateBinding ItemsPanel}"
                                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                                             <StackPanel Style="{StaticResource VisibilityOnSelected}" Orientation="Horizontal" Background="Black">
@@ -45,8 +50,19 @@
                                                 </TextBlock>
                                             </StackPanel>
                                         </StackPanel>
+
+                                        <DataGridRowHeader SelectiveScrollingGrid.SelectiveScrollingOrientation="Vertical"
+                                               Grid.RowSpan="2"
+                                               Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=HeadersVisibility, Converter={x:Static DataGrid.HeadersVisibilityConverter}, ConverterParameter={x:Static DataGridHeadersVisibility.Row}}"/>
                                     </SelectiveScrollingGrid>
                                 </Border>
+
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource DataGridCellBackgroundHover}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>

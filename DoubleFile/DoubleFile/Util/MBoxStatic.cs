@@ -87,10 +87,7 @@ namespace DoubleFile
 
             return retVal;
         }
-
-        // make MessageBox modal from a worker thread
-        static MessageBoxResult
-            ShowDialog_(string strMessage, string strTitle, MessageBoxButton? buttons, ILocalWindow owner)
+        static MessageBoxResult ShowDialog_(string strMessage, string strTitle, MessageBoxButton? buttons, ILocalWindow owner)
         {
             if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
                 return MessageBox.Show(strMessage + "\n(LocalMbox: application shutting down.)", strTitle, buttons ?? MessageBoxButton.OK);

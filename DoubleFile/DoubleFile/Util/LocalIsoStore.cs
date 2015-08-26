@@ -153,7 +153,7 @@ namespace DoubleFile
 
             return (Path.IsPathRooted(strFile))
                 ? File.ReadLines(strFile)
-                : ReadLinesIterator.CreateIterator(new StreamReader(OpenFile(strFile, FileMode.Open)));
+                : ReadLinesIterator.CreateIterator(strFile);
         }
     }
 }

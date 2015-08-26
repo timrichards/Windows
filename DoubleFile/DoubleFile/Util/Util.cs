@@ -145,7 +145,7 @@ namespace DoubleFile
 
             var thread = ThreadMake(() =>
             {
-                ParallelForEach(lsDisposable, new ParallelOptions { CancellationToken = cts.Token },
+                ParallelForEach(99653, lsDisposable, new ParallelOptions { CancellationToken = cts.Token },
                     d => d.Dispose());
             });
 
@@ -158,11 +158,11 @@ namespace DoubleFile
         }
 
         static internal void
-            ParallelForEach<TSource>(IEnumerable<TSource> source, Action<TSource> doSomething) =>
-            ParallelForEach(source, new ParallelOptions { }, doSomething);
+            ParallelForEach<TSource>(decimal nLocation, IEnumerable<TSource> source, Action<TSource> doSomething) =>
+            ParallelForEach(nLocation, source, new ParallelOptions { }, doSomething);
 
         static internal void
-            ParallelForEach<TSource>(IEnumerable<TSource> source, ParallelOptions options, Action<TSource> doSomething)
+            ParallelForEach<TSource>(decimal nLocation, IEnumerable<TSource> source, ParallelOptions options, Action<TSource> doSomething)
         {
             try
             {
@@ -177,7 +177,7 @@ namespace DoubleFile
                     {
                         var b = e.GetBaseException();
 
-                        Util.Assert(99675, false, b.GetType() + " in ParallelForEach\n" +
+                        Util.Assert(nLocation, false, b.GetType() + " in ParallelForEach\n" +
                             b.Message + "\n" + b.StackTrace);
                     }
                 });

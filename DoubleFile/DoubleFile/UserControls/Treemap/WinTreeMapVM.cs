@@ -432,7 +432,7 @@ namespace DoubleFile
             var lsFiles = new List<Tuple<string, ulong>>();
 
             foreach (var asFileLine
-                in strListingFile.ReadLines()
+                in strListingFile.ReadLinesWait(99650)
                 .Skip(nPrevDir)
                 .Take((nLineNo - nPrevDir - 1))
                 .Select(s =>

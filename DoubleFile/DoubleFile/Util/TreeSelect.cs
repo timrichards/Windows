@@ -124,7 +124,7 @@ namespace DoubleFile
 
                 return
                     strListingFile
-                    .ReadLines()
+                    .ReadLines(99643)
                     .Skip(nPrevDir)
                     .Take((nLineNo - nPrevDir - 1))
                     .ToArray()

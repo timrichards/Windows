@@ -206,7 +206,7 @@ namespace DoubleFile
 
             var dt = DateTime.Now;
 
-            Util.ParallelForEach(_allNodes, folder => folder.NodeDatum.FolderScore = // mean square
+            Util.ParallelForEach(99675, _allNodes, folder => folder.NodeDatum.FolderScore = // mean square
                 grandTotalMean
                 .Zip(folder.NodeDatum.FolderScore, (totalMean, folderScore) =>
             {

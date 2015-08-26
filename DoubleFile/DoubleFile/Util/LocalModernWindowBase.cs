@@ -38,8 +38,6 @@ namespace DoubleFile
         {
             Util.UIthread(99789, () =>
             {
-                Activate();
-
                 Application.Current.Windows.OfType<ModernWindow>()
                     .ForEach(w => SetDarkened(w, Visibility.Visible));
 

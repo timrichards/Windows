@@ -124,7 +124,29 @@ namespace DoubleFile
         }
 
         static internal IEnumerable<string>
-            ReadLines(this string strFile)
+            ReadLinesWait(this string strFile, decimal nLocation)
+        {
+            IOException eThrow = null;
+
+            for (int i = 0; i < 10; ++i)
+            {
+                try
+                {
+                    return strFile.ReadLines(nLocation);
+                }
+                catch (IOException e)
+                {
+                    eThrow = e;
+                    Util.WriteLine("ReadLinesWait " + strFile);
+                    Util.Block(50);
+                }
+            }
+
+            throw eThrow;
+        }
+
+        static internal IEnumerable<string>
+            ReadLines(this string strFile, decimal nLocation)
         {
             if (string.IsNullOrWhiteSpace(strFile))
                 return new string[0];

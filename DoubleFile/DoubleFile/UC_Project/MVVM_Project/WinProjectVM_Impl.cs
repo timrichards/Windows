@@ -48,7 +48,7 @@ namespace DoubleFile
 
             var asLVitems = _lvVM.ItemsCast.ToList();
 
-            foreach (var strLine in Metadata.ReadLines())
+            foreach (var strLine in Metadata.ReadLines(99652))
             {
                 for (int i = 0; i < asLVitems.Count; ++i)
                 {
@@ -204,7 +204,7 @@ namespace DoubleFile
                     listItems.Add(lvItem);
             }
 
-            Util.ParallelForEach(ieFiles, new ParallelOptions { CancellationToken = cts.Token }, strFilename =>
+            Util.ParallelForEach(99661, ieFiles, new ParallelOptions { CancellationToken = cts.Token }, strFilename =>
             {
                 if (userCanceled?.Invoke() ?? false)
                 {

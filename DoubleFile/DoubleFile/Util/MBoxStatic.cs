@@ -42,7 +42,12 @@ namespace DoubleFile
 
             if (AssertUp)
             {
-                MessageBox.Show(strErrorOut + "\n(LocalMbox: there is a local assert box already up.)");
+                var owner = (LocalModernWindowBase)Application.Current?.MainWindow;
+
+                if (owner?.LocalIsClosing ?? true)
+                    owner = null;
+
+                MessageBox.Show(owner, strErrorOut + "\n(LocalMbox: there is a local assert box already up.)");
             }
             else
             {
@@ -78,6 +83,12 @@ namespace DoubleFile
             if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
             {
                 MessageBox.Show(strMessage + "\n(LocalMbox: application shutting down.)", strTitle, buttons ?? MessageBoxButton.OK);
+                return MessageBoxResult.None;
+            }
+
+            if (((LocalModernWindowBase)Application.Current?.MainWindow)?.LocalIsClosing ?? true)
+            {
+                MessageBox.Show(null, strMessage + "\n(LocalMbox: main window closing.)", strTitle, buttons ?? MessageBoxButton.OK);
                 return MessageBoxResult.None;
             }
 

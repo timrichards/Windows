@@ -58,9 +58,11 @@ namespace DoubleFile
 
             var lsDupDirFileLines = new ConcurrentBag<Tuple<LVitemProject_Updater<bool>, IReadOnlyList<string>>> { };
 
-            Util.ParallelForEach(
-                _selectedItem.LSduplicates
-                    .GroupBy(duplicate => duplicate.LVitemProjectVM),
+            var lsKeys = _selectedItem.LSduplicates
+                .GroupBy(duplicate => duplicate.LVitemProjectVM).ToList();
+
+            Util.ParallelForEach(99656,
+                lsKeys,
                 new ParallelOptions { CancellationToken = (_cts = new CancellationTokenSource()).Token },
                 g =>
             {
@@ -77,7 +79,7 @@ namespace DoubleFile
 
                 foreach (var strLine
                     in lvItemProject_Updater.ListingFile
-                    .ReadLines())
+                    .ReadLinesWait(99651))
                 {
                     if (_cts.IsCancellationRequested)
                         return;     // from lambda

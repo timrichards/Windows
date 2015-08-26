@@ -350,7 +350,7 @@ namespace DoubleFile
             const int knLinesDesired = 4 + knDriveInfoItems;
             const int knLinesGrabFile = 10;
 
-            var asLines = strFile.ReadLines().Take(knLinesDesired + knLinesGrabFile)
+            var asLines = strFile.ReadLines(99648).Take(knLinesDesired + knLinesGrabFile)
                 .ToArray();
 
             if (knLinesDesired > asLines.Length)
@@ -418,7 +418,7 @@ namespace DoubleFile
                 return retVal;
 
             var arrLine =
-                strFile.ReadLines()
+                strFile.ReadLines(99647)
                 .Take(1)
                 .ToArray();
 
@@ -436,7 +436,7 @@ namespace DoubleFile
             }
 
             if (false ==
-                strFile.ReadLines()
+                strFile.ReadLines(99646)
                 .Take(1)
                 .Select(strLine => strLine.Split('\t'))
                 .Select(asLine => ((3 < asLine.Length) && (ksHeader == asLine[2])))
@@ -450,7 +450,7 @@ namespace DoubleFile
             ulong nScannedLength = 0;
             var nLinesTotal = 0;
 
-            strFile.ReadLines()
+            strFile.ReadLines(99645)
                 .Where(strLine => strLine.StartsWith(ksLineType_Length))
                 .Select(strLine => strLine.Split('\t'))
                 .FirstOnlyAssert(asLine =>

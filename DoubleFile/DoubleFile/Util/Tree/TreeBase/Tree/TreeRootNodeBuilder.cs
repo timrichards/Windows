@@ -153,7 +153,7 @@ namespace DoubleFile
                 {
                     var ieDriveInfo =
                         _lvItemProjectVM.ListingFile
-                        .ReadLines()
+                        .ReadLines(99642)
                         .Where(s => s.StartsWith(ksLineType_VolumeInfo));
 
                     var strBuilder = new StringBuilder();
@@ -202,7 +202,7 @@ namespace DoubleFile
 
                 var dirData =
                     _lvItemProjectVM.ListingFile
-                    .ReadLines()
+                    .ReadLines(99641)
                     .Where(s => s.StartsWith(ksLineType_Start))
                     .Select(s => new DirData((s.Split('\t')[1]).ToInt()))
                     .FirstOnlyAssert();
@@ -215,7 +215,7 @@ namespace DoubleFile
                     ? 11
                     : 10;
 
-                foreach (var strLine in _lvItemProjectVM.ListingFile.ReadLines())
+                foreach (var strLine in _lvItemProjectVM.ListingFile.ReadLines(99640))
                 {
                     if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                         _bThreadAbort)

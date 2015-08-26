@@ -134,7 +134,7 @@ namespace DoubleFile
 
             Util.ThreadMake(() =>
             {
-                Util.ParallelForEach(
+                Util.ParallelForEach(99654,
                     Statics.LVprojectVM_Copy.ItemsCast
                     .Where(lvItem => lvItem.CanLoad), lvItem =>
                 {
@@ -142,7 +142,7 @@ namespace DoubleFile
 
                     foreach (var nLength in
                         lvItem.ListingFile
-                        .ReadLines()
+                        .ReadLines(99644)
                         .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
                         .Select(strLine => strLine.Split('\t'))
                         .Where(asLine => FileParse.knColLength < asLine.Length)

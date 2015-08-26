@@ -33,7 +33,11 @@ namespace DoubleFile
             return this;
         }
 
-        public void Dispose() => Util.LocalDispose(_lsDisposable);
+        public void Dispose()
+        {
+            Util.LocalDispose(_lsDisposable);
+            _nicknameUpdater.Clear();
+        }
 
         void LV_FilesVM_SelectedFileChanged(Tuple<LV_FilesVM.SelectedFileChanged, int> initiatorTuple)
         {

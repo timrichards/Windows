@@ -196,7 +196,7 @@ namespace DoubleFile
 
                     Util.ThreadMake(() =>
                     {
-                        Util.ParallelForEach(lsFilePaths,
+                        Util.ParallelForEach(99658, lsFilePaths,
                             new ParallelOptions
                             {
                                 MaxDegreeOfParallelism = Environment.ProcessorCount,
@@ -276,7 +276,7 @@ namespace DoubleFile
                         // There is a miniscule start-up time, and a larger wind-down time, which is saving the listings to file.
                         Util.ThreadMake(() =>
                         {
-                            Util.ParallelForEach(lsFileBuffers_Dequeue, new ParallelOptions { CancellationToken = cts.Token }, tuple =>
+                            Util.ParallelForEach(99657, lsFileBuffers_Dequeue, new ParallelOptions { CancellationToken = cts.Token }, tuple =>
                             {
                                 if (_bThreadAbort)
                                 {

@@ -168,7 +168,7 @@ namespace DoubleFile
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                 .LocalSubscribe(99757, x => StatusCallback(nProgress: nProgress/(double) nLVitems)))
-            Util.ParallelForEach(
+            Util.ParallelForEach(99655,
                 _LVprojectVM.Items.Cast<LVitemProject_Explorer>()
                 .Where(lvItem => lvItem.CanLoad), new ParallelOptions{ CancellationToken = cts.Token }, lvItem =>
             {
@@ -183,7 +183,7 @@ namespace DoubleFile
 
                 foreach (var tuple in
                     lvItem.ListingFile
-                    .ReadLines()
+                    .ReadLines(99649)
                     .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
                     .Select(strLine => strLine.Split('\t'))
                     .Where(asLine => 10 < asLine.Length)

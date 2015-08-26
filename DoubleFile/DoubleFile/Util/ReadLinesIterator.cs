@@ -1,67 +1,72 @@
 ﻿using System.Collections.Concurrent;
 using System.IO;
-using System.Text;
 
 namespace DoubleFile
 {
-	internal class ReadLinesIterator : Iterator<string>
-	{
-		private StreamReader _reader;
+    internal class ReadLinesIterator : Iterator<string>
+    {
+        private StreamReader _reader;
 
-		private ReadLinesIterator(StreamReader reader)
-		{
-			_reader = reader;
+        private ReadLinesIterator(StreamReader reader)
+        {
+            _reader = reader;
             nID = ++static_nID;
-		}
+        }
 
-		public override bool MoveNext()
-		{
-			if (_reader != null)
-			{
-				current = _reader.ReadLine();
-				if (current != null)
-				{
-					return true;
-				}
-			}
-			return false;
-		}
+        public override bool MoveNext()
+        {
+            if (_reader != null)
+            {
+                current = _reader.ReadLine();
+                if (current != null)
+                {
+                    return true;
+                }
+				base.Dispose(); // ------------------------- remove if using chaser iterator code
+            }
+            return false;
+        }
 
-		protected override Iterator<string> Clone()
-		{
-			return CreateIterator(_reader);
-		}
+        protected override Iterator<string> Clone()
+        {
+            return CreateIterator(_reader);
+        }
 
-		protected override void Dispose(bool disposing)
-		{
+        protected override void Dispose(bool disposing)
+        {
             if (0 < --nRefCount)
                 return;
 
             ReadLinesIterator foobar = null;
             _dictFilesOpen.TryRemove(_strFile, out foobar);
+            //Util.WriteLine("Disposing " + nID);
 
-            Util.WriteLine("Disposing " + nID);
-			try
-			{
-				if (disposing && _reader != null)
-				{
-					_reader.Dispose();
-				}
-			}
-			finally
-			{
-				_reader = null;
-				base.Dispose(disposing);
-			}
-		}
+            try
+            {
+                if (disposing && _reader != null)
+                {
+                    _reader.Dispose();
+                }
+            }
+            finally
+            {
+                _reader = null;
+                base.Dispose(disposing);
+            }
+        }
 
-		static ReadLinesIterator CreateIterator(StreamReader reader)
-		{
-			return new ReadLinesIterator(reader);
-		}
+        static ReadLinesIterator CreateIterator(StreamReader reader)
+        {
+            return new ReadLinesIterator(reader);
+        }
 
-		internal static ReadLinesIterator CreateIterator(string strFile)
-		{
+        internal static ReadLinesIterator CreateIterator(string strFile)
+        {
+            return CreateIterator(new StreamReader(strFile.OpenFile(FileMode.Open)));
+        }
+
+        internal static ReadLinesIterator CreateIterator_(string strFile)
+        {
             ReadLinesIterator holder = null;
 
             lock (holderLock)
@@ -71,8 +76,8 @@ namespace DoubleFile
                 holder._strFile = strFile;
             }
 
-			return holder;
-		}
+            return holder;
+        }
 
         int nRefCount = 0;
         string _strFile = "";

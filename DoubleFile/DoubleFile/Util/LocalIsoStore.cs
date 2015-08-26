@@ -117,7 +117,7 @@ namespace DoubleFile
             else
             {
                 if (FileMode.Open == mode)
-                    return _isoStore.OpenFile(strFile, FileMode.Open);
+                    return _isoStore.OpenFile(strFile, FileMode.Open, FileAccess.Read);
 
                 return WriteLockA(() => _isoStore.OpenFile(strFile, mode));
             }
@@ -150,6 +150,18 @@ namespace DoubleFile
         {
             if (string.IsNullOrWhiteSpace(strFile))
                 return new string[0];
+
+            //var a = new StreamReader(OpenFile(strFile, FileMode.Open));
+            //var b = ReadLinesIterator.CreateIterator(a, true);
+            //var c = ReadLinesIterator.CreateIterator(a, true);
+            //b.MoveNext();
+            //c.MoveNext();
+            //b.MoveNext();
+            //Util.WriteLine(b.current);
+            //Util.WriteLine(c.current);
+
+            //b.DeferredDispose();
+            //c.DeferredDispose();
 
             return (Path.IsPathRooted(strFile))
                 ? File.ReadLines(strFile)

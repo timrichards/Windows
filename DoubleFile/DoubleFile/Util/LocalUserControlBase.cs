@@ -98,11 +98,11 @@ namespace DoubleFile
                     return;
 
                 Content = ((LocalUserControlBase)Activator.CreateInstance(GetType())).Content;
+                _bNavigatedFromAlready = false;
 
                 if (this != Statics.CurrentPage)
                     return;     // from lambda
 
-                _bNavigatedFromAlready = false;
                 LocalNavigatedTo();
                 LocalFragmentNavigation(_strFragment);
                 MainWindow.UpdateTitleLinks();
@@ -110,10 +110,17 @@ namespace DoubleFile
 
             if (CantDupeThisUsercontrol)
             {
-                LocalNavigatedFrom();
-                _bNavigatedFromAlready = true;
-                Content = new UC_ExtraWindow { WindowExtra = window };
-                MainWindow.UpdateTitleLinks();
+                if (false == _bNavigatedFromAlready)
+                {
+                    LocalNavigatedFrom();
+                    _bNavigatedFromAlready = true;
+                    Content = new UC_ExtraWindow { WindowExtra = window };
+                    MainWindow.UpdateTitleLinks();
+                }
+                else
+                {
+                    Util.Assert(99888, false);
+                }
             }
 
             window.Show();

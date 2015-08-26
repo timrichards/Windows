@@ -28,7 +28,7 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type DataGridRow}">
-                                <Border>
+                                <Border Background="{TemplateBinding Background}">
                                     <SelectiveScrollingGrid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>

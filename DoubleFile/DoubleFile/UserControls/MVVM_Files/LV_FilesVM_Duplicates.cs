@@ -38,6 +38,9 @@ namespace DoubleFile
             if (null != _selectedItem.LSdupDirFileLines)
                 return;
 
+            if (null == _selectedItem.LSduplicates)
+                return;
+
             {
                 var nCheck = 0;
 

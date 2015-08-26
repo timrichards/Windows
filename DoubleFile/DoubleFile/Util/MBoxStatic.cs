@@ -80,25 +80,30 @@ namespace DoubleFile
         static internal MessageBoxResult
             ShowDialog(string strMessage, string strTitle = null, MessageBoxButton? buttons = null, ILocalWindow owner = null)
         {
-            if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
-            {
-                MessageBox.Show(strMessage + "\n(LocalMbox: application shutting down.)", strTitle, buttons ?? MessageBoxButton.OK);
-                return MessageBoxResult.None;
-            }
+            MessageBoxResult retVal = MessageBoxResult.None;
 
-            if (((LocalModernWindowBase)Application.Current?.MainWindow)?.LocalIsClosing ?? true)
-            {
-                MessageBox.Show(null, strMessage + "\n(LocalMbox: main window closing.)", strTitle, buttons ?? MessageBoxButton.OK);
-                return MessageBoxResult.None;
-            }
+            Util.UIthread(99916, () =>
+                retVal = ShowDialog_(strMessage, strTitle, buttons, owner));
+
+            return retVal;
+        }
+
+        // make MessageBox modal from a worker thread
+        static MessageBoxResult
+            ShowDialog_(string strMessage, string strTitle, MessageBoxButton? buttons, ILocalWindow owner)
+        {
+            if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
+                return MessageBox.Show(strMessage + "\n(LocalMbox: application shutting down.)", strTitle, buttons ?? MessageBoxButton.OK);
+
+            //if (((LocalModernWindowBase)Application.Current?.MainWindow)?.LocalIsClosing ?? true)
+            //    return MessageBox.Show(strMessage + "\n(LocalMbox: main window closing.)", strTitle, buttons ?? MessageBoxButton.OK);
 
             if (null == owner)
             {
-                Util.UIthread(99916, () =>
                 owner =
                     (Statics.TopWindow is IModalWindow)
                     ? Statics.TopWindow
-                    : (ILocalWindow)Application.Current.MainWindow);
+                    : (ILocalWindow)Application.Current.MainWindow;
             } 
 
             if (owner?.LocalIsClosed ?? false)
@@ -110,11 +115,10 @@ namespace DoubleFile
             {
                 _restart = false;
 
-                Util.UIthread(99888, () =>
-                    //msgBoxRet =
-                    //(_messageBox = new LocalMbox(owner, strMessage, strTitle, buttons ?? MessageBoxButton.OK))
-                    //.ShowDialog());
-                    msgBoxRet = MainWindow.WithMainWindow(w => w.ShowMessagebox(strMessage, strTitle, buttons)));
+                //msgBoxRet =
+                //(_messageBox = new LocalMbox(owner, strMessage, strTitle, buttons ?? MessageBoxButton.OK))
+                //.ShowDialog());
+                msgBoxRet = MainWindow.WithMainWindow(w => w.ShowMessagebox(strMessage, strTitle, buttons));
 
                 if (_restart)
                     Util.Block(250);

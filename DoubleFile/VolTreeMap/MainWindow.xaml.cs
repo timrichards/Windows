@@ -31,28 +31,28 @@ namespace VolTreeMap
             InitializeComponent();
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
-            var W = "/DoubleFile;component/Win";
+            var W = "/DoubleFile;component/UserControls";
 
             MenuLinkGroups.Add(new LinkGroup { DisplayName="Explore", Links =
             {
-                new MyLink("Tree map", W + "/WinTreeMap.xaml"),
-                new MyLink("Folders", W + "/WinTreeView.xaml"),
-                new MyLink("Tree list", W + "/WinTreeList.xaml")
+                new MyLink("Tree map", W + "/UC_TreeMap.xaml"),
+                new MyLink("Folders", W + "/UC_TreeView.xaml"),
+                new MyLink("Tree list", W + "/UC_TreeList.xaml")
             }});
 
             MenuLinkGroups.Add(new LinkGroup { DisplayName = "Files", Links =
             {
-                new MyLink("Files in folder", W + "/WinFiles.xaml"),
+                new MyLink("Files in folder", W + "/UC_Files.xaml"),
             }});
 
             MenuLinkGroups.Add(new LinkGroup { DisplayName="Search", Links =
             {
-                new MyLink("Search", W + "/WinSearch.xaml")
+                new MyLink("Search", W + "/UC_Search.xaml")
             }});
 
             MenuLinkGroups.Add(new LinkGroup { DisplayName = "Detailed info", Links =
             {
-                new MyLink("Detailed info", W + "/WinDetail.xaml")
+                new MyLink("Detailed info", W + "/UC_Detail.xaml")
             }});
 
             TitleLinks.Add(DoubleFile.MainWindow._extraWindowLink);

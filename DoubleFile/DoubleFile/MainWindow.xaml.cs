@@ -93,18 +93,18 @@ namespace DoubleFile
             }});
         }
 
-        internal void UpdateTitleLinks(bool? bListingsToSave = null)
+        internal static void UpdateTitleLinks(bool? bListingsToSave = null)
         {
             if (null != bListingsToSave)
-                _bListingsToSave = bListingsToSave.Value;
+            {
+                WithMainWindowA(w =>
+                    w._bListingsToSave = bListingsToSave.Value);
+            }
 
             UpdateTitleLinks();
-#if DEBUG
-            TitleLinks.Add(_advancedLink);
-#endif
         }
 
-        static internal void UpdateTitleLinks()
+        internal static void UpdateTitleLinks()
         {
             var mainWindow = (LocalModernWindowBase)Application.Current.MainWindow;
 
@@ -128,6 +128,9 @@ namespace DoubleFile
                 return;
 
             mainWindow.TitleLinks.Add(_extraWindowLink);
+#if DEBUG
+            mainWindow.TitleLinks.Add(_advancedLink);
+#endif
         }
 
         static internal void

@@ -88,9 +88,7 @@ namespace DoubleFile
             if (bListingsToSave && bSaveListings)
                 bListingsToSave = false;
 
-            MainWindow.WithMainWindowA(mainWindow =>
-                mainWindow.UpdateTitleLinks(bListingsToSave));
-
+            MainWindow.UpdateTitleLinks(bListingsToSave);
             return (false == bSaveListings);
         }
 

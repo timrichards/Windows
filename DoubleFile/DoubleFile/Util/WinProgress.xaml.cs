@@ -13,13 +13,68 @@ namespace DoubleFile
         bool ConfirmClose();
     }
 
+    class _ProgressAsOverlay : ILocalWindow
+    {
+        internal string Title { get; set; }
+
+        protected Action<CancelEventArgs> OKtoClose = null;
+        internal ILocalWindow Close()
+        {
+            CancelEventArgs cancelEventArgs = new CancelEventArgs { Cancel = false };
+
+            OKtoClose?.Invoke(cancelEventArgs);
+
+            if (false == cancelEventArgs.Cancel)
+                _dispatcherFrame.Continue = false;
+
+            return this;
+        }
+
+        protected void GoModeless() { _bWentModeless = true; _dispatcherFrame.Continue = false; }
+        bool _bWentModeless = false;
+
+        public bool Activate() { return false; }
+        public bool LocalIsClosed => (false == _lv.Any());
+        public bool SimulatingModal { get; set; } = true;
+
+        LocalDispatcherFrame _dispatcherFrame = new LocalDispatcherFrame(0);
+
+        protected LV_ProgressVM
+            _lv = null;
+
+        internal _ProgressAsOverlay()
+        {
+            _lv = MainWindow.WithMainWindow(w => w.DataContext.As<LV_ProgressVM>());
+        }
+
+        protected Action<WinProgress> _initClient = null;
+
+        internal void ShowDialog()
+        {
+            var mainWindow = MainWindow.WithMainWindow(w => w);
+            
+            mainWindow.ShowProgress();
+
+            Observable.Timer(TimeSpan.FromMilliseconds(50)).Timestamp()
+                .LocalSubscribe(0, x => Util.UIthread(0, () => _initClient?.Invoke((WinProgress)this)));
+
+            _dispatcherFrame.PushFrameTrue();
+
+            if (_bWentModeless)
+                return;
+
+            mainWindow.Progress_Close();
+            _lv.ClearItems();
+        }
+    }
+
     // Window_Closed() calls Dispose() on the LV_ProgressVM member.
     [SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     partial class
-        WinProgress : IModalWindow
+        WinProgress : _ProgressAsOverlay
     {
         internal WeakReference<IWinProgressClosing>
-            WindowClosingCallback { set; private get; }
+            WindowClosingCallback { private get; set; }
 
         internal WinProgress
             AllowSubsequentProcess() { _bAllowSubsequentProcess = true; return this; }
@@ -48,7 +103,7 @@ namespace DoubleFile
                     return w;   // from lambda
                 }
 
-                Util.Assert(99792, false);
+   //             Util.Assert(99792, false);
 
                 return
                     w           // from lambda
@@ -57,34 +112,9 @@ namespace DoubleFile
             });
 
             _wr.SetTarget(this);
-            InitializeComponent();
-            WindowStyle = WindowStyle.None;
-            AllowsTransparency = true;
-
-            var rc = Win32Screen.GetWindowRect(Application.Current.MainWindow);
-
-            Left = rc.Left;
-            Width = rc.Width;
-
-            Observable.FromEventPattern(this, "SourceInitialized")
-                .LocalSubscribe(99730, x => ResizeMode = ResizeMode.NoResize);
-
-            Observable.FromEventPattern(this, "Loaded")
-                .LocalSubscribe(99729, x => formLV_Progress.DataContext = _lv);
-
-            Observable.FromEventPattern(this, "ContentRendered")
-                .LocalSubscribe(99728, x =>
-            {
-                MinHeight = MaxHeight = ActualHeight;
-                initClient(this);
-            });
-
-            Observable.FromEventPattern(formBtn_Cancel, "Click")
-                .LocalSubscribe(99727, x => base.Close());
-
-            Observable.FromEventPattern<CancelEventArgs>(this, "Closing")
-                .LocalSubscribe(99726, args => Window_Closing(args.EventArgs));
-
+            _initClient = initClient;
+            _lv.Cancel_Action = () => base.Close();
+            OKtoClose = Window_Closing;
             _lv.Add(astrBigLabels.Zip(astrSmallKeyLabels, (a, b) => Tuple.Create(a, b)));
         }
 
@@ -112,7 +142,7 @@ namespace DoubleFile
 
                 if (_lv.ItemsCast.All(lvItemA => lvItemA.IsCompleted))
                 {
-                    Util.UIthread(99827, () => formBtn_Cancel.ToolTip = "Process completed. You may now close the window");
+ //                   Util.UIthread(99827, () => formBtn_Cancel.ToolTip = "Process completed. You may now close the window");
                     StopShowingConfirmMessage();
 
                     if (_bAllowSubsequentProcess)
@@ -172,15 +202,15 @@ namespace DoubleFile
             if (MBoxStatic.AssertUp)
                 return this;        // don't close: there Is an error message
 
-            Util.UIthread(99774, () =>
-                OwnedWindows
-                .Cast<Window>()
-                .ToList()
-                .FirstOnlyAssert(w =>
-            {
-                w.Close();
-                _dtConfirmingClose = DateTime.MinValue;
-            }));
+            //Util.UIthread(99774, () =>
+            //    OwnedWindows
+            //    .Cast<Window>()
+            //    .ToList()
+            //    .FirstOnlyAssert(w =>
+            //{
+            //    w.Close();
+            //    _dtConfirmingClose = DateTime.MinValue;
+            //}));
 
             return this;
         }
@@ -240,10 +270,9 @@ namespace DoubleFile
 
         internal static T
             WithWinProgress<T>(Func<WinProgress, T> doSomethingWith) => _wr.Get(o => doSomethingWith(o));
+
         static readonly WeakReference<WinProgress> _wr = new WeakReference<WinProgress>(null);
-        
-        readonly LV_ProgressVM
-            _lv = new LV_ProgressVM();
+
         bool
             _bClosing = false;
         DateTime

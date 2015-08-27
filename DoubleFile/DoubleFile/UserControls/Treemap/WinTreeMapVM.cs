@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 
 namespace DoubleFile
 {
-    class WinTreeMapVM : SliderVM_Base<ListViewItemVM_Base>, IDisposable
+    class UC_TreeMapVM : SliderVM_Base<ListViewItemVM_Base>, IDisposable
     {
         [DllImport("gdi32")]
         static extern int DeleteObject(IntPtr o);
@@ -61,7 +61,7 @@ namespace DoubleFile
         internal System.Windows.Window
             LocalOwner = null;
 
-        public WinTreeMapVM()
+        public UC_TreeMapVM()
         {
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99696, initiatorTuple =>
             {

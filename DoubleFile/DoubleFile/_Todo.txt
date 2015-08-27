@@ -2,8 +2,6 @@
 	- that other no-repeat code may prevent user from seeing message.
 	- Message log window for all repeats etc. Perhaps subitems for repeated in-a-row not skipped messages.
 	- log file, and consoldiate that with ProjectFile.
-- extra window should not dupe the view: change it to "Pop out" and nav to Project page
-	- remove link probably beats nav to extra window when naving.
 - first tree view item is bold and the wrong forecolors, incl highlighted - treeview shouldn't have a selected item. app activated?
 - file list 0-length files assert at tuple.Item2.First(strFile =>
 - binding errors only evidence on extra windows
@@ -189,6 +187,10 @@ Specific code areas:
 	Listings can be searched when volumes are off site. Can read any volume mounted in Windows Explorer, including Linux and Mac volumes. Supports long path names.
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
+
+99730
+99729
+99728
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
 99639 next low assert

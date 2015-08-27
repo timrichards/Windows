@@ -1,4 +1,4 @@
-﻿<local:LocalWindowBase x:Class="DoubleFile.WinProgress"
+﻿<local:LocalWindowBase x:Class="DoubleFile.WinProgress_"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"

@@ -15,9 +15,6 @@ namespace DoubleFile
             Util.Write("I");
             _cts.Cancel();
 
-            if (null == _selectedItem.LSduplicates)
-                return;
-
             Util.ThreadMake(() => 
             {
                 try
@@ -36,9 +33,6 @@ namespace DoubleFile
         void TreeFileSelChanged()
         {
             if (null != _selectedItem.LSdupDirFileLines)
-                return;
-
-            if (null == _selectedItem.LSduplicates)
                 return;
 
             {
@@ -60,6 +54,9 @@ namespace DoubleFile
             }
 
             var lsDupDirFileLines = new ConcurrentBag<Tuple<LVitemProject_Updater<bool>, IReadOnlyList<string>>> { };
+
+            if (null == _selectedItem.LSduplicates)
+                return;
 
             var lsKeys = _selectedItem.LSduplicates
                 .GroupBy(duplicate => duplicate.LVitemProjectVM).ToList();

@@ -25,7 +25,7 @@ namespace DoubleFile
         {
             DataContext =
                 _ucTreeMap =
-                new WinTreeMapVM
+                new UC_TreeMapVM
             {
                 LocalOwner = Application.Current.MainWindow,
             };
@@ -71,7 +71,7 @@ namespace DoubleFile
                 _ucTreeMap = null;
         }
 
-        WinTreeMapVM
+        UC_TreeMapVM
             _ucTreeMap = null;
         readonly IList<IDisposable>
             _lsDisposable = new List<IDisposable>();

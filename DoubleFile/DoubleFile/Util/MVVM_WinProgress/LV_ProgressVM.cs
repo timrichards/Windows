@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Linq;
+using System.Windows.Input;
 
 namespace DoubleFile
 {
     class LV_ProgressVM : ListViewVM_Base<LVitem_ProgressVM>, IDisposable
     {
+        public ICommand Icmd_Cancel { get; }
+        internal Action Cancel_Action = null;
+
         public string WidthBigLabel => SCW;             // franken all NaN
         public string WidthSmallKeyLabel => SCW;
         public string WidthStatus => SCW;
@@ -34,6 +38,8 @@ namespace DoubleFile
                 foreach (var lvItem in ItemsCast.ToArray())
                     lvItem.TimerTick();
             }));
+
+            Icmd_Cancel = new RelayCommand(() => Cancel_Action?.Invoke());
         }
 
         public void Dispose() => Util.LocalDispose(_lsDisposable);

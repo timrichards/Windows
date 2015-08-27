@@ -9,7 +9,7 @@ namespace DoubleFile
         internal LV_FilesVM()
         {
             _lsDisposable.Add(TreeSelect.FileListUpdated.Observable.LocalSubscribe(99703, TreeSelect_FileListUpdated));
-            _lsDisposable.Add(WinTreeMapVM.SelectedFile.LocalSubscribe(99702, UC_TreeMap_SelectedFile));
+            _lsDisposable.Add(UC_TreeMapVM.SelectedFile.LocalSubscribe(99702, UC_TreeMap_SelectedFile));
 
             var fileList = LocalTV.TreeSelect_FileList;
 

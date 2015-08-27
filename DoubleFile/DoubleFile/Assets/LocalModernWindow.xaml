@@ -176,9 +176,42 @@
                                             <Grid.Background>
                                             <SolidColorBrush Color="Black" Opacity=".4"/>
                                         </Grid.Background>
-                                        <local:LocalContentPresenter Visibility="{TemplateBinding local:LocalModernWindowBase.ShowMessagebox}" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                            <local:LocalContentPresenter Visibility="{TemplateBinding local:LocalModernWindowBase.ShowProgress}" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                                <Border BorderThickness="1" BorderBrush="Black" Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                                    Height="Auto" MinHeight="50">
+                                                    <Grid>
+                                                        <ListView ItemsSource="{Binding Items}" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top">
+                                                            <ListView.Resources>
+                                                                <Style TargetType="{x:Type ListViewItem}">
+                                                                    <Setter Property="Foreground" Value="Black" />
+                                                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                                                    <Setter Property="Focusable" Value="False"/>
+                                                                </Style>
+                                                            </ListView.Resources>
+                                                            <ListView.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <Border Style="{StaticResource styleBorder}" Height="Auto" Margin="5">
+                                                                        <StackPanel Margin="10,0,0,0">
+                                                                            <TextBlock Style="{StaticResource LocalTextBlock}" Text="{Binding BigLabel}" />
+                                                                            <TextBlock Text="{Binding SmallKeyLabel}" />
+                                                                            <ProgressBar Foreground="{Binding Foreground}" Value="{Binding Progress, Mode=OneWay}" Maximum="1" LargeChange="0.1" SmallChange="0.01" IsIndeterminate="{Binding Indeterminate}" Height="5" Margin="0,2"/>
+                                                                            <TextBlock Text="{Binding Status}" />
+                                                                        </StackPanel>
+                                                                    </Border>
+                                                                </DataTemplate>
+                                                            </ListView.ItemTemplate>
+                                                        </ListView>
+                                                        <Button Command="{Binding Icmd_Cancel}" IsCancel="True" Style="{StaticResource SystemCloseButton}" VerticalAlignment="Top" HorizontalAlignment="Right" ToolTip="cancel process">
+                                                            <Button.Content>
+                                                                <Path Data="M1,0 L9,7 M9,0 L1,7 Z" Width="9" Height="7" VerticalAlignment="Center" HorizontalAlignment="Center" Stroke="Black" StrokeThickness="1.5"  />
+                                                            </Button.Content>
+                                                        </Button>
+                                                    </Grid>
+                                                </Border>
+                                            </local:LocalContentPresenter>
+                                            <local:LocalContentPresenter Visibility="{TemplateBinding local:LocalModernWindowBase.ShowMessagebox}" HorizontalAlignment="Stretch" VerticalAlignment="Center">
                                             <Border BorderThickness="1" BorderBrush="Black" Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                                    Height="170" MinHeight="170">
+                                                    Height="Auto" MinHeight="170">
                                                 <Grid>
                                                     <Grid.RowDefinitions>
                                                         <RowDefinition Height="28"/>
@@ -198,39 +231,6 @@
                                                     </ScrollViewer>
                                                     <Button Command="{Binding Icmd_OK}" Grid.Column="1" Content="OK" Grid.Row="2" Width="75" Height="Auto" IsDefault="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
                                                     <Button Command="{Binding Icmd_Cancel}" Grid.Column="2" Content="Cancel" Grid.Row="2" Width="75" Height="Auto" IsCancel="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
-                                                </Grid>
-                                            </Border>
-                                        </local:LocalContentPresenter>
-                                        <local:LocalContentPresenter Visibility="{TemplateBinding local:LocalModernWindowBase.ShowProgress}" HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                                            <Border BorderThickness="1" BorderBrush="Black" Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                                    Height="50" MinHeight="50">
-                                                <Grid>
-                                                    <ListView ItemsSource="{Binding Items}" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top">
-                                                        <ListView.Resources>
-                                                            <Style TargetType="{x:Type ListViewItem}">
-                                                                <Setter Property="Foreground" Value="Black" />
-                                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                                                <Setter Property="Focusable" Value="False"/>
-                                                            </Style>
-                                                        </ListView.Resources>
-                                                        <ListView.ItemTemplate>
-                                                            <DataTemplate>
-                                                                <Border Style="{StaticResource styleBorder}" Height="Auto" Margin="5">
-                                                                    <StackPanel Margin="10,0,0,0">
-                                                                        <TextBlock Style="{StaticResource LocalTextBlock}" Text="{Binding BigLabel}" />
-                                                                        <TextBlock Text="{Binding SmallKeyLabel}" />
-                                                                        <ProgressBar Foreground="{Binding Foreground}" Value="{Binding Progress, Mode=OneWay}" Maximum="1" LargeChange="0.1" SmallChange="0.01" IsIndeterminate="{Binding Indeterminate}" Height="5" Margin="0,2"/>
-                                                                        <TextBlock Text="{Binding Status}" />
-                                                                    </StackPanel>
-                                                                </Border>
-                                                            </DataTemplate>
-                                                        </ListView.ItemTemplate>
-                                                    </ListView>
-                                                    <Button Command="{Binding Icmd_Cancel}" IsCancel="True" Style="{StaticResource SystemCloseButton}" VerticalAlignment="Top" HorizontalAlignment="Right" ToolTip="cancel process">
-                                                        <Button.Content>
-                                                            <Path Data="M1,0 L9,7 M9,0 L1,7 Z" Width="9" Height="7" VerticalAlignment="Center" HorizontalAlignment="Center" Stroke="Black" StrokeThickness="1.5"  />
-                                                        </Button.Content>
-                                                    </Button>
                                                 </Grid>
                                             </Border>
                                         </local:LocalContentPresenter>

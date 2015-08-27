@@ -291,8 +291,6 @@ namespace DoubleFile
                 return this;
             }
 
-            MBoxStatic.Restart();
-
             if (null == Owner)
                 Owner = Application.Current.MainWindow;
 
@@ -321,9 +319,6 @@ namespace DoubleFile
                 Util.Assert(99980, false);
                 return null;
             }
-
-            // if false == this is LocalMbox)    // future proof
-            MBoxStatic.Restart();
 
             I.SimulatingModal = Statics.SimulatingModal;
             Owner = (Window)me;

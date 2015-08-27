@@ -180,8 +180,6 @@ namespace DoubleFile
                 return this;
             }
 
-            MBoxStatic.Restart();
-
             if (null == Owner)
                 Owner = Application.Current.MainWindow;
 
@@ -210,12 +208,6 @@ namespace DoubleFile
             {
                 Util.Assert(99981, false);
                 return null;
-            }
-
-            if ((false == this is WinMessagebox) &&
-                (false == this is IDarkWindow))     // IDarkWindow will never be modern window.
-            {
-                MBoxStatic.Restart();
             }
 
             I.SimulatingModal = Statics.SimulatingModal;

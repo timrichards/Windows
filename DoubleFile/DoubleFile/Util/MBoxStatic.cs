@@ -62,20 +62,6 @@ namespace DoubleFile
 #endif
         }
 
-        static internal void
-            Kill()
-        {
-            _messageBox?.Close();
-            _messageBox = null;
-        }
-
-        static internal void
-            Restart()
-        {
-            _restart = true;
-            Kill();
-        }
-
         // make MessageBox modal from a worker thread
         static internal MessageBoxResult
             ShowDialog(string strMessage, string strTitle = null, MessageBoxButton? buttons = null, ILocalWindow owner = null)
@@ -92,47 +78,12 @@ namespace DoubleFile
             if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
                 return MessageBox.Show(strMessage + "\n(LocalMbox: application shutting down.)", strTitle, buttons ?? MessageBoxButton.OK);
 
-            //if (((LocalModernWindowBase)Application.Current?.MainWindow)?.LocalIsClosing ?? true)
-            //    return MessageBox.Show(strMessage + "\n(LocalMbox: main window closing.)", strTitle, buttons ?? MessageBoxButton.OK);
-
-            if (null == owner)
-            {
-                owner =
-                    (Statics.TopWindow is IModalWindow)
-                    ? Statics.TopWindow
-                    : (ILocalWindow)Application.Current.MainWindow;
-            } 
-
-            if (owner?.LocalIsClosed ?? false)
-                owner = null;
-
-            var msgBoxRet = MessageBoxResult.None;
-            
-            do
-            {
-                _restart = false;
-
-                //msgBoxRet =
-                //(_messageBox = new LocalMbox(owner, strMessage, strTitle, buttons ?? MessageBoxButton.OK))
-                //.ShowDialog());
-                msgBoxRet = MainWindow.WithMainWindow(w => w.ShowMessagebox(strMessage, strTitle, buttons));
-
-                if (_restart)
-                    Util.Block(250);
-            }
-            while (_restart);
-
-            _messageBox = null;
-            return msgBoxRet;
+            return MainWindow.WithMainWindow(w => w.ShowMessagebox(strMessage, strTitle, buttons));
         }
 
         static decimal
             _nLastAssertLoc = -1;
         static DateTime
             _dtLastAssert = DateTime.MinValue;
-        static WinMessagebox
-            _messageBox = null;
-        static bool
-            _restart = false;
     }
 }

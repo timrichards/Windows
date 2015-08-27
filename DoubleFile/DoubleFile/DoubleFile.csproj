@@ -214,9 +214,7 @@
     </Compile>
     <Compile Include="Util\ILocalWindow.cs" />
     <Compile Include="Util\LocalDispatcherFrame.cs" />
-    <Compile Include="Util\WinMessagebox.xaml.cs">
-      <DependentUpon>WinMessagebox.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Util\Progressbar.cs" />
     <Compile Include="Util\LocalModernWindowBase.cs" />
     <Compile Include="Util\LocalSubject.cs" />
     <Compile Include="Util\LocalUserControlBase.cs" />
@@ -313,7 +311,7 @@
     <Compile Include="Util\TreeSelect.cs" />
     <Compile Include="Util\FolderKeyTuple.cs" />
     <Compile Include="Util\Tree\LVitemFileTag.cs" />
-    <Compile Include="UserControls\Treemap\WinTreeMapVM.cs" />
+    <Compile Include="UserControls\Treemap\UC_TreeMapVM.cs" />
     <Compile Include="Util\UtilColor.cs" />
     <Compile Include="Util\FileDictionary.cs" />
     <Compile Include="Util\FileDictionary\DuplicateStruct.cs" />
@@ -366,10 +364,6 @@
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\WinProgress.xaml.cs">
-      <DependentUpon>WinProgress.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UC_Project\UC_Project.xaml.cs">
@@ -497,10 +491,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Util\WinMessagebox.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Assets\VolumeEdit_Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -546,10 +536,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\UC_TreeView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Util\WinProgress.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

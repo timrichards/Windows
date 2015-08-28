@@ -6,6 +6,23 @@ namespace DoubleFile
 {
     public partial class UC_Messagebox : UC_ContentPresenter
     {
+        public static readonly RoutedEvent
+            ShownEvent = EventManager.RegisterRoutedEvent("Shown", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(UC_Messagebox));
+        public static readonly RoutedEvent
+            HiddenEvent = EventManager.RegisterRoutedEvent("Hidden", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(UC_Messagebox));
+
+        public event RoutedEventHandler Shown
+        {
+            add { AddHandler(ShownEvent, value); }
+            remove { RemoveHandler(ShownEvent, value); }
+        }
+
+        public event RoutedEventHandler Hidden
+        {
+            add { AddHandler(HiddenEvent, value); }
+            remove { RemoveHandler(HiddenEvent, value); }
+        }
+
         MessageBoxButton Buttons
         {
             set
@@ -41,7 +58,6 @@ namespace DoubleFile
         public UC_Messagebox()
         {
             InitializeComponent();
-            Visibility = Visibility.Collapsed;
         }
 
         internal MessageBoxResult
@@ -58,9 +74,6 @@ namespace DoubleFile
 
             if (null != buttons)
                 Buttons = buttons.Value;
-
-            Visibility = Visibility.Visible;
-            form_Message.Text = strMessage;
 
             switch (_buttons)
             {
@@ -84,8 +97,10 @@ namespace DoubleFile
                 }
             }
 
+            form_Message.Text = strMessage;
+            form_Grid.RaiseEvent(new RoutedEventArgs(ShownEvent));
             _dispatcherFrame.PushFrameTrue();
-            Visibility = Visibility.Collapsed;
+            form_Grid.RaiseEvent(new RoutedEventArgs(HiddenEvent));
             return _Result;
         }
 

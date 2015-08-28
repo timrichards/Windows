@@ -23,7 +23,7 @@ namespace DoubleFile
             ShowMessagebox(string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
         {
             var ucMessagebox = (UC_Messagebox)GetTemplateChild("UC_Messagebox");
-            MessageBoxResult retVal = MessageBoxResult.None;
+            var retVal = MessageBoxResult.None;
 
             Util.UIthread(99789, () =>
             {

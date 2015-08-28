@@ -148,7 +148,7 @@ namespace DoubleFile
         static internal T
             WithMainWindow<T>(Func<MainWindow, T> doSomethingWith)
         {
-            if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
+            if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                 return default(T);
 
             // use-case: assert before main window class allocated

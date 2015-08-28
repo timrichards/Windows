@@ -7,11 +7,11 @@ using System.Windows.Data;
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for LocalContentPresenter.xaml
+    /// Interaction logic for UC_ContentPresenter.xaml
     /// </summary>
-    public partial class LocalContentPresenter : UserControl
+    public partial class UC_ContentPresenter : UserControl
     {
-        //[Category("LocalContentPresenter")]
+        //[Category("UC_ContentPresenter")]
         //public object Presenter
         //{
         //    get { return GetValue(PresenterProperty); }
@@ -19,7 +19,7 @@ namespace DoubleFile
         //}
 
         //public static readonly DependencyProperty
-        //    PresenterProperty = DependencyProperty.Register("Presenter", typeof(object), typeof(LocalContentPresenter),
+        //    PresenterProperty = DependencyProperty.Register("Presenter", typeof(object), typeof(UC_ContentPresenter),
         //    new FrameworkPropertyMetadata(null));
 
         protected override void OnInitialized(EventArgs e)

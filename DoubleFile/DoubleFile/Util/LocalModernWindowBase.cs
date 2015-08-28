@@ -3,30 +3,16 @@ using System;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Interop;
 
 namespace DoubleFile
 {
     abstract public class LocalModernWindowBase : ModernWindow, ILocalWindow
     {
-        public ICommand Icmd_OK { get; private set; }
-        public ICommand Icmd_Cancel { get; private set; }
-
         public static Visibility GetDarkened(DependencyObject obj) => (Visibility)obj.GetValue(DarkenedProperty);
         public static void SetDarkened(DependencyObject obj, Visibility value) => obj.SetValue(DarkenedProperty, value);
         public static readonly DependencyProperty DarkenedProperty = DependencyProperty.RegisterAttached(
             "Darkened", typeof(Visibility), typeof(LocalModernWindowBase), new FrameworkPropertyMetadata(Visibility.Collapsed));
-
-        public static Visibility GetShowMessagebox(DependencyObject obj) => (Visibility)obj.GetValue(ShowMessageboxProperty);
-        public static void SetShowMessagebox(DependencyObject obj, Visibility value) => obj.SetValue(ShowMessageboxProperty, value);
-        public static readonly DependencyProperty ShowMessageboxProperty = DependencyProperty.RegisterAttached(
-            "ShowMessagebox", typeof(Visibility), typeof(LocalModernWindowBase), new FrameworkPropertyMetadata(Visibility.Collapsed));
-
-        public static string GetMessageboxText(DependencyObject obj) => (string)obj.GetValue(MessageboxTextProperty);
-        public static void SetMessageboxText(DependencyObject obj, string value) => obj.SetValue(MessageboxTextProperty, value);
-        public static readonly DependencyProperty MessageboxTextProperty = DependencyProperty.RegisterAttached(
-            "MessageboxText", typeof(string), typeof(LocalModernWindowBase), new FrameworkPropertyMetadata(null));
 
         public static Visibility GetShowProgress(DependencyObject obj) => (Visibility)obj.GetValue(ShowProgressProperty);
         public static void SetShowProgress(DependencyObject obj, Visibility value) => obj.SetValue(ShowProgressProperty, value);
@@ -36,8 +22,8 @@ namespace DoubleFile
         internal MessageBoxResult
             ShowMessagebox(string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
         {
-            _dataContext = DataContext;
-            DataContext = this;
+            var ucMessagebox = (UC_Messagebox)GetTemplateChild("UC_Messagebox");
+            MessageBoxResult retVal = MessageBoxResult.None;
 
             Util.UIthread(99789, () =>
             {
@@ -47,44 +33,16 @@ namespace DoubleFile
                         .ForEach(w => SetDarkened(w, Visibility.Visible));
                 }
 
-                SetShowMessagebox(this, Visibility.Visible);
-                SetMessageboxText(this, strMessage);
-            });
+                retVal = ucMessagebox.ShowMessagebox(strMessage, strTitle, buttons);
 
-            _dispatcherFrame_MessageBox.PushFrameTrue();
-            DataContext = _dataContext;
-            return _messageboxResult;
-        }
-        LocalDispatcherFrame _dispatcherFrame_MessageBox = new LocalDispatcherFrame(99786);
-        MessageBoxResult _messageboxResult = MessageBoxResult.None;
-        object _dataContext = null;
-
-        void Messagebox_Close()
-        {
-            Util.UIthread(99787, () =>
-            {
                 if (false == _bProgressUp)
                 {
                     Application.Current.Windows.OfType<ModernWindow>()
                         .ForEach(w => SetDarkened(w, Visibility.Collapsed));
                 }
-
-                SetShowMessagebox(this, Visibility.Collapsed);
             });
 
-            _dispatcherFrame_MessageBox.Continue = false;
-        }
-
-        void Messagebox_OK()
-        {
-            _messageboxResult = MessageBoxResult.OK;
-            Messagebox_Close();
-        }
-
-        void Messagebox_Cancel()
-        {
-            _messageboxResult = MessageBoxResult.Cancel;
-            Messagebox_Close();
+            return retVal;
         }
 
         internal void
@@ -140,10 +98,6 @@ namespace DoubleFile
 
         protected LocalModernWindowBase(Action<Action> InitForMainWindowOnly = null)
         {
-            DataContext = this;
-            Icmd_OK = new RelayCommand(Messagebox_OK);
-            Icmd_Cancel = new RelayCommand(Messagebox_Cancel);
-
             if (null != InitForMainWindowOnly)
             {
                 InitForMainWindowOnly(Init);

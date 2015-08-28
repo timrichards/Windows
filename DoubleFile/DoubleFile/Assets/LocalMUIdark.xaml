@@ -75,7 +75,7 @@
 
   <SolidColorBrush x:Key="PopupBackground" Color="#252526" />
 
-  <!--<SolidColorBrush x:Key="ProgressBackground" Color="#333333" />-->
+  <SolidColorBrush x:Key="ProgressBackground" Color="#333333" />
 
   <SolidColorBrush x:Key="ScrollBarBackground" Color="#333333" />
   <SolidColorBrush x:Key="ScrollBarThumbBackground" Color="Transparent" />

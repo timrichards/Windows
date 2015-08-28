@@ -196,7 +196,7 @@
     <Compile Include="LocalTreeNode\LocalColorItemBase.cs" />
     <Compile Include="LocalTreeNode\LVitemProject_Explorer.cs" />
     <Compile Include="Statics.cs" />
-    <Compile Include="Util\LocalContentPresenter.cs" />
+    <Compile Include="Util\UC_ContentPresenter.cs" />
     <Compile Include="Util\LocalIsoStore.cs" />
     <Compile Include="Util\Iterator.cs" />
     <Compile Include="Util\ModalThread.cs" />
@@ -229,6 +229,9 @@
     <Compile Include="Util\Win32Screen\RECT.cs" />
     <Compile Include="Util\Win32Screen\SWP.cs" />
     <Compile Include="Util\Win32Screen\Win32Screen.cs" />
+    <Compile Include="Util\UC_Messagebox.xaml.cs">
+      <DependentUpon>UC_Messagebox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="VolTreeMap\UC_VolTreeMap.xaml.cs">
       <DependentUpon>UC_VolTreeMap.xaml</DependentUpon>
     </Compile>
@@ -347,8 +350,8 @@
     <Compile Include="Util\FileParse.cs" />
     <Compile Include="MVVM\ObservableObjectBase.cs" />
     <Compile Include="MVVM\ObservableObject_OwnerWindow.cs" />
-    <Compile Include="Util\MVVM_WinProgress\LVitem_ProgressVM.cs" />
-    <Compile Include="Util\MVVM_WinProgress\LV_ProgressVM.cs" />
+    <Compile Include="Util\MVVM_Progressbar\LVitem_ProgressVM.cs" />
+    <Compile Include="Util\MVVM_Progressbar\LV_ProgressVM.cs" />
     <Compile Include="UC_Project\MVVM_Project\LV_ProjectVM.cs" />
     <Compile Include="UC_Project\MVVM_Project\WinProjectVM_Impl.cs" />
     <Compile Include="UC_Project\MVVM_Project\LVitem_ProjectVM.cs" />
@@ -494,6 +497,10 @@
     <Page Include="Assets\VolumeEdit_Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Util\UC_Messagebox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="VolTreeMap\UC_VolTreeMap.xaml">
       <Generator>MSBuild:Compile</Generator>

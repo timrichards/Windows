@@ -1,5 +1,4 @@
-﻿using System.Windows;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System;
@@ -37,7 +36,7 @@ namespace DoubleFile
         public bool LocalIsClosed => (false == _lv.Any());
         public bool SimulatingModal { get; set; } = true;
 
-        LocalDispatcherFrame _dispatcherFrame = new LocalDispatcherFrame(0);
+        LocalDispatcherFrame _dispatcherFrame = new LocalDispatcherFrame(99730);
 
         protected LV_ProgressVM
             _lv = null;
@@ -45,26 +44,29 @@ namespace DoubleFile
         internal _ProgressAsOverlay()
         {
             _lv = MainWindow.WithMainWindow(w => w.DataContext.As<LV_ProgressVM>());
+            _lv.Cancel_Action = () => Close();
         }
 
         protected Action<WinProgress> _initClient = null;
 
         internal void ShowDialog()
         {
-            var mainWindow = MainWindow.WithMainWindow(w => w);
-            
-            mainWindow.ShowProgress();
+            MainWindow.WithMainWindowA(mainWindow =>
+            {
+                mainWindow.ShowProgress();
+                _lv.Init();
 
-            Observable.Timer(TimeSpan.FromMilliseconds(50)).Timestamp()
-                .LocalSubscribe(0, x => Util.UIthread(0, () => _initClient?.Invoke((WinProgress)this)));
+                Observable.Timer(TimeSpan.FromMilliseconds(50)).Timestamp()
+                    .LocalSubscribe(0, x => Util.UIthread(99729, () => _initClient?.Invoke((WinProgress)this)));
 
-            _dispatcherFrame.PushFrameTrue();
+                _dispatcherFrame.PushFrameTrue();
 
-            if (_bWentModeless)
-                return;
+                if (_bWentModeless)
+                    return;
 
-            mainWindow.Progress_Close();
-            _lv.ClearItems();
+                mainWindow.Progress_Close();
+                _lv.ClearItems();
+            });
         }
     }
 
@@ -113,7 +115,6 @@ namespace DoubleFile
 
             _wr.SetTarget(this);
             _initClient = initClient;
-            _lv.Cancel_Action = () => base.Close();
             OKtoClose = Window_Closing;
             _lv.Add(astrBigLabels.Zip(astrSmallKeyLabels, (a, b) => Tuple.Create(a, b)));
         }

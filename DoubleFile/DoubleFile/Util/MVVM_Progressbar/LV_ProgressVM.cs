@@ -8,7 +8,7 @@ namespace DoubleFile
 {
     class LV_ProgressVM : ListViewVM_Base<LVitem_ProgressVM>, IDisposable
     {
-        public ICommand Icmd_Cancel { get; }
+        public ICommand Icmd_Cancel { get; private set; }
         internal Action Cancel_Action = null;
 
         public string WidthBigLabel => SCW;             // franken all NaN
@@ -30,7 +30,7 @@ namespace DoubleFile
             }));
         }
 
-        internal LV_ProgressVM()
+        internal LV_ProgressVM Init()
         {
             _lsDisposable.Add(Observable.Timer(TimeSpan.FromMilliseconds(500), TimeSpan.FromMilliseconds(500)).Timestamp()
                 .LocalSubscribe(99733, x =>
@@ -40,6 +40,7 @@ namespace DoubleFile
             }));
 
             Icmd_Cancel = new RelayCommand(() => Cancel_Action?.Invoke());
+            return this;
         }
 
         public void Dispose() => Util.LocalDispose(_lsDisposable);

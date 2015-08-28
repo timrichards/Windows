@@ -106,7 +106,7 @@ namespace DoubleFile
 
                 if (0 < denominator)
                 {
-                    var nRemaining = (int) TimeSpan.FromTicks((long)(numerator / denominator))
+                    var nRemaining = (int)TimeSpan.FromTicks((long)(numerator / denominator))
                         .Add(TimeSpan.FromMinutes(1))
                         .TotalMinutes;
 

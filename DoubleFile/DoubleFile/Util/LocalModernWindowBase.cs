@@ -14,10 +14,8 @@ namespace DoubleFile
         public static readonly DependencyProperty DarkenedProperty = DependencyProperty.RegisterAttached(
             "Darkened", typeof(Visibility), typeof(LocalModernWindowBase), new FrameworkPropertyMetadata(Visibility.Collapsed));
 
-        public static Visibility GetShowProgress(DependencyObject obj) => (Visibility)obj.GetValue(ShowProgressProperty);
-        public static void SetShowProgress(DependencyObject obj, Visibility value) => obj.SetValue(ShowProgressProperty, value);
-        public static readonly DependencyProperty ShowProgressProperty = DependencyProperty.RegisterAttached(
-            "ShowProgress", typeof(Visibility), typeof(LocalModernWindowBase), new FrameworkPropertyMetadata(Visibility.Collapsed));
+        internal UC_Progress
+            GetProgressCtl() => (UC_Progress)GetTemplateChild("UC_Progress");
 
         internal MessageBoxResult
             ShowMessagebox(string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
@@ -33,6 +31,7 @@ namespace DoubleFile
                         .ForEach(w => SetDarkened(w, Visibility.Visible));
                 }
 
+                ucMessagebox.Visibility = Visibility.Visible;
                 retVal = ucMessagebox.ShowMessagebox(strMessage, strTitle, buttons);
 
                 if (false == _bProgressUp)
@@ -40,35 +39,36 @@ namespace DoubleFile
                     Application.Current.Windows.OfType<ModernWindow>()
                         .ForEach(w => SetDarkened(w, Visibility.Collapsed));
                 }
+
+                ucMessagebox.Visibility = Visibility.Collapsed;
             });
 
             return retVal;
         }
 
         internal void
-            ShowProgress()
+            Progress_Darken()
         {
             Util.UIthread(99727, () =>
             {
                 Application.Current.Windows.OfType<ModernWindow>()
                     .ForEach(w => SetDarkened(w, Visibility.Visible));
-
-                SetShowProgress(this, Visibility.Visible);
             });
 
+            GetProgressCtl().Visibility = Visibility.Visible;
             _bProgressUp = true;
         }
 
-        internal void Progress_Close()
+        internal void
+            Progress_Undarken()
         {
             Util.UIthread(99726, () =>
             {
                 Application.Current.Windows.OfType<ModernWindow>()
                     .ForEach(w => SetDarkened(w, Visibility.Collapsed));
-
-                SetShowProgress(this, Visibility.Collapsed);
             });
 
+            GetProgressCtl().Visibility = Visibility.Collapsed;
             _bProgressUp = false;
         }
         bool _bProgressUp = false;

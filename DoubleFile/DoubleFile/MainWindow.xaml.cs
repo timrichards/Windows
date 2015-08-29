@@ -73,8 +73,6 @@ namespace DoubleFile
             MainWindow()
             : base(InitForMainWindowOnly)
         {
-            DataContext = new LV_ProgressVM();
-
             Statics.Icon = Icon;
             _mainWindowWR.SetTarget(this);
             Init();

@@ -11,29 +11,13 @@ namespace DoubleFile
     /// </summary>
     public partial class UC_ContentPresenter : UserControl
     {
-        //[Category("UC_ContentPresenter")]
-        //public object Presenter
-        //{
-        //    get { return GetValue(PresenterProperty); }
-        //    set { SetValue(PresenterProperty, value); }
-        //}
-
-        //public static readonly DependencyProperty
-        //    PresenterProperty = DependencyProperty.Register("Presenter", typeof(object), typeof(UC_ContentPresenter),
-        //    new FrameworkPropertyMetadata(null));
-
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
 
             var grid = new Grid();
 
-            //grid.Children.Add(
-            //    new ContentPresenter { Content = BindingOperations.SetBinding(this, PresenterProperty, new Binding()) });
-
-            grid.Children.Add(
-                new ContentPresenter { Content = Content });
-
+            grid.Children.Add(new ContentPresenter { Content = Content });
             Content = grid;
         }
     }

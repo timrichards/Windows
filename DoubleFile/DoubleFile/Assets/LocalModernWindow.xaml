@@ -174,43 +174,11 @@
                                     <local:UC_ContentPresenter Visibility="{TemplateBinding local:LocalModernWindowBase.Darkened}" Grid.RowSpan="999" Grid.ColumnSpan="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid>
                                             <Grid.Background>
-                                            <SolidColorBrush Color="Black" Opacity=".4"/>
-                                        </Grid.Background>
-                                            <local:UC_ContentPresenter Visibility="{TemplateBinding local:LocalModernWindowBase.ShowProgress}" HorizontalAlignment="Stretch" VerticalAlignment="Center">
-                                                <Border BorderThickness="1" BorderBrush="Black" Background="White" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                                    Height="Auto" MinHeight="50">
-                                                    <Grid>
-                                                        <ListView ItemsSource="{Binding Items}" BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Top">
-                                                            <ListView.Resources>
-                                                                <Style TargetType="{x:Type ListViewItem}">
-                                                                    <Setter Property="Foreground" Value="Black" />
-                                                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                                                    <Setter Property="Focusable" Value="False"/>
-                                                                </Style>
-                                                            </ListView.Resources>
-                                                            <ListView.ItemTemplate>
-                                                                <DataTemplate>
-                                                                    <Border Style="{StaticResource styleBorder}" Height="Auto" Margin="5">
-                                                                        <StackPanel Margin="10,0,0,0">
-                                                                            <TextBlock Style="{StaticResource LocalTextBlock}" Text="{Binding BigLabel}" />
-                                                                            <TextBlock Text="{Binding SmallKeyLabel}" />
-                                                                            <ProgressBar Foreground="{Binding Foreground}" Background="Transparent" Value="{Binding Progress, Mode=OneWay}" Maximum="1" LargeChange="0.1" SmallChange="0.01" IsIndeterminate="{Binding Indeterminate}" Height="5" Margin="0,2"/>
-                                                                            <TextBlock Text="{Binding Status}" />
-                                                                        </StackPanel>
-                                                                    </Border>
-                                                                </DataTemplate>
-                                                            </ListView.ItemTemplate>
-                                                        </ListView>
-                                                        <Button Command="{Binding Icmd_Cancel}" IsCancel="True" Style="{StaticResource SystemCloseButton}" VerticalAlignment="Top" HorizontalAlignment="Right" ToolTip="cancel process">
-                                                            <Button.Content>
-                                                                <Path Data="M1,0 L9,7 M9,0 L1,7 Z" Width="9" Height="7" VerticalAlignment="Center" HorizontalAlignment="Center" Stroke="Black" StrokeThickness="1.5"  />
-                                                            </Button.Content>
-                                                        </Button>
-                                                    </Grid>
-                                                </Border>
-                                            </local:UC_ContentPresenter>
-                                            <local:UC_Messagebox x:Name="UC_Messagebox" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-                                    </Grid>
+                                                <SolidColorBrush Color="Black" Opacity=".4"/>
+                                            </Grid.Background>
+                                            <local:UC_Progress x:Name="UC_Progress" HorizontalAlignment="Stretch" VerticalAlignment="Center" Visibility="Collapsed"/>
+                                            <local:UC_Messagebox x:Name="UC_Messagebox" HorizontalAlignment="Stretch" VerticalAlignment="Center" Visibility="Collapsed"/>
+                                        </Grid>
                                     </local:UC_ContentPresenter>
                                 </Grid>
                             </AdornerDecorator>

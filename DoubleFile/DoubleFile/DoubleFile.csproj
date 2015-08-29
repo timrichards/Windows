@@ -31,6 +31,8 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -214,7 +216,6 @@
     </Compile>
     <Compile Include="Util\ILocalWindow.cs" />
     <Compile Include="Util\LocalDispatcherFrame.cs" />
-    <Compile Include="Util\Progressbar.cs" />
     <Compile Include="Util\LocalModernWindowBase.cs" />
     <Compile Include="Util\LocalSubject.cs" />
     <Compile Include="Util\LocalUserControlBase.cs" />
@@ -225,6 +226,9 @@
     <Compile Include="Util\TabledString\TabledStringBase\TabledStringGenerated.cs" />
     <Compile Include="Util\TabledString\TabledStringBase\TabledStringGenerating.cs" />
     <Compile Include="Util\TabledString\TabledStringTypesBase.cs" />
+    <Compile Include="Util\UC_Progress.xaml.cs">
+      <DependentUpon>UC_Progress.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Util\Win32Screen\MONITORINFO.cs" />
     <Compile Include="Util\Win32Screen\RECT.cs" />
     <Compile Include="Util\Win32Screen\SWP.cs" />
@@ -499,6 +503,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Util\UC_Messagebox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Util\UC_Progress.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

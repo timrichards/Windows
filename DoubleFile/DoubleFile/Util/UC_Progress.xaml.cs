@@ -12,6 +12,14 @@ namespace DoubleFile
         bool ConfirmClose();
     }
 
+    public partial class UC_Progress
+    {
+        public UC_Progress()
+        {
+            InitializeComponent();
+        }
+    }
+
     class _ProgressAsOverlay : ILocalWindow
     {
         internal string Title { get; set; }
@@ -19,7 +27,7 @@ namespace DoubleFile
         protected Action<CancelEventArgs> OKtoClose = null;
         internal ILocalWindow Close()
         {
-            CancelEventArgs cancelEventArgs = new CancelEventArgs { Cancel = false };
+            var cancelEventArgs = new CancelEventArgs { Cancel = false };
 
             OKtoClose?.Invoke(cancelEventArgs);
 
@@ -43,7 +51,7 @@ namespace DoubleFile
 
         internal _ProgressAsOverlay()
         {
-            _lv = MainWindow.WithMainWindow(w => w.DataContext.As<LV_ProgressVM>());
+            _lv = new LV_ProgressVM();
             _lv.Cancel_Action = () => Close();
         }
 
@@ -53,19 +61,20 @@ namespace DoubleFile
         {
             MainWindow.WithMainWindowA(mainWindow =>
             {
-                mainWindow.ShowProgress();
+                mainWindow.Progress_Darken();
                 _lv.Init();
+                MainWindow.WithMainWindow(w => w.GetProgressCtl().DataContext = _lv);
 
                 Observable.Timer(TimeSpan.FromMilliseconds(50)).Timestamp()
-                    .LocalSubscribe(0, x => Util.UIthread(99729, () => _initClient?.Invoke((WinProgress)this)));
+                    .LocalSubscribe(99787, x => Util.UIthread(99729, () => _initClient?.Invoke((WinProgress)this)));
 
                 _dispatcherFrame.PushFrameTrue();
 
                 if (_bWentModeless)
                     return;
 
-                mainWindow.Progress_Close();
-                _lv.ClearItems();
+                mainWindow.Progress_Undarken();
+                _lv.Dispose();
             });
         }
     }

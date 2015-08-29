@@ -6,28 +6,15 @@ namespace DoubleFile
 {
     public partial class UC_Messagebox : UC_ContentPresenter
     {
-        public static readonly RoutedEvent
-            ShownEvent = EventManager.RegisterRoutedEvent("Shown", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(UC_Messagebox));
-        public static readonly RoutedEvent
-            HiddenEvent = EventManager.RegisterRoutedEvent("Hidden", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(UC_Messagebox));
-
-        public event RoutedEventHandler Shown
-        {
-            add { AddHandler(ShownEvent, value); }
-            remove { RemoveHandler(ShownEvent, value); }
-        }
-
-        public event RoutedEventHandler Hidden
-        {
-            add { AddHandler(HiddenEvent, value); }
-            remove { RemoveHandler(HiddenEvent, value); }
-        }
-
         MessageBoxButton Buttons
         {
             set
             {
                 _buttons = value;
+                formBtn_OK.SetValue(Grid.ColumnProperty, _OK_ColumnProperty);
+                formBtn_OK.Content = "OK";
+                formBtn_Cancel.Content = "Cancel";
+                formBtn_Cancel.Visibility = Visibility.Visible;
 
                 switch (_buttons)
                 {
@@ -54,10 +41,12 @@ namespace DoubleFile
             }
         }
         MessageBoxButton _buttons = MessageBoxButton.OKCancel;
+        object _OK_ColumnProperty = null;
 
         public UC_Messagebox()
         {
             InitializeComponent();
+            _OK_ColumnProperty = formBtn_OK.GetValue(Grid.ColumnProperty);
         }
 
         internal MessageBoxResult
@@ -98,9 +87,9 @@ namespace DoubleFile
             }
 
             form_Message.Text = strMessage;
-            form_Grid.RaiseEvent(new RoutedEventArgs(ShownEvent));
+            LocalShow();
             _dispatcherFrame.PushFrameTrue();
-            form_Grid.RaiseEvent(new RoutedEventArgs(HiddenEvent));
+            LocalHide();
             return _Result;
         }
 

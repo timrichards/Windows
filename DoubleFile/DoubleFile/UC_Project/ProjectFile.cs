@@ -18,7 +18,7 @@ namespace DoubleFile
 
     // The Process disposable field is managed by wrapper functions that dispose it once control returns.
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
-    class ProjectFile : IWinProgressClosing, IDisposable
+    class ProjectFile : IProgressOverlayClosing, IDisposable
     {
         static internal event Func<string> OnSavingProject = null;
         static internal event Action OnOpenedProject = null;
@@ -209,7 +209,7 @@ namespace DoubleFile
             _bProcessing = false;
             bRet = true;
             
-            WinProgress.WithWinProgress(w =>
+            ProgressOverlay.WithProgressOverlay(w =>
                 w.SetCompleted(Path.GetFileName(strProjectFilename)));
         }
 
@@ -322,7 +322,7 @@ namespace DoubleFile
             );
 
             OnOpenedProject?.Invoke();
-            WinProgress.CloseForced();
+            ProgressOverlay.CloseForced();
             _bProcessing = false;
             return bRet && (false == _bUserCanceled);
         }
@@ -342,7 +342,7 @@ namespace DoubleFile
             Observable.FromEventPattern(_process, "Exited")
                 .LocalSubscribe(99723, x => onExit());
 
-            (new WinProgress(new[] { _status }, new[] { strProjectFileNoPath }, x =>
+            (new ProgressOverlay(new[] { _status }, new[] { strProjectFileNoPath }, x =>
             {
                 try
                 {
@@ -362,18 +362,18 @@ namespace DoubleFile
                         b.Message + "\n" + b.StackTrace);
                 }
             })
-            { WindowClosingCallback = new WeakReference<IWinProgressClosing>(this) })
+            { WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this) })
                 .ShowDialog();
 
             return true;
         }
 
-        bool IWinProgressClosing.ConfirmClose()
+        bool IProgressOverlayClosing.ConfirmClose()
         {
             if (false == _bProcessing)
                 return true;
 
-            if (MessageBoxResult.Yes == WinProgress.WithWinProgress(w =>
+            if (MessageBoxResult.Yes == ProgressOverlay.WithProgressOverlay(w =>
                 MBoxStatic.ShowDialog("Do you want to cancel?", _status, MessageBoxButton.YesNo, w)))
             {
                 _bUserCanceled = true;
@@ -426,7 +426,7 @@ namespace DoubleFile
 
             // bootstrap the window close with a delay then messagebox
             // otherwise it freezes
-            WinProgress.CloseForced();
+            ProgressOverlay.CloseForced();
 
             // One-shot: no need to dispose
             Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()

@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace DoubleFile
 {
-    class SaveListingsProcess : IWinProgressClosing, ISaveDirListingsStatus
+    class SaveListingsProcess : IProgressOverlayClosing, ISaveDirListingsStatus
     {
         static internal void Go(LV_ProjectVM lvProjectVM)
         {
@@ -35,13 +35,13 @@ namespace DoubleFile
                 Statics.SaveDirListings.EndThread();
             }
 
-            (new WinProgress(listNicknames, listSourcePaths, x =>
+            (new ProgressOverlay(listNicknames, listSourcePaths, x =>
                 Statics.SaveDirListings =
                     new SaveDirListings(lvProjectVM, this)
                     .DoThreadFactory())
             {
                 Title = "Saving Directory Listings",
-                WindowClosingCallback = new WeakReference<IWinProgressClosing>(this),
+                WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this),
             })
                 .AllowSubsequentProcess()
                 .ShowDialog();
@@ -51,7 +51,7 @@ namespace DoubleFile
             string strError, bool bDone, double nProgress)
         {
             var sdl = Statics.SaveDirListings;
-            var winProgress = WinProgress.WithWinProgress(w => w);
+            var winProgress = ProgressOverlay.WithProgressOverlay(w => w);
 
             if (winProgress.LocalIsClosed)
             {
@@ -66,7 +66,7 @@ namespace DoubleFile
                 sdl.IsAborted)
             {
                 if (false == _bKeepShowingError)
-                    WinProgress.CloseForced();
+                    ProgressOverlay.CloseForced();
                     
                 return;
             }
@@ -94,14 +94,14 @@ namespace DoubleFile
             Statics.SaveDirListings = null;
         }
 
-        bool IWinProgressClosing.ConfirmClose()
+        bool IProgressOverlayClosing.ConfirmClose()
         {
             if (Statics.SaveDirListings?.IsAborted ?? true)
                 return true;
 
             if (MessageBoxResult.Yes !=
                 MBoxStatic.ShowDialog("Do you want to cancel?", "Saving Directory Listings", MessageBoxButton.YesNo,
-                WinProgress.WithWinProgress(w => w)))
+                ProgressOverlay.WithProgressOverlay(w => w)))
                 return false;
 
             Statics.SaveDirListings?.EndThread();

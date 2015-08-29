@@ -7,7 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace DoubleFile
 {
-    interface IWinProgressClosing
+    interface IProgressOverlayClosing
     {
         bool ConfirmClose();
     }
@@ -55,7 +55,7 @@ namespace DoubleFile
             _lv.Cancel_Action = () => Close();
         }
 
-        protected Action<WinProgress> _initClient = null;
+        protected Action<ProgressOverlay> _initClient = null;
 
         internal void ShowDialog()
         {
@@ -63,12 +63,20 @@ namespace DoubleFile
             {
                 mainWindow.Progress_Darken();
                 _lv.Init();
-                MainWindow.WithMainWindow(w => w.GetProgressCtl().DataContext = _lv);
 
-                Observable.Timer(TimeSpan.FromMilliseconds(50)).Timestamp()
-                    .LocalSubscribe(99787, x => Util.UIthread(99729, () => _initClient?.Invoke((WinProgress)this)));
+                MainWindow.WithMainWindowA(w =>
+                {
+                    var ucProgress = w.GetProgressCtl();
+                    
+                    ucProgress.DataContext = _lv;
+                    ucProgress.LocalShow();
 
-                _dispatcherFrame.PushFrameTrue();
+                    Observable.Timer(TimeSpan.FromMilliseconds(50)).Timestamp()
+                        .LocalSubscribe(99787, x => Util.UIthread(99729, () => _initClient?.Invoke((ProgressOverlay)this)));
+
+                    _dispatcherFrame.PushFrameTrue();
+                    ucProgress.LocalHide();
+                });
 
                 if (_bWentModeless)
                     return;
@@ -82,31 +90,31 @@ namespace DoubleFile
     // Window_Closed() calls Dispose() on the LV_ProgressVM member.
     [SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
     partial class
-        WinProgress : _ProgressAsOverlay
+        ProgressOverlay : _ProgressAsOverlay
     {
-        internal WeakReference<IWinProgressClosing>
+        internal WeakReference<IProgressOverlayClosing>
             WindowClosingCallback { private get; set; }
 
-        internal WinProgress
+        internal ProgressOverlay
             AllowSubsequentProcess() { _bAllowSubsequentProcess = true; return this; }
         bool _bAllowSubsequentProcess = false;
 
-        internal static WinProgress
-            CloseForced() => WithWinProgress(w =>
+        internal static ProgressOverlay
+            CloseForced() => WithProgressOverlay(w =>
         {
             return
                 (w.LocalIsClosed)
                 ? w
-                : (WinProgress) w.Abort().Close();
+                : (ProgressOverlay) w.Abort().Close();
         });
-        internal WinProgress
+        internal ProgressOverlay
             Abort() { _bAborted = true; return this; }
         bool _bAborted = false;
 
         internal
-            WinProgress(IEnumerable<string> astrBigLabels, IEnumerable<string> astrSmallKeyLabels, Action<WinProgress> initClient)
+            ProgressOverlay(IEnumerable<string> astrBigLabels, IEnumerable<string> astrSmallKeyLabels, Action<ProgressOverlay> initClient)
         {
-            WithWinProgress(w =>
+            WithProgressOverlay(w =>
             {
                 if (w.LocalIsClosed ||
                     w._bAllowSubsequentProcess)
@@ -128,7 +136,7 @@ namespace DoubleFile
             _lv.Add(astrBigLabels.Zip(astrSmallKeyLabels, (a, b) => Tuple.Create(a, b)));
         }
 
-        internal WinProgress
+        internal ProgressOverlay
             SetProgress(string strPath, double nProgress)
         {
             if (false ==
@@ -141,7 +149,7 @@ namespace DoubleFile
             return this;
         }
 
-        internal WinProgress
+        internal ProgressOverlay
             SetCompleted(string strPath)
         {
             if (false ==
@@ -166,7 +174,7 @@ namespace DoubleFile
             return this;
         }
 
-        internal WinProgress
+        internal ProgressOverlay
             SetError(string strSmallKeyLabel, string strError)
         {
             if (false == _lv[strSmallKeyLabel].FirstOnlyAssert(lvItem => lvItem.SetError(strError)))
@@ -175,7 +183,7 @@ namespace DoubleFile
             return this;
         }
 
-        internal WinProgress
+        internal ProgressOverlay
             CloseIfNatural()
         {
             if (_bClosing)
@@ -197,7 +205,7 @@ namespace DoubleFile
             return this;
         }
 
-        WinProgress
+        ProgressOverlay
             StopShowingConfirmMessage()
         {
             if (DateTime.MinValue == _dtConfirmingClose)
@@ -273,15 +281,15 @@ namespace DoubleFile
                 }
                 else
                 {
-                    WindowClosingCallback = new WeakReference<IWinProgressClosing>(windowClosing);
+                    WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(windowClosing);
                 }
             });
         }
 
         internal static T
-            WithWinProgress<T>(Func<WinProgress, T> doSomethingWith) => _wr.Get(o => doSomethingWith(o));
+            WithProgressOverlay<T>(Func<ProgressOverlay, T> doSomethingWith) => _wr.Get(o => doSomethingWith(o));
 
-        static readonly WeakReference<WinProgress> _wr = new WeakReference<WinProgress>(null);
+        static readonly WeakReference<ProgressOverlay> _wr = new WeakReference<ProgressOverlay>(null);
 
         bool
             _bClosing = false;

@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    partial class LocalTV : IWinProgressClosing, ICreateFileDictStatus, ITreeStatus
+    partial class LocalTV : IProgressOverlayClosing, ICreateFileDictStatus, ITreeStatus
     {
         internal void ClearMem_TreeForm()
         {
@@ -47,7 +47,7 @@ namespace DoubleFile
             if (Statics.FileDictionary.IsEmpty)
                 lsProgressItems.Insert(0, _ksFileDictKey);
 
-            (new WinProgress(new string[lsProgressItems.Count], lsProgressItems, x =>
+            (new ProgressOverlay(new string[lsProgressItems.Count], lsProgressItems, x =>
             {
                 if (Statics.FileDictionary.IsEmpty)
                     Statics.FileDictionary.DoThreadFactory(_lvProjectVM, new WeakReference<ICreateFileDictStatus>(this));
@@ -68,7 +68,7 @@ namespace DoubleFile
             })
             {
                 Title = "Initializing Explorer",
-                WindowClosingCallback = new WeakReference<IWinProgressClosing>(this)
+                WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this)
             })
                 .ShowDialog();
 
@@ -83,7 +83,7 @@ namespace DoubleFile
             if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                 Statics.FileDictionary.IsAborted)
             {
-                WinProgress.WithWinProgress(w => w
+                ProgressOverlay.WithProgressOverlay(w => w
                     .Abort());
 
                 return;
@@ -91,7 +91,7 @@ namespace DoubleFile
 
             if (bDone)
             {
-                WinProgress.WithWinProgress(w => w
+                ProgressOverlay.WithProgressOverlay(w => w
                     .SetCompleted(_ksFileDictKey)
                     .CloseIfNatural());
 
@@ -99,7 +99,7 @@ namespace DoubleFile
             }
             else if (0 <= nProgress)
             {
-                WinProgress.WithWinProgress(w => w
+                ProgressOverlay.WithProgressOverlay(w => w
                     .SetProgress(_ksFileDictKey, nProgress));
             }
         }
@@ -112,7 +112,7 @@ namespace DoubleFile
             {
                 ClearMem_TreeForm();
 
-                WinProgress.WithWinProgress(w => w
+                ProgressOverlay.WithProgressOverlay(w => w
                     .Abort());
 
                 return;
@@ -128,7 +128,7 @@ namespace DoubleFile
             {
                 _rootNodes.Add(rootNode);
 
-                WinProgress.WithWinProgress(w => w
+                ProgressOverlay.WithProgressOverlay(w => w
                     .SetProgress(_ksFolderTreeKey, _rootNodes.Count * _knProgMult));
             }
         }
@@ -137,7 +137,7 @@ namespace DoubleFile
         {
             if (0 == _rootNodes.Count)
             {
-                WinProgress.CloseForced();
+                ProgressOverlay.CloseForced();
                 return;
             }
 
@@ -151,7 +151,7 @@ namespace DoubleFile
             var nProgress = 0d;
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
-                .LocalSubscribe(99761, x => WinProgress.WithWinProgress(w => w.SetProgress(_ksFolderTreeKey, (3 + nProgress) / 4))))
+                .LocalSubscribe(99761, x => ProgressOverlay.WithProgressOverlay(w => w.SetProgress(_ksFolderTreeKey, (3 + nProgress) / 4))))
             {
                 _allNodes = new List<LocalTreeNode> { };
 
@@ -170,7 +170,7 @@ namespace DoubleFile
                 if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
                     return;
 
-                WinProgress.WithWinProgress(w => w
+                ProgressOverlay.WithProgressOverlay(w => w
                     .SetCompleted(_ksFolderTreeKey));
 
                 collate.Step2();
@@ -221,13 +221,13 @@ namespace DoubleFile
             _allNodes.Sort((y, x) => x.NodeDatum.FolderScore[1].CompareTo(y.NodeDatum.FolderScore[1]));
             _bTreeDone = true;      // should preceed closing status dialog: returns true to the caller
 
-            WinProgress.WithWinProgress(w => w
+            ProgressOverlay.WithProgressOverlay(w => w
                 .CloseIfNatural());
 
             _dictNodes = null;      // saving memory here.
         }
 
-        bool IWinProgressClosing.ConfirmClose()
+        bool IProgressOverlayClosing.ConfirmClose()
         {
             if (false == Util.Closure(() =>
             {
@@ -246,7 +246,7 @@ namespace DoubleFile
                 Util.WriteLine("IWinProgressClosing.ConfirmClose A");
 
                 return              // from lambda Util.Closure
-                    (MessageBoxResult.Yes == WinProgress.WithWinProgress(w =>
+                    (MessageBoxResult.Yes == ProgressOverlay.WithProgressOverlay(w =>
                     MBoxStatic.ShowDialog("Do you want to cancel?", w.Title, MessageBoxButton.YesNo, w)));
             }))
             {

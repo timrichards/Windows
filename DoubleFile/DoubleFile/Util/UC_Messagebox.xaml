@@ -3,27 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
         Height="Auto" MinHeight="170">
-    <Grid Name="form_Grid" Background="White" Opacity="0">
-        <Grid.Triggers>
-            <EventTrigger RoutedEvent="local:UC_Messagebox.Shown">
-                <EventTrigger.Actions>
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <DoubleAnimation Storyboard.TargetProperty="(Grid.Opacity)" From="0" To="1" Duration="0:0:0.2"/>
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger.Actions>
-            </EventTrigger>
-            <EventTrigger RoutedEvent="local:UC_Messagebox.Hidden">
-                <EventTrigger.Actions>
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <DoubleAnimation Storyboard.TargetProperty="(Grid.Opacity)" From="1" To="0" Duration="0:0:0.2"/>
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger.Actions>
-            </EventTrigger>
-        </Grid.Triggers>
+    <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="28"/>
             <RowDefinition />

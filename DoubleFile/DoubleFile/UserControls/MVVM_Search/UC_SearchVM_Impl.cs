@@ -5,7 +5,7 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    partial class UC_SearchVM : IDisposable, ISearchStatus, IWinProgressClosing
+    partial class UC_SearchVM : IDisposable, ISearchStatus, IProgressOverlayClosing
     {
         internal Func<bool> IsEditBoxNonEmpty = null;
         bool IsSearchEnabled() => IsEditBoxNonEmpty() && (null == _searchType2);
@@ -106,7 +106,7 @@ namespace DoubleFile
 
             if (_bDisposed)
             {
-                WinProgress.CloseForced();
+                ProgressOverlay.CloseForced();
                 return;
             }
 
@@ -137,7 +137,7 @@ namespace DoubleFile
                         continue;
 
                     // first time through
-                    WinProgress.CloseForced();
+                    ProgressOverlay.CloseForced();
                     bClosed = true;
                 }
             }
@@ -153,10 +153,10 @@ namespace DoubleFile
             }
 
             if (false == bClosed)
-                WinProgress.CloseForced();
+                ProgressOverlay.CloseForced();
         }
 
-        bool IWinProgressClosing.ConfirmClose()
+        bool IProgressOverlayClosing.ConfirmClose()
         {
             _searchType2?.Abort();
             _searchType2 = null;
@@ -218,7 +218,7 @@ namespace DoubleFile
                 : LocalTV.AllNodes
                     .Where(treeNode => treeNode.Text.ToLower().Contains(SearchText));
 
-            (new WinProgress(new[] { "" }, new[] { _ksSearchKey }, x =>
+            (new ProgressOverlay(new[] { "" }, new[] { _ksSearchKey }, x =>
             {
                 Util.ThreadMake(() =>
                 {
@@ -243,7 +243,7 @@ namespace DoubleFile
                     if (blockingFrame.Continue)             // 1
                         blockingFrame.PushFrameTrue();
 
-                    WinProgress.CloseForced();
+                    ProgressOverlay.CloseForced();
 
                     if (ieLVitems.Any())
                         Util.UIthread(99816, () => Add(ieLVitems));
@@ -257,7 +257,7 @@ namespace DoubleFile
             if (GenerationStarting_And_FullPathFound(SearchText))
                 return;
 
-            (new WinProgress(new[] { "" }, new[] { _ksSearchKey }, x =>
+            (new ProgressOverlay(new[] { "" }, new[] { _ksSearchKey }, x =>
             {
                 _lsSearchResults = new List<SearchResults>();
 
@@ -275,7 +275,7 @@ namespace DoubleFile
                     .DoThreadFactory();
             })
             {
-                WindowClosingCallback = new WeakReference<IWinProgressClosing>(this)
+                WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this)
             })
                 .ShowDialog();
         }

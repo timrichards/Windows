@@ -11,7 +11,7 @@ using System.Windows.Input;
 
 namespace DoubleFile
 {
-    partial class WinProjectVM : IOpenListingFiles, IWinProgressClosing, IDisposable
+    partial class WinProjectVM : IOpenListingFiles, IProgressOverlayClosing, IDisposable
     {
         internal const string
             ListingFilter = "Double File Listing|*." + FileParse.ksFileExt_Listing + _ksAllFilesFilter;
@@ -175,16 +175,16 @@ namespace DoubleFile
 
             var strPlural = (1 < dlg.FileNames.Length) ? "s" : "";
 
-            new WinProgress(new[] { "Opening listing file" + strPlural }, new[] { "" }, winProgress =>
+            new ProgressOverlay(new[] { "Opening listing file" + strPlural }, new[] { "" }, winProgress =>
                 Util.ThreadMake(() =>
                 {
                     if (OpenListingFiles(dlg.FileNames, userCanceled: () => _bUserCanceled))
                         _lvVM.Unsaved = true;
 
-                    WinProgress.CloseForced();
+                    ProgressOverlay.CloseForced();
                 }))
             {
-                WindowClosingCallback = new WeakReference<IWinProgressClosing>(this)
+                WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this)
             }
                 .ShowDialog();
         }
@@ -277,7 +277,7 @@ namespace DoubleFile
         bool IOpenListingFiles.Callback(IEnumerable<string> ieFiles, bool bClearItems, Func<bool> userCanceled) =>
             OpenListingFiles(ieFiles, bClearItems, userCanceled);
 
-        bool IWinProgressClosing.ConfirmClose()
+        bool IProgressOverlayClosing.ConfirmClose()
         {
             _bUserCanceled |= (MessageBoxResult.Yes ==
                 MBoxStatic.ShowDialog("Do you want to cancel?", "Opening Listing Files", MessageBoxButton.YesNo));

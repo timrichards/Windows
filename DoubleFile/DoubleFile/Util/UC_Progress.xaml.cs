@@ -4,6 +4,7 @@ using System.Reactive.Linq;
 using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -59,31 +60,27 @@ namespace DoubleFile
 
         internal void ShowDialog()
         {
-            MainWindow.WithMainWindowA(mainWindow =>
-            {
-                mainWindow.Progress_Darken();
-                _lv.Init();
+            var mainWindow = (LocalModernWindowBase)Application.Current.MainWindow;
 
-                MainWindow.WithMainWindowA(w =>
-                {
-                    var ucProgress = w.GetProgressCtl();
+            mainWindow.Progress_Darken();
+            _lv.Init();
+
+            var ucProgress = mainWindow.GetProgressCtl();
                     
-                    ucProgress.DataContext = _lv;
-                    ucProgress.LocalShow();
+            ucProgress.DataContext = _lv;
+            ucProgress.LocalShow();
 
-                    Observable.Timer(TimeSpan.FromMilliseconds(50)).Timestamp()
-                        .LocalSubscribe(99787, x => Util.UIthread(99729, () => _initClient?.Invoke((ProgressOverlay)this)));
+            Observable.Timer(TimeSpan.FromMilliseconds(50)).Timestamp()
+                .LocalSubscribe(99787, x => Util.UIthread(99729, () => _initClient?.Invoke((ProgressOverlay)this)));
 
-                    _dispatcherFrame.PushFrameTrue();
-                    ucProgress.LocalHide();
-                });
+            _dispatcherFrame.PushFrameTrue();
+            ucProgress.LocalHide();
 
-                if (_bWentModeless)
-                    return;
+            if (_bWentModeless)
+                return;
 
-                mainWindow.Progress_Undarken();
-                _lv.Dispose();
-            });
+            mainWindow.Progress_Undarken();
+            _lv.Dispose();
         }
     }
 

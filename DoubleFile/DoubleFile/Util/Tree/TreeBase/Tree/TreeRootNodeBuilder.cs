@@ -278,13 +278,13 @@ namespace DoubleFile
                 StatusCallback(_lvItemProjectVM, rootTreeNode);
 
 #if (DEBUG && FOOBAR)
-                Util.WriteLine("" + _lvItemProjectVM.ListingFile.ReadLines().Where(s => s.StartsWith(ksLineType_File)).Sum(s => (decimal)(s.Split('\t')[knColLength]).ToUlong()));
-                Util.WriteLine("" + _lvItemProjectVM.ListingFile.ReadLines().Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => (decimal)(s.Split('\t')[knColLength]).ToUlong()));
+                Util.WriteLine("" + _lvItemProjectVM.ListingFile.ReadLines(99787).Where(s => s.StartsWith(ksLineType_File)).Sum(s => (decimal)(s.Split('\t')[knColLength]).ToUlong()));
+                Util.WriteLine("" + _lvItemProjectVM.ListingFile.ReadLines(99728).Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => (decimal)(s.Split('\t')[knColLength]).ToUlong()));
 
                 ulong nScannedLength = 0;
 
                 _lvItemProjectVM.ListingFile
-                    .ReadLines()
+                    .ReadLines(99639)
                     .Where(s => s.StartsWith(ksLineType_Length))
                     .FirstOnlyAssert(s => nScannedLength = (s.Split('\t')[knColLength]).ToUlong());
 

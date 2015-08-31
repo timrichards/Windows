@@ -13,12 +13,33 @@ namespace DoubleFile
 {
     class UC_TreeMapVM : SliderVM_Base<ListViewItemVM_Base>, IDisposable
     {
-        public static double BitmapSize => 2048;
+        public const double BitmapSize = 2048;
 
-        public double SelectionLeft { get { return _selectionLeft; } private set { _selectionLeft = value; RaisePropertyChanged(); } } double _selectionLeft = 0;
-        public double SelectionWidth { get { return _selectionWidth; } private set { _selectionWidth = value; RaisePropertyChanged(); } } double _selectionWidth = 0;
-        public double SelectionTop { get { return _selectionTop; } private set { _selectionTop = value; RaisePropertyChanged(); } } double _selectionTop = 0;
-        public double SelectionHeight { get { return _selectionHeight; } private set { _selectionHeight = value; RaisePropertyChanged(); } } double _selectionHeight = 0;
+        public double SelectionLeft { get; private set; }
+        public double SelectionWidth { get; private set; }
+        public double SelectionTop { get; private set; }
+        public double SelectionHeight { get; private set; }
+        LocalTreeNode
+            SelChildNode
+        {
+            get { return _selChildNode; }
+            set
+            {
+                var sz = new SizeF((float)BitmapSize / _rectBitmap.Width, (float)BitmapSize / _rectBitmap.Height);
+                var rect = value?.NodeDatum.TreeMapRect.Scale(sz) ?? default(Rectangle);
+
+                SelectionLeft = rect.Left;
+                SelectionTop = rect.Top;
+                SelectionWidth = rect.Width;
+                SelectionHeight = rect.Height;
+                RaisePropertyChanged("SelectionLeft");
+                RaisePropertyChanged("SelectionTop");
+                RaisePropertyChanged("SelectionWidth");
+                RaisePropertyChanged("SelectionHeight");
+                _selChildNode = value;
+            }
+        }
+        LocalTreeNode _selChildNode = null;
 
         [DllImport("gdi32")]
         static extern int DeleteObject(IntPtr o);
@@ -81,9 +102,6 @@ namespace DoubleFile
 
             _lsDisposable.Add(LV_TreeListChildrenVM.TreeListChildSelected.LocalSubscribe(99695, LV_TreeListChildrenVM_TreeListChildSelected));
             _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.Observable.LocalSubscribe(99694, LV_FilesVM_SelectedFileChanged));
-
-            // Stuff below was in the OnLoad method
-
             _lsDisposable.Add(TreeNodeCallback.LocalSubscribe(99692, TreeMapVM_TreeNodeCallback));
         }
 
@@ -99,7 +117,7 @@ namespace DoubleFile
 
         internal void form_tmapUserCtl_MouseUp(System.Windows.Point ptLocation)
         {
-            var treeNode = ZoomOrTooltip(new System.Drawing.Point((int)(ptLocation.X * _rectBitmap.Width), (int)(ptLocation.Y * _rectBitmap.Height)));
+            var treeNode = ZoomOrTooltip(new Point((int)(ptLocation.X * _rectBitmap.Width), (int)(ptLocation.Y * _rectBitmap.Height)));
 
             if (null != treeNode)
                 LocalTV.SelectedNode = treeNode;
@@ -1100,25 +1118,6 @@ namespace DoubleFile
             _rectCenter = Rectangle.Empty;
         DateTime
             _dtHideGoofball = DateTime.MinValue;
-
-        // selection
-        LocalTreeNode
-            SelChildNode
-        {
-            get { return _selChildNode; }
-            set
-            {
-                var sz = new SizeF((float)BitmapSize / _rectBitmap.Width, (float)BitmapSize / _rectBitmap.Height);
-                var rect = value?.NodeDatum.TreeMapRect.Scale(sz) ?? default(Rectangle);
-
-                SelectionLeft = rect.Left;
-                SelectionTop = rect.Top;
-                SelectionWidth = rect.Width;
-                SelectionHeight = rect.Height;
-                _selChildNode = value;
-            }
-        }
-        LocalTreeNode _selChildNode = null;
 
         LocalTreeNode
             _prevNode = null;

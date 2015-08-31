@@ -145,6 +145,7 @@
     <Reference Include="FirstFloor.ModernUI">
       <HintPath>..\packages\ModernUI.WPF.1.0.6\lib\net45\FirstFloor.ModernUI.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Expression.Drawing, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
@@ -584,6 +585,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="_Scracthpad.txt" />
     <Resource Include="Assets\ic_assistant_photo_white_18dp.png" />
     <Resource Include="Assets\ic_content_copy_white_18dp.png" />
     <Resource Include="Assets\ic_folder_open_white_18dp.png" />

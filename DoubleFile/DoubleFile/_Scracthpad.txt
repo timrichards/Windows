@@ -1,0 +1,147 @@
+                    <Canvas.Resources>
+                        <Storyboard x:Key="Storyboard1" RepeatBehavior="Forever">
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" Storyboard.TargetName="form_Goofball">
+                                <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="180"/>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </Canvas.Resources>
+                    <Canvas.Triggers>
+                        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                            <BeginStoryboard Storyboard="{StaticResource Storyboard1}"/>
+                        </EventTrigger>
+                    </Canvas.Triggers>
+                    <Grid x:Name="form_Goofball" Width="24" Height="24" RenderTransformOrigin="0.5,0.5" Visibility="Collapsed">
+                        <Grid.RenderTransform>
+                            <RotateTransform/>
+                        </Grid.RenderTransform>
+                        <Ellipse HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Ellipse.Fill>
+                                <RadialGradientBrush>
+                                    <GradientStop Color="Transparent"/>
+                                    <GradientStop Color="White" Offset="6"/>
+                                </RadialGradientBrush>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                        <Grid Margin="3">
+                            <Ellipse HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Stroke="Black" Margin="5">
+                                <Ellipse.Fill>
+                                    <RadialGradientBrush>
+                                        <GradientStop Color="Black"/>
+                                        <GradientStop Color="Transparent" Offset="1"/>
+                                    </RadialGradientBrush>
+                                </Ellipse.Fill>
+                            </Ellipse>
+                            <ed:Arc ArcThickness="1" ArcThicknessUnit="Percent" Margin="0" Stretch="None" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <ed:Arc.Fill>
+                                    <RadialGradientBrush GradientOrigin="0,1" Center="0,1" RadiusX="1" RadiusY="1">
+                                        <GradientStop Color="Transparent" Offset="1"/>
+                                        <GradientStop Color="White" Offset=".25"/>
+                                    </RadialGradientBrush>
+                                </ed:Arc.Fill>
+                            </ed:Arc>
+                            <ed:Arc ArcThickness="1" ArcThicknessUnit="Percent" Margin="0" Stretch="None" StartAngle="180" EndAngle="270" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <ed:Arc.Fill>
+                                    <RadialGradientBrush GradientOrigin="1,0" Center="1,0" RadiusX="1" RadiusY="1">
+                                        <GradientStop Color="Transparent" Offset="1"/>
+                                        <GradientStop Color="White" Offset=".25"/>
+                                    </RadialGradientBrush>
+                                </ed:Arc.Fill>
+                            </ed:Arc>
+                            <ed:Arc ArcThickness="1" ArcThicknessUnit="Percent" Margin="0" Stretch="None" StartAngle="90" EndAngle="180" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <ed:Arc.Fill>
+                                    <RadialGradientBrush GradientOrigin="0,0" Center="0,0" RadiusX="1" RadiusY="1">
+                                        <GradientStop Color="Black" Offset=".25"/>
+                                        <GradientStop Color="Transparent" Offset="1"/>
+                                    </RadialGradientBrush>
+                                </ed:Arc.Fill>
+                            </ed:Arc>
+                            <ed:Arc ArcThickness="1" ArcThicknessUnit="Percent" Margin="0" Stretch="None" StartAngle="270" EndAngle="360" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <ed:Arc.Fill>
+                                    <RadialGradientBrush GradientOrigin="1,1" Center="1,1" RadiusX="1" RadiusY="1">
+                                        <GradientStop Color="Black" Offset=".25" />
+                                        <GradientStop Color="Transparent" Offset="1"/>
+                                    </RadialGradientBrush>
+                                </ed:Arc.Fill>
+                            </ed:Arc>
+                        </Grid>
+                    </Grid>
+
+
+
+
+            //_lsDisposable.Add(Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(33)).Timestamp()    // 30 FPS
+            //    .LocalSubscribe(99693, x =>
+            //{
+            //    if (Rectangle.Empty == _rectCenter)
+            //        return;         // from lambda
+
+            //    ++_nAnimFrame;
+
+            //    if (0 == _nInvalidateRef)
+            //        Invalidate(_rectCenter);
+            //}));
+
+
+
+
+        //void OnPaint(PaintEventArgs e)
+        //{
+        //    if (null != _selChildNode)
+        //    {
+        //        e.Graphics.FillRectangle(
+        //            new SolidBrush(Color.FromArgb(64, 0, 0, 0)),
+        //            _selChildNode.NodeDatum.TreeMapRect.Scale(_sizeTranslate));
+        //    }
+
+        //    if ((null == _deepNodeDrawn) ||
+        //        ReferenceEquals(_deepNodeDrawn, TreeNode))
+        //    {
+        //        _rectCenter = Rectangle.Empty;
+        //        return;
+        //    }
+
+        //    if (DateTime.MinValue != _dtHideGoofball)
+        //        return;
+
+        //    var nodeDatum = _deepNodeDrawn.NodeDatum;
+
+        //    if (null == nodeDatum)      // added 2/13/15
+        //    {
+        //        Util.Assert(99965, false);
+        //        return;
+        //    }
+
+        //    RectangleF r = 
+        //        nodeDatum.TreeMapRect
+        //        .Scale(_sizeTranslate);
+
+        //    r.Inflate(-r.Width / 2 + 15, -r.Height / 2 + 15);
+        //    _rectCenter = Rectangle.Ceiling(r);
+
+        //    var path = new GraphicsPath();
+
+        //    path.AddEllipse(_rectCenter);
+
+        //    var brush = new PathGradientBrush(path)
+        //    {
+        //        CenterColor = Color.White,
+        //        SurroundColors = new[] { Color.FromArgb(0, 0, 0, 0) }
+        //    };
+
+        //    e.Graphics.FillEllipse(brush, _rectCenter);
+        //    r.Inflate(-r.Width / 5, -r.Height / 5);
+
+        //    var r_A = Rectangle.Ceiling(r);
+        //    var nAnimFrame = (_nAnimFrame %= 6) * 30;
+
+        //    brush.CenterColor = Color.White;
+        //    brush.SurroundColors = new[] { Color.Black };
+        //    e.Graphics.FillPie(brush, r_A, 90 + nAnimFrame, 90);
+        //    e.Graphics.FillPie(brush, r_A, 270 + nAnimFrame, 90);
+        //    brush.CenterColor = Color.Black;
+        //    brush.SurroundColors = new[] { Color.White };
+        //    e.Graphics.FillPie(brush, r_A, 0 + nAnimFrame, 90);
+        //    e.Graphics.FillPie(brush, r_A, 180 + nAnimFrame, 90);
+        //}
+

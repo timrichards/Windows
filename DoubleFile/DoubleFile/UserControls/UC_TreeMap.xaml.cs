@@ -41,7 +41,13 @@ namespace DoubleFile
                 .LocalSubscribe(99697, args =>
             {
                 if (bMouseDown)
-                    _ucTreeMap.form_tmapUserCtl_MouseUp(args.EventArgs.GetPosition(this));
+                {
+                    var pt = args.EventArgs.GetPosition(form_Canvas);
+
+                    pt.X /= form_Canvas.ActualWidth;
+                    pt.Y /= form_Canvas.ActualHeight;
+                    _ucTreeMap.form_tmapUserCtl_MouseUp(pt);
+                }
 
                 bMouseDown = false;
             }));

@@ -70,15 +70,14 @@ namespace DoubleFile
             ucProgress.DataContext = _lv;
             ucProgress.LocalShow();
 
-            Observable.Timer(TimeSpan.FromMilliseconds(50)).Timestamp()
-                .LocalSubscribe(99787, x => Util.UIthread(99729, () => _initClient?.Invoke((ProgressOverlay)this)));
+            Util.UIthread(99729, () => _initClient?.Invoke((ProgressOverlay)this));
 
             _dispatcherFrame.PushFrameTrue();
-            ucProgress.LocalHide();
 
             if (_bWentModeless)
                 return;
 
+            ucProgress.LocalHide();
             mainWindow.Progress_Undarken();
             _lv.Dispose();
         }

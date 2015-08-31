@@ -3,21 +3,28 @@ using System.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Drawing.Drawing2D;
 using System.Threading;
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices;
+using System.Drawing.Drawing2D;
 
 namespace DoubleFile
 {
     class UC_TreeMapVM : SliderVM_Base<ListViewItemVM_Base>, IDisposable
     {
+        public static double BitmapSize => 2048;
+
+        public double SelectionLeft { get { return _selectionLeft; } private set { _selectionLeft = value; RaisePropertyChanged(); } } double _selectionLeft = 0;
+        public double SelectionWidth { get { return _selectionWidth; } private set { _selectionWidth = value; RaisePropertyChanged(); } } double _selectionWidth = 0;
+        public double SelectionTop { get { return _selectionTop; } private set { _selectionTop = value; RaisePropertyChanged(); } } double _selectionTop = 0;
+        public double SelectionHeight { get { return _selectionHeight; } private set { _selectionHeight = value; RaisePropertyChanged(); } } double _selectionHeight = 0;
+
         [DllImport("gdi32")]
         static extern int DeleteObject(IntPtr o);
 
-        public System.Windows.Media.Brush
-            Background
+        public System.Windows.Media.ImageSource
+            TreeMapImage
         {
             get
             {
@@ -26,22 +33,19 @@ namespace DoubleFile
 
                 var hBitmap =  _BackgroundImage.GetHbitmap();
 
-                var imageBrush = new System.Windows.Media.ImageBrush
-                {
-                    ImageSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                        hBitmap, 
-                        IntPtr.Zero,
-                        System.Windows.Int32Rect.Empty, 
-                        System.Windows.Media.Imaging.BitmapSizeOptions.FromWidthAndHeight(_BackgroundImage.Width, _BackgroundImage.Height))
-                };
+                var imageSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                    hBitmap,
+                    IntPtr.Zero,
+                    System.Windows.Int32Rect.Empty,
+                    System.Windows.Media.Imaging.BitmapSizeOptions.FromWidthAndHeight(_BackgroundImage.Width, _BackgroundImage.Height));
 
                 DeleteObject(hBitmap);
-                return imageBrush;
+                return imageSource;
             }
         }
         Bitmap _BackgroundImage;
 
-        void Invalidate(Rectangle r = default(Rectangle)) => RaisePropertyChanged("Background");
+        void Invalidate(Rectangle r = default(Rectangle)) => RaisePropertyChanged("TreeMapImage");
 
         internal override int NumCols => 0;
 
@@ -80,18 +84,6 @@ namespace DoubleFile
 
             // Stuff below was in the OnLoad method
 
-            _lsDisposable.Add(Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(33)).Timestamp()    // 30 FPS
-                .LocalSubscribe(99693, x =>
-            {
-                if (Rectangle.Empty == _rectCenter)
-                    return;         // from lambda
-
-                ++_nAnimFrame;
-
-                if (0 == _nInvalidateRef)
-                    Invalidate(_rectCenter);
-            }));
-
             _lsDisposable.Add(TreeNodeCallback.LocalSubscribe(99692, TreeMapVM_TreeNodeCallback));
         }
 
@@ -107,7 +99,7 @@ namespace DoubleFile
 
         internal void form_tmapUserCtl_MouseUp(System.Windows.Point ptLocation)
         {
-            var treeNode = ZoomOrTooltip(new Point((int)ptLocation.X, (int)ptLocation.Y));
+            var treeNode = ZoomOrTooltip(new System.Drawing.Point((int)(ptLocation.X * _rectBitmap.Width), (int)(ptLocation.Y * _rectBitmap.Height)));
 
             if (null != treeNode)
                 LocalTV.SelectedNode = treeNode;
@@ -126,7 +118,7 @@ namespace DoubleFile
             if (false == bDontCloseTooltip)
                 WinTooltip.CloseTooltip();  // CloseTooltip callback recurses here hence _bClearingSelection
 
-            _selChildNode = null;
+            SelChildNode = null;
 
             if (0 == _nInvalidateRef)
                 Invalidate();
@@ -144,12 +136,12 @@ namespace DoubleFile
                 _bg = null;
                 WinTooltip.CloseTooltip();
                 _deepNodeDrawn = null;
-                _selChildNode = null;
+                this.SelChildNode = null;
                 _prevNode = null;
             });
         }
 
-        internal LocalTreeNode ZoomOrTooltip(Point pt_in)
+        internal LocalTreeNode ZoomOrTooltip(Point pt)
         {
             if (_bTreeSelect ||
                 _bSelRecAndTooltip)
@@ -162,7 +154,7 @@ namespace DoubleFile
             if (null == TreeNode)
                 return null;
 
-            if (_rectCenter.Contains(pt_in))   // click once to hide goofball. Click again within 5 seconds to return to the deep node.
+            if (_rectCenter.Contains(pt))   // click once to hide goofball. Click again within 5 seconds to return to the deep node.
             {
                 if (DateTime.MinValue == _dtHideGoofball)
                 {
@@ -178,7 +170,6 @@ namespace DoubleFile
 
             _dtHideGoofball = DateTime.MinValue;   // click anywhere else on the treemap and the goofball returns.
 
-            var pt = Point.Ceiling(new PointF(pt_in.X / _sizeTranslate.Width, pt_in.Y / _sizeTranslate.Height));
             LocalTreeNode nodeRet = null;
             var bFilesHere = false;
             var bVolumeView = false;
@@ -320,7 +311,7 @@ namespace DoubleFile
                 return;
             }
 
-            if (_selChildNode == treeNodeChild)
+            if (SelChildNode == treeNodeChild)
                 return;
 
             _bSelRecAndTooltip = true;
@@ -345,7 +336,7 @@ namespace DoubleFile
                     () => ClearSelection(bDontCloseTooltip: true)),
                 treeNodeChild);
 
-            _selChildNode = treeNodeChild;
+            SelChildNode = treeNodeChild;
             _prevNode = treeNodeChild;
 
             if (0 == _nInvalidateRef)   // jic
@@ -484,69 +475,8 @@ namespace DoubleFile
             };
         }
 
-        void OnPaint(PaintEventArgs e)
-        {
-            if (null != _selChildNode)
-            {
-                e.Graphics.FillRectangle(
-                    new SolidBrush(Color.FromArgb(64, 0, 0, 0)),
-                    _selChildNode.NodeDatum.TreeMapRect.Scale(_sizeTranslate));
-            }
-
-            if ((null == _deepNodeDrawn) ||
-                ReferenceEquals(_deepNodeDrawn, TreeNode))
-            {
-                _rectCenter = Rectangle.Empty;
-                return;
-            }
-
-            if (DateTime.MinValue != _dtHideGoofball)
-                return;
-
-            var nodeDatum = _deepNodeDrawn.NodeDatum;
-
-            if (null == nodeDatum)      // added 2/13/15
-            {
-                Util.Assert(99965, false);
-                return;
-            }
-
-            RectangleF r = 
-                nodeDatum.TreeMapRect
-                .Scale(_sizeTranslate);
-
-            r.Inflate(-r.Width / 2 + 15, -r.Height / 2 + 15);
-            _rectCenter = Rectangle.Ceiling(r);
-
-            var path = new GraphicsPath();
-
-            path.AddEllipse(_rectCenter);
-
-            var brush = new PathGradientBrush(path)
-            {
-                CenterColor = Color.White,
-                SurroundColors = new[] { Color.FromArgb(0, 0, 0, 0) }
-            };
-
-            e.Graphics.FillEllipse(brush, _rectCenter);
-            r.Inflate(-r.Width / 5, -r.Height / 5);
-
-            var r_A = Rectangle.Ceiling(r);
-            var nAnimFrame = (_nAnimFrame %= 6) * 30;
-
-            brush.CenterColor = Color.White;
-            brush.SurroundColors = new[] { Color.Black };
-            e.Graphics.FillPie(brush, r_A, 90 + nAnimFrame, 90);
-            e.Graphics.FillPie(brush, r_A, 270 + nAnimFrame, 90);
-            brush.CenterColor = Color.Black;
-            brush.SurroundColors = new[] { Color.White };
-            e.Graphics.FillPie(brush, r_A, 0 + nAnimFrame, 90);
-            e.Graphics.FillPie(brush, r_A, 180 + nAnimFrame, 90);
-        }
-
         internal void OnSizeChanged(EventArgs e)
         {
-            TranslateSize();
             _prevNode = null;
             ClearSelection();
         }
@@ -588,7 +518,7 @@ namespace DoubleFile
                 DeepNode = treeNode;
 
             var nPxPerSide = (treeNode.SelectedImageIndex < 0)
-                ? 2048
+                ? (int)BitmapSize
                 : treeNode.SelectedImageIndex;
 
             if ((null == _bg?.Graphics) ||
@@ -604,7 +534,6 @@ namespace DoubleFile
                 bgcontext.MaximumBuffer = _rectBitmap.Size;
                 _bg?.Dispose();
                 _bg = bgcontext.Allocate(Graphics.FromImage(_BackgroundImage), _rectBitmap);
-                TranslateSize();
                 Util.WriteLine("Size bitmap " + nPxPerSide + " " + (DateTime.Now - dtStart_A).TotalMilliseconds / 1000d + " seconds.");
             }
 
@@ -639,7 +568,7 @@ namespace DoubleFile
                catch (ArgumentException) { Util.Assert(99979, false); }
             });
 
-            _selChildNode = null;
+            SelChildNode = null;
             _prevNode = null;
             _dtHideGoofball = DateTime.MinValue;
 
@@ -649,14 +578,6 @@ namespace DoubleFile
                     (((treeNode.SelectedImageIndex < 0) ? _rectBitmap.Size.Width : treeNode.SelectedImageIndex)
                     * .75), 256);
             }
-        }
-
-        void TranslateSize()
-        {
-            SizeF sizeBitmap = _rectBitmap.Size;
-            SizeF size = new SizeF(2048, 2048);
-
-            _sizeTranslate = new SizeF(size.Width / sizeBitmap.Width, size.Height / sizeBitmap.Height);
         }
 
         // treemap.cpp	- Implementation of CColorSpace, CTreemap and CTreemapPreview
@@ -1159,8 +1080,6 @@ namespace DoubleFile
             _bg = null;
         Rectangle
             _rectBitmap = Rectangle.Empty;
-        SizeF
-            _sizeTranslate = SizeF.Empty;
         int
             _nInvalidateRef = 0;
         bool
@@ -1181,12 +1100,26 @@ namespace DoubleFile
             _rectCenter = Rectangle.Empty;
         DateTime
             _dtHideGoofball = DateTime.MinValue;
-        int
-            _nAnimFrame = 0;
 
         // selection
         LocalTreeNode
-            _selChildNode = null;
+            SelChildNode
+        {
+            get { return _selChildNode; }
+            set
+            {
+                var sz = new SizeF((float)BitmapSize / _rectBitmap.Width, (float)BitmapSize / _rectBitmap.Height);
+                var rect = value?.NodeDatum.TreeMapRect.Scale(sz) ?? default(Rectangle);
+
+                SelectionLeft = rect.Left;
+                SelectionTop = rect.Top;
+                SelectionWidth = rect.Width;
+                SelectionHeight = rect.Height;
+                _selChildNode = value;
+            }
+        }
+        LocalTreeNode _selChildNode = null;
+
         LocalTreeNode
             _prevNode = null;
 

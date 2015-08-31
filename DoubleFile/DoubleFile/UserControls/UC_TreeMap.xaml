@@ -2,13 +2,21 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
+        xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
         LocalTitle="Tree Map">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <Canvas Background="{Binding Background}" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        <Viewbox Grid.Column="0" Stretch="Fill">
+            <Grid Width="{x:Static local:UC_TreeMapVM.BitmapSize}" Height="{x:Static local:UC_TreeMapVM.BitmapSize}">
+                <Image Source="{Binding TreeMapImage}"/>
+                <Canvas Name="form_Canvas">
+                    <Rectangle Fill="Black" Opacity=".4" Canvas.Left="{Binding SelectionLeft}" Canvas.Top="{Binding SelectionTop}" Width="{Binding SelectionWidth}" Height="{Binding SelectionHeight}"/>
+                </Canvas>
+            </Grid>
+        </Viewbox>
         <Slider Name="form_slider" Grid.Column="1" Value="{Binding Value}" Maximum="{Binding Maximum}"
                 IsSnapToTickEnabled="True"
                 LargeChange="1" SmallChange="1" TickFrequency="1"

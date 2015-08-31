@@ -41,6 +41,7 @@ namespace DoubleFile
                 return;
             }
 
+            LocalTV.WithLocalTV(localTV => localTV.LocalDispose());     // use-case: back button/backspace key
             LocalTV.FactoryCreate(lvProjectVM);
 
             if (null == LocalTV.TopNode)

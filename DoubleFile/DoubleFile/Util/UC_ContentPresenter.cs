@@ -10,7 +10,7 @@ namespace DoubleFile
     /// </summary>
     public partial class UC_ContentPresenter : UserControl
     {
-        public bool AllowFade { private get; set; } = true;
+        public bool InitiallyHidden { private get; set; } = true;
 
         public static readonly RoutedEvent
             ShownEvent = EventManager.RegisterRoutedEvent("Shown", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(UC_ContentPresenter));
@@ -29,7 +29,7 @@ namespace DoubleFile
             remove { RemoveHandler(HiddenEvent, value); }
         }
 
-        void MakeFadeTrigger(Grid grid, RoutedEvent evt, double fromValue, double toValue)
+        void MakeFadeTrigger(RoutedEvent evt, double fromValue, double toValue)
         {
             var animation = new DoubleAnimation(fromValue, toValue, new Duration(TimeSpan.FromMilliseconds(200)));
 
@@ -42,7 +42,7 @@ namespace DoubleFile
             var trigger = new EventTrigger(evt);
 
             trigger.Actions.Add(new BeginStoryboard { Storyboard = storyboard });
-            grid.Triggers.Add(trigger);
+            _grid.Triggers.Add(trigger);
         }
 
         protected override void OnInitialized(EventArgs e)
@@ -52,11 +52,11 @@ namespace DoubleFile
             _grid.Children.Add(new ContentPresenter { Content = Content });
             Content = _grid;
 
-            if (false == AllowFade)
+            if (false == InitiallyHidden)
                 return;
 
-            MakeFadeTrigger(_grid, ShownEvent, 0, 1);
-            MakeFadeTrigger(_grid, HiddenEvent, 1, 0);
+            MakeFadeTrigger(ShownEvent, 0, 1);
+            MakeFadeTrigger(HiddenEvent, 1, 0);
             _grid.Opacity = 0;
             Visibility = Visibility.Collapsed;
         }

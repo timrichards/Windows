@@ -4,18 +4,16 @@ using System.Linq;
 using System.Threading;
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media;
 
 namespace DoubleFile
 {
-    class LVitem_RectVM : ListViewItemVM_Base
+    class TreeMapFolderRect
     {
-        public double X => _rc.X;
-        public double Y => _rc.Y;
-        public double Width => _rc.Width;
-        public double Height => _rc.Height;
+        internal GeometryDrawing
+            GeometryDrawing => new GeometryDrawing(Fill, new Pen(Brushes.Black, 1), new RectangleGeometry(_rc));
+
         Rect _rc = default(Rect);
 
         public Brush
@@ -28,25 +26,19 @@ namespace DoubleFile
             : UtilColor.FromArgb(_fill.Value))));
         int? _fill = null;
 
-        internal LVitem_RectVM(Rect rc, int? fill = null)
+        internal TreeMapFolderRect(Rect rc, int? fill = null)
         {
             _rc = rc;
 
             if (null != fill)
                 _fill = fill.Value;
         }
-
-        internal LVitem_RectVM Clone() => (LVitem_RectVM)MemberwiseClone();
-
-        protected override IReadOnlyList<string> _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
-        static IReadOnlyList<string> _propNamesA = null;
-
-        internal override int NumCols => NumCols_;
-        internal const int NumCols_ = 0;
     }
 
-    class UC_TreeMapVM : SliderVM_Base<LVitem_RectVM>, IDisposable
+    class UC_TreeMapVM : SliderVM_Base<ListViewItemVM_Base>, IDisposable
     {
+        public DrawingGroup TreeMapDrawing { get; private set; }
+
         public const double BitmapSize = 2048;
 
         public double SelectionLeft { get; private set; }
@@ -76,9 +68,6 @@ namespace DoubleFile
             }
         }
         LocalTreeNode _selChildNode = null;
-
-        [DllImport("gdi32")]
-        static extern int DeleteObject(IntPtr o);
 
         internal override int NumCols => 0;
 
@@ -130,7 +119,7 @@ namespace DoubleFile
             --_nInvalidateRef;
 
             if (0 == _nInvalidateRef)
-                RaisePropertyChanged("Items");
+                RaisePropertyChanged("TreeMapDrawing");
         }
 
         internal void MouseUp(Point ptLocation)
@@ -157,7 +146,7 @@ namespace DoubleFile
             SelChildNode = null;
 
             if (0 == _nInvalidateRef)
-                RaisePropertyChanged("Items");
+                RaisePropertyChanged("TreeMapDrawing");
 
             _bClearingSelection = false;
         }
@@ -361,7 +350,7 @@ namespace DoubleFile
             _prevNode = treeNodeChild;
 
             if (0 == _nInvalidateRef)   // jic
-                RaisePropertyChanged("Items");
+                RaisePropertyChanged("TreeMapDrawing");
 
             if (LV_TreeListChildrenVM.kChildSelectedOnNext != nInitiator)
                 _bTreeSelect = TreeSelect.DoThreadFactory(nodeTreeSelect, nInitiator);
@@ -551,7 +540,12 @@ namespace DoubleFile
                 if (null == _ieRenderActions)
                     return;     // from lambda
 
-                Add(_ieRenderActions);
+                TreeMapDrawing = new DrawingGroup();
+
+                foreach (var render in _ieRenderActions)
+                    TreeMapDrawing.Children.Add(render.GeometryDrawing);
+
+                RaisePropertyChanged("TreeMapDrawing");
 
                 if (null != LocalOwner)
                     LocalOwner.Title = treeNode.Text;
@@ -585,7 +579,7 @@ namespace DoubleFile
         //
         // Last modified: $Date: 2004/11/05 16:53:08 $
         
-        IEnumerable<LVitem_RectVM> DrawTreemap()
+        IEnumerable<TreeMapFolderRect> DrawTreemap()
         {
             _deepNodeDrawn = null;
 
@@ -608,16 +602,16 @@ namespace DoubleFile
             return
                 (nodeDatum.TotalLength > 0)
                 ? new Recurse().Render(TreeNode, rc, DeepNode, out _deepNodeDrawn)
-                : new[] { new LVitem_RectVM(rc, Colors.Wheat.ToArgb()) };
+                : new[] { new TreeMapFolderRect(rc, Colors.Wheat.ToArgb()) };
         }
 
         class Recurse
         {
-            internal IEnumerable<LVitem_RectVM>
+            internal IEnumerable<TreeMapFolderRect>
                 Render(LocalTreeNode item, Rect rc, LocalTreeNode deepNode, out LocalTreeNode deepNodeDrawn_out)
             {
-                _lsRenderActions = new ConcurrentBag<LVitem_RectVM>();
-                _lsFrames = new ConcurrentBag<LVitem_RectVM>();
+                _lsRenderActions = new ConcurrentBag<TreeMapFolderRect>();
+                _lsFrames = new ConcurrentBag<TreeMapFolderRect>();
                 _deepNode = deepNode;
                 RecurseDrawGraph(item, rc, true);
 
@@ -657,7 +651,7 @@ namespace DoubleFile
                     rc.Height < 32)
                 {
                     // Speedup. Draw an "empty" folder in place of too much detail
-                    _lsRenderActions.Add(new LVitem_RectVM(rc, item.ForeColor));
+                    _lsRenderActions.Add(new TreeMapFolderRect(rc, item.ForeColor));
                     return;
                 }
 
@@ -778,7 +772,7 @@ namespace DoubleFile
                 }
 
                 // There are no children. Draw a file or an empty folder.
-                _lsRenderActions.Add(new LVitem_RectVM(rc, item.ForeColor));
+                _lsRenderActions.Add(new TreeMapFolderRect(rc, item.ForeColor));
             }
 
             //My first approach was to make this member pure virtual and have three
@@ -907,7 +901,7 @@ namespace DoubleFile
                         );
 
                         if (bStart)
-                            _lsFrames.Add(new LVitem_RectVM(rcChild));
+                            _lsFrames.Add(new TreeMapFolderRect(rcChild));
 
                         if (lastChild)
                         {
@@ -1014,9 +1008,9 @@ namespace DoubleFile
                 return rowHeight;
             }
 
-            ConcurrentBag<LVitem_RectVM>
+            ConcurrentBag<TreeMapFolderRect>
                 _lsRenderActions = null;
-            ConcurrentBag<LVitem_RectVM>
+            ConcurrentBag<TreeMapFolderRect>
                 _lsFrames = null;
             LocalTreeNode
                 _deepNode = null;
@@ -1043,7 +1037,7 @@ namespace DoubleFile
             _bSelRecAndTooltip = false;
 
         // Recurse class
-        IEnumerable<LVitem_RectVM>
+        IEnumerable<TreeMapFolderRect>
             _ieRenderActions = null;
         LocalTreeNode
             _deepNodeDrawn = null;

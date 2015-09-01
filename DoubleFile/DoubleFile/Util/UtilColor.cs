@@ -9,7 +9,7 @@ namespace DoubleFile
         static internal readonly IReadOnlyDictionary<int, string>
             Descriptions = new Dictionary<int, string>
         {
-            {Transparent,             ""},
+            {Transparent,       ""},
             {LightBlue,         "This folder has multiple copies on at least two separate volumes."},
             {DarkGray,          ""},						            // ignore list
             {DarkKhaki,         ""},						            // Treemap: Folder containing files

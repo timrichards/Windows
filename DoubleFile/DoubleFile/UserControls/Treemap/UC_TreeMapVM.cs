@@ -6,24 +6,34 @@ using System.Collections.Concurrent;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace DoubleFile
 {
     class TreeMapFolderRect
     {
         internal GeometryDrawing
-            GeometryDrawing => new GeometryDrawing(Fill, new Pen(Brushes.Black, 1), new RectangleGeometry(_rc));
+            GeometryDrawing
+        {
+            get
+            {
+                var retVal = new GeometryDrawing(Fill, new Pen(Brushes.Black, .25), new RectangleGeometry(_rc));
+                    
+                retVal.Freeze();
+                return retVal;
+            }
+        }
 
         Rect _rc = default(Rect);
 
-        public Brush
+        Brush
             Fill =>
             (null == _fill)
             ? Brushes.Transparent
             : (Brush)(new RadialGradientBrush(Colors.Wheat, UtilColor.Dark(
             (UtilColor.Transparent == _fill.Value)
             ? Colors.SandyBrown
-            : UtilColor.FromArgb(_fill.Value))));
+            : UtilColor.FromArgb(_fill.Value))) { RadiusX = 1, RadiusY = 1 });
         int? _fill = null;
 
         internal TreeMapFolderRect(Rect rc, int? fill = null)
@@ -37,9 +47,10 @@ namespace DoubleFile
 
     class UC_TreeMapVM : SliderVM_Base<ListViewItemVM_Base>, IDisposable
     {
-        public DrawingGroup TreeMapDrawing { get; private set; }
+        public WriteableBitmap
+            TreeMapDrawing { get; private set; }
 
-        public const double BitmapSize = 2048;
+        public const double BitmapSize = 1 << 11;
 
         public double SelectionLeft { get; private set; }
         public double SelectionWidth { get; private set; }
@@ -112,16 +123,6 @@ namespace DoubleFile
             Util.ThreadMake(WinTooltip.CloseTooltip);
         }
 
-        void InvalidatePushRef(Action action)
-        {
-            ++_nInvalidateRef;
-            action();
-            --_nInvalidateRef;
-
-            if (0 == _nInvalidateRef)
-                RaisePropertyChanged("TreeMapDrawing");
-        }
-
         internal void MouseUp(Point ptLocation)
         {
             var treeNode = ZoomOrTooltip(new Point((int)(ptLocation.X * _rectBitmap.Width), (int)(ptLocation.Y * _rectBitmap.Height)));
@@ -144,10 +145,6 @@ namespace DoubleFile
                 WinTooltip.CloseTooltip();  // CloseTooltip callback recurses here hence _bClearingSelection
 
             SelChildNode = null;
-
-            if (0 == _nInvalidateRef)
-                RaisePropertyChanged("TreeMapDrawing");
-
             _bClearingSelection = false;
         }
 
@@ -349,9 +346,6 @@ namespace DoubleFile
             SelChildNode = treeNodeChild;
             _prevNode = treeNodeChild;
 
-            if (0 == _nInvalidateRef)   // jic
-                RaisePropertyChanged("TreeMapDrawing");
-
             if (LV_TreeListChildrenVM.kChildSelectedOnNext != nInitiator)
                 _bTreeSelect = TreeSelect.DoThreadFactory(nodeTreeSelect, nInitiator);
 
@@ -518,7 +512,7 @@ namespace DoubleFile
                 return;
             }
 
-            InvalidatePushRef(() => Render(treeNode));
+            Render(treeNode);
         }
 
         void Render(LocalTreeNode treeNode)
@@ -535,22 +529,30 @@ namespace DoubleFile
                if (null != LocalOwner)
                     LocalOwner.Title = "Double File";
 
-                ClearItems();
-
                 if (null == _ieRenderActions)
                     return;     // from lambda
 
-                TreeMapDrawing = new DrawingGroup();
+                var drawingGroup = new DrawingGroup();
 
                 foreach (var render in _ieRenderActions)
-                    TreeMapDrawing.Children.Add(render.GeometryDrawing);
+                    drawingGroup.Children.Add(render.GeometryDrawing);
 
-                RaisePropertyChanged("TreeMapDrawing");
+                var drawingVisual = new DrawingVisual();
+                var hDC = drawingVisual.RenderOpen();
+
+                hDC.DrawDrawing(drawingGroup);
+                hDC.Close();
+
+                var renderTargetBitmap = new RenderTargetBitmap((int)BitmapSize, (int)BitmapSize, 96, 96, PixelFormats.Default);
+
+                renderTargetBitmap.Render(drawingVisual);
+                TreeMapDrawing = new WriteableBitmap(renderTargetBitmap);
 
                 if (null != LocalOwner)
                     LocalOwner.Title = treeNode.Text;
             });
 
+            RaisePropertyChanged("TreeMapDrawing");
             SelChildNode = null;
             _prevNode = null;
             _dtHideGoofball = DateTime.MinValue;
@@ -1027,8 +1029,6 @@ namespace DoubleFile
 
         static readonly Rect
             _rectBitmap = new Rect(0, 0, BitmapSize, BitmapSize);
-        int
-            _nInvalidateRef = 0;
         bool
             _bClearingSelection = false;
         bool

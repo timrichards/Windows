@@ -33,9 +33,9 @@ namespace DoubleFile
         {
             var color = color_;
 
-            color.R = (byte)(color.R * .75);
-            color.G = (byte)(color.G * .75);
-            color.B = (byte)(color.B * .75);
+            color.R = (byte)(color.R * .3);
+            color.G = (byte)(color.G * .3);
+            color.B = (byte)(color.B * .3);
             return color;
         }
 

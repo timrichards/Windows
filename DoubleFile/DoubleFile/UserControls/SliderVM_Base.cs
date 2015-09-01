@@ -16,11 +16,14 @@
 
                 var nMaximum = 0;
 
-                for (var treeNode = value.Parent;
-                    null != treeNode;
-                    treeNode = treeNode.Parent)
+                if (null != value)
                 {
-                    ++nMaximum;
+                    for (var treeNode = value.Parent;
+                        null != treeNode;
+                        treeNode = treeNode.Parent)
+                    {
+                        ++nMaximum;
+                    }
                 }
 
                 Maximum = nMaximum;

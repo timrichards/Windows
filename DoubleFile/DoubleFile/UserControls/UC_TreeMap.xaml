@@ -17,7 +17,7 @@
                 </Canvas>
             </Grid>
         </Viewbox>
-        <Slider Name="form_slider" Grid.Column="1" Value="{Binding Value}" Maximum="{Binding Maximum}"
+        <Slider Name="form_Slider" Grid.Column="1" Value="{Binding Value}" Maximum="{Binding Maximum}"
                 IsSnapToTickEnabled="True"
                 LargeChange="1" SmallChange="1" TickFrequency="1"
                 TickPlacement="TopLeft" Orientation="Vertical"

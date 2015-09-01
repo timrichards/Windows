@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Linq;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -14,6 +15,9 @@ namespace DoubleFile
         public string LocalTitle { get; set; }
 
         internal bool CantDupeThisUsercontrol = false;
+
+        protected Window
+            LocalOwner = null;
 
         public void OnFragmentNavigation(FragmentNavigationEventArgs e)
         {
@@ -30,6 +34,7 @@ namespace DoubleFile
         public void OnNavigatedTo(NavigationEventArgs e)
         {
             Statics.CurrentPage = this;
+            LocalOwner = App.Current.MainWindow;
 
             if (false == _bNavigatedFromAlready)
                 LocalNavigatedTo();
@@ -83,10 +88,13 @@ namespace DoubleFile
             Observable.FromEventPattern(window, "Loaded")
                 .LocalSubscribe(99746, x =>
             {
+                content.LocalOwner = window;
                 content.LocalNavigatedTo();
                 content.LocalFragmentNavigation(_strFragment);
                 //content.CopyTag_NewWindow(new WeakReference(page.Tag));
             });
+
+            var origContent = Content;
 
             Observable.FromEventPattern(window, "Closed")
                 .LocalSubscribe(99745, x =>
@@ -97,7 +105,7 @@ namespace DoubleFile
                 if (false == CantDupeThisUsercontrol)
                     return;
 
-                Content = ((LocalUserControlBase)Activator.CreateInstance(GetType())).Content;
+                Content = origContent;
                 _bNavigatedFromAlready = false;
 
                 if (this != Statics.CurrentPage)
@@ -106,6 +114,7 @@ namespace DoubleFile
                 LocalNavigatedTo();
                 LocalFragmentNavigation(_strFragment);
                 MainWindow.UpdateTitleLinks();
+                LocalOwner.Activate();
             });
 
             if (CantDupeThisUsercontrol)

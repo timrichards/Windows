@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -54,11 +55,14 @@ namespace DoubleFile
                     _winTooltip.Top = winOwner.Top + winOwner.Height;
                 });
 
-                _winOwnerClosedObserver = Observable.FromEventPattern(winOwner, "Closed")
-                    .LocalSubscribe(99691, argsA => CloseTooltip());
+                _lsDisposable.Add(Observable.FromEventPattern(winOwner, "Closed")
+                    .LocalSubscribe(99691, argsA => CloseTooltip()));
 
-                _winOwnerClosedObserver = Observable.FromEventPattern(winOwner, "LocationChanged")
-                    .LocalSubscribe(99673, argsA => CloseTooltip());
+                _lsDisposable.Add(Observable.FromEventPattern(winOwner, "LocationChanged")
+                    .LocalSubscribe(99673, argsA => CloseTooltip()));
+
+                _lsDisposable.Add(Observable.FromEventPattern(winOwner, "SizeChanged")
+                    .LocalSubscribe(99638, argsA => CloseTooltip()));
 
                 Observable.FromEventPattern<SizeChangedEventArgs>(_winTooltip, "SizeChanged")
                     .LocalSubscribe(99690, argsA => _winTooltip.WinTooltip_SizeChanged(argsA.EventArgs.NewSize));
@@ -113,8 +117,8 @@ namespace DoubleFile
                 _winTooltip.Close();
             }
 
-            _winOwnerClosedObserver?.Dispose();
-            _winOwnerClosedObserver = null;
+            Util.LocalDispose(_lsDisposable);
+            _lsDisposable.Clear();
             _winTooltip = null;
             _bClosingTooltip = false;
         }
@@ -190,7 +194,7 @@ namespace DoubleFile
             _clickCallback = null;
         static bool
             _bClosingTooltip = false;
-        static IDisposable
-            _winOwnerClosedObserver = null;
+        static readonly IList<IDisposable>
+            _lsDisposable = new List<IDisposable>();
     }
 }

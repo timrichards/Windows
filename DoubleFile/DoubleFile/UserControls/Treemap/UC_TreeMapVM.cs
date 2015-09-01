@@ -105,6 +105,17 @@ namespace DoubleFile
             _lsDisposable.Add(TreeNodeCallback.LocalSubscribe(99692, TreeMapVM_TreeNodeCallback));
         }
 
+        public void Dispose()
+        {
+            Util.LocalDispose(_lsDisposable);
+
+            Util.ThreadMake(() =>
+            {
+                _bg?.Dispose();
+                WinTooltip.CloseTooltip();
+            });
+        }
+
         void InvalidatePushRef(Action action)
         {
             ++_nInvalidateRef;
@@ -142,21 +153,6 @@ namespace DoubleFile
                 Invalidate();
 
             _bClearingSelection = false;
-        }
-
-        public void Dispose()
-        {
-            Util.LocalDispose(_lsDisposable);
-
-            Util.ThreadMake(() =>
-            {
-                _bg?.Dispose();
-                _bg = null;
-                WinTooltip.CloseTooltip();
-                _deepNodeDrawn = null;
-                this.SelChildNode = null;
-                _prevNode = null;
-            });
         }
 
         internal LocalTreeNode ZoomOrTooltip(Point pt)

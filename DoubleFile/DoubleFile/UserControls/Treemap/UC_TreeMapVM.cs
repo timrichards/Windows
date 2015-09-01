@@ -13,16 +13,7 @@ namespace DoubleFile
     class TreeMapFolderRect
     {
         internal GeometryDrawing
-            GeometryDrawing
-        {
-            get
-            {
-                var retVal = new GeometryDrawing(Fill, new Pen(Brushes.Black, .25), new RectangleGeometry(_rc));
-                    
-                retVal.Freeze();
-                return retVal;
-            }
-        }
+            GeometryDrawing => new GeometryDrawing(Fill, new Pen(Brushes.Black, .25), new RectangleGeometry(_rc));
 
         Rect _rc = default(Rect);
 
@@ -526,8 +517,10 @@ namespace DoubleFile
 
             Util.UIthread(99823, () =>
             {
-               if (null != LocalOwner)
+                if (null != LocalOwner)
                     LocalOwner.Title = "Double File";
+
+                TreeMapDrawing = null;
 
                 if (null == _ieRenderActions)
                     return;     // from lambda

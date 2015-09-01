@@ -355,8 +355,8 @@
     <Compile Include="Util\FileParse.cs" />
     <Compile Include="MVVM\ObservableObjectBase.cs" />
     <Compile Include="MVVM\ObservableObject_OwnerWindow.cs" />
-    <Compile Include="Util\MVVM_Progressbar\LVitem_ProgressVM.cs" />
-    <Compile Include="Util\MVVM_Progressbar\LV_ProgressVM.cs" />
+    <Compile Include="Util\MVVM_UC_Progress\LVitem_ProgressVM.cs" />
+    <Compile Include="Util\MVVM_UC_Progress\LV_ProgressVM.cs" />
     <Compile Include="UC_Project\MVVM_Project\LV_ProjectVM.cs" />
     <Compile Include="UC_Project\MVVM_Project\WinProjectVM_Impl.cs" />
     <Compile Include="UC_Project\MVVM_Project\LVitem_ProjectVM.cs" />

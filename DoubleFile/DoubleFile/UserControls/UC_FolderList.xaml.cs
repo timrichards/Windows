@@ -36,7 +36,7 @@ namespace DoubleFile
             _bNavigatedTo = false;
 
             DataContext = 
-                _winFolderListVM =
+                _vm =
                 new UC_FolderListVM(strFragment) { UseNicknames = _bNicknames }
                 .Init();
 
@@ -48,15 +48,15 @@ namespace DoubleFile
         protected override void LocalNavigatedFrom()
         {
             _bNicknames = formChk_Nicknames.IsChecked ?? false;
-            _winFolderListVM.Dispose();
+            _vm.Dispose();
 
             DataContext =
-                _winFolderListVM =
+                _vm =
                 null;
         }
 
         UC_FolderListVM
-            _winFolderListVM = null;
+            _vm = null;
         bool
             _bNicknames = false;
         bool

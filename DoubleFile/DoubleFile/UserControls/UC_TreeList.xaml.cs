@@ -12,40 +12,40 @@ namespace DoubleFile
             InitializeComponent();
 
             Observable.FromEventPattern(form_slider, "LostMouseCapture")
-                .LocalSubscribe(99684, x => _lvTreeListChildrenVM?.LostMouseCapture());
+                .LocalSubscribe(99684, x => _lvChildrenVM?.LostMouseCapture());
         }
 
         protected override void LocalNavigatedTo()
         {
             formLV_Children.DataContext = 
                 form_gridChildrenCtls.DataContext =
-                _lvTreeListChildrenVM =
+                _lvChildrenVM =
                 new LV_TreeListChildrenVM();
 
             Tag =
                 formLV_Siblings.DataContext =
-                _lvTreeListSiblingsVM =
-                new LV_TreeListSiblingsVM(_lvTreeListChildrenVM);
+                _lvSiblingsVM =
+                new LV_TreeListSiblingsVM(_lvChildrenVM);
         }
 
         protected override void LocalNavigatedFrom()
         {
-            _lvTreeListSiblingsVM.Dispose();
+            _lvSiblingsVM.Dispose();
 
             formLV_Children.DataContext =
                 form_gridChildrenCtls.DataContext =
-                _lvTreeListChildrenVM =
+                _lvChildrenVM =
                 null;
 
             Tag =
                 formLV_Siblings.DataContext =
-                _lvTreeListSiblingsVM =
+                _lvSiblingsVM =
                 null;
         }
 
         LV_TreeListSiblingsVM
-            _lvTreeListSiblingsVM = null;
+            _lvSiblingsVM = null;
         LV_TreeListChildrenVM
-            _lvTreeListChildrenVM = null;
+            _lvChildrenVM = null;
     }
 }

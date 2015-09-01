@@ -22,7 +22,7 @@ namespace DoubleFile
             var strText = formEdit_search.Text;
 
             DataContext =
-                _winSearchVM =
+                _vm =
                 new UC_SearchVM
             {
                 IsEditBoxNonEmpty = () => false == string.IsNullOrWhiteSpace(formEdit_search.Text),
@@ -31,7 +31,7 @@ namespace DoubleFile
             }
                 .Init();
 
-            _winSearchVM.SearchText = strText;      // set this after DataContext
+            _vm.SearchText = strText;      // set this after DataContext
 
             // Set search text box focus
             // One-shot: no need to dispose
@@ -47,15 +47,15 @@ namespace DoubleFile
         {
             _bRegex = formChk_Regex.IsChecked ?? false;
             _bNicknames = formChk_Nicknames.IsChecked ?? false;
-            _winSearchVM.Dispose();
+            _vm.Dispose();
 
             DataContext =
-                _winSearchVM =
+                _vm =
                 null;
         }
 
         UC_SearchVM
-            _winSearchVM = null;
+            _vm = null;
         bool
             _bRegex = false;
         bool

@@ -33,8 +33,8 @@ namespace DoubleFile
                 _bNicknames = formChk_Nicknames.IsChecked ?? false;
             
             _bNavigatedTo = false;
-            _winFormsLVVM = UC_ClonesVM.FactoryGetHolder(strFragment, _bNicknames);
-            DataContext = _winFormsLVVM;
+            _vm = UC_ClonesVM.FactoryGetHolder(strFragment, _bNicknames);
+            DataContext = _vm;
 
             LocalTitle =
                 new CultureInfo("en-US", false).TextInfo            // future proof to title case
@@ -44,15 +44,15 @@ namespace DoubleFile
         protected override void LocalNavigatedFrom()
         {
             _bNicknames = formChk_Nicknames.IsChecked ?? false;
-            _winFormsLVVM.Dispose();
+            _vm.Dispose();
 
             DataContext =
-                _winFormsLVVM =
+                _vm =
                 null;
         }
 
         UC_ClonesVM
-            _winFormsLVVM = null;
+            _vm = null;
         bool
             _bNicknames = false;
         bool

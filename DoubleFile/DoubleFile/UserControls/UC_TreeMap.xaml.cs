@@ -20,16 +20,16 @@ namespace DoubleFile
         protected override void LocalNavigatedTo()
         {
             _lsDisposable.Add(Observable.FromEventPattern(form_Slider, "LostMouseCapture")
-                .LocalSubscribe(99682, x => _ucTreeMap?.LostMouseCapture()));
+                .LocalSubscribe(99682, x => _vm?.LostMouseCapture()));
 
             DataContext =
-                _ucTreeMap =
+                _vm =
                 new UC_TreeMapVM
             {
                 LocalOwner = LocalOwner
             };
 
-            _lsDisposable.Add(_ucTreeMap);
+            _lsDisposable.Add(_vm);
 
             var bMouseDown = false;
 
@@ -45,7 +45,7 @@ namespace DoubleFile
 
                     pt.X /= form_Canvas.ActualWidth;
                     pt.Y /= form_Canvas.ActualHeight;
-                    _ucTreeMap.form_tmapUserCtl_MouseUp(pt);
+                    _vm.form_tmapUserCtl_MouseUp(pt);
                 }
 
                 bMouseDown = false;
@@ -67,16 +67,16 @@ namespace DoubleFile
             else
             {
                 treeNode = folderDetail.treeNode;
-                _ucTreeMap.GoTo(treeNode);
+                _vm.GoTo(treeNode);
             }
         }
 
         protected override void LocalNavigatedFrom()
         {
-            var treeNode = _ucTreeMap.TreeNode;
+            var treeNode = _vm.TreeNode;
 
             DataContext = 
-                _ucTreeMap = null;
+                _vm = null;
 
             Util.LocalDispose(_lsDisposable);
             _lsDisposable.Clear();
@@ -91,7 +91,7 @@ namespace DoubleFile
         }
 
         UC_TreeMapVM
-            _ucTreeMap = null;
+            _vm = null;
         readonly IList<IDisposable>
             _lsDisposable = new List<IDisposable>();
     }

@@ -44,10 +44,10 @@ namespace DoubleFile
 
             var winProject = _weakReference.Get(w => w);
 
-            if (Statics.WithLVprojectVM(p => p?.LocalEquals(winProject._lvProjectVM) ?? false) &&
+            if (Statics.WithLVprojectVM(p => p?.LocalEquals(winProject._vm) ?? false) &&
                 OKtoNavigate_UpdateSaveListingsLink(bSaveListings))
             {
-                Util.Assert(99875, Statics.WithLVprojectVM(p => false == ReferenceEquals(p, winProject._lvProjectVM)));
+                Util.Assert(99875, Statics.WithLVprojectVM(p => false == ReferenceEquals(p, winProject._vm)));
                 return true;
             }
 
@@ -74,11 +74,11 @@ namespace DoubleFile
             if ((0 < lvProjectVM_Copy.CanLoadCount) &&
                 LocalTV.FactoryCreate(lvProjectVM_Copy))
             {
-                winProject._lvProjectVM = lvProjectVM_Copy;
+                winProject._vm = lvProjectVM_Copy;
             }
 
             OKtoNavigate_UpdateSaveListingsLink();
-            return (null != winProject._lvProjectVM);
+            return (null != winProject._vm);
         }
 
         static internal bool OKtoNavigate_UpdateSaveListingsLink(bool bSaveListings = false)
@@ -106,7 +106,7 @@ namespace DoubleFile
             });
 
             _weakReference.Get(w =>
-                w._lvProjectVM = null);
+                w._vm = null);
 
             LocalTV.WithLocalTV(localTV =>
                 localTV.LocalDispose());
@@ -116,7 +116,7 @@ namespace DoubleFile
         }
 
         LV_ProjectVM
-            _lvProjectVM = null;
+            _vm = null;
         static readonly WeakReference<UC_Project>
             _weakReference = new WeakReference<UC_Project>(null);
     }

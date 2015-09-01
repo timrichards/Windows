@@ -14,20 +14,20 @@
         protected override void LocalNavigatedTo()
         {
             DataContext =
-                _lvFilesVM =
+                _vm =
                 new LV_FilesVM();
         }
 
         protected override void LocalNavigatedFrom()
         {
-            _lvFilesVM.Dispose();
+            _vm.Dispose();
 
             DataContext =
-                _lvFilesVM =
+                _vm =
                 null;
         }
 
         LV_FilesVM
-            _lvFilesVM = null;
+            _vm = null;
     }
 }

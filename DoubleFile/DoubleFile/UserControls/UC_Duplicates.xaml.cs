@@ -14,7 +14,7 @@
         protected override void LocalNavigatedTo()
         {
             DataContext =
-                _winDuplicatesVM =
+                _vm =
                 new UC_DuplicatesVM
             {
                 UseNicknames = _bNicknames
@@ -25,15 +25,15 @@
         protected override void LocalNavigatedFrom()
         {
             _bNicknames = formChk_Nicknames.IsChecked ?? false;
-            _winDuplicatesVM.Dispose();
+            _vm.Dispose();
 
             DataContext =
-                _winDuplicatesVM =
+                _vm =
                 null;
         }
 
         UC_DuplicatesVM
-            _winDuplicatesVM = null;
+            _vm = null;
         bool
             _bNicknames = false;
     }

@@ -34,8 +34,8 @@ namespace DoubleFile
 
         internal int
             Level { get { return Datum8bits; } set { Datum8bits = value; } }
-        internal int
-            SelectedImageIndex { get { return Datum16bits; } set { Datum16bits = value; } }
+        //internal int
+        //    SelectedImageIndex { get { return Datum16bits; } set { Datum16bits = value; } }
 
         internal LocalTreeNode Root
         {
@@ -53,7 +53,6 @@ namespace DoubleFile
         internal LocalTreeNode()
         {
             Level = -1;
-            SelectedImageIndex = -1;
         }
 
         internal LocalTreeNode(string strContent)

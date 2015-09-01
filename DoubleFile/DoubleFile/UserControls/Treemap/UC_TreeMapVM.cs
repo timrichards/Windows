@@ -1,17 +1,51 @@
-﻿using System.Windows.Forms;
-using System.Drawing;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
 using System.Runtime.InteropServices;
-using System.Drawing.Drawing2D;
+using System.Windows;
+using System.Windows.Media;
 
 namespace DoubleFile
 {
-    class UC_TreeMapVM : SliderVM_Base<ListViewItemVM_Base>, IDisposable
+    class LVitem_RectVM : ListViewItemVM_Base
+    {
+        public double X => _rc.X;
+        public double Y => _rc.Y;
+        public double Width => _rc.Width;
+        public double Height => _rc.Height;
+        Rect _rc = default(Rect);
+
+        public Brush
+            Fill =>
+            (null == _fill)
+            ? Brushes.Transparent
+            : (Brush)(new RadialGradientBrush(Colors.Wheat, UtilColor.Dark(
+            (UtilColor.Transparent == _fill.Value)
+            ? Colors.SandyBrown
+            : UtilColor.FromArgb(_fill.Value))));
+        int? _fill = null;
+
+        internal LVitem_RectVM(Rect rc, int? fill = null)
+        {
+            _rc = rc;
+
+            if (null != fill)
+                _fill = fill.Value;
+        }
+
+        internal LVitem_RectVM Clone() => (LVitem_RectVM)MemberwiseClone();
+
+        protected override IReadOnlyList<string> _propNames { get { return _propNamesA; } set { _propNamesA = value; } }
+        static IReadOnlyList<string> _propNamesA = null;
+
+        internal override int NumCols => NumCols_;
+        internal const int NumCols_ = 0;
+    }
+
+    class UC_TreeMapVM : SliderVM_Base<LVitem_RectVM>, IDisposable
     {
         public const double BitmapSize = 2048;
 
@@ -25,8 +59,10 @@ namespace DoubleFile
             get { return _selChildNode; }
             set
             {
-                var sz = new SizeF((float)BitmapSize / _rectBitmap.Width, (float)BitmapSize / _rectBitmap.Height);
-                var rect = value?.NodeDatum.TreeMapRect.Scale(sz) ?? default(Rectangle);
+                var rect =
+                    value?.NodeDatum.TreeMapRect
+                    .Scale(new Size(BitmapSize / _rectBitmap.Width, BitmapSize / _rectBitmap.Height))
+                    ?? default(Rect);
 
                 SelectionLeft = rect.Left;
                 SelectionTop = rect.Top;
@@ -44,30 +80,6 @@ namespace DoubleFile
         [DllImport("gdi32")]
         static extern int DeleteObject(IntPtr o);
 
-        public System.Windows.Media.ImageSource
-            TreeMapImage
-        {
-            get
-            {
-                if (null == _BackgroundImage)
-                    return null;
-
-                var hBitmap =  _BackgroundImage.GetHbitmap();
-
-                var imageSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                    hBitmap,
-                    IntPtr.Zero,
-                    System.Windows.Int32Rect.Empty,
-                    System.Windows.Media.Imaging.BitmapSizeOptions.FromWidthAndHeight(_BackgroundImage.Width, _BackgroundImage.Height));
-
-                DeleteObject(hBitmap);
-                return imageSource;
-            }
-        }
-        Bitmap _BackgroundImage;
-
-        void Invalidate(Rectangle r = default(Rectangle)) => RaisePropertyChanged("TreeMapImage");
-
         internal override int NumCols => 0;
 
         internal IObservable<Tuple<LocalTreeNode, int>>
@@ -83,7 +95,7 @@ namespace DoubleFile
         internal const int
             kSelRectAndTooltip = 99983;
 
-        internal System.Windows.Window
+        internal Window
             LocalOwner = null;
 
         public UC_TreeMapVM()
@@ -108,12 +120,7 @@ namespace DoubleFile
         public void Dispose()
         {
             Util.LocalDispose(_lsDisposable);
-
-            Util.ThreadMake(() =>
-            {
-                _bg?.Dispose();
-                WinTooltip.CloseTooltip();
-            });
+            Util.ThreadMake(WinTooltip.CloseTooltip);
         }
 
         void InvalidatePushRef(Action action)
@@ -123,10 +130,10 @@ namespace DoubleFile
             --_nInvalidateRef;
 
             if (0 == _nInvalidateRef)
-                Invalidate();
+                RaisePropertyChanged("Items");
         }
 
-        internal void form_tmapUserCtl_MouseUp(System.Windows.Point ptLocation)
+        internal void MouseUp(Point ptLocation)
         {
             var treeNode = ZoomOrTooltip(new Point((int)(ptLocation.X * _rectBitmap.Width), (int)(ptLocation.Y * _rectBitmap.Height)));
 
@@ -136,7 +143,7 @@ namespace DoubleFile
 
         internal void ClearSelection(bool bDontCloseTooltip = false)
         {
-            if (System.Windows.Application.Current?.Dispatcher.HasShutdownStarted ?? true)
+            if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                 return;
 
             if (_bClearingSelection)
@@ -150,7 +157,7 @@ namespace DoubleFile
             SelChildNode = null;
 
             if (0 == _nInvalidateRef)
-                Invalidate();
+                RaisePropertyChanged("Items");
 
             _bClearingSelection = false;
         }
@@ -354,7 +361,7 @@ namespace DoubleFile
             _prevNode = treeNodeChild;
 
             if (0 == _nInvalidateRef)   // jic
-                Invalidate();
+                RaisePropertyChanged("Items");
 
             if (LV_TreeListChildrenVM.kChildSelectedOnNext != nInitiator)
                 _bTreeSelect = TreeSelect.DoThreadFactory(nodeTreeSelect, nInitiator);
@@ -484,8 +491,7 @@ namespace DoubleFile
 
             return new LocalTreeMapFileListNode(parent, lsNodes)
             {
-                NodeDatum = new NodeDatum { TotalLength = nTotalLength, TreeMapRect = parent.NodeDatum.TreeMapRect },
-                SelectedImageIndex = -1
+                NodeDatum = new NodeDatum { TotalLength = nTotalLength, TreeMapRect = parent.NodeDatum.TreeMapRect }
             };
         }
 
@@ -531,28 +537,6 @@ namespace DoubleFile
             if (false == (DeepNode?.IsChildOf(treeNode) ?? false))
                 DeepNode = treeNode;
 
-            var nPxPerSide = (treeNode.SelectedImageIndex < 0)
-                ? (int)BitmapSize
-                : treeNode.SelectedImageIndex;
-
-            if ((null == _bg?.Graphics) ||
-                (nPxPerSide != _rectBitmap.Size.Width))
-            {
-                var dtStart_A = DateTime.Now;
-
-                _rectBitmap = new Rectangle(0, 0, nPxPerSide, nPxPerSide);
-                _BackgroundImage = new Bitmap(_rectBitmap.Size.Width, _rectBitmap.Size.Height);
-
-                var bgcontext = BufferedGraphicsManager.Current;
-
-                bgcontext.MaximumBuffer = _rectBitmap.Size;
-                _bg?.Dispose();
-                _bg = bgcontext.Allocate(Graphics.FromImage(_BackgroundImage), _rectBitmap);
-                Util.WriteLine("Size bitmap " + nPxPerSide + " " + (DateTime.Now - dtStart_A).TotalMilliseconds / 1000d + " seconds.");
-            }
-
-            var dtStart = DateTime.Now;
-
             ClearSelection();
             TreeNode = treeNode;
             _ieRenderActions = DrawTreemap();
@@ -562,36 +546,20 @@ namespace DoubleFile
                if (null != LocalOwner)
                     LocalOwner.Title = "Double File";
 
-               try
-               {
-                   _bg.Graphics.Clear(Color.DarkGray);
+                ClearItems();
 
-                   if (null == _ieRenderActions)
-                       return;     // from lambda
+                if (null == _ieRenderActions)
+                    return;     // from lambda
 
-                   foreach (var stroke in _ieRenderActions)
-                       stroke.Stroke(_bg.Graphics);
+                Add(_ieRenderActions);
 
-                   _ieRenderActions = null;
-                   _bg.Graphics.DrawRectangle(new Pen(Brushes.Black, 10), _rectBitmap);
-                   _bg.Render();
-
-                   if (null != LocalOwner)
-                       LocalOwner.Title = treeNode.Text;
-               }
-               catch (ArgumentException) { Util.Assert(99979, false); }
+                if (null != LocalOwner)
+                    LocalOwner.Title = treeNode.Text;
             });
 
             SelChildNode = null;
             _prevNode = null;
             _dtHideGoofball = DateTime.MinValue;
-
-            if ((DateTime.Now - dtStart) > TimeSpan.FromSeconds(1))
-            {
-                treeNode.SelectedImageIndex = Math.Max((int)
-                    (((treeNode.SelectedImageIndex < 0) ? _rectBitmap.Size.Width : treeNode.SelectedImageIndex)
-                    * .75), 256);
-            }
         }
 
         // treemap.cpp	- Implementation of CColorSpace, CTreemap and CTreemapPreview
@@ -617,7 +585,7 @@ namespace DoubleFile
         //
         // Last modified: $Date: 2004/11/05 16:53:08 $
         
-        IEnumerable<RenderAction> DrawTreemap()
+        IEnumerable<LVitem_RectVM> DrawTreemap()
         {
             _deepNodeDrawn = null;
 
@@ -640,16 +608,16 @@ namespace DoubleFile
             return
                 (nodeDatum.TotalLength > 0)
                 ? new Recurse().Render(TreeNode, rc, DeepNode, out _deepNodeDrawn)
-                : new[] { new FillRectangle { Brush = Brushes.Wheat, rc = rc } };
+                : new[] { new LVitem_RectVM(rc, Colors.Wheat.ToArgb()) };
         }
 
         class Recurse
         {
-            internal IEnumerable<RenderAction>
-                Render(LocalTreeNode item, Rectangle rc, LocalTreeNode deepNode, out LocalTreeNode deepNodeDrawn_out)
+            internal IEnumerable<LVitem_RectVM>
+                Render(LocalTreeNode item, Rect rc, LocalTreeNode deepNode, out LocalTreeNode deepNodeDrawn_out)
             {
-                _lsRenderActions = new ConcurrentBag<RenderAction>();
-                _lsFrames = new ConcurrentBag<RenderAction>();
+                _lsRenderActions = new ConcurrentBag<LVitem_RectVM>();
+                _lsFrames = new ConcurrentBag<LVitem_RectVM>();
                 _deepNode = deepNode;
                 RecurseDrawGraph(item, rc, true);
 
@@ -662,7 +630,7 @@ namespace DoubleFile
             
             void RecurseDrawGraph(
                 LocalTreeNode item,
-                Rectangle rc,
+                Rect rc,
                 bool bStart = false)
             {
 #if (DEBUG)
@@ -689,7 +657,7 @@ namespace DoubleFile
                     rc.Height < 32)
                 {
                     // Speedup. Draw an "empty" folder in place of too much detail
-                    DrawNode(item, rc);
+                    _lsRenderActions.Add(new LVitem_RectVM(rc, item.ForeColor));
                     return;
                 }
 
@@ -736,6 +704,7 @@ namespace DoubleFile
 
                         var nodeDatumUnread = new NodeDatum();
                         var nVolumeLength = rootNodeDatum.VolumeLength;
+
                         var nUnreadLength = (long)nVolumeLength -
                             (long)rootNodeDatum.VolumeFree -
                             (long)rootNodeDatum.TotalLength;
@@ -809,28 +778,7 @@ namespace DoubleFile
                 }
 
                 // There are no children. Draw a file or an empty folder.
-                DrawNode(item, rc);
-            }
-
-            void DrawNode(LocalTreeNode item, Rectangle rc)
-            {
-                var path = new GraphicsPath();
-                var r = rc;
-
-                r.Inflate(r.Width >> 1, r.Height >> 1);
-                path.AddEllipse(r);
-
-                var brush = new PathGradientBrush(path)
-                {
-                    CenterColor = Color.Wheat,
-                    SurroundColors = new[] { ControlPaint.Dark(
-                        (UtilColor.Empty == item.ForeColor)
-                        ? Color.SandyBrown
-                        : Color.FromArgb(item.ForeColor)
-                    )}
-                };
-
-                _lsRenderActions.Add(new FillRectangle { Brush = brush, rc = rc });
+                _lsRenderActions.Add(new LVitem_RectVM(rc, item.ForeColor));
             }
 
             //My first approach was to make this member pure virtual and have three
@@ -916,37 +864,37 @@ namespace DoubleFile
 
                 rows.ForEach(row =>
                 {
-                    var fBottom = top + row.RowHeight * height;
-                    var bottom = (int)fBottom;
+                    var bottom = top + row.RowHeight * height;
 
                     if (ReferenceEquals(row, lastRow))
-                        bottom = horizontalRows ? rc.Bottom : rc.Right;
+                        bottom = horizontalRows ? rc.Bottom() : rc.Right();
 
                     double left = horizontalRows ? rc.Left : rc.Top;
 
                     for (var i = 0; i < row.ChildrenPerRow; i++, c++)
                     {
                         var child = lsChildren[c];
+
                         Util.Assert(1302.3305m, anChildWidth[c] >= 0);
-                        var fRight = left + anChildWidth[c] * width;
-                        var right = (int)fRight;
+
+                        var right = left + anChildWidth[c] * width;
 
                         var lastChild = 
                             ((i == row.ChildrenPerRow - 1) ||
                             anChildWidth[c + 1].Equals(0));
 
                         if (lastChild)
-                            right = horizontalRows ? rc.Right : rc.Bottom;
+                            right = horizontalRows ? rc.Right() : rc.Bottom();
 
                         var rcChild =
                             horizontalRows
-                            ? new Rectangle((int)left, (int)top, right - (int)left, bottom - (int)top)
-                            : new Rectangle((int)top, (int)left, bottom - (int)top, right - (int)left);
+                            ? new Rect((int)left, (int)top, right - (int)left, bottom - (int)top)
+                            : new Rect((int)top, (int)left, bottom - (int)top, right - (int)left);
 
                         ThreadPool.QueueUserWorkItem(
                             state =>
                             {
-                                var param = (Tuple<LocalTreeNode, Rectangle>)state;
+                                var param = (Tuple<LocalTreeNode, Rect>)state;
 
                                 RecurseDrawGraph(param.Item1, param.Item2);
                                 Interlocked.Decrement(ref _nWorkerCount);
@@ -954,11 +902,12 @@ namespace DoubleFile
                                 if (0 == _nWorkerCount)
                                     _blockingFrame.Continue = false;
                             },
+
                             Tuple.Create(child, rcChild)
                         );
 
                         if (bStart)
-                            _lsFrames.Add(new DrawRectangle { rc = rcChild });
+                            _lsFrames.Add(new LVitem_RectVM(rcChild));
 
                         if (lastChild)
                         {
@@ -966,16 +915,16 @@ namespace DoubleFile
                             c++;
 
                             if (i < row.ChildrenPerRow)
-                                lsChildren[c].NodeDatum.TreeMapRect = new Rectangle(-1, -1, -1, -1);
+                                lsChildren[c].NodeDatum.TreeMapRect = new Rect(-1, -1, -1, -1);
 
                             c += row.ChildrenPerRow - i;
                             break;
                         }
 
-                        left = fRight;
+                        left = right;
                     }
                     // This asserts due to rounding error: Utilities.Assert(1302.3306, left == (horizontalRows ? rc.Right : rc.Bottom));
-                    top = fBottom;
+                    top = bottom;
                 });
                 // This asserts due to rounding error: Utilities.Assert(1302.3307, top == (horizontalRows ? rc.Bottom : rc.Right));
                 return true;
@@ -991,7 +940,6 @@ namespace DoubleFile
                 var nCount = listChildren.Count;
 
                 Util.Assert(1302.3308m, kdMinProportion < 1);
-
                 Util.Assert(1302.3309m, nextChild < nCount);
                 Util.Assert(1302.33101m, width >= 1d);
 
@@ -1016,9 +964,9 @@ namespace DoubleFile
                     Util.Assert(1302.3311m, virtualRowHeight > 0);
                     Util.Assert(1302.3312m, virtualRowHeight <= 1);
 
-                    // Rectangle(mySize)    = width * 1d
-                    // Rectangle(childSize) = childWidth * virtualRowHeight
-                    // Rectangle(childSize) = childSize / mySize * width
+                    // Rect(mySize)    = width * 1d
+                    // Rect(childSize) = childWidth * virtualRowHeight
+                    // Rect(childSize) = childSize / mySize * width
 
                     double childWidth = childSize / mySize * width / virtualRowHeight;
 
@@ -1047,7 +995,7 @@ namespace DoubleFile
                 // Now as we know the rowHeight, we compute the widths of our children.
                 for (i = 0; i < childrenUsed; i++)
                 {
-                    // Rectangle(1d * 1d) = mySize
+                    // Rect(1d * 1d) = mySize
                     var rowSize = mySize * rowHeight;
                     var nodeDatum_A = listChildren[nextChild + i].NodeDatum;
 
@@ -1066,9 +1014,9 @@ namespace DoubleFile
                 return rowHeight;
             }
 
-            ConcurrentBag<RenderAction>
+            ConcurrentBag<LVitem_RectVM>
                 _lsRenderActions = null;
-            ConcurrentBag<RenderAction>
+            ConcurrentBag<LVitem_RectVM>
                 _lsFrames = null;
             LocalTreeNode
                 _deepNode = null;
@@ -1083,17 +1031,8 @@ namespace DoubleFile
                 _blockingFrame = new LocalDispatcherFrame(99850);
         }
 
-        abstract class
-            RenderAction { internal Rectangle rc; internal abstract void Stroke(Graphics g); }
-        class
-            FillRectangle : RenderAction { internal Brush Brush; internal override void Stroke(Graphics g) => g.FillRectangle(Brush, rc); }
-        class
-            DrawRectangle : RenderAction { static readonly Pen Pen = new Pen(Color.Black, 2); internal override void Stroke(Graphics g) => g.DrawRectangle(Pen, rc); }
-
-        BufferedGraphics
-            _bg = null;
-        Rectangle
-            _rectBitmap = Rectangle.Empty;
+        static readonly Rect
+            _rectBitmap = new Rect(0, 0, BitmapSize, BitmapSize);
         int
             _nInvalidateRef = 0;
         bool
@@ -1104,14 +1043,14 @@ namespace DoubleFile
             _bSelRecAndTooltip = false;
 
         // Recurse class
-        IEnumerable<RenderAction>
+        IEnumerable<LVitem_RectVM>
             _ieRenderActions = null;
         LocalTreeNode
             _deepNodeDrawn = null;
 
         // goofball
-        Rectangle
-            _rectCenter = Rectangle.Empty;
+        Rect
+            _rectCenter = Rect.Empty;
         DateTime
             _dtHideGoofball = DateTime.MinValue;
 

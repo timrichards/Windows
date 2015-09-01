@@ -11,7 +11,24 @@
         </Grid.ColumnDefinitions>
         <Viewbox Grid.Column="0" Stretch="Fill">
             <Grid Width="{x:Static local:UC_TreeMapVM.BitmapSize}" Height="{x:Static local:UC_TreeMapVM.BitmapSize}">
-                <Image Source="{Binding TreeMapImage}"/>
+                <ItemsControl ItemsSource="{Binding Items}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                            <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Rectangle Width="{Binding Width}" Height="{Binding Height}" Fill="{Binding Fill}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
                 <Canvas Name="form_Canvas">
                     <Rectangle Fill="Black" Opacity=".4" Canvas.Left="{Binding SelectionLeft}" Canvas.Top="{Binding SelectionTop}" Width="{Binding SelectionWidth}" Height="{Binding SelectionHeight}"/>
                 </Canvas>

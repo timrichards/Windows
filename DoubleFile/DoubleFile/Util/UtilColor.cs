@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.Windows.Media;
 
 namespace DoubleFile
 {
@@ -9,7 +9,7 @@ namespace DoubleFile
         static internal readonly IReadOnlyDictionary<int, string>
             Descriptions = new Dictionary<int, string>
         {
-            {Empty,             ""},
+            {Transparent,             ""},
             {LightBlue,         "This folder has multiple copies on at least two separate volumes."},
             {DarkGray,          ""},						            // ignore list
             {DarkKhaki,         ""},						            // Treemap: Folder containing files
@@ -24,19 +24,34 @@ namespace DoubleFile
             {SteelBlue,         "This folder has a copy on a separate volume."}
         };
 
-        static internal int Empty => Color.Empty.ToArgb();
-        static internal int LightBlue => Color.LightBlue.ToArgb();
-        static internal int DarkGray => Color.DarkGray.ToArgb();
-        static internal int DarkKhaki => Color.DarkKhaki.ToArgb();
+        static internal int
+            ToArgb(this Color color) => (color.A << 24) | (color.R << 16) | (color.G << 8) | color.B;
+        static internal Color
+            FromArgb(int argb) => Color.FromArgb((byte)(argb >> 24), (byte)(argb >> 16), (byte)(argb >> 8), (byte)(argb));
+        static internal Color
+            Dark(this Color color_)
+        {
+            var color = color_;
+
+            color.R = (byte)(color.R * .75);
+            color.G = (byte)(color.G * .75);
+            color.B = (byte)(color.B * .75);
+            return color;
+        }
+
+        static internal int Transparent => Colors.Transparent.ToArgb();
+        static internal int LightBlue => Colors.LightBlue.ToArgb();
+        static internal int DarkGray => Colors.DarkGray.ToArgb();
+        static internal int DarkKhaki => Colors.DarkKhaki.ToArgb();
         static internal int DarkRedBG => Color.FromArgb(64, 64, 0, 0).ToArgb();
-        static internal int Firebrick => Color.Firebrick.ToArgb();
+        static internal int Firebrick => Colors.Firebrick.ToArgb();
         static internal int DarkYellowBG => Color.FromArgb(64, 0, 64, 64).ToArgb();
-        static internal int LightGray => Color.LightGray.ToArgb();
-        static internal int MediumSpringGreen => Color.MediumSpringGreen.ToArgb();
-        static internal int MediumVioletRed => Color.MediumVioletRed.ToArgb();
-        static internal int OliveDrab => Color.OliveDrab.ToArgb();
+        static internal int LightGray => Colors.LightGray.ToArgb();
+        static internal int MediumSpringGreen => Colors.MediumSpringGreen.ToArgb();
+        static internal int MediumVioletRed => Colors.MediumVioletRed.ToArgb();
+        static internal int OliveDrab => Colors.OliveDrab.ToArgb();
         static internal int Red => Color.FromArgb(255, 192, 0, 0).ToArgb();
-        static internal int SteelBlue => Color.SteelBlue.ToArgb();
+        static internal int SteelBlue => Colors.SteelBlue.ToArgb();
 
         internal const uint
             CLUT_Mask = 0xFF;
@@ -57,18 +72,12 @@ namespace DoubleFile
         static internal int SetFG_ARGB(ref int n, int argb) => n = (int)(n & _knCLUT_BGmask) + _revCLUT[argb];
         static internal int SetBG_ARGB(ref int n, int argb) => n = (int)(n & _knCLUT_FGmask) + (_revCLUT[argb] << (CLUT_Shift >> 1));
 
-        static internal System.Windows.Media.Brush ARGBtoBrush(int nFormsARGB)
-        {
-            var abARGB = BitConverter.GetBytes(nFormsARGB);
-
-            return new System.Windows.Media.SolidColorBrush(
-                System.Windows.Media.Color.FromArgb(abARGB[3], abARGB[2], abARGB[1], abARGB[0]));
-        }
+        static internal Brush ARGBtoBrush(int nFormsARGB) => new SolidColorBrush(FromArgb(nFormsARGB));
 
         readonly static IReadOnlyList<int>
             CLUT = new int[_knNumColors]
         {
-            Empty, LightBlue, DarkGray, DarkKhaki, DarkRedBG,
+            Transparent, LightBlue, DarkGray, DarkKhaki, DarkRedBG,
             Firebrick, DarkYellowBG, LightGray, MediumSpringGreen, MediumVioletRed,
             OliveDrab, Red, SteelBlue
         };
@@ -78,7 +87,7 @@ namespace DoubleFile
             int nIx = 0;
             var revClut = new Dictionary<int, int>();
 
-            revClut[Empty] = nIx++;
+            revClut[Transparent] = nIx++;
             revClut[LightBlue] = nIx++;
             revClut[DarkGray] = nIx++;
             revClut[DarkKhaki] = nIx++;

@@ -9,15 +9,10 @@
 - ditch duplicates view and expand files list for that
 	- duplicates view should have same fs info ("lv line knColLengthLV") as the Files view and col differences should be red
 - true now wpf?
-	- tree map doesn't always show up at all; slow calc etc
+	- true: tree map doesn't always show up at all; slow calc etc
 	- large file tree map blacks out switching between items 1 and 2 - item 1 has bitmap size of 1152: loaded too slow for it.
-- clean up tree map: remove animation timer
 - overlay
 	- main window needs to be in front
-	- messagebox buttons, particularly the sole OK button on the assert box
-	- messagebox does not expand with text. Good/bad? Not a problem -
-	- treemap animation; OnPaint; dead code
-	- progress
 	- remove modal thread dark window
 	- do not allow windows to maximize
 	- esc key doesn't close the msgbox when other window activated - good
@@ -187,6 +182,9 @@ Specific code areas:
 	Listings can be searched when volumes are off site. Can read any volume mounted in Windows Explorer, including Linux and Mac volumes. Supports long path names.
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
+
+99979
+99806
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
 99637 next low assert

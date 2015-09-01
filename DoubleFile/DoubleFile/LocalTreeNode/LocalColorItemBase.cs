@@ -8,7 +8,7 @@ namespace DoubleFile
         public int BackColor { get { return UtilColor.GetBG_ARGB(Color); } set { int c = Color; Color = UtilColor.SetBG_ARGB(ref c, value); } }
 
         internal Brush Foreground =>
-            (UtilColor.Empty == ForeColor)
+            (UtilColor.Transparent == ForeColor)
             ? Brushes.White
             : UtilColor.ARGBtoBrush(ForeColor);
 
@@ -16,7 +16,7 @@ namespace DoubleFile
 
         internal LocalColorItemBase()
         {
-            Color = UtilColor.Set_ARGB(UtilColor.Empty, UtilColor.Empty);
+            Color = UtilColor.Set_ARGB(UtilColor.Transparent, UtilColor.Transparent);
         }
 
         protected int Datum8bits

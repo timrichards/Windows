@@ -312,7 +312,7 @@ namespace DoubleFile
                 var lvIgnoreItem = kvp.Value;
 
                 treeNode.ForeColor = UtilColor.DarkGray;
-                treeNode.BackColor = UtilColor.Empty;
+                treeNode.BackColor = UtilColor.Transparent;
 
                 var nodeDatum = treeNode.NodeDatum;
 
@@ -352,7 +352,7 @@ namespace DoubleFile
 
                 Util.Assert(1305.6322m, 0 < nodeDatum.FileCountHere);
                 SnowUniqueParents(treeNode);
-                Util.Assert(1305.6323m, UtilColor.Empty == treeNode.ForeColor);
+                Util.Assert(1305.6323m, UtilColor.Transparent == treeNode.ForeColor);
                 treeNode.ForeColor = UtilColor.Red;
                 _lsLVsolitary.Add(lvItem);
                 Util.Assert(1305.6324m, null == nodeDatum.LVitem);
@@ -495,7 +495,7 @@ namespace DoubleFile
                         return;
                     }
 
-                    Util.Assert(1305.6308m, UtilColor.Empty == treeNode.ForeColor);
+                    Util.Assert(1305.6308m, UtilColor.Transparent == treeNode.ForeColor);
                     treeNode.ForeColor = UtilColor.Firebrick;
 
                     foreach (var subnode in listClones)
@@ -625,7 +625,7 @@ namespace DoubleFile
                 var nodeDatum = parentNode.NodeDatum;
 
                 Util.Assert(1305.6313m,
-                    (parentNode.ForeColor == UtilColor.Empty) ==
+                    (parentNode.ForeColor == UtilColor.Transparent) ==
                     (null == nodeDatum.LVitem));
 
                 parentNode = parentNode.Parent;

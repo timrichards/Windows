@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Windows;
 
@@ -227,10 +226,10 @@ namespace DoubleFile
             return nRet;
         }
 
-        static internal RectangleF
-            Scale(this Rectangle rc_in, SizeF scale)
+        static internal Rect
+            Scale(this Rect rc_in, Size scale)
         {
-            RectangleF rc = rc_in;
+            Rect rc = rc_in;
 
             rc.X *= scale.Width;
             rc.Y *= scale.Height;
@@ -257,5 +256,10 @@ namespace DoubleFile
             window.Height = r.Height;
             return window;
         }
+
+        static internal double
+            Right(this Rect r) => r.X + r.Width;
+        static internal double
+            Bottom(this Rect r) => r.Y + r.Height;
     }
 }

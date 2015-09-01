@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
-using System.Windows;
 using System.Windows.Input;
 
 namespace DoubleFile
@@ -45,19 +44,12 @@ namespace DoubleFile
 
                     pt.X /= form_Canvas.ActualWidth;
                     pt.Y /= form_Canvas.ActualHeight;
-                    _vm.form_tmapUserCtl_MouseUp(pt);
+                    _vm.MouseUp(pt);
                 }
 
                 bMouseDown = false;
             }));
 
-            Observable.FromEventPattern<SizeChangedEventArgs>(this, "SizeChanged")
-                .LocalSubscribe(99806, x =>
-            {
-
-            });
-
-            var treeNode = LocalTV.TopNode;
             var folderDetail = LocalTV.TreeSelect_FolderDetail;
 
             if (null == folderDetail)
@@ -66,8 +58,8 @@ namespace DoubleFile
             }
             else
             {
-                treeNode = folderDetail.treeNode;
-                _vm.GoTo(treeNode);
+                _vm.GoTo(folderDetail.treeNode);
+                _vm.TreeNode = folderDetail.treeNode;
             }
         }
 

@@ -52,7 +52,7 @@ namespace DoubleFile
                 {
                     _winTooltip.Owner = winOwner;
                     _winTooltip.Left = winOwner.Left;
-                    _winTooltip.Top = winOwner.Top + winOwner.Height;
+                    _winTooltip.Top = winOwner.Top;
                 });
 
                 _lsDisposable.Add(Observable.FromEventPattern(winOwner, "Closed")
@@ -63,9 +63,6 @@ namespace DoubleFile
 
                 _lsDisposable.Add(Observable.FromEventPattern(winOwner, "SizeChanged")
                     .LocalSubscribe(99638, argsA => CloseTooltip()));
-
-                Observable.FromEventPattern<SizeChangedEventArgs>(_winTooltip, "SizeChanged")
-                    .LocalSubscribe(99690, argsA => _winTooltip.WinTooltip_SizeChanged(argsA.EventArgs.NewSize));
             });
         }
 
@@ -77,8 +74,7 @@ namespace DoubleFile
             {
                 Util.UIthread(99808, () =>
                 {
-                    (_winTooltip = new WinTooltip { WindowStartupLocation = WindowStartupLocation.Manual })
-                        .Show();
+                    (_winTooltip = new WinTooltip()).Show();
 
                     NativeMethods.SetWindowPos(_winTooltip, _winTooltip.Owner, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
                 });
@@ -144,46 +140,6 @@ namespace DoubleFile
 
             Observable.FromEventPattern(this, "Closing")
                 .LocalSubscribe(99672, x => _closingCallback?.Invoke());
-        }
-
-        void WinTooltip_SizeChanged(Size newSize)
-        {
-            if (null == Owner)
-                return;
-
-            var nOwnerRight = Owner.Left + Owner.Width;
-            var nOwnerBot = Owner.Top + Owner.Height;
-
-            var rcTooltip = new Rect
-            {
-                X = nOwnerRight - newSize.Width,
-                Y = nOwnerBot,
-                Width = newSize.Width,
-                Height = newSize.Height
-            };
-
-            if (WindowState.Maximized == Owner.WindowState)
-            {
-                rcTooltip.X = (SystemParameters.PrimaryScreenWidth - rcTooltip.Width) / 2d;
-                rcTooltip.Y = 0;
-            }
-
-            Rect rcMonitor = Win32Screen.GetWindowMonitorInfo(Owner).rcMonitor;
-
-            if (false == (rcMonitor.Contains(rcTooltip)))
-            {
-                rcTooltip.X = Owner.Left + Owner.Width - rcTooltip.Width;
-                rcTooltip.Y = Owner.Top - rcTooltip.Height;
-            }
-
-            if (rcMonitor.Left > rcTooltip.X)
-                rcTooltip.X = Owner.Left;
-
-            if (rcMonitor.Top > rcTooltip.Y)
-                rcTooltip.Y = Owner.Top;
-
-            Left = rcTooltip.X;
-            Top = rcTooltip.Y;
         }
 
         static WinTooltip

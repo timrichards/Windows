@@ -1,4 +1,9 @@
-﻿- Message box option to not repeat, with loc dictionary and 1 minute timer
+﻿- couldn't move an extra window.						<----- consistent/repeatable.
+- treemap still selects the tooltip when closing extra window.
+- tooltip doesn't show the first time after zoom
+	- ditch the UR corner tooltip for the middle one: covers the close box
+	- tooltip doesn't darken: no big deal.
+- Message box option to not repeat, with loc dictionary and 1 minute timer
 	- that other no-repeat code may prevent user from seeing message.
 	- Message log window for all repeats etc. Perhaps subitems for repeated in-a-row not skipped messages.
 	- log file, and consoldiate that with ProjectFile.
@@ -12,6 +17,7 @@
 	- true: tree map doesn't always show up at all; slow calc etc
 	- large file tree map blacks out switching between items 1 and 2 - item 1 has bitmap size of 1152: loaded too slow for it.
 - overlay
+	- put the AllowSubsequentProcess() functionality back in for when listings were saved
 	- main window needs to be in front
 	- remove modal thread dark window
 	- do not allow windows to maximize

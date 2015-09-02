@@ -116,7 +116,7 @@ namespace DoubleFile
 
         internal void MouseUp(Point ptLocation)
         {
-            var treeNode = ZoomOrTooltip(new Point((int)(ptLocation.X * _rectBitmap.Width), (int)(ptLocation.Y * _rectBitmap.Height)));
+            var treeNode = ZoomOrTooltip(new Point((ptLocation.X * _rectBitmap.Width), (ptLocation.Y * _rectBitmap.Height)));
 
             if (null != treeNode)
                 LocalTV.SelectedNode = treeNode;
@@ -877,8 +877,8 @@ namespace DoubleFile
 
                         var rcChild =
                             horizontalRows
-                            ? new Rect((int)left, (int)top, right - (int)left, bottom - (int)top)
-                            : new Rect((int)top, (int)left, bottom - (int)top, right - (int)left);
+                            ? new Rect(left, top, right - left, bottom - top)
+                            : new Rect(top, left, bottom - top, right - left);
 
                         ThreadPool.QueueUserWorkItem(
                             state =>

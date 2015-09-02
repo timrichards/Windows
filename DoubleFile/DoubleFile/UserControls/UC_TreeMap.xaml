@@ -11,8 +11,8 @@
         </Grid.ColumnDefinitions>
         <Viewbox Grid.Column="0" Stretch="Fill">
             <Grid Width="{x:Static local:UC_TreeMapVM.BitmapSize}" Height="{x:Static local:UC_TreeMapVM.BitmapSize}">
+                <Image Source="{Binding TreeMapDrawing}" />
                 <Canvas Name="form_Canvas">
-                    <Image Source="{Binding TreeMapDrawing}" />
                     <Rectangle Fill="Black" Opacity=".4" Canvas.Left="{Binding SelectionLeft}" Canvas.Top="{Binding SelectionTop}" Width="{Binding SelectionWidth}" Height="{Binding SelectionHeight}"/>
                 </Canvas>
             </Grid>

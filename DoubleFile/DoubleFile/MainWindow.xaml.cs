@@ -2,7 +2,6 @@
 using System;
 using System.Reactive.Linq;
 using System.Windows;
-using System.Reactive;
 using System.ComponentModel;
 using System.Diagnostics;           // DEBUG
 using System.Linq;
@@ -78,6 +77,7 @@ namespace DoubleFile
             Init();
             Init = null;
             InitializeComponent();
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             //Util.Assert(0, false);      // test ability to assert from the primordial soup
 
             Observable.FromEventPattern(this, "ContentRendered")

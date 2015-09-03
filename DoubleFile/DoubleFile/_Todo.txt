@@ -1,5 +1,4 @@
-﻿- full screen selection rectangle is one pixel small
-- treemap doesn't always draw when zoomed into a folder with many files, mismatching proper user selection rect
+﻿- treemap doesn't always draw when zoomed into a folder with many files, mismatching proper user selection rect
 - extra window resizes when closing when a tooltip is up
 - alt-tab from an extra window cycles to the main window
 - couldn't move an extra window. Fixed with not bringing tooltip to front now? 9/2/15

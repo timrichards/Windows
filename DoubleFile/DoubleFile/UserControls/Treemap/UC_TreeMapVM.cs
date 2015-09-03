@@ -616,9 +616,6 @@ namespace DoubleFile
 
             var rc = new Rect(0, 0, BitmapSize, BitmapSize).Scale(1d / TreeMapFolderRect.ScaleFactor);
 
-            --rc.Width;
-            --rc.Height;
-
             return
                 (0 < nodeDatum.TotalLength)
                 ? new Recurse().Render(TreeNode, rc, DeepNode, out _deepNodeDrawn)
@@ -714,7 +711,8 @@ namespace DoubleFile
                         var nodeDatumUnread = new NodeDatum();
                         var nVolumeLength = rootNodeDatum.VolumeLength;
 
-                        var nUnreadLength = (long)nVolumeLength -
+                        var nUnreadLength =
+                            (long)nVolumeLength -
                             (long)rootNodeDatum.VolumeFree -
                             (long)rootNodeDatum.TotalLength;
 
@@ -802,8 +800,6 @@ namespace DoubleFile
                 KDirStat_DrawChildren(LocalTreeNode parent, IEnumerable<LocalTreeNode> ieChildren, bool bStart)
             {
                 var nodeDatum = parent.NodeDatum;
-                var rc = nodeDatum.TreeMapRect;
-                var rows = new List<RowStruct> { };
 
                 if (bStart &&
                     (null != nodeDatum.TreeMapFiles))
@@ -838,6 +834,7 @@ namespace DoubleFile
                 var anChildWidth = // Widths of the children (fraction of row width).
                     new double[nCount];
 
+                var rc = nodeDatum.TreeMapRect;
                 var horizontalRows = (rc.Width >= rc.Height);
                 var width_A = 1d;
 
@@ -851,6 +848,8 @@ namespace DoubleFile
                     if (0 < rc.Width)
                         width_A = rc.Height / rc.Width;
                 }
+
+                var rows = new List<RowStruct> { };
 
                 {
                     var childrenUsed = 0;

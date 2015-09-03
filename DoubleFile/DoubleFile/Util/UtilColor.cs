@@ -40,13 +40,13 @@ namespace DoubleFile
         }
 
         // these need to remain properties - unless const
-        internal const int Transparent         /*=> Colors.Transparent.ToArgb();            */  = unchecked(     0x00FFFFFF);
+        internal const int Transparent         /*=> Colors.Transparent.ToArgb();            */  =                0x00FFFFFF;
         internal const int LightBlue           /*=> Colors.LightBlue.ToArgb();              */  = unchecked((int)0xFFADD8E6);
         internal const int DarkGray            /*=> Colors.DarkGray.ToArgb();               */  = unchecked((int)0xFFA9A9A9);
         internal const int DarkKhaki           /*=> Colors.DarkKhaki.ToArgb();              */  = unchecked((int)0xFFBDB76B);
-        internal const int DarkRedBG           /*=> Color.FromArgb(64, 64, 0, 0).ToArgb();  */  = unchecked(     0x40400000);
+        internal const int DarkRedBG           /*=> Color.FromArgb(64, 64, 0, 0).ToArgb();  */  =                0x40400000;
         internal const int Firebrick           /*=> Colors.Firebrick.ToArgb();              */  = unchecked((int)0xFFB22222);
-        internal const int DarkYellowBG        /*=> Color.FromArgb(64, 0, 64, 64).ToArgb(); */  = unchecked(     0x40004040);
+        internal const int DarkYellowBG        /*=> Color.FromArgb(64, 0, 64, 64).ToArgb(); */  =                0x40004040;
         internal const int LightGray           /*=> Colors.LightGray.ToArgb();              */  = unchecked((int)0xFFD3D3D3);
         internal const int MediumSpringGreen   /*=> Colors.MediumSpringGreen.ToArgb();      */  = unchecked((int)0xFF00FA9A);
         internal const int MediumVioletRed     /*=> Colors.MediumVioletRed.ToArgb();        */  = unchecked((int)0xFFC71585);

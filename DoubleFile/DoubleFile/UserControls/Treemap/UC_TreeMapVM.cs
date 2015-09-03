@@ -169,7 +169,6 @@ namespace DoubleFile
             var prevNode = _prevNode;
 
             ClearSelection(bDontCloseTooltip: true);
-
             _prevNode = prevNode;
 
             if (null == TreeNode)
@@ -1026,7 +1025,6 @@ namespace DoubleFile
                     var cw = childSize / rowSize;
 
                     Util.Assert(1302.3315m, 0 <= cw);
-
                     anChildWidth[nextChild + i] = cw;
                 }
 

@@ -33,7 +33,7 @@ namespace DoubleFile
             {
                 get
                 {
-                    switch (_fill)
+                    switch (_fill)      // nullable type gets converted when not null (i.e. don't have to use .Value)
                     {
                         case null: return Brushes.Transparent;
                         case UtilColorcode.Transparent: return _brushSandyBrown;
@@ -842,12 +842,12 @@ namespace DoubleFile
                 if (horizontalRows)
                 {
                     if (0 < rc.Height)
-                        width_A = rc.Width / (double)rc.Height;
+                        width_A = rc.Width / rc.Height;
                 }
                 else
                 {
                     if (0 < rc.Width)
-                        width_A = rc.Height / (double)rc.Width;
+                        width_A = rc.Height / rc.Width;
                 }
 
                 {

@@ -10,18 +10,18 @@ namespace DoubleFile
             Descriptions = new Dictionary<int, string>
         {
             {Transparent,       ""},
-            {MultipleCopies,    "This folder has multiple copies on at least two separate volumes."},
             {DarkGray,          ""},						            // ignore list
-            {TreemapFolder,     ""},						            // Treemap: Folder containing files
-            {ContainsSolitary,  "Contains folders that have no copy, or copies are on one volume."},
-            {AllOnOneVolume,    "All copies of this folder reside on one volume."},
             {ParentCloned,      "This folder and its parent have a copy on a separate volume."},
+            {MultipleCopies,    "This folder has multiple copies on at least two separate volumes."},
+            {OneCopy,           "This folder has a copy on a separate volume."},
+            {AllOnOneVolume,    "All copies of this folder reside on one volume."},
+            {Solitary,          "This folder has no exact copy."},
+            {ContainsSolitary,  "Contains folders that have no copy, or copies are on one volume."},
             {ZeroLengthFolder,  "This folder has no data."},
+            {TreemapFolder,     ""},						            // Treemap: Folder containing files
             {TreemapFreespace,  ""},						            // Treemap: Free space
             {TreemapUnreadspace,""},						            // Treemap: Unread space
-            {TreemapFile,       ""},						            // Treemap: File
-            {Solitary,          "This folder has no exact copy."},
-            {OneCopy,           "This folder has a copy on a separate volume."}
+            {TreemapFile,       ""}						                // Treemap: File
         };
 
         static internal int
@@ -41,18 +41,18 @@ namespace DoubleFile
 
         // these need to remain properties - unless const
         internal const int Transparent          =                0x00FFFFFF;    // => Colors.Transparent.ToArgb();              // Transparent      
-        internal const int MultipleCopies       = unchecked((int)0xFFADD8E6);   // => Colors.LightBlue.ToArgb();                // LightBlue        
         internal const int DarkGray             = unchecked((int)0xFFA9A9A9);   // => Colors.DarkGray.ToArgb();                 // DarkGray         
-        internal const int TreemapFolder        = unchecked((int)0xFFBDB76B);   // => Colors.DarkKhaki.ToArgb();                // DarkKhaki        
-        internal const int ContainsSolitary     =                0x40400000;    // => Color.FromArgb(64, 64, 0, 0).ToArgb();    // DarkRedBG        
-        internal const int AllOnOneVolume       = unchecked((int)0xFFB22222);   // => Colors.Firebrick.ToArgb();                // Firebrick        
         internal const int ParentCloned         =                0x40004040;    // => Color.FromArgb(64, 0, 64, 64).ToArgb();   // DarkYellowBG     
+        internal const int MultipleCopies       = unchecked((int)0xFFADD8E6);   // => Colors.LightBlue.ToArgb();                // LightBlue        
+        internal const int OneCopy              = unchecked((int)0xFF4682B4);   // => Colors.SteelBlue.ToArgb();                // SteelBlue        
+        internal const int AllOnOneVolume       = unchecked((int)0xFFB22222);   // => Colors.Firebrick.ToArgb();                // Firebrick        
+        internal const int Solitary             = unchecked((int)0xFFC00000);   // => Color.FromArgb(255, 192, 0, 0).ToArgb();  // Red              
+        internal const int ContainsSolitary     =                0x40400000;    // => Color.FromArgb(64, 64, 0, 0).ToArgb();    // DarkRedBG        
         internal const int ZeroLengthFolder     = unchecked((int)0xFFD3D3D3);   // => Colors.LightGray.ToArgb();                // LightGray        
+        internal const int TreemapFolder        = unchecked((int)0xFFBDB76B);   // => Colors.DarkKhaki.ToArgb();                // DarkKhaki        
         internal const int TreemapFreespace     = unchecked((int)0xFF00FA9A);   // => Colors.MediumSpringGreen.ToArgb();        // MediumSpringGreen
         internal const int TreemapUnreadspace   = unchecked((int)0xFFC71585);   // => Colors.MediumVioletRed.ToArgb();          // MediumVioletRed  
         internal const int TreemapFile          = unchecked((int)0xFF6B8E23);   // => Colors.OliveDrab.ToArgb();                // OliveDrab        
-        internal const int Solitary             = unchecked((int)0xFFC00000);   // => Color.FromArgb(255, 192, 0, 0).ToArgb();  // Red              
-        internal const int OneCopy              = unchecked((int)0xFF4682B4);   // => Colors.SteelBlue.ToArgb();                // SteelBlue        
 
         internal const uint
             CLUT_Mask = 0xFF;

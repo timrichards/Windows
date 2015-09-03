@@ -80,8 +80,8 @@ namespace DoubleFile
             InitializeComponent();
             //Util.Assert(0, false);      // test ability to assert from the primordial soup
 
-            Observable.FromEventPattern(this, "Loaded")
-                .LocalSubscribe(99760, Window_Loaded);
+            Observable.FromEventPattern(this, "ContentRendered")
+                .LocalSubscribe(99760, ContentRendered_Handler);
 
             Observable.FromEventPattern<CancelEventArgs>(this, "Closing")
                 .LocalSubscribe(99759, args => MainWindow_Closing(args.EventArgs));
@@ -180,7 +180,7 @@ namespace DoubleFile
             }
         }
 
-        void Window_Loaded(EventPattern<object> obj)
+        void ContentRendered_Handler(EventPattern<object> obj)
         {
 #if (DEBUG)
             //#warning DEBUG is defined.

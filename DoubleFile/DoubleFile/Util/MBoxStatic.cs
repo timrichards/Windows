@@ -56,7 +56,8 @@ namespace DoubleFile
                 AssertUp = false;
             }
 #if (DEBUG && LOCALMBOX)
-            Debugger.Break();
+            if (Debugger.IsAttached)
+                Debugger.Break();
 #endif
             return false;
 #endif
@@ -75,10 +76,15 @@ namespace DoubleFile
         }
         static MessageBoxResult ShowDialog_(string strMessage, string strTitle, MessageBoxButton? buttons, ILocalWindow owner)
         {
-            if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
+            if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                 return MessageBox.Show(strMessage + "\n(LocalMbox: application shutting down.)", strTitle, buttons ?? MessageBoxButton.OK);
 
-            return MainWindow.WithMainWindow(w => w.ShowMessagebox(strMessage, strTitle, buttons));
+            var mainWindow = MainWindow.WithMainWindow(w => w);
+
+            if (null == mainWindow)
+                return MessageBox.Show(strMessage + "\n(LocalMbox: no main window.)", strTitle, buttons ?? MessageBoxButton.OK);
+
+            return mainWindow.ShowMessagebox(strMessage, strTitle, buttons);
         }
 
         static decimal

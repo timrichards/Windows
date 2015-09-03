@@ -93,7 +93,6 @@
 	- use string.Compare. avoid using the String.CompareTo instance methods because none of the overloads takes a StringComparison
 	- https://msdn.microsoft.com/en-us/library/Cc165449.aspx
 	- Ordinal is the fastest way to compare two strings.
-	- interned means two references to the same object (ReferenceEquals means interned). Specifically strings though in the vernacular, such as it is.
 - Application.Current.MainWindow can be LocalMbox (when exiting app)
 - The todo list is not read-only while debugging.
 - You can set a breakpoint condition false == new System.Diagnostics.StackTrace().ToString().Contains("AddToTree")

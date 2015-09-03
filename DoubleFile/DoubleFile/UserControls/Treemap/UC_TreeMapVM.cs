@@ -6,7 +6,6 @@ using System.Collections.Concurrent;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace DoubleFile
 {
@@ -17,8 +16,11 @@ namespace DoubleFile
             internal const int
                 ScaleFactor = 1 << 2;
 
+            internal double Area =>
+                _rc.Width * _rc.Height;
+
             internal GeometryDrawing
-                GeometryDrawing => new GeometryDrawing(Fill, new Pen(Brushes.Gray, .25), new RectangleGeometry(_rc.Scale(ScaleFactor)));
+                GeometryDrawing => new GeometryDrawing(Fill, new Pen(Brushes.Black, .25), new RectangleGeometry(_rc.Scale(ScaleFactor)));
 
             internal TreeMapFolderRect(Rect rc, int? fill = null)
             {
@@ -71,7 +73,7 @@ namespace DoubleFile
             readonly int? _fill = null;
         }
 
-        public WriteableBitmap
+        public Drawing
             TreeMapDrawing { get; private set; }
         public const double
             BitmapSize = 1 << 11;
@@ -554,19 +556,11 @@ namespace DoubleFile
 
                 drawingGroup.Children.Add(new GeometryDrawing(new SolidColorBrush(Color.FromRgb(193, 176, 139)), new Pen(), new RectangleGeometry(new Rect(0, 0, BitmapSize, BitmapSize))));
 
-                foreach (var render in _ieRenderActions)
+                foreach (var render in _ieRenderActions.OrderByDescending(r => r.Area).Take(1 << 11))
                     drawingGroup.Children.Add(render.GeometryDrawing);
 
-                var drawingVisual = new DrawingVisual();
-                var hDC = drawingVisual.RenderOpen();
-
-                hDC.DrawDrawing(drawingGroup);
-                hDC.Close();
-
-                var renderTargetBitmap = new RenderTargetBitmap((int)BitmapSize, (int)BitmapSize, 96, 96, PixelFormats.Default);
-
-                renderTargetBitmap.Render(drawingVisual);
-                TreeMapDrawing = new WriteableBitmap(renderTargetBitmap);
+                Util.WriteLine(DateTime.Now.Ticks + " " + treeNode + " drawingGroup.Children.Add(render.GeometryDrawing);");
+                TreeMapDrawing = drawingGroup;
 
                 if (null != LocalOwner)
                     LocalOwner.Title = treeNode.Text;
@@ -633,8 +627,13 @@ namespace DoubleFile
                 _deepNode = deepNode;
                 RecurseDrawGraph(treeNode, rc, true);
 
+                var timer = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Timestamp()
+                    .LocalSubscribe(0, x => Util.WriteLine("" + _nWorkerCount));
+
                 if (0 < _nWorkerCount)
                     _blockingFrame.PushFrameTrue();
+
+                timer.Dispose();
 
                 deepNodeDrawn_out = _deepNodeDrawn;
                 return _lsRenderActions.Concat(_lsFrames);
@@ -836,7 +835,7 @@ namespace DoubleFile
 
                 var rc = nodeDatum.TreeMapRect;
                 var horizontalRows = (rc.Width >= rc.Height);
-                var width_A = 1d;
+                double width_A = 1;
 
                 if (horizontalRows)
                 {
@@ -866,9 +865,8 @@ namespace DoubleFile
 
                 var width = horizontalRows ? rc.Width : rc.Height;
                 var height = horizontalRows ? rc.Height : rc.Width;
-
                 var c = 0;
-                double top = horizontalRows ? rc.Top : rc.Left;
+                var top = horizontalRows ? rc.Top : rc.Left;
                 var lastRow = rows[rows.Count - 1];
 
                 rows.ForEach(row =>
@@ -996,6 +994,7 @@ namespace DoubleFile
                         // = 1 > _minProportion.
                         break;
                     }
+
                     rowHeight = virtualRowHeight;
                 }
 

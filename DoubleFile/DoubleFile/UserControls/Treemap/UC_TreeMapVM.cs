@@ -559,7 +559,6 @@ namespace DoubleFile
                 foreach (var render in _ieRenderActions.OrderByDescending(r => r.Area).Take(1 << 11))
                     drawingGroup.Children.Add(render.GeometryDrawing);
 
-                Util.WriteLine(DateTime.Now.Ticks + " " + treeNode + " drawingGroup.Children.Add(render.GeometryDrawing);");
                 TreeMapDrawing = drawingGroup;
 
                 if (null != LocalOwner)
@@ -627,13 +626,8 @@ namespace DoubleFile
                 _deepNode = deepNode;
                 RecurseDrawGraph(treeNode, rc, true);
 
-                var timer = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Timestamp()
-                    .LocalSubscribe(0, x => Util.WriteLine("" + _nWorkerCount));
-
                 if (0 < _nWorkerCount)
                     _blockingFrame.PushFrameTrue();
-
-                timer.Dispose();
 
                 deepNodeDrawn_out = _deepNodeDrawn;
                 return _lsRenderActions.Concat(_lsFrames);

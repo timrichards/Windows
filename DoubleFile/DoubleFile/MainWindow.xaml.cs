@@ -81,7 +81,7 @@ namespace DoubleFile
             //Util.Assert(0, false);      // test ability to assert from the primordial soup
 
             Observable.FromEventPattern(this, "ContentRendered")
-                .LocalSubscribe(99760, ContentRendered_Handler);
+                .LocalSubscribe(99760, x => ContentRendered_Handler());
 
             Observable.FromEventPattern<CancelEventArgs>(this, "Closing")
                 .LocalSubscribe(99759, args => MainWindow_Closing(args.EventArgs));
@@ -180,8 +180,11 @@ namespace DoubleFile
             }
         }
 
-        void ContentRendered_Handler(EventPattern<object> obj)
+        void ContentRendered_Handler()
         {
+            //<!--Not feasible to have content and also allow an extra window.-->
+            //<!--Grid allows a ContentRendered event handler. Handler sets Content = null-->
+            Content = null;
 #if (DEBUG)
             //#warning DEBUG is defined.
             Util.Assert(99998, Debugger.IsAttached, "Debugger is not attached!");

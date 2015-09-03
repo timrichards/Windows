@@ -33,8 +33,8 @@ namespace DoubleFile
                     tuple.ieDetail
                     .Select(ieLine => new LVitem_FolderDetailVM(ieLine.ToList()));
 
-                var strFG_Description = UtilColor.Descriptions[tuple.treeNode.ForeColor];
-                var strBG_Description = UtilColor.Descriptions[tuple.treeNode.BackColor];
+                var strFG_Description = UtilColorcode.Descriptions[tuple.treeNode.ForeColor];
+                var strBG_Description = UtilColorcode.Descriptions[tuple.treeNode.BackColor];
 
                 if (false == string.IsNullOrWhiteSpace(strFG_Description))
                 {

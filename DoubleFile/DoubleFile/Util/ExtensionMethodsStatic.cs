@@ -227,14 +227,14 @@ namespace DoubleFile
         }
 
         static internal Rect
-            Scale(this Rect rc_in, Size scale)
+            Scale(this Rect rc_in, double scale)
         {
             Rect rc = rc_in;
 
-            rc.X *= scale.Width;
-            rc.Y *= scale.Height;
-            rc.Width *= scale.Width;
-            rc.Height *= scale.Height;
+            rc.X *= scale;
+            rc.Y *= scale;
+            rc.Width *= scale;
+            rc.Height *= scale;
             return rc;
         }
 

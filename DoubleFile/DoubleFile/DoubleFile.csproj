@@ -320,7 +320,7 @@
     <Compile Include="Util\FolderKeyTuple.cs" />
     <Compile Include="Util\Tree\LVitemFileTag.cs" />
     <Compile Include="UserControls\Treemap\UC_TreeMapVM.cs" />
-    <Compile Include="Util\UtilColor.cs" />
+    <Compile Include="Util\UtilColorcode.cs" />
     <Compile Include="Util\FileDictionary.cs" />
     <Compile Include="Util\FileDictionary\DuplicateStruct.cs" />
     <Compile Include="Util\FileKeyTuple.cs" />

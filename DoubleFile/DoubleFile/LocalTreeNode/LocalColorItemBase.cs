@@ -4,25 +4,25 @@ namespace DoubleFile
 {
     abstract class LocalColorItemBase
     {
-        public int ForeColor { get { return UtilColor.GetFG_ARGB(Color); } set { int c = Color; Color = UtilColor.SetFG_ARGB(ref c, value); } }
-        public int BackColor { get { return UtilColor.GetBG_ARGB(Color); } set { int c = Color; Color = UtilColor.SetBG_ARGB(ref c, value); } }
+        public int ForeColor { get { return UtilColorcode.GetFG_ARGB(Color); } set { int c = Color; Color = UtilColorcode.SetFG_ARGB(ref c, value); } }
+        public int BackColor { get { return UtilColorcode.GetBG_ARGB(Color); } set { int c = Color; Color = UtilColorcode.SetBG_ARGB(ref c, value); } }
 
         internal Brush Foreground =>
-            (UtilColor.Transparent == ForeColor)
+            (UtilColorcode.Transparent == ForeColor)
             ? Brushes.White
-            : UtilColor.ARGBtoBrush(ForeColor);
+            : UtilColorcode.ARGBtoBrush(ForeColor);
 
-        internal Brush Background => UtilColor.ARGBtoBrush(BackColor);
+        internal Brush Background => UtilColorcode.ARGBtoBrush(BackColor);
 
         internal LocalColorItemBase()
         {
-            Color = UtilColor.Set_ARGB(UtilColor.Transparent, UtilColor.Transparent);
+            Color = UtilColorcode.Set_ARGB(UtilColorcode.Transparent, UtilColorcode.Transparent);
         }
 
         protected int Datum8bits
         {
-            get { return (int)(_datum & _knDatum8bitMask) >> UtilColor.CLUT_Shift; }
-            set { _datum = (int)(_datum & (-1 - _knDatum8bitMask)) + (value << UtilColor.CLUT_Shift); }
+            get { return (int)(_datum & _knDatum8bitMask) >> UtilColorcode.CLUT_Shift; }
+            set { _datum = (int)(_datum & (-1 - _knDatum8bitMask)) + (value << UtilColorcode.CLUT_Shift); }
         }
 
         protected int Datum16bits
@@ -33,12 +33,12 @@ namespace DoubleFile
 
         int Color
         {
-            get { return (int)(_datum & UtilColor.CLUT_Mask); }
-            set { _datum = (int)(_datum & (-1 - UtilColor.CLUT_Mask)) + value; }
+            get { return (int)(_datum & UtilColorcode.CLUT_Mask); }
+            set { _datum = (int)(_datum & (-1 - UtilColorcode.CLUT_Mask)) + value; }
         }
 
         static readonly uint
-            _knDatum8bitMask =  0xFFFF - UtilColor.CLUT_Mask;
+            _knDatum8bitMask =  0xFFFF - UtilColorcode.CLUT_Mask;
         const uint
             _knDatum16bitMask = 0xFFFF0000;
 

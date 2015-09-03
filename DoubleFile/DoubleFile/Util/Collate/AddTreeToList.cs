@@ -49,7 +49,7 @@ namespace DoubleFile
                         continue;
                     }
 
-                    if ((treeNode.ForeColor == UtilColor.Firebrick) &&
+                    if ((treeNode.ForeColor == UtilColorcode.AllOnOneVolume) &&
                         (treeNode == nodeDatum.Clones[0]))
                     {
                         _lsSameVol.Add(treeNode);
@@ -57,7 +57,7 @@ namespace DoubleFile
 
                     if (bCloneOK)
                     {
-                        treeNode.BackColor = UtilColor.DarkYellowBG;
+                        treeNode.BackColor = UtilColorcode.ParentCloned;
 
                         //if ((nodeDatum.LVitem != null) && (nodeDatum.LVitem.ListView == null))  // ignore LV
                         //{
@@ -68,7 +68,7 @@ namespace DoubleFile
                     if (treeNode.FirstNode != null)
                     {
                         Go(treeNode.FirstNode, bCloneOK ||
-                            (new[] { UtilColor.SteelBlue, UtilColor.LightBlue }.Contains(treeNode.ForeColor)));
+                            (new[] { UtilColorcode.OneCopy, UtilColorcode.MultipleCopies }.Contains(treeNode.ForeColor)));
                     }
                 }
                 while (bNextNode && ((treeNode = treeNode.NextNode) != null));

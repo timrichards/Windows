@@ -10,58 +10,69 @@ using System.Windows.Media.Imaging;
 
 namespace DoubleFile
 {
-    class TreeMapFolderRect
-    {
-        internal GeometryDrawing
-            GeometryDrawing => new GeometryDrawing(Fill, new Pen(Brushes.Black, .25), new RectangleGeometry(_rc));
-
-        internal TreeMapFolderRect(Rect rc, int? fill = null)
-        {
-            _rc = rc;
-
-            if (null != fill)
-                _fill = fill.Value;
-        }
-
-        Brush
-            Fill
-        {
-            get
-            {
-                switch (_fill)
-                {
-                    case null: return Brushes.Transparent;
-                    case UtilColor.Transparent: return _sandyBrown;
-                    case UtilColor.Red: return _red;
-                    case UtilColor.SteelBlue: return _steelBlue;
-                    default: return new RadialGradientBrush(Colors.Wheat, UtilColor.Dark(UtilColor.FromArgb(_fill.Value))) { RadiusX = 1, RadiusY = 1 };
-                }
-            }
-        }
-        static Brush _sandyBrown = null;
-        static Brush _red = null;
-        static Brush _steelBlue = null;
-
-        static internal void Init()
-        {
-            Util.UIthread(99979, () =>
-            {
-                _sandyBrown = new RadialGradientBrush(Colors.Wheat, UtilColor.Dark(Colors.SandyBrown)) { RadiusX = 1, RadiusY = 1 };
-                _red = new RadialGradientBrush(Colors.Wheat, UtilColor.Dark(Colors.Red)) { RadiusX = 1, RadiusY = 1 };
-                _steelBlue = new RadialGradientBrush(Colors.Wheat, UtilColor.Dark(Colors.SteelBlue)) { RadiusX = 1, RadiusY = 1 };
-            });
-        }
-
-        readonly Rect _rc = default(Rect);
-        readonly int? _fill = null;
-    }
-
     class UC_TreeMapVM : SliderVM_Base<ListViewItemVM_Base>, IDisposable
     {
+        class TreeMapFolderRect
+        {
+            internal const int
+                ScaleFactor = 1 << 2;
+
+            internal GeometryDrawing
+                GeometryDrawing => new GeometryDrawing(Fill, new Pen(Brushes.Gray, .25), new RectangleGeometry(_rc.Scale(ScaleFactor)));
+
+            internal TreeMapFolderRect(Rect rc, int? fill = null)
+            {
+                _rc = rc;
+
+                if (null != fill)
+                    _fill = fill.Value;
+            }
+
+            Brush
+                Fill
+            {
+                get
+                {
+                    switch (_fill)
+                    {
+                        case null: return Brushes.Transparent;
+                        case UtilColorcode.Transparent: return _brushSandyBrown;
+                        case UtilColorcode.Solitary: return _brushSolitary;
+                        case UtilColorcode.OneCopy: return _brushOneCopy;
+                        case UtilColorcode.TreemapFolder: return _brushTreemapFolder;
+                        case UtilColorcode.TreemapFile: return _brushTreemapFile;
+                        default: return new RadialGradientBrush(Colors.Wheat, UtilColorcode.Dark(UtilColorcode.FromArgb(_fill.Value))) { RadiusX = 1, RadiusY = 1 };
+                    }
+                }
+            }
+            static Brush _brushSandyBrown = null;
+            static Brush _brushSolitary = null;
+            static Brush _brushOneCopy = null;
+            static Brush _brushTreemapFolder = null;
+            static Brush _brushTreemapFile = null;
+
+            static Brush Init(int color) => new RadialGradientBrush(Colors.Wheat, UtilColorcode.Dark(UtilColorcode.FromArgb(color))) { RadiusX = 1, RadiusY = 1 };
+            static internal void
+                Init()
+            {
+                Util.UIthread(99979, () =>
+                {
+                    _brushSandyBrown = new RadialGradientBrush(Colors.Wheat, UtilColorcode.Dark(Colors.SandyBrown)) { RadiusX = 1, RadiusY = 1 };
+                    _brushSolitary = Init(UtilColorcode.Solitary);
+                    _brushOneCopy = Init(UtilColorcode.OneCopy);
+                    _brushTreemapFolder = Init(UtilColorcode.TreemapFolder);
+                    _brushTreemapFile = Init(UtilColorcode.TreemapFile);
+                });
+            }
+
+            readonly Rect _rc = default(Rect);
+            readonly int? _fill = null;
+        }
+
         public WriteableBitmap
             TreeMapDrawing { get; private set; }
-
-        public const double BitmapSize = 1 << 11;
+        public const double
+            BitmapSize = 1 << 11;
 
         public double SelectionLeft { get; private set; }
         public double SelectionWidth { get; private set; }
@@ -74,8 +85,7 @@ namespace DoubleFile
             set
             {
                 var rect =
-                    value?.NodeDatum.TreeMapRect
-                    .Scale(new Size(BitmapSize / _rectBitmap.Width, BitmapSize / _rectBitmap.Height))
+                    value?.NodeDatum.TreeMapRect.Scale(TreeMapFolderRect.ScaleFactor)
                     ?? default(Rect);
 
                 SelectionLeft = rect.Left;
@@ -134,7 +144,7 @@ namespace DoubleFile
 
         internal void MouseUp(Point ptLocation)
         {
-            var treeNode = ZoomOrTooltip(new Point((ptLocation.X * _rectBitmap.Width), (ptLocation.Y * _rectBitmap.Height)));
+            var treeNode = ZoomOrTooltip(new Point(ptLocation.X * BitmapSize, ptLocation.Y * BitmapSize));
 
             if (null != treeNode)
                 LocalTV.SelectedNode = treeNode;
@@ -365,7 +375,14 @@ namespace DoubleFile
             _bSelRecAndTooltip = false;
         }
 
-        static LocalTreeNode FindMapNode(LocalTreeNode treeNode_in, Point pt, bool bNextNode = false)
+        static LocalTreeNode FindMapNode(LocalTreeNode treeNode_in, Point pt)
+        {
+            pt.X /= TreeMapFolderRect.ScaleFactor;
+            pt.Y /= TreeMapFolderRect.ScaleFactor;
+            return FindMapNode_(treeNode_in, pt);
+        }
+
+        static LocalTreeNode FindMapNode_(LocalTreeNode treeNode_in, Point pt, bool bNextNode = false)
         {
             var treeNode = treeNode_in;
 
@@ -391,17 +408,10 @@ namespace DoubleFile
                     return treeNode;
                 }
 
-                //The following shows that you have to convert to int to compare to int.
-                //var a = treeNode.Nodes?.Count;
-                //var b = treeNode.Nodes?.Count ?? 0;
-
-                //if (0 == treeNode.Nodes?.Count)
-                //    continue;
-
                 if (0 == (treeNode.Nodes?.Count ?? 0))
                     continue;
 
-                var foundNode = FindMapNode(treeNode.Nodes[0], pt, bNextNode: true);
+                var foundNode = FindMapNode_(treeNode.Nodes[0], pt, bNextNode: true);
 
                 if (null != foundNode)
                     return foundNode;
@@ -476,7 +486,7 @@ namespace DoubleFile
                 lsNodes.Add(new LocalTreeMapFileNode(tuple.Item1)
                 {
                     NodeDatum = new NodeDatum { TotalLength = tuple.Item2 },
-                    ForeColor = UtilColor.OliveDrab
+                    ForeColor = UtilColorcode.TreemapFile
                 });
             }
 
@@ -540,6 +550,8 @@ namespace DoubleFile
 
                 var drawingGroup = new DrawingGroup();
 
+                drawingGroup.Children.Add(new GeometryDrawing(new SolidColorBrush(Color.FromRgb(193, 176, 139)), new Pen(), new RectangleGeometry(new Rect(0, 0, BitmapSize, BitmapSize))));
+
                 foreach (var render in _ieRenderActions)
                     drawingGroup.Children.Add(render.GeometryDrawing);
 
@@ -592,15 +604,6 @@ namespace DoubleFile
         {
             _deepNodeDrawn = null;
 
-            var rc = _rectBitmap;
-
-            --rc.Width;
-            --rc.Height;
-
-            if ((0 >= rc.Width) ||
-                (0 >= rc.Height))
-                return null;
-
             var nodeDatum = TreeNode.NodeDatum;
 
             if (null == nodeDatum)      // added 2/13/15
@@ -608,6 +611,11 @@ namespace DoubleFile
                 Util.Assert(99963, false);
                 return null;
             }
+
+            var rc = new Rect(0, 0, BitmapSize, BitmapSize).Scale(1d / TreeMapFolderRect.ScaleFactor);
+
+            --rc.Width;
+            --rc.Height;
 
             return
                 (0 < nodeDatum.TotalLength)
@@ -636,10 +644,6 @@ namespace DoubleFile
             void
                 RecurseDrawGraph(LocalTreeNode treeNode, Rect rc, bool bStart = false)
             {
-#if (DEBUG)
-                Util.Assert(1302.3303m, 0 <= rc.Width);
-                Util.Assert(1302.3304m, 0 <= rc.Height);
-#endif
                 var nodeDatum = treeNode.NodeDatum;
 
                 if (null == nodeDatum)      // added 2/13/15
@@ -663,13 +667,6 @@ namespace DoubleFile
                     _lsRenderActions.Add(new TreeMapFolderRect(rc, treeNode.ForeColor));
                     return;
                 }
-
-                //if ((false == bStart) &&
-                //    (1 << 10 < treeNode.Nodes?.Count))
-                //{
-                //    _lsRenderActions.Add(new TreeMapFolderRect(rc, UtilColor.DarkYellowBG));
-                //    return;
-                //}
 
                 if ((treeNode == _deepNode) ||
                     (_deepNode?.IsChildOf(treeNode) ?? false))
@@ -709,7 +706,7 @@ namespace DoubleFile
                         var nodeFree = new LocalTreeMapFileNode(treeNode.Text + " (free space)")
                         {
                             NodeDatum = nodeDatumFree,
-                            ForeColor = UtilColor.MediumSpringGreen
+                            ForeColor = UtilColorcode.TreemapFreespace
                         };
 
                         var nodeDatumUnread = new NodeDatum();
@@ -735,7 +732,7 @@ namespace DoubleFile
                         var nodeUnread = new LocalTreeMapFileNode(treeNode.Text + " (unread data)")
                         {
                             NodeDatum = nodeDatumUnread,
-                            ForeColor = UtilColor.MediumVioletRed
+                            ForeColor = UtilColorcode.TreemapUnreadspace
                         };
 
                         // parent added as child, with two other nodes:
@@ -816,7 +813,7 @@ namespace DoubleFile
                     ieChildren = ieChildren.Concat(new[] { new LocalTreeMapFileNode(parent.Text)
                     {
                         NodeDatum = new NodeDatum { TotalLength = nodeDatum.Length },
-                        ForeColor = UtilColor.DarkKhaki
+                        ForeColor = UtilColorcode.TreemapFolder
                     }});
                 }
 
@@ -1048,8 +1045,6 @@ namespace DoubleFile
                 _blockingFrame = new LocalDispatcherFrame(99850);
         }
 
-        static readonly Rect
-            _rectBitmap = new Rect(0, 0, BitmapSize, BitmapSize);
         bool
             _bClearingSelection = false;
         bool

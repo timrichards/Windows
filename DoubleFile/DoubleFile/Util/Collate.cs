@@ -271,10 +271,10 @@ namespace DoubleFile
                     continue;               // keep the same-vol
 
                 if ((3 <= nClones) &&       // includes the subject node: only note three clones or more
-                    (UtilColor.SteelBlue == listNodes.Value[0].ForeColor))  // otherwise it'd be FireBrick: all one volume
+                    (UtilColorcode.OneCopy == listNodes.Value[0].ForeColor))  // otherwise it'd be FireBrick: all one volume
                 {
                     foreach (var node in listNodes.Value)
-                        node.ForeColor = UtilColor.LightBlue;
+                        node.ForeColor = UtilColorcode.MultipleCopies;
                 }
 
                 var lvItem = new LVitem_ClonesVM(listNodes.Value, nicknameUpdater);
@@ -311,8 +311,8 @@ namespace DoubleFile
                 var treeNode = kvp.Key;
                 var lvIgnoreItem = kvp.Value;
 
-                treeNode.ForeColor = UtilColor.DarkGray;
-                treeNode.BackColor = UtilColor.Transparent;
+                treeNode.ForeColor = UtilColorcode.DarkGray;
+                treeNode.BackColor = UtilColorcode.Transparent;
 
                 var nodeDatum = treeNode.NodeDatum;
 
@@ -352,8 +352,8 @@ namespace DoubleFile
 
                 Util.Assert(1305.6322m, 0 < nodeDatum.FileCountHere);
                 SnowUniqueParents(treeNode);
-                Util.Assert(1305.6323m, UtilColor.Transparent == treeNode.ForeColor);
-                treeNode.ForeColor = UtilColor.Red;
+                Util.Assert(1305.6323m, UtilColorcode.Transparent == treeNode.ForeColor);
+                treeNode.ForeColor = UtilColorcode.Solitary;
                 _lsLVsolitary.Add(lvItem);
                 Util.Assert(1305.6324m, null == nodeDatum.LVitem);
                 nodeDatum.LVitem = lvItem;
@@ -464,7 +464,7 @@ namespace DoubleFile
 
             if (0 == nLength)
             {
-                treeNode.ForeColor = UtilColor.LightGray;
+                treeNode.ForeColor = UtilColorcode.ZeroLengthFolder;
                 nodeDatum.Clones = null;
             }
 
@@ -495,8 +495,8 @@ namespace DoubleFile
                         return;
                     }
 
-                    Util.Assert(1305.6308m, UtilColor.Transparent == treeNode.ForeColor);
-                    treeNode.ForeColor = UtilColor.Firebrick;
+                    Util.Assert(1305.6308m, UtilColorcode.Transparent == treeNode.ForeColor);
+                    treeNode.ForeColor = UtilColorcode.AllOnOneVolume;
 
                     foreach (var subnode in listClones)
                     {
@@ -527,8 +527,8 @@ namespace DoubleFile
                             continue;
                         }
 
-                        Util.Assert(1305.6311m, treeNode.ForeColor == UtilColor.Firebrick);
-                        treeNode.ForeColor = UtilColor.SteelBlue;
+                        Util.Assert(1305.6311m, treeNode.ForeColor == UtilColorcode.AllOnOneVolume);
+                        treeNode.ForeColor = UtilColorcode.OneCopy;
                         break;
                     }
 
@@ -620,12 +620,12 @@ namespace DoubleFile
 
             while (null != parentNode)
             {
-                parentNode.BackColor = UtilColor.DarkRedBG;
+                parentNode.BackColor = UtilColorcode.ContainsSolitary;
 
                 var nodeDatum = parentNode.NodeDatum;
 
                 Util.Assert(1305.6313m,
-                    (parentNode.ForeColor == UtilColor.Transparent) ==
+                    (parentNode.ForeColor == UtilColorcode.Transparent) ==
                     (null == nodeDatum.LVitem));
 
                 parentNode = parentNode.Parent;

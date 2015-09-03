@@ -1,11 +1,42 @@
 ﻿- treemap doesn't always draw when zoomed into a folder with many files, mismatching proper user selection rect
+- treemap still selects the tooltip when closing extra window.
+- GoTo file only works with file list open
+	- Detail doesn't listen for selected file change
+- Application.Current.MainWindow is only accessible on the main UI thread
+- Click OK on a dialog and Double File disappears behind another app. -fix example: end of save listings it comes to front.
+- Eliminate no files here + just one subfolder from folder score (but why's it different?)
+	- Why does a folder with the same # items as subfolder have a different folder score? (i.e. no files here)
+	- why does e.g. monkey_house have a nFolderScorer of 0?
+	- SDL small then check outer folder score: 0 0 0
+	- Why are some folders white? Why do some folders not say they're duplicated?
+	- What is the distribution of sums of "random" hash folder score?
+- Add folder name to suffix title Tree List: My Documents; Files in Folder: My Documents; Folders Here: My Documents; etc.
+- Option to show drive label and model/serial in Volume text (Nickname)
+- Allow a notes field
+- Allow rescan of drive, with history difference, or allow copying values of already saved to the new one
+- Allow opening values of listing file that failed scanning
+- compare mode - how is this folder different from that one besides looking at the details: show missing/different file.
+- This folder has no exact copy: so please itemize in a report what the exact differences are to the nearest copy.
+	- Show the global folder list which is ranked by similar neighbors; select this folder.
+	- Allow a list of important files and directories to watch, with alerts; links; etc.:
+		- Invert the exclusive principle. Start inclusive, not with an ignore list.
+	- Folders and files that are missing; or that are different.
+	- Invert the size matters principle: some of the most important files may go unnoticed: just a drop in the bucket.
+	- Restore the ignore list: nobody cares about the Windows or Program Files directories. Don't make moron reports.
+- A 64 bit hash has 1 chance in 18 quintillion. Do collision tests: e.g. run SHA1 against MD5. Put statistics under Advanced.
+	- last modified time as part of comparison; or notification: hash equal but mod times are different
+	- wolfram-alpha front-end; curate; data -> query language: what state are my backups in? What are the best queries to bring forward?
+	- compare the 4K vs 128K correlations to see what they caught. - quick see: nFolderCount1pt0 vs nFolderCount2
+- allow two different file windows to point to two different folders: each new folder window should have its own children
+- dupe vm event alerts: static vm internal counter or static transmit
+- Sync To button in tree view
+- Filtering user control header for tree list; tree view; files; search; duplicates: like search but restrict the view
+- open project; nav save listings; cancel; nav nav; complete save listings; nav explorer create; cancel: should project page.
+- show messagbox title
 - extra window resizes when closing when a tooltip is up
 - alt-tab from an extra window cycles to the main window
 - couldn't move an extra window. Fixed with not bringing tooltip to front now? 9/2/15
-- treemap still selects the tooltip when closing extra window.
-- tooltip doesn't show the first time after zoom
-	- ditch the UR corner tooltip for the middle one: covers the close box
-	- tooltip doesn't darken: no big deal.
+- tooltip doesn't darken: no big deal.
 - Message box option to not repeat, with loc dictionary and 1 minute timer
 	- that other no-repeat code may prevent user from seeing message.
 	- Message log window for all repeats etc. Perhaps subitems for repeated in-a-row not skipped messages.
@@ -13,10 +44,12 @@
 - first tree view item is bold and the wrong forecolors, incl highlighted - treeview shouldn't have a selected item. app activated?
 - file list 0-length files assert at tuple.Item2.First(strFile =>
 - binding errors only evidence on extra windows
+	- SelectedItem binding not found on Detail Datagrids: BindingExpression path error: 'SelectedItem' property not found on 'object' ''LV_VolumeDetailVM' (HashCode=47281521)'. BindingExpression:Path=SelectedItem; DataItem='LV_VolumeDetailVM' (HashCode=47281521); target element is 'DataGrid' (Name='formLV_Volume'); target property is 'SelectedItem' (type 'Object')
 - esc key doesn't close Edit Listing window - I like it
 - ditch duplicates view and expand files list for that
 	- duplicates view should have same fs info ("lv line knColLengthLV") as the Files view and col differences should be red
 - true now wpf?
+	- Treemap selection rectangle still doesn't always know what the treemap treenode view is set at
 	- true: tree map doesn't always show up at all; slow calc etc
 	- large file tree map blacks out switching between items 1 and 2 - item 1 has bitmap size of 1152: loaded too slow for it.
 - overlay
@@ -28,9 +61,6 @@
 	- enter key doesn't do anything until you click on msg box itself. Good.
 - can you disable Minimize in the Alt-Space popup menu? It results in a no-op: not a big deal.
 - shouldn't be impossible to find 2 year old jpg of eq settings
-- GoTo file only works with file list open
-	- Detail doesn't listen for selected file change
-- Application.Current.MainWindow is only accessible on the main UI thread
 - foreach over IList
 - beating on search causes 1 in 5 no appear
 - backspace key is just like any browser: history back button
@@ -38,14 +68,12 @@
 - repeatedly scrolling to the end and cycling the Variance pages will eat up memory.
 - corner case: pounding search will increase memory usage
 - Assert box offset when app window partly off screen
-- Treemap selection rectangle still doesn't always know what the treemap treenode view is set at
 - background progress: saving project doesn't have to tie up the app.
 - Could remove ?? true: false != null
 - LocalTreeNode(TabledString<Tabled_Folders> strContent) is never called - keep it around. string passed in gets converted
 - Smells:
 	- ISaveDirListingsStatus.Status ignores WinProgress.WithWinProgress lambda 
 	- WinProject doesn't test its weak reference which is understandable
-- SelectedItem binding not found on Detail Datagrids: BindingExpression path error: 'SelectedItem' property not found on 'object' ''LV_VolumeDetailVM' (HashCode=47281521)'. BindingExpression:Path=SelectedItem; DataItem='LV_VolumeDetailVM' (HashCode=47281521); target element is 'DataGrid' (Name='formLV_Volume'); target property is 'SelectedItem' (type 'Object')
 - if (null == tuple.Item3.NodeDatum.TreeMapFiles)     // TODO: Why would this be null?
 - rename "tuple" in TreeSelect clients
 - same volume / solitary red forecolors are too similar
@@ -65,7 +93,7 @@
 	- use string.Compare. avoid using the String.CompareTo instance methods because none of the overloads takes a StringComparison
 	- https://msdn.microsoft.com/en-us/library/Cc165449.aspx
 	- Ordinal is the fastest way to compare two strings.
-	- interned means two references to the same object (ReferenceEquals means interned)
+	- interned means two references to the same object (ReferenceEquals means interned). Specifically strings though in the vernacular, such as it is.
 - Application.Current.MainWindow can be LocalMbox (when exiting app)
 - The todo list is not read-only while debugging.
 - You can set a breakpoint condition false == new System.Diagnostics.StackTrace().ToString().Contains("AddToTree")
@@ -81,45 +109,15 @@
 - Rename set methods to MethodSet(): hard to find: e.g. AbortSet() in WinProgress
 	- check properties that are only supposed to be set once to true: make them Set methods
 
-- Eliminate no files here + just one subfolder from folder score (but why's it different?)
-	- Why does a folder with the same # items as subfolder have a different folder score? (i.e. no files here)
-	- why does e.g. monkey_house have a nFolderScorer of 0?
-	- SDL small then check outer folder score: 0 0 0
-- What is the distribution of sums of "random" hash folder score?
-- Why are some folders white? Why do some folders not say they're duplicated?
 - PresentationCore.dll: FormatException; InvalidCastException; ArgumentException (see output window)
 - New Listing File dialog flashes when system choose folder dialog is shown
 - tool tip to tree map title bar area
 - go to button in tree map
 - save to both V1 and latest V as 2 files (in debug); convert V1 and compare to latest: for practice in consistency
 - rollover highlight project image button text
-- Click OK on a dialog and Double File disappears behind another app. -fix example: end of save listings it comes to front.
-- Allow a notes field
-- Allow rescan of drive, with history difference, or allow copying values of already saved to the new one
-- Allow opening values of listing file that failed scanning
-- compare mode - how is this folder different from that one besides looking at the details: show missing/different file.
-- This folder has no exact copy: so please itemize in a report what the exact differences are to the nearest copy.
-	- Show the global folder list which is ranked by similar neighbors; select this folder.
-	- Allow a list of important files and directories to watch, with alerts; links; etc.:
-		- Invert the exclusive principle. Start inclusive, not with an ignore list.
-	- Folders and files that are missing; or that are different.
-	- Invert the size matters principle: some of the most important files may go unnoticed: just a drop in the bucket.
-	- Restore the ignore list: nobody cares about the Windows or Program Files directories. Don't make moron reports.
-- A 64 bit hash has 1 chance in 18 quintillion. Do collision tests: e.g. run SHA1 against MD5. Put statistics under Advanced.
-- last modified time as part of comparison; or notification: hash equal but mod times are different
-- wolfram-alpha front-end; curate; data -> query language: what state are my backups in? What are the best queries to bring forward?
-- compare the 4K vs 128K correlations to see what they caught. - quick see: nFolderCount1pt0 vs nFolderCount2
-- Add folder name to suffix title Tree List: My Documents; Files in Folder: My Documents; Folders Here: My Documents; etc.
 - Tree list is not updating from treemap selection - or maybe it's a drill down - didn't respond to tree map drill up. Did.
-- Option to show drive label and model/serial in Volume text (Nickname)
 - Allow sorting the tree view by drive letter, etc.
 - Good that tree does not autoupdate: extra window. Allow filter by volume type, for example.
-- allow two different file windows to point to two different folders: each new folder window should have its own children
-- dupe vm event alerts: static vm internal counter or static transmit
-- Sync To button in tree view
-- Filtering user control header for tree list; tree view; files; search; duplicates: like search but restrict the view
-- open project; nav save listings; cancel; nav nav; complete save listings; nav explorer create; cancel: should project page.
-- show messagbox title
 - Unimplemented code in DriveSerialStatic.cs which tries to scan all drives to find model # - not an issue: serial # usb is
 
 - Allow method chaining: return this instead of void

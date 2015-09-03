@@ -41,7 +41,7 @@ namespace DoubleFile
                         case UtilColorcode.OneCopy: return _brushOneCopy;
                         case UtilColorcode.TreemapFolder: return _brushTreemapFolder;
                         case UtilColorcode.TreemapFile: return _brushTreemapFile;
-                        default: return new RadialGradientBrush(Colors.Wheat, UtilColorcode.Dark(UtilColorcode.FromArgb(_fill.Value))) { RadiusX = 1, RadiusY = 1 };
+                        default: return new RadialGradientBrush(_kCenterColor, UtilColorcode.Dark(UtilColorcode.FromArgb(_fill.Value))) { RadiusX = 1, RadiusY = 1 };
                     }
                 }
             }
@@ -51,13 +51,15 @@ namespace DoubleFile
             static Brush _brushTreemapFolder = null;
             static Brush _brushTreemapFile = null;
 
-            static Brush Init(int color) => new RadialGradientBrush(Colors.Wheat, UtilColorcode.Dark(UtilColorcode.FromArgb(color))) { RadiusX = 1, RadiusY = 1 };
+            static readonly Color _kCenterColor = Colors.PapayaWhip;
+
+            static Brush Init(int color) => new RadialGradientBrush(_kCenterColor, UtilColorcode.Dark(UtilColorcode.FromArgb(color))) { RadiusX = 1, RadiusY = 1 };
             static internal void
                 Init()
             {
                 Util.UIthread(99979, () =>
                 {
-                    _brushSandyBrown = new RadialGradientBrush(Colors.Wheat, UtilColorcode.Dark(Colors.SandyBrown)) { RadiusX = 1, RadiusY = 1 };
+                    _brushSandyBrown = new RadialGradientBrush(_kCenterColor, UtilColorcode.Dark(Colors.SandyBrown)) { RadiusX = 1, RadiusY = 1 };
                     _brushSolitary = Init(UtilColorcode.Solitary);
                     _brushOneCopy = Init(UtilColorcode.OneCopy);
                     _brushTreemapFolder = Init(UtilColorcode.TreemapFolder);

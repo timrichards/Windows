@@ -101,6 +101,7 @@ namespace DoubleFile
             {
                 content.LocalNavigatedFrom();
                 content.LocalWindowClosed();
+                LocalOwner.Activate();
 
                 if (false == CantDupeThisUsercontrol)
                     return;
@@ -114,7 +115,6 @@ namespace DoubleFile
                 LocalNavigatedTo();
                 LocalFragmentNavigation(_strFragment);
                 MainWindow.UpdateTitleLinks();
-                LocalOwner.Activate();
             });
 
             if (CantDupeThisUsercontrol)

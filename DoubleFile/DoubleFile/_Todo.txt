@@ -1,4 +1,6 @@
-﻿- couldn't move an extra window.						<----- consistent/repeatable.
+﻿- extra window resizes when closing when a tooltip is up
+- alt-tab from an extra window cycles to the main window
+- couldn't move an extra window. Fixed with not bringing tooltip to front now? 9/2/15
 - treemap still selects the tooltip when closing extra window.
 - tooltip doesn't show the first time after zoom
 	- ditch the UR corner tooltip for the middle one: covers the close box
@@ -189,8 +191,9 @@ Specific code areas:
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
 
-99979
-99806
+99825
+99692
+99690
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
 99637 next low assert

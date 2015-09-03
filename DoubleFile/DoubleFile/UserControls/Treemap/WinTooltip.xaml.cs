@@ -48,12 +48,12 @@ namespace DoubleFile
                 if (null == winOwner)
                     return; // from lambda
 
-                Util.UIthread(99810, () =>
-                {
-                    _winTooltip.Owner = winOwner;
-                    _winTooltip.Left = winOwner.Left;
-                    _winTooltip.Top = winOwner.Top;
-                });
+                Util.UIthread(99810, () => _winTooltip.Owner = winOwner);
+
+                var rc = Win32Screen.GetWindowRect(winOwner);
+
+                _winTooltip.Left = rc.Left;
+                _winTooltip.Top = rc.Top;
 
                 _lsDisposable.Add(Observable.FromEventPattern(winOwner, "Closed")
                     .LocalSubscribe(99691, argsA => CloseTooltip()));
@@ -72,13 +72,7 @@ namespace DoubleFile
                 _winTooltip.LocalIsClosing ||
                 _winTooltip.LocalIsClosed)
             {
-                Util.UIthread(99808, () =>
-                {
-                    (_winTooltip = new WinTooltip()).Show();
-
-                    NativeMethods.SetWindowPos(_winTooltip, _winTooltip.Owner, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
-                });
-
+                Util.UIthread(99808, () => (_winTooltip = new WinTooltip()).Show());
                 clientSpecific();
             }
 

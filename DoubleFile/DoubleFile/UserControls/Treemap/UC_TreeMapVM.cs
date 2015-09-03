@@ -15,18 +15,6 @@ namespace DoubleFile
         internal GeometryDrawing
             GeometryDrawing => new GeometryDrawing(Fill, new Pen(Brushes.Black, .25), new RectangleGeometry(_rc));
 
-        Rect _rc = default(Rect);
-
-        Brush
-            Fill =>
-            (null == _fill)
-            ? Brushes.Transparent
-            : (Brush)(new RadialGradientBrush(Colors.Wheat, UtilColor.Dark(
-            (UtilColor.Transparent == _fill.Value)
-            ? Colors.SandyBrown
-            : UtilColor.FromArgb(_fill.Value))) { RadiusX = 1, RadiusY = 1 });
-        int? _fill = null;
-
         internal TreeMapFolderRect(Rect rc, int? fill = null)
         {
             _rc = rc;
@@ -34,6 +22,38 @@ namespace DoubleFile
             if (null != fill)
                 _fill = fill.Value;
         }
+
+        Brush
+            Fill
+        {
+            get
+            {
+                switch (_fill)
+                {
+                    case null: return Brushes.Transparent;
+                    case UtilColor.Transparent: return _sandyBrown;
+                    case UtilColor.Red: return _red;
+                    case UtilColor.SteelBlue: return _steelBlue;
+                    default: return new RadialGradientBrush(Colors.Wheat, UtilColor.Dark(UtilColor.FromArgb(_fill.Value))) { RadiusX = 1, RadiusY = 1 };
+                }
+            }
+        }
+        static Brush _sandyBrown = null;
+        static Brush _red = null;
+        static Brush _steelBlue = null;
+
+        static internal void Init()
+        {
+            Util.UIthread(99979, () =>
+            {
+                _sandyBrown = new RadialGradientBrush(Colors.Wheat, UtilColor.Dark(Colors.SandyBrown)) { RadiusX = 1, RadiusY = 1 };
+                _red = new RadialGradientBrush(Colors.Wheat, UtilColor.Dark(Colors.Red)) { RadiusX = 1, RadiusY = 1 };
+                _steelBlue = new RadialGradientBrush(Colors.Wheat, UtilColor.Dark(Colors.SteelBlue)) { RadiusX = 1, RadiusY = 1 };
+            });
+        }
+
+        readonly Rect _rc = default(Rect);
+        readonly int? _fill = null;
     }
 
     class UC_TreeMapVM : SliderVM_Base<ListViewItemVM_Base>, IDisposable
@@ -73,10 +93,8 @@ namespace DoubleFile
 
         internal override int NumCols => 0;
 
-        internal IObservable<Tuple<LocalTreeNode, int>>
-            TreeNodeCallback => _treeNodeCallback;
-        readonly LocalSubject<LocalTreeNode> _treeNodeCallback = new LocalSubject<LocalTreeNode>();
-        internal override void GoTo(LocalTreeNode treeNode) => _treeNodeCallback.LocalOnNext(treeNode, 99853);
+        internal override void
+            GoTo(LocalTreeNode treeNode) => RenderA(treeNode, 99853);
 
         static internal IObservable<Tuple<string, int>>
             SelectedFile => _selectedFile;
@@ -105,7 +123,7 @@ namespace DoubleFile
 
             _lsDisposable.Add(LV_TreeListChildrenVM.TreeListChildSelected.LocalSubscribe(99695, LV_TreeListChildrenVM_TreeListChildSelected));
             _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.Observable.LocalSubscribe(99694, LV_FilesVM_SelectedFileChanged));
-            _lsDisposable.Add(TreeNodeCallback.LocalSubscribe(99692, TreeMapVM_TreeNodeCallback));
+            TreeMapFolderRect.Init();
         }
 
         public void Dispose()
@@ -137,6 +155,7 @@ namespace DoubleFile
 
             SelChildNode = null;
             _bClearingSelection = false;
+            _prevNode = null;
         }
 
         internal LocalTreeNode ZoomOrTooltip(Point pt)
@@ -147,7 +166,11 @@ namespace DoubleFile
                 return null;
             }
 
+            var prevNode = _prevNode;
+
             ClearSelection(bDontCloseTooltip: true);
+
+            _prevNode = prevNode;
 
             if (null == TreeNode)
                 return null;
@@ -469,12 +492,6 @@ namespace DoubleFile
             };
         }
 
-        internal void OnSizeChanged(EventArgs e)
-        {
-            _prevNode = null;
-            ClearSelection();
-        }
-
         internal void Tooltip_Click()
         {
             var treeNode = WinTooltip.LocalTreeNode;
@@ -485,9 +502,6 @@ namespace DoubleFile
             WinTooltip.CloseTooltip();
             RenderA(treeNode, nInitiator: 0);
         }
-
-        void TreeMapVM_TreeNodeCallback(Tuple<LocalTreeNode, int> initiatorTuple) =>
-            Util.UIthread(99825, () => RenderA(initiatorTuple.Item1, initiatorTuple.Item2));
 
         void RenderA(LocalTreeNode treeNode, int nInitiator)
         {
@@ -574,16 +588,18 @@ namespace DoubleFile
         //
         // Last modified: $Date: 2004/11/05 16:53:08 $
         
-        IEnumerable<TreeMapFolderRect> DrawTreemap()
+        IEnumerable<TreeMapFolderRect> 
+            DrawTreemap()
         {
             _deepNodeDrawn = null;
 
             var rc = _rectBitmap;
 
-            rc.Width--;
-            rc.Height--;
+            --rc.Width;
+            --rc.Height;
 
-            if (rc.Width <= 0 || rc.Height <= 0)
+            if ((0 >= rc.Width) ||
+                (0 >= rc.Height))
                 return null;
 
             var nodeDatum = TreeNode.NodeDatum;
@@ -595,20 +611,21 @@ namespace DoubleFile
             }
 
             return
-                (nodeDatum.TotalLength > 0)
+                (0 < nodeDatum.TotalLength)
                 ? new Recurse().Render(TreeNode, rc, DeepNode, out _deepNodeDrawn)
                 : new[] { new TreeMapFolderRect(rc, Colors.Wheat.ToArgb()) };
         }
 
-        class Recurse
+        class
+            Recurse
         {
             internal IEnumerable<TreeMapFolderRect>
-                Render(LocalTreeNode item, Rect rc, LocalTreeNode deepNode, out LocalTreeNode deepNodeDrawn_out)
+                Render(LocalTreeNode treeNode, Rect rc, LocalTreeNode deepNode, out LocalTreeNode deepNodeDrawn_out)
             {
-                _lsRenderActions = new ConcurrentBag<TreeMapFolderRect>();
-                _lsFrames = new ConcurrentBag<TreeMapFolderRect>();
+                _lsRenderActions = new ConcurrentBag<TreeMapFolderRect> { };
+                _lsFrames = new ConcurrentBag<TreeMapFolderRect> { };
                 _deepNode = deepNode;
-                RecurseDrawGraph(item, rc, true);
+                RecurseDrawGraph(treeNode, rc, true);
 
                 if (0 < _nWorkerCount)
                     _blockingFrame.PushFrameTrue();
@@ -617,16 +634,14 @@ namespace DoubleFile
                 return _lsRenderActions.Concat(_lsFrames);
             }
             
-            void RecurseDrawGraph(
-                LocalTreeNode item,
-                Rect rc,
-                bool bStart = false)
+            void
+                RecurseDrawGraph(LocalTreeNode treeNode, Rect rc, bool bStart = false)
             {
 #if (DEBUG)
-                Util.Assert(1302.3303m, rc.Width >= 0);
-                Util.Assert(1302.3304m, rc.Height >= 0);
+                Util.Assert(1302.3303m, 0 <= rc.Width);
+                Util.Assert(1302.3304m, 0 <= rc.Height);
 #endif
-                var nodeDatum = item.NodeDatum;
+                var nodeDatum = treeNode.NodeDatum;
 
                 if (null == nodeDatum)      // added 2/13/15
                 {
@@ -636,34 +651,41 @@ namespace DoubleFile
 
                 nodeDatum.TreeMapRect = rc;
 
-                if (rc.Width < 1 ||
-                    rc.Height < 1)
+                if ((1 > rc.Width) ||
+                    (1 > rc.Height))
                 {
                     return;
                 }
 
-                if (rc.Width < 32 ||
-                    rc.Height < 32)
+                if ((32 > rc.Width) ||
+                    (32 > rc.Height))
                 {
                     // Speedup. Draw an "empty" folder in place of too much detail
-                    _lsRenderActions.Add(new TreeMapFolderRect(rc, item.ForeColor));
+                    _lsRenderActions.Add(new TreeMapFolderRect(rc, treeNode.ForeColor));
                     return;
                 }
 
-                if ((item == _deepNode) ||
-                    (_deepNode?.IsChildOf(item) ?? false))
+                //if ((false == bStart) &&
+                //    (1 << 10 < treeNode.Nodes?.Count))
+                //{
+                //    _lsRenderActions.Add(new TreeMapFolderRect(rc, UtilColor.DarkYellowBG));
+                //    return;
+                //}
+
+                if ((treeNode == _deepNode) ||
+                    (_deepNode?.IsChildOf(treeNode) ?? false))
                 {
-                    _deepNodeDrawn = item;
+                    _deepNodeDrawn = treeNode;
                 }
 
                 if (bStart &&
                     (null == nodeDatum.TreeMapFiles) &&
-                    (false == item is LocalTreeMapFileNode))
+                    (false == treeNode is LocalTreeMapFileNode))
                 {
-                    nodeDatum.TreeMapFiles = GetFileList(item);
+                    nodeDatum.TreeMapFiles = GetFileList(treeNode);
                 }
 
-                if ((0 < (item.Nodes?.Count ?? 0)) ||
+                if ((0 < (treeNode.Nodes?.Count ?? 0)) ||
                     (bStart && (null != nodeDatum.TreeMapFiles)))
                 {
                     IEnumerable<LocalTreeNode> ieChildren = null;
@@ -672,7 +694,7 @@ namespace DoubleFile
 
                     Util.Closure(() =>
                     {
-                        var rootNodeDatum = item.NodeDatum.As<RootNodeDatum>();
+                        var rootNodeDatum = treeNode.NodeDatum.As<RootNodeDatum>();
 
                         if ((false == bStart) ||
                             (null == rootNodeDatum))
@@ -685,7 +707,7 @@ namespace DoubleFile
 
                         var nodeDatumFree = new NodeDatum { TotalLength = rootNodeDatum.VolumeFree };
 
-                        var nodeFree = new LocalTreeMapFileNode(item.Text + " (free space)")
+                        var nodeFree = new LocalTreeMapFileNode(treeNode.Text + " (free space)")
                         {
                             NodeDatum = nodeDatumFree,
                             ForeColor = UtilColor.MediumSpringGreen
@@ -698,20 +720,20 @@ namespace DoubleFile
                             (long)rootNodeDatum.VolumeFree -
                             (long)rootNodeDatum.TotalLength;
 
-                        if (nUnreadLength > 0)
+                        if (0 < nUnreadLength)
                         {
                             nodeDatumUnread.TotalLength = (ulong)nUnreadLength;
                         }
                         else
                         {
                             // Faked length to make up for compression and hard links
-                            nVolumeLength = rootNodeDatum.VolumeFree +
-                                rootNodeDatum.TotalLength;
+                            nVolumeLength =
+                                rootNodeDatum.VolumeFree + rootNodeDatum.TotalLength;
 
                             nodeDatumUnread.TotalLength = 0;
                         }
 
-                        var nodeUnread = new LocalTreeMapFileNode(item.Text + " (unread data)")
+                        var nodeUnread = new LocalTreeMapFileNode(treeNode.Text + " (unread data)")
                         {
                             NodeDatum = nodeDatumUnread,
                             ForeColor = UtilColor.MediumVioletRed
@@ -719,16 +741,16 @@ namespace DoubleFile
 
                         // parent added as child, with two other nodes:
                         // free space (color: spring green); and...
-                        var lsChildren = new List<LocalTreeNode> { item, nodeFree };
+                        var lsChildren = new List<LocalTreeNode> { treeNode, nodeFree };
 
-                        if (nUnreadLength > 0)
+                        if (0 < nUnreadLength)
                         {
                             // ...unread guess, affected by compression and hard links (violet)
                             lsChildren.Add(nodeUnread);
                         }
 
                         ieChildren = lsChildren;
-                        parent = new LocalTreeMapFileNode(item.Text + " (volume)");
+                        parent = new LocalTreeMapFileNode(treeNode.Text + " (volume)");
 
                         var nodeDatumVolume = new NodeDatum
                         {
@@ -740,21 +762,21 @@ namespace DoubleFile
                         bVolumeNode = true;
                     });
 
-                    if ((bVolumeNode == false) &&
-                        (null != item.Nodes))
+                    if ((false == bVolumeNode) &&
+                        (null != treeNode.Nodes))
                     {
-                        parent = item;
+                        parent = treeNode;
 
                         ieChildren =
-                            item.Nodes
+                            treeNode.Nodes
                             .Where(t => 0 < t.NodeDatum.TotalLength);
                     }
 
                     if ((null == ieChildren) &&
                         (null != nodeDatum.TreeMapFiles))
                     {
-                        parent = item;
-                        ieChildren = new List<LocalTreeNode>();
+                        parent = treeNode;
+                        ieChildren = new List<LocalTreeNode> { };
                     }
 
                     // returns true if there are children
@@ -767,7 +789,7 @@ namespace DoubleFile
                 }
 
                 // There are no children. Draw a file or an empty folder.
-                _lsRenderActions.Add(new TreeMapFolderRect(rc, item.ForeColor));
+                _lsRenderActions.Add(new TreeMapFolderRect(rc, treeNode.ForeColor));
             }
 
             //My first approach was to make this member pure virtual and have three
@@ -778,18 +800,19 @@ namespace DoubleFile
             //I learned this squarification style from the KDirStat executable.
             //It's the most complex one here but also the clearest, imho.
 
-            bool KDirStat_DrawChildren(LocalTreeNode parent, IEnumerable<LocalTreeNode> ieChildren, bool bStart)
+            bool
+                KDirStat_DrawChildren(LocalTreeNode parent, IEnumerable<LocalTreeNode> ieChildren, bool bStart)
             {
                 var nodeDatum = parent.NodeDatum;
                 var rc = nodeDatum.TreeMapRect;
-                var rows = new List<RowStruct>();
+                var rows = new List<RowStruct> { };
 
                 if (bStart &&
                     (null != nodeDatum.TreeMapFiles))
                 {
                     ieChildren = ieChildren.Concat(new[] { nodeDatum.TreeMapFiles });
                 }
-                else if (nodeDatum.Length > 0)
+                else if (0 < nodeDatum.Length)
                 {
                     ieChildren = ieChildren.Concat(new[] { new LocalTreeMapFileNode(parent.Text)
                     {
@@ -801,7 +824,7 @@ namespace DoubleFile
                 // could do array here but it's slightly less efficient because element sizes have to be shrunk
                 var lsChildren =
                     ieChildren
-                    .OrderByDescending(x => x.NodeDatum.TotalLength)
+                    .OrderByDescending(treeNode => treeNode.NodeDatum.TotalLength)
                     .ToList();
 
                 var nCount = lsChildren.Count;
@@ -815,19 +838,19 @@ namespace DoubleFile
                 Interlocked.Add(ref _nWorkerCount, nCount);
 
                 var anChildWidth = // Widths of the children (fraction of row width).
-                    new Double[nCount];
+                    new double[nCount];
 
                 var horizontalRows = (rc.Width >= rc.Height);
                 var width_A = 1d;
 
                 if (horizontalRows)
                 {
-                    if (rc.Height > 0)
+                    if (0 < rc.Height)
                         width_A = rc.Width / (double)rc.Height;
                 }
                 else
                 {
-                    if (rc.Width > 0)
+                    if (0 < rc.Width)
                         width_A = rc.Height / (double)rc.Width;
                 }
 
@@ -864,12 +887,12 @@ namespace DoubleFile
                     {
                         var child = lsChildren[c];
 
-                        Util.Assert(1302.3305m, anChildWidth[c] >= 0);
+                        Util.Assert(1302.3305m, 0 <= anChildWidth[c]);
 
                         var right = left + anChildWidth[c] * width;
 
                         var lastChild = 
-                            ((i == row.ChildrenPerRow - 1) ||
+                            ((row.ChildrenPerRow - 1 == i) ||
                             anChildWidth[c + 1].Equals(0));
 
                         if (lastChild)
@@ -928,9 +951,9 @@ namespace DoubleFile
                 const double kdMinProportion = 0.4;
                 var nCount = listChildren.Count;
 
-                Util.Assert(1302.3308m, kdMinProportion < 1);
+                Util.Assert(1302.3308m, 1 > kdMinProportion);
                 Util.Assert(1302.3309m, nextChild < nCount);
-                Util.Assert(1302.33101m, width >= 1d);
+                Util.Assert(1302.33101m, 1 <= width);
 
                 var nodeDatum = parent.NodeDatum;
 
@@ -940,16 +963,19 @@ namespace DoubleFile
                     return 0;
                 }
 
-                var mySize = (double)nodeDatum.TotalLength;
+                double mySize = nodeDatum.TotalLength;
                 ulong sizeUsed = 0;
                 double rowHeight = 0;
                 var i = 0;
 
-                for (i = nextChild; i < nCount; i++)
+                for (i = nextChild; i < nCount; ++i)
                 {
                     var childSize = listChildren[i].NodeDatum.TotalLength;
+
                     sizeUsed += childSize;
+
                     var virtualRowHeight = sizeUsed / mySize;
+
                     Util.Assert(1302.3311m, virtualRowHeight > 0);
                     Util.Assert(1302.3312m, virtualRowHeight <= 1);
 
@@ -957,9 +983,11 @@ namespace DoubleFile
                     // Rect(childSize) = childWidth * virtualRowHeight
                     // Rect(childSize) = childSize / mySize * width
 
-                    double childWidth = childSize / mySize * width / virtualRowHeight;
+                    double childWidth =
+                        childSize / mySize *
+                        width / virtualRowHeight;
 
-                    if (childWidth / virtualRowHeight < kdMinProportion)
+                    if (kdMinProportion > childWidth / virtualRowHeight)
                     {
                         Util.Assert(1302.3313m, i > nextChild); // because width >= 1 and _minProportion < 1.
                         // For the first child we have:
@@ -982,7 +1010,7 @@ namespace DoubleFile
                 childrenUsed = i - nextChild;
 
                 // Now as we know the rowHeight, we compute the widths of our children.
-                for (i = 0; i < childrenUsed; i++)
+                for (i = 0; i < childrenUsed; ++i)
                 {
                     // Rect(1d * 1d) = mySize
                     var rowSize = mySize * rowHeight;
@@ -996,7 +1024,9 @@ namespace DoubleFile
 
                     var childSize = (double)nodeDatum_A.TotalLength;
                     var cw = childSize / rowSize;
-                    Util.Assert(1302.3315m, cw >= 0);
+
+                    Util.Assert(1302.3315m, 0 <= cw);
+
                     anChildWidth[nextChild + i] = cw;
                 }
 

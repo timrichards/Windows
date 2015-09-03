@@ -39,19 +39,20 @@ namespace DoubleFile
             return color;
         }
 
-        static internal int Transparent => Colors.Transparent.ToArgb();
-        static internal int LightBlue => Colors.LightBlue.ToArgb();
-        static internal int DarkGray => Colors.DarkGray.ToArgb();
-        static internal int DarkKhaki => Colors.DarkKhaki.ToArgb();
-        static internal int DarkRedBG => Color.FromArgb(64, 64, 0, 0).ToArgb();
-        static internal int Firebrick => Colors.Firebrick.ToArgb();
-        static internal int DarkYellowBG => Color.FromArgb(64, 0, 64, 64).ToArgb();
-        static internal int LightGray => Colors.LightGray.ToArgb();
-        static internal int MediumSpringGreen => Colors.MediumSpringGreen.ToArgb();
-        static internal int MediumVioletRed => Colors.MediumVioletRed.ToArgb();
-        static internal int OliveDrab => Colors.OliveDrab.ToArgb();
-        static internal int Red => Color.FromArgb(255, 192, 0, 0).ToArgb();
-        static internal int SteelBlue => Colors.SteelBlue.ToArgb();
+        // these need to remain properties - unless const
+        internal const int Transparent         /*=> Colors.Transparent.ToArgb();            */  = unchecked(     0x00FFFFFF);
+        internal const int LightBlue           /*=> Colors.LightBlue.ToArgb();              */  = unchecked((int)0xFFADD8E6);
+        internal const int DarkGray            /*=> Colors.DarkGray.ToArgb();               */  = unchecked((int)0xFFA9A9A9);
+        internal const int DarkKhaki           /*=> Colors.DarkKhaki.ToArgb();              */  = unchecked((int)0xFFBDB76B);
+        internal const int DarkRedBG           /*=> Color.FromArgb(64, 64, 0, 0).ToArgb();  */  = unchecked(     0x40400000);
+        internal const int Firebrick           /*=> Colors.Firebrick.ToArgb();              */  = unchecked((int)0xFFB22222);
+        internal const int DarkYellowBG        /*=> Color.FromArgb(64, 0, 64, 64).ToArgb(); */  = unchecked(     0x40004040);
+        internal const int LightGray           /*=> Colors.LightGray.ToArgb();              */  = unchecked((int)0xFFD3D3D3);
+        internal const int MediumSpringGreen   /*=> Colors.MediumSpringGreen.ToArgb();      */  = unchecked((int)0xFF00FA9A);
+        internal const int MediumVioletRed     /*=> Colors.MediumVioletRed.ToArgb();        */  = unchecked((int)0xFFC71585);
+        internal const int OliveDrab           /*=> Colors.OliveDrab.ToArgb();              */  = unchecked((int)0xFF6B8E23);
+        internal const int Red                 /*=> Color.FromArgb(255, 192, 0, 0).ToArgb();*/  = unchecked((int)0xFFC00000);
+        internal const int SteelBlue           /*=> Colors.SteelBlue.ToArgb();              */  = unchecked((int)0xFF4682B4);
 
         internal const uint
             CLUT_Mask = 0xFF;
@@ -60,7 +61,7 @@ namespace DoubleFile
 
         static internal int Set_ARGB(int fg, int bg)
         {
-            int ret = 0;
+            var ret = 0;
 
             SetFG_ARGB(ref ret, fg);
             SetBG_ARGB(ref ret, bg);
@@ -84,7 +85,7 @@ namespace DoubleFile
 
         static UtilColor()
         {
-            int nIx = 0;
+            var nIx = 0;
             var revClut = new Dictionary<int, int>();
 
             revClut[Transparent] = nIx++;

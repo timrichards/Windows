@@ -77,6 +77,12 @@
                 treeNode = treeNode.Parent;
             }
 
+            if (null == treeNode)
+            {
+                Util.Assert(99806, false);
+                return;
+            }
+
             GoTo(treeNode);
         }
     }

@@ -1,4 +1,5 @@
-﻿- treemap doesn't always draw when zoomed into a folder with many files, mismatching proper user selection rect
+﻿- restore goofball
+- treemap doesn't always draw when zoomed into a folder with many files, mismatching proper user selection rect
 - treemap still selects the tooltip when closing extra window.
 - GoTo file only works with file list open
 	- Detail doesn't listen for selected file change
@@ -189,7 +190,6 @@ Specific code areas:
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
 
-99825
 99692
 99690
 

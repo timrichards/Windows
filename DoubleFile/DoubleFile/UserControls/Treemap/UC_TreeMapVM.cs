@@ -25,9 +25,7 @@ namespace DoubleFile
             internal TreeMapFolderRect(Rect rc, int? fill = null)
             {
                 _rc = rc;
-
-                if (null != fill)
-                    _fill = fill.Value;
+                _fill = fill;
             }
 
             Brush
@@ -59,6 +57,9 @@ namespace DoubleFile
             static internal void
                 Init()
             {
+                if (null != _brushSandyBrown)
+                    return;
+
                 Util.UIthread(99979, () =>
                 {
                     _brushSandyBrown = new RadialGradientBrush(_kCenterColor, UtilColorcode.Dark(Colors.SandyBrown)) { RadiusX = 1, RadiusY = 1 };
@@ -540,7 +541,13 @@ namespace DoubleFile
 
             ClearSelection();
             TreeNode = treeNode;
-            _ieRenderActions = DrawTreemap();
+
+            var timer = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Timestamp()
+                .LocalSubscribe(0, x => Util.WriteLine(DateTime.Now.Ticks + " " + treeNode + " DrawTreemap"));
+
+            var ieRenderActions = DrawTreemap();
+
+            timer.Dispose();
 
             Util.UIthread(99823, () =>
             {
@@ -549,14 +556,14 @@ namespace DoubleFile
 
                 TreeMapDrawing = null;
 
-                if (null == _ieRenderActions)
+                if (null == ieRenderActions)
                     return;     // from lambda
 
                 var drawingGroup = new DrawingGroup();
 
                 drawingGroup.Children.Add(new GeometryDrawing(new SolidColorBrush(Color.FromRgb(193, 176, 139)), new Pen(), new RectangleGeometry(new Rect(0, 0, BitmapSize, BitmapSize))));
 
-                foreach (var render in _ieRenderActions.OrderByDescending(r => r.Area).Take(1 << 11))
+                foreach (var render in ieRenderActions.OrderByDescending(r => r.Area).Take(1 << 11))
                     drawingGroup.Children.Add(render.GeometryDrawing);
 
                 TreeMapDrawing = drawingGroup;
@@ -626,8 +633,24 @@ namespace DoubleFile
                 _deepNode = deepNode;
                 RecurseDrawGraph(treeNode, rc, true);
 
+                var timerA = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Timestamp()
+                    .LocalSubscribe(0, x => Util.WriteLine(_nWorkerCount + " " + treeNode + " DrawTreemap"));
+
+                var timer = Observable.Timer(TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(100)).Timestamp()
+                    .LocalSubscribe(99825, x =>
+                {
+                    if (0 < _nWorkerCount)
+                        return;     // from lambda
+
+                    _blockingFrame.Continue = false;
+                    Util.WriteLine(DateTime.Now.Ticks + " " + treeNode + " DrawTreemap - cleared stuck worker count during 100ms check");
+                });
+
                 if (0 < _nWorkerCount)
                     _blockingFrame.PushFrameTrue();
+
+                timer.Dispose();
+                timerA.Dispose();
 
                 deepNodeDrawn_out = _deepNodeDrawn;
                 return _lsRenderActions.Concat(_lsFrames);
@@ -1047,8 +1070,6 @@ namespace DoubleFile
             _bSelRecAndTooltip = false;
 
         // Recurse class
-        IEnumerable<TreeMapFolderRect>
-            _ieRenderActions = null;
         LocalTreeNode
             _deepNodeDrawn = null;
 

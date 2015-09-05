@@ -13,7 +13,8 @@ namespace DoubleFile
         {
             var hashTuple = HashTuple.FactoryCreate(strHash);
 
-            return (null != hashTuple)
+            return
+                (null != hashTuple)
                 ? new FileKeyTuple(hashTuple, nLength)
                 : null;
         }

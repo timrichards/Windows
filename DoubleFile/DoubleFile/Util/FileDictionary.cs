@@ -31,7 +31,7 @@ namespace DoubleFile
             Clear()
         {
             _dictFiles = null;
-            _bListingFileWithOnlyHashV1pt0 = false;
+            _bAnyListingFilesHashV1pt0 = false;
         }
 
         internal bool
@@ -51,7 +51,7 @@ namespace DoubleFile
                 if (null == _LVprojectVM)
                 {
                     Util.Assert(99959, false);
-                    Util.Block(1000);
+                    Util.Block(1 << 10);
 
                     if (null == _LVprojectVM)
                     {
@@ -87,14 +87,15 @@ namespace DoubleFile
             GetDuplicates(string[] asFileLine)
         {
             var nHashColumn =
-                _bListingFileWithOnlyHashV1pt0
+                _bAnyListingFilesHashV1pt0
                 ? 10
                 : 11;
 
             if (asFileLine.Length <= nHashColumn)
                 return null;
 
-            var tuple = _dictFiles?.TryGetValue(FileKeyTuple.FactoryCreate(
+            var tuple =
+                _dictFiles?.TryGetValue(FileKeyTuple.FactoryCreate(
                 asFileLine[nHashColumn],
                 ("" + asFileLine[7]).ToUlong()));
 
@@ -118,7 +119,6 @@ namespace DoubleFile
             _callbackWR = callbackWR;
             _dictFiles = null;
             IsAborted = false;
-
             _thread = Util.ThreadMake(() => { Go(); _blockingFrame.Continue = false; });
             _blockingFrame.PushFrameTrue();
             return this;
@@ -142,7 +142,6 @@ namespace DoubleFile
                 return;
 
             var nLVitems = 0;
-
             var dictLVtoItemNumber = new Dictionary<LVitemProject_Explorer, int>();
             var dictItemNumberToLV = new Dictionary<int, LVitemProject_Explorer>();
 
@@ -214,7 +213,7 @@ namespace DoubleFile
                     var lookup = 0;
                     FileKeyTuple keyV2 = null;
 
-                    if ((false == _bListingFileWithOnlyHashV1pt0) &&
+                    if ((false == _bAnyListingFilesHashV1pt0) &&
                         (null != tuple.Item4))
                     {
                         keyV2 = FileKeyTuple.FactoryCreate(tuple.Item4, tuple.Item2);
@@ -242,7 +241,7 @@ namespace DoubleFile
                 }
 
                 if (bOnlyHashV1pt0)
-                    _bListingFileWithOnlyHashV1pt0 = true;
+                    _bAnyListingFilesHashV1pt0 = true;
 
                 Interlocked.Increment(ref nProgress);
             });
@@ -255,10 +254,10 @@ namespace DoubleFile
 
             var dt = DateTime.Now;
             var nFolderScorer = 0U;
-            var nFolderCount = (uint)(_bListingFileWithOnlyHashV1pt0 ? nFolderCount1pt0 : nFolderCount2);
+            var nFolderCount = (uint)(_bAnyListingFilesHashV1pt0 ? nFolderCount1pt0 : nFolderCount2);
 
             _dictFiles =
-                (_bListingFileWithOnlyHashV1pt0 ? dictV1pt0 : dictV2)
+                (_bAnyListingFilesHashV1pt0 ? dictV1pt0 : dictV2)
                 .Where(kvp => 1 < kvp.Value.Count)
                 .OrderBy(kvp => kvp.Key.Item2)
                 .ToDictionary(kvp => kvp.Key, kvp => Tuple.Create(
@@ -272,9 +271,9 @@ namespace DoubleFile
             // Skip enumerating AllListingsHashV2 when possible: not important, but it'd be a small extra step
             // Otherwise note that _LVprojectVM gets nulled six lines down so the value has to be set by now.
             if (null == _allListingsHashV2)
-                _allListingsHashV2 = (false == _bListingFileWithOnlyHashV1pt0);
+                _allListingsHashV2 = (false == _bAnyListingFilesHashV1pt0);
             else
-                Util.Assert(99958, _bListingFileWithOnlyHashV1pt0 != AllListingsHashV2);
+                Util.Assert(99958, _bAnyListingFilesHashV1pt0 != AllListingsHashV2);
 
             StatusCallback(bDone: true);
             _callbackWR = null;
@@ -332,7 +331,7 @@ namespace DoubleFile
         IReadOnlyDictionary<FileKeyTuple, Tuple<IReadOnlyList<uint>, IEnumerable<int>>>
             _dictFiles = null;
         bool
-            _bListingFileWithOnlyHashV1pt0 = false;
+            _bAnyListingFilesHashV1pt0 = false;
 
         WeakReference<ICreateFileDictStatus>
             _callbackWR = null;

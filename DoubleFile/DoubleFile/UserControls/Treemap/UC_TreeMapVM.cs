@@ -15,10 +15,8 @@ namespace DoubleFile
         {
             internal const int
                 ScaleFactor = 1 << 2;
-
-            internal double Area =>
-                _rc.Width * _rc.Height;
-
+            internal double
+                Area => _rc.Width * _rc.Height;
             internal GeometryDrawing
                 GeometryDrawing => new GeometryDrawing(Fill, new Pen(Brushes.Black, .25), new RectangleGeometry(_rc.Scale(ScaleFactor)));
 

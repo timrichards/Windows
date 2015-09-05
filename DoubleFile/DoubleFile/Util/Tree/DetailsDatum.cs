@@ -52,23 +52,22 @@ namespace DoubleFile
             FolderScore = datum.FolderScore;
         }
 
-        static public DetailsDatum operator +(DetailsDatum datum1, DetailsDatum datum2)
+        static public DetailsDatum
+            operator +(DetailsDatum datum1, DetailsDatum datum2) =>
+            new DetailsDatum
         {
-            return new DetailsDatum
-            {
-                TotalLength = datum1.TotalLength + datum2.TotalLength,
-                FileCountTotal = datum1.FileCountTotal + datum2.FileCountTotal,
-                SubDirs = datum1.SubDirs + datum2.SubDirs,
-                FileCountHere = datum1.FileCountHere + datum2.FileCountHere,
-                DirsWithFiles = datum1.DirsWithFiles + datum2.DirsWithFiles,
+            TotalLength = datum1.TotalLength + datum2.TotalLength,
+            FileCountTotal = datum1.FileCountTotal + datum2.FileCountTotal,
+            SubDirs = datum1.SubDirs + datum2.SubDirs,
+            FileCountHere = datum1.FileCountHere + datum2.FileCountHere,
+            DirsWithFiles = datum1.DirsWithFiles + datum2.DirsWithFiles,
 
-                FolderScore =
-                    datum1.FolderScore.Zip(datum2.FolderScore, (n1, n2) => n1 + n2)
-                    .ToArray()
-            };
-        }
+            FolderScore =
+                datum1.FolderScore.Zip(datum2.FolderScore, (n1, n2) => n1 + n2)
+                .ToArray()
+        };
 
-        internal FolderKeyTuple Key =>
-            new FolderKeyTuple(TotalLength, FileCountTotal, DirsWithFiles, FolderScore);
+        internal FolderKeyTuple
+            Key => new FolderKeyTuple(TotalLength, FileCountTotal, DirsWithFiles, FolderScore);
     }
 }

@@ -67,7 +67,7 @@ namespace DoubleFile
         {
             var treeNode = _vm?.TreeNode;
 
-            DataContext = 
+            DataContext =
                 _vm = null;
 
             Util.LocalDispose(_lsDisposable);

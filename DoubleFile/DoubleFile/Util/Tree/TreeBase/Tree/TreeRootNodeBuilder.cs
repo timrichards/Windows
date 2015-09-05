@@ -239,7 +239,7 @@ namespace DoubleFile
                             return;
                         }
 
-                       folderScore =
+                        folderScore =
                             folderScore.Zip(
                             new[] { (uint)fileKeyTuple.GetHashCode() }
                             .Concat(Statics.FileDictionary.GetFolderScorer(fileKeyTuple)),

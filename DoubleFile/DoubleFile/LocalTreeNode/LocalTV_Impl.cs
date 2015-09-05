@@ -147,8 +147,8 @@ namespace DoubleFile
             LocalTreeNode.SetLevel(_rootNodes);
             _tree = null;
 
-            var lsLocalLVignore = new List<LVitem_ClonesVM>();  // when implementing, replace the Forms ListViewItem.Tag in LocalLVItem
-            var nProgress = 0d;
+            var lsLocalLVignore = new List<LVitem_ClonesVM> { };  // when implementing, replace the Forms ListViewItem.Tag in LocalLVItem
+            double nProgress = 0;
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                 .LocalSubscribe(99761, x => ProgressOverlay.WithProgressOverlay(w => w.SetProgress(_ksFolderTreeKey, (3 + nProgress) / 4))))
@@ -189,7 +189,7 @@ namespace DoubleFile
                 var grandTotalFolderScore = new[] { 0U, 0U, 0U }  // Weighted folder scores: HashParity (random); largest; smallest
                     .AsEnumerable();
 
-                var grandTotalFileCount = 0U;
+                uint grandTotalFileCount = 0;
 
                 foreach (var folder in _rootNodes)
                 {
@@ -205,15 +205,18 @@ namespace DoubleFile
             });
 
             var dt = DateTime.Now;
+            var nCount = _allNodes.Count;
 
-            Util.ParallelForEach(99675, _allNodes, folder => folder.NodeDatum.FolderScore = // mean square
+            Util.ParallelForEach(99675, _allNodes, folder =>
+                folder.NodeDatum.FolderScore = // mean square
                 grandTotalMean
                 .Zip(folder.NodeDatum.FolderScore, (totalMean, folderScore) =>
             {
                 var mean = folderScore / (double)folder.NodeDatum.FileCountTotal;
                 var meanDiff = (mean - totalMean);
                 var sumOfSquares = meanDiff * meanDiff * folder.NodeDatum.FileCountTotal;
-                return (uint) (sumOfSquares / (_allNodes.Count - 1));      // from lamnda
+
+                return (uint) (sumOfSquares / (nCount - 1));      // from lamnda
             })
                 .ToArray());
 

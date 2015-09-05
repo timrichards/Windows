@@ -44,7 +44,7 @@ namespace DoubleFile
         protected override void LocalNavigatedFrom()
         {
             _bNicknames = formChk_Nicknames.IsChecked ?? false;
-            _vm.Dispose();
+            _vm?.Dispose();
 
             DataContext =
                 _vm =

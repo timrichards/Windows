@@ -20,7 +20,7 @@
 
         protected override void LocalNavigatedFrom()
         {
-            _vm.Dispose();
+            _vm?.Dispose();
 
             DataContext =
                 _vm =

@@ -36,9 +36,9 @@ namespace DoubleFile
 
         protected override void LocalNavigatedFrom()
         {
-            _lvFileDetailVM.Dispose();
-            _lvFolderDetailVM.Dispose();
-            _lvVolumeDetailVM.Dispose();
+            _lvFileDetailVM?.Dispose();
+            _lvFolderDetailVM?.Dispose();
+            _lvVolumeDetailVM?.Dispose();
 
             form_localPath.DataContext =
                 formLV_File.DataContext =

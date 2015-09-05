@@ -47,7 +47,7 @@ namespace DoubleFile
         {
             _bRegex = formChk_Regex.IsChecked ?? false;
             _bNicknames = formChk_Nicknames.IsChecked ?? false;
-            _vm.Dispose();
+            _vm?.Dispose();
 
             DataContext =
                 _vm =

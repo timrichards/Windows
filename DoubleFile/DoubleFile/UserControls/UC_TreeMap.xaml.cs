@@ -65,7 +65,7 @@ namespace DoubleFile
 
         protected override void LocalNavigatedFrom()
         {
-            var treeNode = _vm.TreeNode;
+            var treeNode = _vm?.TreeNode;
 
             DataContext = 
                 _vm = null;

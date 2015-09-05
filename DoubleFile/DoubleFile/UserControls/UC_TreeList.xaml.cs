@@ -30,7 +30,7 @@ namespace DoubleFile
 
         protected override void LocalNavigatedFrom()
         {
-            _lvSiblingsVM.Dispose();
+            _lvSiblingsVM?.Dispose();
 
             formLV_Children.DataContext =
                 form_gridChildrenCtls.DataContext =

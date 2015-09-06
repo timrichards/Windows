@@ -19,11 +19,15 @@ namespace DoubleFile
             DarkWindow : LocalWindowBase, IDarkWindow
         {
             internal Rect Rect;
-            internal static bool ShowDarkWindows = true;
+            internal static bool ShowDarkWindows = false;
 
             internal DarkWindow(Window owner)
             {
-                Rect = ShowDarkWindows ? Win32Screen.GetWindowRect(owner) : new Rect();
+                Rect = Win32Screen.GetWindowRect(owner);
+
+                if (false == ShowDarkWindows)
+                    Visibility = Visibility.Hidden;
+
                 this.SetRect(new Rect());
                 Owner = owner;
                 Background = Brushes.Black;
@@ -35,9 +39,18 @@ namespace DoubleFile
                 IsEnabled = false;
             }
 
-            internal new DarkWindow Show() { ((Window)this).Show(); return this; }                  // Darkens ExtraWindows and WinTooltip
-            internal new void ShowDialog() => base.ShowDialog((ILocalWindow)Application.Current.MainWindow);      // then modally darkens MainWindow
+            internal new DarkWindow Show() { ((Window)this).Show(); return this; }  // Darkens ExtraWindows and WinTooltip
             internal new void GoModeless() => base.GoModeless();
+
+            internal new void ShowDialog()
+            {
+                var mainWindow = (LocalModernWindowBase)Application.Current.MainWindow;
+                var locDarken = 99690;
+
+                mainWindow.Darken(locDarken);
+                base.ShowDialog(mainWindow);                                        // then modally darkens MainWindow
+                mainWindow.Undarken(locDarken);
+            }
         }
 
         class Push : IDisposable
@@ -153,7 +166,7 @@ namespace DoubleFile
                 _blockingFrame.PushFrameTrue();
 
             Push.AssertAllClear();
-            DarkWindow.ShowDarkWindows = true;
+            DarkWindow.ShowDarkWindows = false;
             return retVal;
         }
 
@@ -228,40 +241,6 @@ namespace DoubleFile
             });
 
             var mainWindow = Application.Current.MainWindow;
-            var fakeBaseWindow = Step1_ShowFakeBaseWindow();
-            var lsDarkWindows = new List<DarkWindow> { };
-
-            var lsNativeWindowsDarkenedLowestFirst = Util.Closure(() =>
-            {
-                var lsDarkenedWindows =
-                    dictOwners
-                    .Keys
-                    .Where(w => mainWindow != w)
-                    .Select(w => (Window)w)
-                    .ToList();
-
-                lsDarkenedWindows.ForEach(window =>
-                    window.Owner = fakeBaseWindow);
-
-                lsDarkWindows =
-                    lsDarkenedWindows
-                    .Select(w => new DarkWindow(w))
-                    .ToList();
-
-                return
-                    GetNativeWindowsTopDown(lsDarkenedWindows)
-                    .Reverse()
-                    .ToList();  // from lambda
-            });
-
-            NativeMethods.SetWindowPos(
-                mainWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE);
-
-            lsDarkWindows.ForEach(darkWindow => darkWindow
-                .Show());
-
-            lsDarkWindows.ForEach(darkWindow => darkWindow
-                .SetRect(darkWindow.Rect));
 
             var retVal = default(T);
 
@@ -274,11 +253,6 @@ namespace DoubleFile
                 Observable.FromEventPattern(darkDialog, "ContentRendered")
                     .LocalSubscribe(99736, x =>
                 {
-                    NativeMethods.SetWindowPos(fakeBaseWindow, SWP.HWND_TOP, 0, 0, 0, 0, SWP.NOSIZE | SWP.NOMOVE | SWP.NOACTIVATE);
-
-                    lsNativeWindowsDarkenedLowestFirst.ForEach(NativeMethods
-                        .BringWindowToTop);
-
                     darkDialog.SetRect(darkDialog.Rect);
                     retVal = showDialog(darkDialog);
                     Step3_CloseDarkDialog(darkDialog);
@@ -297,17 +271,6 @@ namespace DoubleFile
                 if (false == kvp.Key.LocalIsClosed)
                     ((Window)kvp.Key).Owner = kvp.Value;
             });
-
-            fakeBaseWindow.Close();
-
-            lsDarkWindows.ForEach(darkWindow =>
-            {
-                if (false == darkWindow.LocalIsClosed)
-                    darkWindow.Close();
-            });
-
-            lsNativeWindowsDarkenedLowestFirst.ForEach(NativeMethods
-                .BringWindowToTop);
 
             // Look for a modal window stuck behind a dark window and bring it to top. This happens.
             Step4_LastCheckForLockup();

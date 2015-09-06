@@ -25,21 +25,12 @@ namespace DoubleFile
 
             Util.UIthread(99789, () =>
             {
-                if (false == _bProgressUp)
-                {
-                    Application.Current.Windows.OfType<ModernWindow>()
-                        .ForEach(w => SetDarkened(w, Visibility.Visible));
-                }
+                var locMessagebox = 99692;
 
+                Darken(locMessagebox);
                 ucMessagebox.Visibility = Visibility.Visible;
                 retVal = ucMessagebox.ShowMessagebox(strMessage, strTitle, buttons);
-
-                if (false == _bProgressUp)
-                {
-                    Application.Current.Windows.OfType<ModernWindow>()
-                        .ForEach(w => SetDarkened(w, Visibility.Collapsed));
-                }
-
+                Undarken(locMessagebox);
                 ucMessagebox.Visibility = Visibility.Collapsed;
             });
 
@@ -49,29 +40,46 @@ namespace DoubleFile
         internal void
             Progress_Darken()
         {
+            Darken(_locProgress);
+            GetProgressCtl().Visibility = Visibility.Visible;
+        }
+        internal void
+            Progress_Undarken()
+        {
+            Undarken(_locProgress);
+            GetProgressCtl().Visibility = Visibility.Collapsed;
+        }
+        decimal _locProgress = 99737;
+
+        internal void
+            Darken(decimal loc)
+        {
+            if (0 != _locDarkened)
+                return;
+
+            _locDarkened = loc;
+
             Util.UIthread(99727, () =>
             {
                 Application.Current.Windows.OfType<ModernWindow>()
                     .ForEach(w => SetDarkened(w, Visibility.Visible));
             });
-
-            GetProgressCtl().Visibility = Visibility.Visible;
-            _bProgressUp = true;
         }
-
         internal void
-            Progress_Undarken()
+            Undarken(decimal loc)
         {
+            if (loc != _locDarkened)
+                return;
+
+            _locDarkened = 0;
+
             Util.UIthread(99726, () =>
             {
                 Application.Current.Windows.OfType<ModernWindow>()
                     .ForEach(w => SetDarkened(w, Visibility.Collapsed));
             });
-
-            GetProgressCtl().Visibility = Visibility.Collapsed;
-            _bProgressUp = false;
         }
-        bool _bProgressUp = false;
+        decimal _locDarkened = 0;
 
         internal bool LocalIsClosing { get; private set; }
         public bool LocalIsClosed { get; private set; } = true;
@@ -250,6 +258,7 @@ namespace DoubleFile
 
             IsEnabled = true;
             base.Show();
+            SetDarkened(this, Visibility.Collapsed);    //jic
             return this;
         }
 
@@ -290,6 +299,7 @@ namespace DoubleFile
             if (false == LocalIsClosing)
             {
                 base.Show();
+                SetDarkened(this, Visibility.Collapsed);
                 _blockingFrame.PushFrameTrue();
             }
 

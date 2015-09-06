@@ -6,7 +6,7 @@
 - GoTo file only works with file list open
 	- Detail doesn't listen for selected file change
 - Click OK on a dialog and Double File disappears behind another app. -fix example: end of save listings it comes to front.
-- Eliminate no files here + just one subfolder from folder score (but why's it different?)
+- Eliminate no files here + just one subfolder from folder score (but why's it different?) -looks ok on 9/6/15
 	- Why does a folder with the same # items as subfolder have a different folder score? (i.e. no files here)
 	- why does e.g. monkey_house have a nFolderScorer of 0? -seems fixed on 9/5/15
 	- SDL small then check outer folder score: 0 0 0 - because the total mean subtracts out. Need to use covariance matrix instead
@@ -191,9 +191,6 @@ Specific code areas:
 	Listings can be searched when volumes are off site. Can read any volume mounted in Windows Explorer, including Linux and Mac volumes. Supports long path names.
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
-
-99692
-99690
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
 99637 next low assert

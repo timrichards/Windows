@@ -181,47 +181,6 @@ namespace DoubleFile
                 Util.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");
             }
 
-            // Mean square from ANOVA: ((folder mean minus total mean) squared * folder total) == ss / (number of folders minus one == df)
-
-            var grandTotalMean =
-                Util.Closure(() =>
-            {
-                var grandTotalFolderScore = new[] { 0U, 0U, 0U }  // Weighted folder scores: HashParity (random); largest; smallest
-                    .AsEnumerable();
-
-                uint grandTotalFileCount = 0;
-
-                foreach (var folder in _rootNodes)
-                {
-                    grandTotalFolderScore =
-                        grandTotalFolderScore
-                        .Zip(folder.NodeDatum.FolderScore, (n1, n2) => n1 + n2);
-
-                    grandTotalFileCount += folder.NodeDatum.FileCountTotal;
-                }
-
-                return grandTotalFolderScore.Select(n => n / (double)grandTotalFileCount)
-                    .ToArray();     // from lambda
-            });
-
-            var dt = DateTime.Now;
-            var nCount = _allNodes.Count;
-
-            Util.ParallelForEach(99675, _allNodes, folder =>
-                folder.NodeDatum.FolderScore = // mean square
-                grandTotalMean
-                .Zip(folder.NodeDatum.FolderScore, (totalMean, folderScore) =>
-            {
-                var mean = folderScore / (double)folder.NodeDatum.FileCountTotal;
-                var meanDiff = (mean - totalMean);
-                var sumOfSquares = meanDiff * meanDiff * folder.NodeDatum.FileCountTotal;
-
-                return (uint) (sumOfSquares / (nCount - 1));      // from lamnda
-            })
-                .ToArray());
-
-            Util.WriteLine("Completed ANOVA in " + (DateTime.Now - dt).TotalMilliseconds + " ms");   // 350 ms
-            _allNodes.Sort((y, x) => x.NodeDatum.FolderScore[1].CompareTo(y.NodeDatum.FolderScore[1]));
             _bTreeDone = true;      // should preceed closing status dialog: returns true to the caller
 
             ProgressOverlay.WithProgressOverlay(w => w

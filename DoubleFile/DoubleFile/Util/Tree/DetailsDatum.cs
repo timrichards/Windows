@@ -13,8 +13,10 @@ namespace DoubleFile
             LineNo;                                 // Found 21 bits
         internal readonly ulong
             Length;
-        internal IReadOnlyList<uint>
-            FolderScore = new[] { 0U, 0U, 0U };     // Weighted folder scores: HashParity (random); largest; smallest
+        internal double
+            Mean;
+        internal double
+            Variance;
 
         internal ulong
             TotalLength;
@@ -31,12 +33,13 @@ namespace DoubleFile
             TreeMapRect;
 
         internal DetailsDatum() { }
-        internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, IReadOnlyList<uint> folderScore)
+        internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, double mean, double variance)
         {
             PrevLineNo = nPrevLineNo;
             LineNo = nLineNo;
             Length = nLength;
-            FolderScore = folderScore;
+            Mean = mean;
+            Variance = variance;
         }
 
         protected DetailsDatum(DetailsDatum datum)
@@ -49,7 +52,8 @@ namespace DoubleFile
             PrevLineNo = datum.PrevLineNo;
             LineNo = datum.LineNo;
             Length = datum.Length;
-            FolderScore = datum.FolderScore;
+            Mean = datum.Mean;
+            Variance = datum.Variance;
         }
 
         static public DetailsDatum
@@ -61,13 +65,11 @@ namespace DoubleFile
             SubDirs = datum1.SubDirs + datum2.SubDirs,
             FileCountHere = datum1.FileCountHere + datum2.FileCountHere,
             DirsWithFiles = datum1.DirsWithFiles + datum2.DirsWithFiles,
-
-            FolderScore =
-                datum1.FolderScore.Zip(datum2.FolderScore, (n1, n2) => n1 + n2)
-                .ToArray()
+            Mean = (datum1.Mean + datum2.Mean) / 2,
+            Variance = (datum1.Variance + datum2.Variance) / 2
         };
 
         internal FolderKeyTuple
-            Key => new FolderKeyTuple(TotalLength, FileCountTotal, DirsWithFiles, FolderScore);
+            Key => new FolderKeyTuple(TotalLength, FileCountTotal, DirsWithFiles, Mean, Variance);
     }
 }

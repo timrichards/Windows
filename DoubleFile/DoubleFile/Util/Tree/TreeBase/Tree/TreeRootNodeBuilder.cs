@@ -57,14 +57,8 @@ namespace DoubleFile
                 nodeDatum.FileCountHere = nodeDatum.LineNo - nodeDatum.PrevLineNo - 1;
                 nodeDatum.FileCountTotal = (datum.FileCountTotal += nodeDatum.FileCountHere);
                 nodeDatum.SubDirs = (datum.SubDirs += (uint)(treeNode.Nodes?.Count ?? 0));
-
-                datum.FolderScore =
-                    datum.FolderScore.Zip(nodeDatum.FolderScore, (n1, n2) => n1 + n2)
-                    .ToArray();
-
-                nodeDatum.FolderScore =
-                    datum.FolderScore.Zip(nodeDatum.FolderScore, (n1, n2) => n1 + n2)
-                    .ToArray();
+                nodeDatum.Mean = datum.Mean = (datum.Mean + nodeDatum.Mean) / 2;
+                nodeDatum.Variance = datum.Variance = (datum.Variance + nodeDatum.Variance) / 2;
 
                 if (0 < nodeDatum.FileCountHere)
                     ++datum.DirsWithFiles;
@@ -208,7 +202,7 @@ namespace DoubleFile
                     .FirstOnlyAssert();
 
                 var dt = DateTime.Now;
-                var folderScore = new[] { 0U, 0U, 0U };  // Weighted folder scores: HashParity (random); largest; smallest
+                var hashcodes = new List<uint> { };
 
                 var nHashColumn =
                     Statics.FileDictionary.AllListingsHashV2
@@ -239,22 +233,26 @@ namespace DoubleFile
                             return;
                         }
 
-                        folderScore =
-                            folderScore.Zip(
-                            new[] { (uint)fileKeyTuple.GetHashCode() }
-                            .Concat(Statics.FileDictionary.GetFolderScorer(fileKeyTuple)),
-                            (n1, n2) => n1 + n2)
-                            .ToArray();
+                        hashcodes.Add((uint)fileKeyTuple.Item1.GetHashCode());
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {
+                        if (0 == hashcodes.Count)
+                            hashcodes.Add(0);
+
+                        var mean = hashcodes.Average(n => n);
+
+                        var variance =
+                            hashcodes.Sum(hashCode => { var diff = hashCode - mean; return diff * diff; }) /
+                            (hashcodes.Count - 1);
+ 
                         dirData.AddToTree(
                             asLine[2],
                             (uint)("" + asLine[1]).ToInt(),
                             ("" + asLine[knColLength]).ToUlong(),
-                            folderScore);
+                            mean, variance);
 
-                        folderScore = new[] { 0U, 0U, 0U };  // Weighted folder scores: HashParity (random); largest; smallest
+                        hashcodes = new List<uint> { };
                     }
                 }
 

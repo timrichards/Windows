@@ -49,7 +49,7 @@ namespace DoubleFile
             Undarken(_locProgress);
             GetProgressCtl().Visibility = Visibility.Collapsed;
         }
-        decimal _locProgress = 99737;
+        decimal _locProgress = 99637;
 
         internal void
             Darken(decimal loc)

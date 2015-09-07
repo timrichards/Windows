@@ -12,7 +12,7 @@ namespace DoubleFile
             {
                 // can't be struct because of object ==
                 internal
-                    Node(string in_str, uint nLineNo, ulong nLength, IReadOnlyList<uint> folderScore, RootNode rootNode)
+                    Node(string in_str, uint nLineNo, ulong nLength, double mean, double variance, RootNode rootNode)
                 {
                     if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
                         return;
@@ -27,7 +27,8 @@ namespace DoubleFile
                     _nPrevLineNo = _rootNode.FirstLineNo;
                     _rootNode.FirstLineNo = _nLineNo = nLineNo;
                     _nLength = nLength;
-                    _folderScore = folderScore;
+                    _mean = mean;
+                    _variance = variance;
 
                     // Path.GetDirectoryName() does not preserve filesystem root
 
@@ -43,7 +44,7 @@ namespace DoubleFile
 
                     if (null == nodeParent)
                     {
-                        nodeParent = new Node(strParent, _rootNode.FirstLineNo, 0, _folderScore, _rootNode);
+                        nodeParent = new Node(strParent, _rootNode.FirstLineNo, 0, mean, variance, _rootNode);
                         _rootNode.Nodes.Add(strParent, nodeParent);
                     }
 
@@ -77,7 +78,7 @@ namespace DoubleFile
                                 // pass the culled path back to TreeRootNodeBuilder; ultimately to LVitem_ProjectExplorer
                                 treeNode.NodeDatum =
                                     new RootNodeDatum(new NodeDatum(new DetailsDatum(
-                                    subNode._nPrevLineNo, subNode._nLineNo, subNode._nLength, subNode._folderScore)),
+                                    subNode._nPrevLineNo, subNode._nLineNo, subNode._nLength, subNode._mean, subNode._variance)),
                                     subNode._strPath);
                             }
 
@@ -100,7 +101,8 @@ namespace DoubleFile
                         treeNode = new LocalTreeNode(strShortPath);
                     }
 
-                    treeNode.NodeDatum = new NodeDatum(new DetailsDatum(_nPrevLineNo, _nLineNo, _nLength, _folderScore));  // this is almost but not quite always newly assigned here.
+                    treeNode.NodeDatum = new NodeDatum(new DetailsDatum(
+                        _nPrevLineNo, _nLineNo, _nLength, _mean, _variance));  // this is almost but not quite always newly assigned here.
                     return treeNode;
                 }
 
@@ -118,8 +120,10 @@ namespace DoubleFile
                     _nLength = 0;
                 bool
                     _bUseShortPath = true;
-                IReadOnlyList<uint>
-                    _folderScore = new[] { 0U, 0U, 0U };  // Weighted folder scores: HashParity (random); largest; smallest
+                double
+                    _mean;
+                double
+                    _variance;
             }
         }
     }

@@ -3,16 +3,15 @@ using System.Collections.Generic;
 
 namespace DoubleFile
 {
-    class FolderKeyTuple : Tuple<ulong, uint, uint, uint, uint, uint>
+    class FolderKeyTuple : Tuple<ulong, uint, uint, double, double>
     {
         internal FolderKeyTuple(ulong nTotalLength,
             uint nFilesInSubdirs,
             uint nDirsWithFiles,
-            IReadOnlyList<uint> folderScore)
+            double mean, double variance)
         : base(nTotalLength, nFilesInSubdirs, nDirsWithFiles,
-              folderScore[0], folderScore[1], folderScore[2])
+              mean, variance)
         {
-            Util.Assert(99902, 3 == folderScore.Count);
         }
     }
 }

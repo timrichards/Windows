@@ -54,10 +54,10 @@ namespace DoubleFile
         internal const int TreemapUnreadspace   = unchecked((int)0xFFC71585);   // => Colors.MediumVioletRed.ToArgb();          // MediumVioletRed  
         internal const int TreemapFile          = unchecked((int)0xFF6B8E23);   // => Colors.OliveDrab.ToArgb();                // OliveDrab        
 
-        internal const uint
-            CLUT_Mask = 0xFF;
-        static internal readonly int
-            CLUT_Shift = (int)Math.Log(CLUT_Mask + 1, 2);
+        internal const int
+            CLUT_Mask = (1 << CLUT_Shift) - 1;
+        internal const int
+            CLUT_Shift = 8;
 
         static internal int Set_ARGB(int fg, int bg)
         {

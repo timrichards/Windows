@@ -70,6 +70,17 @@ namespace DoubleFile
         }
         bool? _allListingsHashV2 = null;
 
+        internal uint
+            GetFolderScorer(FileKeyTuple fileKeyTuple)
+        {
+            var tuple = _dictFiles.TryGetValue(fileKeyTuple);
+
+            return
+                (null != tuple)
+                ? tuple.Item1
+                : 0;
+        }
+
         internal IReadOnlyList<DuplicateStruct>
             GetDuplicates(string[] asFileLine)
         {
@@ -81,16 +92,16 @@ namespace DoubleFile
             if (asFileLine.Length <= nHashColumn)
                 return null;
 
-            var ieLookup =
+            var tuple =
                 _dictFiles?.TryGetValue(FileKeyTuple.FactoryCreate(
                 asFileLine[nHashColumn],
                 ("" + asFileLine[7]).ToUlong()));
 
-            if (null == ieLookup)
+            if (null == tuple)
                 return null;
 
             return
-                ieLookup.AsParallel()
+                tuple.Item2.AsParallel()
                 .Select(lookup => new DuplicateStruct
             {
                 LVitemProjectVM = _dictItemNumberToLV[GetLVitemProjectVM(lookup)],
@@ -241,12 +252,14 @@ namespace DoubleFile
 
             var dt = DateTime.Now;
             var nFolderCount = (uint)(_bAnyListingFilesHashV1pt0 ? nFolderCount1pt0 : nFolderCount2);
+            uint nFolderScorer = 0;
 
             _dictFiles =
                 (_bAnyListingFilesHashV1pt0 ? dictV1pt0 : dictV2)
                 .Where(kvp => 1 < kvp.Value.Count)
                 .OrderBy(kvp => kvp.Key.Item2)
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.AsEnumerable());
+                .ToDictionary(kvp => kvp.Key, kvp =>Tuple.Create(++nFolderScorer,
+                    kvp.Value.AsEnumerable()));
 
             Util.Assert(99896, _dictFiles.Count == nFolderCount - 1, bTraceOnly: true);
             Util.WriteLine("_DictFiles " + (DateTime.Now - dt).TotalMilliseconds + " ms");   // 650 ms 
@@ -299,19 +312,18 @@ namespace DoubleFile
             createFileDictStatus.Callback(bDone, nProgress);
         }
 
-        static int GetLVitemProjectVM(int n) => (int)(n & _knItemVMmask) >> 24;
-        static int SetLVitemProjectVM(ref int n, int v) => n = GetLineNumber(n) + (v << 24);
-        static int GetLineNumber(int n) => n & 0x00FFFFFF;
-        static int SetLineNumber(ref int n, int v) => n = (int)(n & _knItemVMmask) + v;
-
-        const uint
-            _knItemVMmask = 0xFF000000;
+        static int GetLVitemProjectVM(int n) => (n & (-1 -_knItemVMmask)) >> _kLookupShift;
+        static int SetLVitemProjectVM(ref int n, int v) => n = GetLineNumber(n) + (v << _kLookupShift);
+        static int GetLineNumber(int n) => n & _knItemVMmask;
+        static int SetLineNumber(ref int n, int v) => n = (n & (-1 - _knItemVMmask)) + v;
+        const int _knItemVMmask = ((1 << _kLookupShift) - 1);
+        const int _kLookupShift = 24;
 
         IReadOnlyDictionary<LVitemProject_Explorer, int>
             _dictLVtoItemNumber = null;
         IReadOnlyDictionary<int, LVitemProject_Explorer>
             _dictItemNumberToLV = null;
-        IReadOnlyDictionary<FileKeyTuple, IEnumerable<int>>
+        IReadOnlyDictionary<FileKeyTuple, Tuple<uint, IEnumerable<int>>>
             _dictFiles = null;
         bool
             _bAnyListingFilesHashV1pt0 = false;

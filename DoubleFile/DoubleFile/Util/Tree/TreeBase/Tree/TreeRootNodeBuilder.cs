@@ -233,7 +233,7 @@ namespace DoubleFile
                             return;
                         }
 
-                        hashcodes.Add((uint)fileKeyTuple.Item1.GetHashCode());
+                        hashcodes.Add(Statics.FileDictionary.GetFolderScorer(fileKeyTuple));
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {

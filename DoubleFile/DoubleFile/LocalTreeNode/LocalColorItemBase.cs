@@ -33,8 +33,8 @@ namespace DoubleFile
 
         int Color
         {
-            get { return (int)(_datum & UtilColorcode.CLUT_Mask); }
-            set { _datum = (int)(_datum & (-1 - UtilColorcode.CLUT_Mask)) + value; }
+            get { return _datum & UtilColorcode.CLUT_Mask; }
+            set { _datum = (_datum & (-1 - UtilColorcode.CLUT_Mask)) + value; }
         }
 
         static readonly uint

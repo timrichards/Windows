@@ -50,7 +50,7 @@ namespace DoubleFile
         static internal void
             GenerationEnded()
         {
-            if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
+            if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                 return;
 
             _t =

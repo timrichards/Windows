@@ -135,27 +135,34 @@ namespace DoubleFile
         }
 
         static internal T
-            CreateJaggedArray<T>(params int[] lengths)
-        {
-            return (T)InitializeJaggedArray(typeof(T).GetElementType(), 0, lengths);
-        }
-
-        static object
-            InitializeJaggedArray(Type type, int index, int[] lengths)
+            CreateJaggedArray<T>(params int[] lengths) => (T)InitializeJaggedArray(typeof(T).GetElementType(), 0, lengths);
+        static object InitializeJaggedArray(Type type, int index, int[] lengths)
         {
             var array = Array.CreateInstance(type, lengths[index]);
             var elementType = type.GetElementType();
 
-            if (elementType != null)
+            if (null != elementType)
             {
                 for (int i = 0; i < lengths[index]; i++)
-                {
-                    array.SetValue(
-                        InitializeJaggedArray(elementType, index + 1, lengths), i);
-                }
+                    array.SetValue(InitializeJaggedArray(elementType, index + 1, lengths), i);
             }
 
             return array;
+        }
+
+        static internal T[,] CreateRectangularArray<T>(IReadOnlyList<IReadOnlyList<T>> arrays)
+        {
+            // TODO: Validation and special-casing for arrays.Count == 0
+            var rowLength = arrays[0].Count;
+            var retVal = new T[arrays.Count, rowLength];
+
+            for (var i = 0; i < arrays.Count; i++)
+            {
+                for (var j = 0; j < rowLength; j++)
+                    retVal[i, j] = arrays[i][j];
+            }
+
+            return retVal;
         }
 
         static internal string

@@ -14,7 +14,7 @@ namespace DoubleFile
                 internal
                     Node(string in_str, uint nLineNo, ulong nLength, IReadOnlyList<int> hashcodes, RootNode rootNode)
                 {
-                    if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
+                    if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                         return;
 
                     Util.Assert(1301.2303m, nLineNo != 0);
@@ -54,7 +54,7 @@ namespace DoubleFile
                 internal LocalTreeNode
                     AddToTree()
                 {
-                    if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
+                    if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                         return new LocalTreeNode();
 
                     var nIndex = _strPath.LastIndexOf('\\');

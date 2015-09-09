@@ -244,7 +244,7 @@ namespace DoubleFile
 
         internal new LocalModernWindowBase Show()
         {
-            if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
+            if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                 return this;
 
             if (this is IModalWindow)
@@ -266,7 +266,7 @@ namespace DoubleFile
 
         bool? ShowDialog(ILocalWindow me)
         {
-            if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
+            if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                 return null;
 
             if (false == this is IModalWindow)

@@ -40,25 +40,25 @@ namespace DoubleFile
 
         // Returns the number of bits needed to store the universe
         internal int
-            BitsForUniverse(int universeSize) => (int)Math.Truncate(Math.Log((double)universeSize, 2.0)) + 1;
+            BitsForUniverse(int universeSize) => (int)Math.Truncate(Math.Log(universeSize, 2)) + 1;
 
         // Universal hash function with two parameters a and b, and universe size in bits
         static uint
             QHash(int x, uint a, uint b, int u) => (a * (uint)x + b) >> (32 - u);
 
-        // Returns the list of min hashes for the given set of hashcodes
-        internal List<uint>
-            GetMinHash(List<int> hashcodes)
+        // Returns the list of min hashes for the given set of input word IDs
+        internal List<int>
+            GetMinHash(IReadOnlyList<int> inputWordIDs)
         {
-            var minHashes = new uint[NumHashFunctions];
+            var minHashes = new int[NumHashFunctions];
 
             for (int h = 0; h < NumHashFunctions; ++h)
                 minHashes[h] = int.MaxValue;
 
-            foreach (int id in hashcodes)
+            foreach (int id in inputWordIDs)
             {
                 for (int h = 0; h < NumHashFunctions; ++h)
-                    minHashes[h] = Math.Min(minHashes[h], HashFunctions[h](id));
+                    minHashes[h] = (int)Math.Min(minHashes[h], HashFunctions[h](id));
             }
 
             return minHashes.ToList();

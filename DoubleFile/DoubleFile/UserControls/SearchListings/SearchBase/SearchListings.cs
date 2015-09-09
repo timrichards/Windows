@@ -37,7 +37,7 @@ namespace DoubleFile
 
             Util.WriteLine(string.Format("Completed Search for {0} in {1} seconds.", _strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10d));
 
-            if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
+            if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                 return;
 
             var searchStatus = _callbackWR?.Get(w => w);

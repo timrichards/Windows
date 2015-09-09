@@ -167,22 +167,31 @@ namespace DoubleFile
                 Util.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");
                 dtStart = DateTime.Now;
 
-                if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
+                if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                     return;
 
                 // LDA
+                const int maxObs = 20;
+                var minHash = new MinHash(1 << 7, maxObs);
+
                 double[][] hashcodes = null;
                 var outputs = new List<int> { };
 
                 {
-                    var lsObservations = GetHashcodes(_rootNodes);
-                    var maxObs = 0;
+                    var lsObservations = GetHashcodes(minHash, _rootNodes);
+                    var nCount = lsObservations.Count;
+                    var multi = Util.CreateRectangularArray(lsObservations);
 
-                    foreach (var observation in lsObservations)
-                    {
-                        if (maxObs < observation.Count)
-                            maxObs = observation.Count;
-                    }
+                    lsObservations = null;
+
+                    var lsh = new LSH(multi, 20);
+
+                    lsh.Calc();
+
+                    var lsNearest = new List<List<int>>{ };
+
+                    for (int i = 0; i < nCount; ++i)
+                        lsNearest.Add(lsh.GetNearest(i));
 
                     var lsHashCodesA = new List<double[]> { };
 
@@ -208,7 +217,7 @@ namespace DoubleFile
             _dictNodes = null;      // saving memory here.
         }
 
-        static internal List<IReadOnlyList<int>> GetHashcodes(IReadOnlyList<LocalTreeNode> nodes)
+        static internal List<IReadOnlyList<int>> GetHashcodes(MinHash minHash, IReadOnlyList<LocalTreeNode> nodes)
         {
             var lsHashcodes = new List<IReadOnlyList<int>> { };
 
@@ -217,10 +226,10 @@ namespace DoubleFile
                 var hashcodes = treeNode.NodeDatum.Hashcodes;
 
                 if (0 < hashcodes.Count)
-                    lsHashcodes.Add(hashcodes);
+                    lsHashcodes.Add(minHash.GetMinHash(hashcodes));
 
                 treeNode.NodeDatum.Hashcodes = null;
-                lsHashcodes.AddRange(GetHashcodes(treeNode.Nodes));
+                lsHashcodes.AddRange(GetHashcodes(minHash, treeNode.Nodes));
             });
 
             return lsHashcodes;

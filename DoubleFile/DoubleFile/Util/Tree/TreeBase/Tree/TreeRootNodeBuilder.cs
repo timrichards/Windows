@@ -285,7 +285,7 @@ namespace DoubleFile
                     nTotalLength = ((RootNodeDatum)rootTreeNode.NodeDatum).TotalLength;
                 }
 
-                if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
+                if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                     return;     // to avoid the below assert box
 
                 if (nScannedLength != nTotalLength)

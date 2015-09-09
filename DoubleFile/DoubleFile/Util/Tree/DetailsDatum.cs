@@ -13,10 +13,10 @@ namespace DoubleFile
             LineNo;                                 // Found 21 bits
         internal readonly ulong
             Length;
-        internal double
-            Mean;
-        internal double
-            Variance;
+
+        internal IReadOnlyList<int>
+            Hashcodes { get { return _hashCodes.As<IReadOnlyList<int>>(); } set { _hashCodes = value; } }
+        object _hashCodes = null;
 
         internal ulong
             TotalLength;
@@ -33,13 +33,12 @@ namespace DoubleFile
             TreeMapRect;
 
         internal DetailsDatum() { }
-        internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, double mean, double variance)
+        internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, IReadOnlyList<int> hashcodes)
         {
             PrevLineNo = nPrevLineNo;
             LineNo = nLineNo;
             Length = nLength;
-            Mean = mean;
-            Variance = variance;
+            Hashcodes = hashcodes;
         }
 
         protected DetailsDatum(DetailsDatum datum)
@@ -52,8 +51,7 @@ namespace DoubleFile
             PrevLineNo = datum.PrevLineNo;
             LineNo = datum.LineNo;
             Length = datum.Length;
-            Mean = datum.Mean;
-            Variance = datum.Variance;
+            Hashcodes = datum.Hashcodes;
         }
 
         static public DetailsDatum
@@ -65,11 +63,10 @@ namespace DoubleFile
             SubDirs = datum1.SubDirs + datum2.SubDirs,
             FileCountHere = datum1.FileCountHere + datum2.FileCountHere,
             DirsWithFiles = datum1.DirsWithFiles + datum2.DirsWithFiles,
-            Mean = (datum1.Mean + datum2.Mean) / 2,
-            Variance = (datum1.Variance + datum2.Variance) / 2
+            Hashcodes = datum1.Hashcodes?.Concat(datum2.Hashcodes).ToList() ?? datum2.Hashcodes
         };
 
         internal FolderKeyTuple
-            Key => new FolderKeyTuple(TotalLength, FileCountTotal, DirsWithFiles, Mean, Variance);
+            Key => new FolderKeyTuple(TotalLength, FileCountTotal, DirsWithFiles, Hashcodes.GetHashCode());
     }
 }

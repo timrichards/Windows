@@ -1,15 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace DoubleFile
 {
-    class FolderKeyTuple : Tuple<ulong, uint, uint, double, double>
+    class FolderKeyTuple : Tuple<ulong, uint, uint, int>
     {
         internal FolderKeyTuple(ulong nTotalLength,
             uint nFilesInSubdirs,
             uint nDirsWithFiles,
-            double mean, double variance)
-        : base(nTotalLength, nFilesInSubdirs, nDirsWithFiles,
-              mean, variance)
+            int hashcode)
+        : base(nTotalLength, nFilesInSubdirs, nDirsWithFiles, hashcode)
         {
         }
     }

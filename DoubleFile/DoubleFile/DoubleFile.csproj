@@ -142,10 +142,6 @@
     <AssemblyOriginatorKeyFile>DoubleFile_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Accord, Version=3.0.2.0, Culture=neutral, PublicKeyToken=fa1a88e29555ccf7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Accord.3.0.2\lib\net45\Accord.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="FirstFloor.ModernUI">
       <HintPath>..\packages\ModernUI.WPF.1.0.6\lib\net45\FirstFloor.ModernUI.dll</HintPath>
     </Reference>
@@ -203,6 +199,10 @@
     <Compile Include="LocalTreeNode\LocalColorItemBase.cs" />
     <Compile Include="LocalTreeNode\LVitemProject_Explorer.cs" />
     <Compile Include="Statics.cs" />
+    <Compile Include="Util\Jaccard.cs" />
+    <Compile Include="Util\LocalitySensitiveHashing.cs" />
+    <Compile Include="Util\MinHash.cs" />
+    <Compile Include="Util\MinHash_.cs" />
     <Compile Include="Util\UC_ContentPresenter.cs" />
     <Compile Include="Util\LocalIsoStore.cs" />
     <Compile Include="Util\Iterator.cs" />
@@ -609,7 +609,9 @@
     </Content>
     <Resource Include="_Todo.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

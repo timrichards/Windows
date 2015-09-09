@@ -15,11 +15,11 @@ namespace DoubleFile
                     _rootNode.FirstLineNo = (uint)nFirstLineNo;
                 }
 
-                internal void AddToTree(string str_in, uint nLineNo, ulong nLength, double mean, double variance)
+                internal void AddToTree(string str_in, uint nLineNo, ulong nLength, IReadOnlyList<int> hashcodes)
                 {
                     var str = str_in.TrimEnd('\\');
 
-                    _rootNode.Nodes.Add(str, new Node(str, nLineNo, nLength, mean, variance, _rootNode));
+                    _rootNode.Nodes.Add(str, new Node(str, nLineNo, nLength, hashcodes, _rootNode));
                 }
 
                 internal LocalTreeNode AddToTree() =>

@@ -52,7 +52,7 @@ namespace DoubleFile
 
                 ieDetail = ieDetail.Concat(new[]
                 { new LVitem_FolderDetailVM(new[] { nHashVersion + " Folder Score", "" +
-                    tuple.treeNode.NodeDatum.Mean + " " + tuple.treeNode.NodeDatum.Variance}) });
+                    tuple.treeNode.NodeDatum.Hashcodes.GetHashCode()}) });
 #endif
                 Title = tuple.treeNode.Text;
                 Add(ieDetail);

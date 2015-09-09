@@ -57,8 +57,7 @@ namespace DoubleFile
                 nodeDatum.FileCountHere = nodeDatum.LineNo - nodeDatum.PrevLineNo - 1;
                 nodeDatum.FileCountTotal = (datum.FileCountTotal += nodeDatum.FileCountHere);
                 nodeDatum.SubDirs = (datum.SubDirs += (uint)(treeNode.Nodes?.Count ?? 0));
-                nodeDatum.Mean = datum.Mean = (datum.Mean + nodeDatum.Mean) / 2;
-                nodeDatum.Variance = datum.Variance = (datum.Variance + nodeDatum.Variance) / 2;
+                nodeDatum.Hashcodes = datum.Hashcodes = datum.Hashcodes?.Concat(nodeDatum.Hashcodes).ToList() ?? nodeDatum.Hashcodes;
 
                 if (0 < nodeDatum.FileCountHere)
                     ++datum.DirsWithFiles;
@@ -202,7 +201,7 @@ namespace DoubleFile
                     .FirstOnlyAssert();
 
                 var dt = DateTime.Now;
-                var hashcodes = new List<uint> { };
+                var hashcodes = new List<int> { };
 
                 var nHashColumn =
                     Statics.FileDictionary.AllListingsHashV2
@@ -233,26 +232,17 @@ namespace DoubleFile
                             return;
                         }
 
-                        hashcodes.Add(Statics.FileDictionary.GetFolderScorer(fileKeyTuple));
+                        hashcodes.Add((int)Statics.FileDictionary.GetFolderScorer(fileKeyTuple));
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {
-                        if (0 == hashcodes.Count)
-                            hashcodes.Add(0);
-
-                        var mean = hashcodes.Average(n => n);
-
-                        var variance =
-                            hashcodes.Sum(hashCode => { var diff = hashCode - mean; return diff * diff; }) /
-                            (hashcodes.Count - 1);
- 
                         dirData.AddToTree(
                             asLine[2],
                             (uint)("" + asLine[1]).ToInt(),
                             ("" + asLine[knColLength]).ToUlong(),
-                            mean, variance);
+                            hashcodes);
 
-                        hashcodes = new List<uint> { };
+                        hashcodes = new List<int> { };
                     }
                 }
 

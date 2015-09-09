@@ -170,6 +170,25 @@ namespace DoubleFile
                 if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true))
                     return;
 
+                // LDA
+                double[][] hashcodes = null;
+                var outputs = new List<int> { };
+
+                {
+                    var lsObservations = GetHashcodes(_rootNodes);
+                    var maxObs = 0;
+
+                    foreach (var observation in lsObservations)
+                    {
+                        if (maxObs < observation.Count)
+                            maxObs = observation.Count;
+                    }
+
+                    var lsHashCodesA = new List<double[]> { };
+
+                    hashcodes = lsHashCodesA.ToArray();
+                }
+
                 ProgressOverlay.WithProgressOverlay(w => w
                     .SetCompleted(_ksFolderTreeKey));
 
@@ -187,6 +206,24 @@ namespace DoubleFile
                 .CloseIfNatural());
 
             _dictNodes = null;      // saving memory here.
+        }
+
+        static internal List<IReadOnlyList<int>> GetHashcodes(IReadOnlyList<LocalTreeNode> nodes)
+        {
+            var lsHashcodes = new List<IReadOnlyList<int>> { };
+
+            nodes?.ForEach(treeNode =>
+            {
+                var hashcodes = treeNode.NodeDatum.Hashcodes;
+
+                if (0 < hashcodes.Count)
+                    lsHashcodes.Add(hashcodes);
+
+                treeNode.NodeDatum.Hashcodes = null;
+                lsHashcodes.AddRange(GetHashcodes(treeNode.Nodes));
+            });
+
+            return lsHashcodes;
         }
 
         bool IProgressOverlayClosing.ConfirmClose()

@@ -8,8 +8,8 @@ namespace DoubleFile
         internal FolderKeyTuple(ulong nTotalLength,
             uint nFilesInSubdirs,
             uint nDirsWithFiles,
-            int hashcode)
-        : base(nTotalLength, nFilesInSubdirs, nDirsWithFiles, hashcode)
+            int nAllFilesHash)
+        : base(nTotalLength, nFilesInSubdirs, nDirsWithFiles, nAllFilesHash)
         {
         }
     }

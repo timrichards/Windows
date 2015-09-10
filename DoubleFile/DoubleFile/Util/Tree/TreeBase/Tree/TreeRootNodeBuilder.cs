@@ -57,7 +57,7 @@ namespace DoubleFile
                 nodeDatum.FileCountHere = nodeDatum.LineNo - nodeDatum.PrevLineNo - 1;
                 nodeDatum.FileCountTotal = (datum.FileCountTotal += nodeDatum.FileCountHere);
                 nodeDatum.SubDirs = (datum.SubDirs += (uint)(treeNode.Nodes?.Count ?? 0));
-                nodeDatum.Hashcodes = datum.Hashcodes = datum.Hashcodes?.Concat(nodeDatum.Hashcodes).ToList() ?? nodeDatum.Hashcodes;
+                nodeDatum.AllFilesHash = (datum.AllFilesHash += nodeDatum.AllFilesHash);
 
                 if (0 < nodeDatum.FileCountHere)
                     ++datum.DirsWithFiles;
@@ -197,11 +197,12 @@ namespace DoubleFile
                     _lvItemProjectVM.ListingFile
                     .ReadLines(99641)
                     .Where(s => s.StartsWith(ksLineType_Start))
-                    .Select(s => new DirData((s.Split('\t')[1]).ToInt()))
+                    .Select(s => new DirData(s.Split('\t')[1].ToInt()))
                     .FirstOnlyAssert();
 
                 var dt = DateTime.Now;
-                var hashcodes = new List<int> { };
+                var nAllFilesHash = 0;
+                var lsFilesHereHashes = new List<int> { };
 
                 var nHashColumn =
                     Statics.FileDictionary.AllListingsHashV2
@@ -219,7 +220,7 @@ namespace DoubleFile
                     var asLine = strLine.Split('\t');
 
                     if ((nHashColumn < asLine.Length) &&
-                        (strLine.StartsWith(ksLineType_File)))
+                        strLine.StartsWith(ksLineType_File))
                     {
                         var fileKeyTuple =
                             FileKeyTuple
@@ -232,7 +233,10 @@ namespace DoubleFile
                             return;
                         }
 
-                        hashcodes.Add((int)Statics.FileDictionary.GetFolderScorer(fileKeyTuple));
+                        var nFileHereHash = fileKeyTuple.Item1.GetHashCode();
+
+                        nAllFilesHash += nFileHereHash;
+                        lsFilesHereHashes.Add(nFileHereHash);
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {
@@ -240,9 +244,9 @@ namespace DoubleFile
                             asLine[2],
                             (uint)("" + asLine[1]).ToInt(),
                             ("" + asLine[knColLength]).ToUlong(),
-                            hashcodes);
+                            nAllFilesHash, lsFilesHereHashes);
 
-                        hashcodes = new List<int> { };
+                        lsFilesHereHashes = new List<int> { };
                     }
                 }
 

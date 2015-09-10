@@ -51,8 +51,7 @@ namespace DoubleFile
                 var nHashVersion = (Statics.FileDictionary.AllListingsHashV2) ? "1 MB" : "4K";
 
                 ieDetail = ieDetail.Concat(new[]
-                { new LVitem_FolderDetailVM(new[] { nHashVersion + " Folder Score", "" +
-                    tuple.treeNode.NodeDatum.Hashcodes.GetHashCode()}) });
+                { new LVitem_FolderDetailVM(new[] { nHashVersion + " All files hash", "" + tuple.treeNode.NodeDatum.AllFilesHash}) });
 #endif
                 Title = tuple.treeNode.Text;
                 Add(ieDetail);

@@ -8,7 +8,7 @@ namespace DoubleFile
     {
         internal UC_FolderListVM(string strFragment)
         {
-            object oPrev = null;
+            var nAllFilesHash_Prev = -1;
             var bAlternate = false;
 
             Action<int> AddFolders = nFolderScoreIndex =>
@@ -16,15 +16,15 @@ namespace DoubleFile
                 Func<LocalTreeNode, bool>
                     Alternate = folder =>
                 {
-                    if (ReferenceEquals(oPrev, folder.NodeDatum.Hashcodes))
+                    if (nAllFilesHash_Prev == folder.NodeDatum.AllFilesHash)
                         return bAlternate;
 
-                    oPrev = folder.NodeDatum.Hashcodes;
+                    nAllFilesHash_Prev = folder.NodeDatum.AllFilesHash;
                     return bAlternate = (false == bAlternate);
                 };
 
                 Util.UIthread(99828, () => Add(LocalTV.AllNodes
-                    .OrderByDescending(folder => folder.NodeDatum.Hashcodes.GetHashCode())
+                    .OrderByDescending(folder => folder.NodeDatum.AllFilesHash)
                     .Select(folder => new LVitem_FolderListVM(folder, Alternate(folder), _nicknameUpdater))));
             };
 

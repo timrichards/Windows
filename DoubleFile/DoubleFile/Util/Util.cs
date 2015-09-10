@@ -152,7 +152,6 @@ namespace DoubleFile
 
         static internal T[,] CreateRectangularArray<T>(IReadOnlyList<IReadOnlyList<T>> arrays)
         {
-            // TODO: Validation and special-casing for arrays.Count == 0
             var rowLength = arrays[0].Count;
             var retVal = new T[arrays.Count, rowLength];
 

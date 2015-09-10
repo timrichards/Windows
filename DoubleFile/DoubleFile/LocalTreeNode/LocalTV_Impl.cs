@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
-using System.Linq;
 
 namespace DoubleFile
 {
@@ -19,6 +18,7 @@ namespace DoubleFile
             _dictNodes = null;           // m_dictNodes is tested to recreate tree.
             _allNodes = new List<LocalTreeNode> { };
             _rootNodes = new List<LocalTreeNode> { };
+            _lsh = null;
         }
 
         bool DoTree(bool bKill = false)
@@ -172,31 +172,8 @@ namespace DoubleFile
 
                 // LDA
                 const int maxObs = 20;
-                var minHash = new MinHash(1 << 7, maxObs);
 
-                double[][] hashcodes = null;
-                var outputs = new List<int> { };
-
-                {
-                    var lsObservations = GetHashcodes(minHash, _rootNodes);
-                    var nCount = lsObservations.Count;
-                    var multi = Util.CreateRectangularArray(lsObservations);
-
-                    lsObservations = null;
-
-                    var lsh = new LSH(multi, 20);
-
-                    lsh.Calc();
-
-                    var lsNearest = new List<List<int>>{ };
-
-                    for (int i = 0; i < nCount; ++i)
-                        lsNearest.Add(lsh.GetNearest(i));
-
-                    var lsHashCodesA = new List<double[]> { };
-
-                    hashcodes = lsHashCodesA.ToArray();
-                }
+                _lsh = new LSH(Util.CreateRectangularArray(GetHashcodes(new MinHash(1 << 7, maxObs), _rootNodes)), 20);
 
                 ProgressOverlay.WithProgressOverlay(w => w
                     .SetCompleted(_ksFolderTreeKey));
@@ -223,12 +200,12 @@ namespace DoubleFile
 
             nodes?.ForEach(treeNode =>
             {
-                var hashcodes = treeNode.NodeDatum.Hashcodes;
+                var hashcodes = treeNode.NodeDatum.FilesHereHashes;
 
                 if (0 < hashcodes.Count)
                     lsHashcodes.Add(minHash.GetMinHash(hashcodes));
 
-                treeNode.NodeDatum.Hashcodes = null;
+                treeNode.NodeDatum.FilesHereHashes = null;
                 lsHashcodes.AddRange(GetHashcodes(minHash, treeNode.Nodes));
             });
 

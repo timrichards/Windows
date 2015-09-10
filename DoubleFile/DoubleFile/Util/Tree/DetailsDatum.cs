@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 
 namespace DoubleFile
@@ -14,9 +13,10 @@ namespace DoubleFile
         internal readonly ulong
             Length;
 
+        internal int
+            AllFilesHash = 0;
         internal IReadOnlyList<int>
-            Hashcodes { get { return _hashCodes.As<IReadOnlyList<int>>(); } set { _hashCodes = value; } }
-        object _hashCodes = null;
+            FilesHereHashes = null;
 
         internal ulong
             TotalLength;
@@ -33,12 +33,13 @@ namespace DoubleFile
             TreeMapRect;
 
         internal DetailsDatum() { }
-        internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, IReadOnlyList<int> hashcodes)
+        internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, int nAllFilesHash, IReadOnlyList<int> lsFilesHereHashes)
         {
             PrevLineNo = nPrevLineNo;
             LineNo = nLineNo;
             Length = nLength;
-            Hashcodes = hashcodes;
+            AllFilesHash = nAllFilesHash;
+            FilesHereHashes = lsFilesHereHashes;
         }
 
         protected DetailsDatum(DetailsDatum datum)
@@ -51,7 +52,8 @@ namespace DoubleFile
             PrevLineNo = datum.PrevLineNo;
             LineNo = datum.LineNo;
             Length = datum.Length;
-            Hashcodes = datum.Hashcodes;
+            AllFilesHash = datum.AllFilesHash;
+            FilesHereHashes = datum.FilesHereHashes;
         }
 
         static public DetailsDatum
@@ -63,10 +65,10 @@ namespace DoubleFile
             SubDirs = datum1.SubDirs + datum2.SubDirs,
             FileCountHere = datum1.FileCountHere + datum2.FileCountHere,
             DirsWithFiles = datum1.DirsWithFiles + datum2.DirsWithFiles,
-            Hashcodes = datum1.Hashcodes?.Concat(datum2.Hashcodes).ToList() ?? datum2.Hashcodes
+            AllFilesHash = datum1.AllFilesHash + datum2.AllFilesHash
         };
 
         internal FolderKeyTuple
-            Key => new FolderKeyTuple(TotalLength, FileCountTotal, DirsWithFiles, Hashcodes.GetHashCode());
+            Key => new FolderKeyTuple(TotalLength, FileCountTotal, DirsWithFiles, AllFilesHash);
     }
 }

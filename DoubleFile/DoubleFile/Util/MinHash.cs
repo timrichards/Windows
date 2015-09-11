@@ -47,10 +47,10 @@ namespace DoubleFile
             QHash(int x, uint a, uint b, int u) => (a * (uint)x + b) >> (32 - u);
 
         // Returns the list of min hashes for the given set of input word IDs
-        internal List<int>
-            GetMinHash(IReadOnlyList<int> inputWordIDs)
+        internal IReadOnlyList<uint>
+            GetMinHash(IReadOnlyList<uint> inputWordIDs)
         {
-            var minHashes = new int[NumHashFunctions];
+            var minHashes = new uint[NumHashFunctions];
 
             for (int h = 0; h < NumHashFunctions; ++h)
                 minHashes[h] = int.MaxValue;
@@ -58,10 +58,10 @@ namespace DoubleFile
             foreach (int id in inputWordIDs)
             {
                 for (int h = 0; h < NumHashFunctions; ++h)
-                    minHashes[h] = (int)Math.Min(minHashes[h], HashFunctions[h](id));
+                    minHashes[h] = Math.Min(minHashes[h], HashFunctions[h](id));
             }
 
-            return minHashes.ToList();
+            return minHashes;
         }
 
         // Calculates the similarity of two lists of min hash values. Approximately Numerically equivilant to Jaccard Similarity

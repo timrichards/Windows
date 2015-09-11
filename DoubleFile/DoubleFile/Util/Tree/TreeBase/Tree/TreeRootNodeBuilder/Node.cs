@@ -12,7 +12,7 @@ namespace DoubleFile
             {
                 // can't be struct because of object ==
                 internal
-                    Node(string in_str, uint nLineNo, ulong nLength, int nAllFilesHash, IReadOnlyList<int> lsFilesHereHashes, RootNode rootNode)
+                    Node(string in_str, uint nLineNo, ulong nLength, int nAllFilesHash, IReadOnlyList<uint> lsFilesHereUIDs, RootNode rootNode)
                 {
                     if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                         return;
@@ -28,7 +28,7 @@ namespace DoubleFile
                     _rootNode.FirstLineNo = _nLineNo = nLineNo;
                     _nLength = nLength;
                     _nAllFilesHash = nAllFilesHash;
-                    _lsFilesHereHashes = lsFilesHereHashes;
+                    _lsFilesHereUIDs = lsFilesHereUIDs;
 
                     // Path.GetDirectoryName() does not preserve filesystem root
 
@@ -78,7 +78,7 @@ namespace DoubleFile
                                 // pass the culled path back to TreeRootNodeBuilder; ultimately to LVitem_ProjectExplorer
                                 treeNode.NodeDatum =
                                     new RootNodeDatum(new NodeDatum(new DetailsDatum(
-                                    subNode._nPrevLineNo, subNode._nLineNo, subNode._nLength, subNode._nAllFilesHash, subNode._lsFilesHereHashes)),
+                                    subNode._nPrevLineNo, subNode._nLineNo, subNode._nLength, subNode._nAllFilesHash, subNode._lsFilesHereUIDs)),
                                     subNode._strPath);
                             }
 
@@ -102,7 +102,7 @@ namespace DoubleFile
                     }
 
                     treeNode.NodeDatum = new NodeDatum(new DetailsDatum(
-                        _nPrevLineNo, _nLineNo, _nLength, _nAllFilesHash, _lsFilesHereHashes));  // this is almost but not quite always newly assigned here.
+                        _nPrevLineNo, _nLineNo, _nLength, _nAllFilesHash, _lsFilesHereUIDs));  // this is almost but not quite always newly assigned here.
 
                     return treeNode;
                 }
@@ -123,8 +123,8 @@ namespace DoubleFile
                     _bUseShortPath = true;
                 int
                     _nAllFilesHash = 0;
-                IReadOnlyList<int>
-                    _lsFilesHereHashes = null;
+                IReadOnlyList<uint>
+                    _lsFilesHereUIDs = null;
             }
         }
     }

@@ -70,6 +70,17 @@ namespace DoubleFile
         }
         bool? _allListingsHashV2 = null;
 
+        internal uint
+            GetFileUID(FileKeyTuple fileKeyTuple)
+        {
+            var tuple = _dictFiles.TryGetValue(fileKeyTuple);
+
+            return
+                (null != tuple)
+                ? tuple.Item1
+                : 0;
+        }
+
         internal IReadOnlyList<DuplicateStruct>
             GetDuplicates(string[] asFileLine)
         {
@@ -81,16 +92,16 @@ namespace DoubleFile
             if (asFileLine.Length <= nHashColumn)
                 return null;
 
-            var lsLookup =
+            var tuple =
                 _dictFiles?.TryGetValue(FileKeyTuple.FactoryCreate(
                 asFileLine[nHashColumn],
                 ("" + asFileLine[7]).ToUlong()));
 
-            if (null == lsLookup)
+            if (null == tuple)
                 return null;
 
             return
-                lsLookup.AsParallel()
+                tuple.Item2.AsParallel()
                 .Select(lookup => new DuplicateStruct
             {
                 LVitemProjectVM = _dictItemNumberToLV[GetLVitemProjectVM(lookup)],
@@ -241,13 +252,16 @@ namespace DoubleFile
 
             var dt = DateTime.Now;
             var nFolderCount = (uint)(_bAnyListingFilesHashV1pt0 ? nFolderCount1pt0 : nFolderCount2);
+            uint nFileUID = 0;           // < 1M: int; can't be short
 
             _dictFiles =
                 (_bAnyListingFilesHashV1pt0 ? dictV1pt0 : dictV2)
                 .Where(kvp => 1 < kvp.Value.Count)
                 .OrderBy(kvp => kvp.Key.Item2)
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.AsEnumerable());
+                .ToDictionary(kvp => kvp.Key, kvp => Tuple.Create(++nFileUID,
+                    kvp.Value.AsEnumerable()));
 
+            Util.Assert(99895, 1 == nFolderCount - nFileUID, bTraceOnly: true);
             Util.Assert(99896, _dictFiles.Count == nFolderCount - 1, bTraceOnly: true);
             Util.WriteLine("_DictFiles " + (DateTime.Now - dt).TotalMilliseconds + " ms");   // 650 ms 
 
@@ -310,7 +324,7 @@ namespace DoubleFile
             _dictLVtoItemNumber = null;
         IReadOnlyDictionary<int, LVitemProject_Explorer>
             _dictItemNumberToLV = null;
-        IReadOnlyDictionary<FileKeyTuple, IEnumerable<int>>
+        IReadOnlyDictionary<FileKeyTuple, Tuple<uint, IEnumerable<int>>>
             _dictFiles = null;
         bool
             _bAnyListingFilesHashV1pt0 = false;

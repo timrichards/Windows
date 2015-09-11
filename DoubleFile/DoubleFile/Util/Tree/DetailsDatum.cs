@@ -15,8 +15,8 @@ namespace DoubleFile
 
         internal int
             AllFilesHash = 0;
-        internal IReadOnlyList<int>
-            FilesHereHashes = null;
+        internal IReadOnlyList<uint>
+            FilesHereUIDs = null;
 
         internal ulong
             TotalLength;
@@ -33,13 +33,13 @@ namespace DoubleFile
             TreeMapRect;
 
         internal DetailsDatum() { }
-        internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, int nAllFilesHash, IReadOnlyList<int> lsFilesHereHashes)
+        internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, int nAllFilesHash, IReadOnlyList<uint> lsFilesHereUIDs)
         {
             PrevLineNo = nPrevLineNo;
             LineNo = nLineNo;
             Length = nLength;
             AllFilesHash = nAllFilesHash;
-            FilesHereHashes = lsFilesHereHashes;
+            FilesHereUIDs = lsFilesHereUIDs;
         }
 
         protected DetailsDatum(DetailsDatum datum)
@@ -53,7 +53,7 @@ namespace DoubleFile
             LineNo = datum.LineNo;
             Length = datum.Length;
             AllFilesHash = datum.AllFilesHash;
-            FilesHereHashes = datum.FilesHereHashes;
+            FilesHereUIDs = datum.FilesHereUIDs;
         }
 
         static public DetailsDatum

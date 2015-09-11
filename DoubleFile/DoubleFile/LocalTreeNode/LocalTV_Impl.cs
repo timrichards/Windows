@@ -171,9 +171,9 @@ namespace DoubleFile
                     return;
 
                 // LDA
-                const int maxObs = 20;
+    //            const int maxObs = 20;
 
-                _lsh = new LSH(Util.CreateRectangularArray(GetHashcodes(new MinHash(1 << 7, maxObs), _rootNodes)), 20);
+   //             _lsh = new LSH(Util.CreateRectangularArray(GetHashcodes(new MinHash(1 << 7, maxObs), _rootNodes)), maxObs);
 
                 ProgressOverlay.WithProgressOverlay(w => w
                     .SetCompleted(_ksFolderTreeKey));
@@ -186,7 +186,7 @@ namespace DoubleFile
                 Util.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");
             }
 
-            _bTreeDone = true;      // should preceed closing status dialog: returns true to the caller
+            _bTreeDone = true;      // should precede closing status dialog: returns true to the caller
 
             ProgressOverlay.WithProgressOverlay(w => w
                 .CloseIfNatural());
@@ -194,22 +194,34 @@ namespace DoubleFile
             _dictNodes = null;      // saving memory here.
         }
 
-        static internal List<IReadOnlyList<int>> GetHashcodes(MinHash minHash, IReadOnlyList<LocalTreeNode> nodes)
+        static internal void GetHashcodesA(MinHash minHash, IReadOnlyList<LocalTreeNode> nodes)
         {
-            var lsHashcodes = new List<IReadOnlyList<int>> { };
+            nodes?.ForEach(treeNode =>
+            {
+                var filesHereUIDs = treeNode.NodeDatum.FilesHereUIDs;
+
+                if (0 < filesHereUIDs.Count)
+                    treeNode.NodeDatum.FilesHereUIDs = minHash.GetMinHash(filesHereUIDs);       // Coopt - A
+
+                GetHashcodesA(minHash, treeNode.Nodes);
+            });
+        }
+
+        static internal List<IReadOnlyList<uint>> GetHashcodesB(IReadOnlyList<LocalTreeNode> nodes)
+        {
+            var lsMinHashes = new List<IReadOnlyList<uint>> { };
 
             nodes?.ForEach(treeNode =>
             {
-                var hashcodes = treeNode.NodeDatum.FilesHereHashes;
+                var minHashes = treeNode.NodeDatum.FilesHereUIDs;                               // Coopt - B
 
-                if (0 < hashcodes.Count)
-                    lsHashcodes.Add(minHash.GetMinHash(hashcodes));
+                if (0 < minHashes.Count)
+                    lsMinHashes.Add(minHashes);
 
-                treeNode.NodeDatum.FilesHereHashes = null;
-                lsHashcodes.AddRange(GetHashcodes(minHash, treeNode.Nodes));
+                lsMinHashes.AddRange(GetHashcodesB(treeNode.Nodes));
             });
 
-            return lsHashcodes;
+            return lsMinHashes;
         }
 
         bool IProgressOverlayClosing.ConfirmClose()

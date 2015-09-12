@@ -177,11 +177,9 @@ namespace DoubleFile
 
                 // Locality sensitive hashing
                 const int maxObs = 20;
-                GetHashcodesA(new MinHash(1 << 7, maxObs), _rootNodes);
 
-                var tuple = GetHashcodesB(_rootNodes);
-
-                _lsh = new LSH(Util.CreateRectangularArray(tuple), maxObs);
+                CalcMinHashes(new MinHash(1 << 7, maxObs), _rootNodes);
+                _lsh = new LSH(Util.CreateRectangularArray(GetMinHashes(_rootNodes)), maxObs);
 
                 ProgressOverlay.WithProgressOverlay(w => w
                     .SetCompleted(_ksFolderTreeKey));
@@ -203,18 +201,18 @@ namespace DoubleFile
         }
 
         static internal List<IReadOnlyList<int>>
-            GetHashcodesA(MinHash minHashClassObj, IReadOnlyList<LocalTreeNode> nodes, bool bStart = true)
+            CalcMinHashes(MinHash minHashClassObj, IReadOnlyList<LocalTreeNode> nodes, bool bStart = true)
         {
             var lsAllFilesHashes = new List<IReadOnlyList<int>> { };
 
             nodes?.ForEach(treeNode =>
             {
                 var lsAllFileHashes_treeNode = treeNode.NodeDatum.FilesHereHashes.ToList();
-                                                                                                // recurse
-                foreach (var allFileHashes in GetHashcodesA(minHashClassObj, treeNode.Nodes, bStart: false))
+
+                foreach (var allFileHashes in CalcMinHashes(minHashClassObj, treeNode.Nodes, bStart: false))    // recurse
                     lsAllFileHashes_treeNode.AddRange(allFileHashes);
-                                                                                                // Coopt - A
-                treeNode.NodeDatum.FilesHereHashes = minHashClassObj.GetMinHash(lsAllFileHashes_treeNode.Select(key => key.GetHashCode()));
+
+                treeNode.NodeDatum.FilesHereHashes = minHashClassObj.GetMinHash(lsAllFileHashes_treeNode);      // Coopt - A
 
                 if (false == bStart)
                     lsAllFilesHashes.Add(lsAllFileHashes_treeNode);
@@ -224,18 +222,18 @@ namespace DoubleFile
         }
 
         static internal List<IReadOnlyList<int>>
-            GetHashcodesB(IReadOnlyList<LocalTreeNode> nodes)
+            GetMinHashes(IReadOnlyList<LocalTreeNode> nodes)
         {
-            var lsAllFilesKeys = new List<IReadOnlyList<int>> { };
+            var lsMinhashes = new List<IReadOnlyList<int>> { };
 
             nodes?.ForEach(treeNode =>
             {
-                lsAllFilesKeys.AddRange(GetHashcodesB(treeNode.Nodes));                         // recurse
-                lsAllFilesKeys.Add(treeNode.NodeDatum.FilesHereHashes);                         // Coopt - B
+                lsMinhashes.AddRange(GetMinHashes(treeNode.Nodes));                                             // recurse
+                lsMinhashes.Add(treeNode.NodeDatum.FilesHereHashes);                                            // Coopt - B
                 treeNode.NodeDatum.FilesHereHashes = null;
             });
 
-            return lsAllFilesKeys;
+            return lsMinhashes;
         }
 
         bool IProgressOverlayClosing.ConfirmClose()

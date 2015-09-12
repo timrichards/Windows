@@ -8,7 +8,7 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    interface ICreateFileDictStatus
+    interface ICreateDupeFileDictStatus
     {
         void Callback(bool bDone = false, double nProgress = double.NaN);
     }
@@ -100,7 +100,7 @@ namespace DoubleFile
         }
 
         internal DupeFileDictionary
-            DoThreadFactory(LV_ProjectVM lvProjectVM, WeakReference<ICreateFileDictStatus> callbackWR)
+            DoThreadFactory(LV_ProjectVM lvProjectVM, WeakReference<ICreateDupeFileDictStatus> callbackWR)
         {
             _LVprojectVM = lvProjectVM;
             _callbackWR = callbackWR;
@@ -315,7 +315,7 @@ namespace DoubleFile
         bool
             _bAnyListingFilesHashV1pt0 = false;
 
-        WeakReference<ICreateFileDictStatus>
+        WeakReference<ICreateDupeFileDictStatus>
             _callbackWR = null;
         Thread
             _thread = null;

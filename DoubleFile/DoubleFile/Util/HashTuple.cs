@@ -10,7 +10,8 @@ namespace DoubleFile
         {
         }
 
-        static internal HashTuple FactoryCreate(IReadOnlyList<byte> abHash_in)
+        static internal HashTuple
+            FactoryCreate(IReadOnlyList<byte> abHash_in)    // only called by SaveDirListings
         {
             var nIx = 16;
             var abHash = new byte[nIx];
@@ -21,16 +22,39 @@ namespace DoubleFile
             return Create(abHash);
         }
 
-        static internal HashTuple FactoryCreate(string strHash)
-        {
-            var abHash = new byte[16];
+        static internal HashTuple
+            FactoryCreate(string strHash) =>                // only called by DupeFileDictionary
+            Create(ConvertToByte(strHash));
 
+        static internal int
+            HashcodeFromString(string strHash)              // only called by TreeRootNodeBuilder
+        {
+            var abHash = ConvertToByte(strHash);
+
+            if (null == abHash)
+                return 0;
+
+            unsafe
+            {
+                fixed (byte* n12 = &abHash[12])
+                fixed (byte* n8 = &abHash[8])
+                fixed (byte* n4 = &abHash[4])
+                fixed (byte* n0 = &abHash[0])
+                    return *((int*)n12) + *((int*)n8) + *((int*)n4) + *((int*)n0);
+            }
+        }
+
+        static byte[]
+            ConvertToByte(string strHash)
+        {
             try
             {
+                var abHash = new byte[16];
+
                 for (var i = 0; i < 32; i += 2)
                     abHash[15 - (i >> 1)] = Convert.ToByte(strHash.Substring(i, 2), 16);
 
-                return Create(abHash);
+                return abHash;
             }
             catch (ArgumentException)
             {
@@ -44,8 +68,12 @@ namespace DoubleFile
             return null;
         }
 
-        static HashTuple Create(byte[] abHash)
+        static HashTuple
+            Create(byte[] abHash)
         {
+            if (null == abHash)
+                return null;
+
             unsafe
             {
                 fixed (byte* n8 = &abHash[8])

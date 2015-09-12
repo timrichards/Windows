@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    partial class LocalTV : IProgressOverlayClosing, ICreateFileDictStatus, ITreeStatus
+    partial class LocalTV : IProgressOverlayClosing, ICreateDupeFileDictStatus, ITreeStatus
     {
         internal void ClearMem_TreeForm()
         {
@@ -46,12 +46,12 @@ namespace DoubleFile
             var lsProgressItems = new List<string> { _ksFolderTreeKey };
 
             if (Statics.DupeFileDictionary.IsEmpty)
-                lsProgressItems.Insert(0, _ksFileDictKey);
+                lsProgressItems.Insert(0, _ksDupeFileDictKey);
 
             (new ProgressOverlay(new string[lsProgressItems.Count], lsProgressItems, x =>
             {
                 if (Statics.DupeFileDictionary.IsEmpty)
-                    Statics.DupeFileDictionary.DoThreadFactory(_lvProjectVM, new WeakReference<ICreateFileDictStatus>(this));
+                    Statics.DupeFileDictionary.DoThreadFactory(_lvProjectVM, new WeakReference<ICreateDupeFileDictStatus>(this));
 
                 TabledString<TabledStringType_Folders>.GenerationStarting();
 
@@ -79,7 +79,7 @@ namespace DoubleFile
             return _bTreeDone;
         }
 
-        void ICreateFileDictStatus.Callback(bool bDone, double nProgress)
+        void ICreateDupeFileDictStatus.Callback(bool bDone, double nProgress)
         {
             if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                 Statics.DupeFileDictionary.IsAborted)
@@ -93,7 +93,7 @@ namespace DoubleFile
             if (bDone)
             {
                 ProgressOverlay.WithProgressOverlay(w => w
-                    .SetCompleted(_ksFileDictKey)
+                    .SetCompleted(_ksDupeFileDictKey)
                     .CloseIfNatural());
 
                 _bFileDictDone = true;
@@ -101,7 +101,7 @@ namespace DoubleFile
             else if (0 <= nProgress)
             {
                 ProgressOverlay.WithProgressOverlay(w => w
-                    .SetProgress(_ksFileDictKey, nProgress));
+                    .SetProgress(_ksDupeFileDictKey, nProgress));
             }
         }
         
@@ -171,16 +171,6 @@ namespace DoubleFile
                 if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                     return;
 
-
-                // broke clones
-
-
-                // Locality sensitive hashing
-                const int maxObs = 20;
-
-                CalcMinHashes(new MinHash(1 << 7, maxObs), _rootNodes);
-                _lsh = new LSH(Util.CreateRectangularArray(GetMinHashes(_rootNodes)), maxObs);
-
                 ProgressOverlay.WithProgressOverlay(w => w
                     .SetCompleted(_ksFolderTreeKey));
 
@@ -190,6 +180,12 @@ namespace DoubleFile
                     _selectedNode = _topNode;
 
                 Util.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");
+
+                // Locality sensitive hashing
+                const int maxObs = 20;
+
+                CalcMinHashes(new MinHash(1 << 7, maxObs), _rootNodes);
+                _lsh = new LSH(Util.CreateRectangularArray(GetMinHashes(_rootNodes)), maxObs);
             }
 
             _bTreeDone = true;      // should precede closing status dialog: returns true to the caller
@@ -272,7 +268,7 @@ namespace DoubleFile
             return true;
         }
 
-        const string _ksFileDictKey = "Creating file dictionary";
+        const string _ksDupeFileDictKey = "Creating duplicate file dictionary";
         const string _ksFolderTreeKey = "Creating folder tree browser";
 
         Tree

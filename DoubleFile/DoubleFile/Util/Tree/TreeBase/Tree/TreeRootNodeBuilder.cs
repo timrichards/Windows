@@ -222,21 +222,15 @@ namespace DoubleFile
                     if ((nHashColumn < asLine.Length) &&
                         strLine.StartsWith(ksLineType_File))
                     {
-                        var fileKeyTuple =
-                            FileKeyTuple
-                            .FactoryCreate(asLine[nHashColumn], ("" + asLine[knColLength]).ToUlong());
+                        var nFileLength = ("" + asLine[knColLength]).ToUlong();
 
-                        if (null == fileKeyTuple)
+                        if (0 < nFileLength)
                         {
-                            Util.Assert(99912, false);
-                            Abort();
-                            return;
+                            var hashcode = HashTuple.HashcodeFromString(asLine[nHashColumn]);
+
+                            nAllFilesHash += hashcode;
+                            lsFilesHereHashes.Add(hashcode);
                         }
-
-                        var nFileKeyHash = fileKeyTuple.GetHashCode();
-
-                        nAllFilesHash += nFileKeyHash;
-                        lsFilesHereHashes.Add(nFileKeyHash);
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {
@@ -247,11 +241,9 @@ namespace DoubleFile
                             nAllFilesHash, lsFilesHereHashes);
 
                         lsFilesHereHashes = new List<int> { };
+                        nAllFilesHash = 0;
                     }
                 }
-
-                // 8s
-                Util.WriteLine("FolderScore " + (DateTime.Now - dt).TotalMilliseconds + " ms - " + _lvItemProjectVM.SourcePath);
 
                 var rootTreeNode = dirData.AddToTree();
 
@@ -267,6 +259,8 @@ namespace DoubleFile
                     TreeSubnodeDetails(rootTreeNode);
                 }
 
+                // 8s
+                Util.WriteLine("TreeRootNodeBuilder " + (DateTime.Now - dt).TotalMilliseconds + " ms - " + _lvItemProjectVM.SourcePath);
                 StatusCallback(_lvItemProjectVM, rootTreeNode);
 
 #if (DEBUG && FOOBAR)

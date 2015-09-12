@@ -8,7 +8,7 @@ namespace DoubleFile
         internal
 			MinHash_(int universeSize)
         {
-            Util.Assert(99635, 0 < universeSize);
+            Util.Assert(99895, 0 < universeSize);
             _hashFunctions = new Hash[_numHashFunctions];
 
             var r = new Random(11);

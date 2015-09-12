@@ -111,8 +111,8 @@ namespace DoubleFile
             LocalTV.WithLocalTV(localTV =>
                 localTV.LocalDispose());
 
-            Statics.FileDictionary.Dispose();
-            Statics.FileDictionary = new FileDictionary();
+            Statics.DupeFileDictionary.Dispose();
+            Statics.DupeFileDictionary = new DupeFileDictionary();
         }
 
         LV_ProjectVM

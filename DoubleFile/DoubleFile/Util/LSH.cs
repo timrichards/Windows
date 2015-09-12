@@ -35,7 +35,7 @@ namespace DoubleFile
                     int hashValue = 0;
                     for (int th = thisHash; th < thisHash + rowsPerBand; th++)
                     {
-                        hashValue = unchecked(hashValue * 1174247 + minHashes[s, th]);
+                        hashValue = unchecked(hashValue * 1174247 + (int)minHashes[s, th]);
                     }
                     if (!thisSL.ContainsKey(hashValue))
                     {

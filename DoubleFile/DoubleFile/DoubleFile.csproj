@@ -326,8 +326,8 @@
     <Compile Include="Util\Tree\LVitemFileTag.cs" />
     <Compile Include="UserControls\Treemap\UC_TreeMapVM.cs" />
     <Compile Include="Util\UtilColorcode.cs" />
-    <Compile Include="Util\FileDictionary.cs" />
-    <Compile Include="Util\FileDictionary\DuplicateStruct.cs" />
+    <Compile Include="Util\DupeFileDictionary.cs" />
+    <Compile Include="Util\DupeFileDictionary\DuplicateStruct.cs" />
     <Compile Include="Util\FileKeyTuple.cs" />
     <Compile Include="Util\HashTuple.cs" />
     <Compile Include="UserControls\MVVM_Files\LVitem_FilesVM.cs" />

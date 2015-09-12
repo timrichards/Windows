@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -40,21 +41,21 @@ namespace DoubleFile
                 return false;
 
             _bTreeDone = false;
-            Statics.FileDictionary.ResetAbortFlag();
+            Statics.DupeFileDictionary.ResetAbortFlag();
 
             var lsProgressItems = new List<string> { _ksFolderTreeKey };
 
-            if (Statics.FileDictionary.IsEmpty)
+            if (Statics.DupeFileDictionary.IsEmpty)
                 lsProgressItems.Insert(0, _ksFileDictKey);
 
             (new ProgressOverlay(new string[lsProgressItems.Count], lsProgressItems, x =>
             {
-                if (Statics.FileDictionary.IsEmpty)
-                    Statics.FileDictionary.DoThreadFactory(_lvProjectVM, new WeakReference<ICreateFileDictStatus>(this));
+                if (Statics.DupeFileDictionary.IsEmpty)
+                    Statics.DupeFileDictionary.DoThreadFactory(_lvProjectVM, new WeakReference<ICreateFileDictStatus>(this));
 
                 TabledString<TabledStringType_Folders>.GenerationStarting();
 
-                if (Statics.FileDictionary.IsAborted)
+                if (Statics.DupeFileDictionary.IsAborted)
                     return;     // from lambda
 
                 if (null == _dictNodes)
@@ -81,7 +82,7 @@ namespace DoubleFile
         void ICreateFileDictStatus.Callback(bool bDone, double nProgress)
         {
             if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
-                Statics.FileDictionary.IsAborted)
+                Statics.DupeFileDictionary.IsAborted)
             {
                 ProgressOverlay.WithProgressOverlay(w => w
                     .Abort());
@@ -107,7 +108,7 @@ namespace DoubleFile
         void ITreeStatus.Status(LVitem_ProjectVM volStrings, LocalTreeNode rootNode, bool bError)
         {
             if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
-                Statics.FileDictionary.IsAborted ||
+                Statics.DupeFileDictionary.IsAborted ||
                 (_tree?.IsAborted ?? false))
             {
                 ClearMem_TreeForm();
@@ -170,10 +171,17 @@ namespace DoubleFile
                 if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                     return;
 
-                // LDA
-    //            const int maxObs = 20;
 
-   //             _lsh = new LSH(Util.CreateRectangularArray(GetHashcodes(new MinHash(1 << 7, maxObs), _rootNodes)), maxObs);
+                // broke clones
+
+
+                // Locality sensitive hashing
+                const int maxObs = 20;
+                GetHashcodesA(new MinHash(1 << 7, maxObs), _rootNodes);
+
+                var tuple = GetHashcodesB(_rootNodes);
+
+                _lsh = new LSH(Util.CreateRectangularArray(tuple), maxObs);
 
                 ProgressOverlay.WithProgressOverlay(w => w
                     .SetCompleted(_ksFolderTreeKey));
@@ -194,41 +202,47 @@ namespace DoubleFile
             _dictNodes = null;      // saving memory here.
         }
 
-        static internal void GetHashcodesA(MinHash minHash, IReadOnlyList<LocalTreeNode> nodes)
+        static internal List<IReadOnlyList<int>>
+            GetHashcodesA(MinHash minHashClassObj, IReadOnlyList<LocalTreeNode> nodes, bool bStart = true)
         {
+            var lsAllFilesHashes = new List<IReadOnlyList<int>> { };
+
             nodes?.ForEach(treeNode =>
             {
-                var filesHereUIDs = treeNode.NodeDatum.FilesHereUIDs;
+                var lsAllFileHashes_treeNode = treeNode.NodeDatum.FilesHereHashes.ToList();
+                                                                                                // recurse
+                foreach (var allFileHashes in GetHashcodesA(minHashClassObj, treeNode.Nodes, bStart: false))
+                    lsAllFileHashes_treeNode.AddRange(allFileHashes);
+                                                                                                // Coopt - A
+                treeNode.NodeDatum.FilesHereHashes = minHashClassObj.GetMinHash(lsAllFileHashes_treeNode.Select(key => key.GetHashCode()));
 
-                if (0 < filesHereUIDs.Count)
-                    treeNode.NodeDatum.FilesHereUIDs = minHash.GetMinHash(filesHereUIDs);       // Coopt - A
-
-                GetHashcodesA(minHash, treeNode.Nodes);
+                if (false == bStart)
+                    lsAllFilesHashes.Add(lsAllFileHashes_treeNode);
             });
+
+            return lsAllFilesHashes;
         }
 
-        static internal List<IReadOnlyList<uint>> GetHashcodesB(IReadOnlyList<LocalTreeNode> nodes)
+        static internal List<IReadOnlyList<int>>
+            GetHashcodesB(IReadOnlyList<LocalTreeNode> nodes)
         {
-            var lsMinHashes = new List<IReadOnlyList<uint>> { };
+            var lsAllFilesKeys = new List<IReadOnlyList<int>> { };
 
             nodes?.ForEach(treeNode =>
             {
-                var minHashes = treeNode.NodeDatum.FilesHereUIDs;                               // Coopt - B
-
-                if (0 < minHashes.Count)
-                    lsMinHashes.Add(minHashes);
-
-                lsMinHashes.AddRange(GetHashcodesB(treeNode.Nodes));
+                lsAllFilesKeys.AddRange(GetHashcodesB(treeNode.Nodes));                         // recurse
+                lsAllFilesKeys.Add(treeNode.NodeDatum.FilesHereHashes);                         // Coopt - B
+                treeNode.NodeDatum.FilesHereHashes = null;
             });
 
-            return lsMinHashes;
+            return lsAllFilesKeys;
         }
 
         bool IProgressOverlayClosing.ConfirmClose()
         {
             if (false == Util.Closure(() =>
             {
-                if (Statics.FileDictionary
+                if (Statics.DupeFileDictionary
                     .IsAborted)
                 {
                     return true;    // from lambda Util.Closure
@@ -252,7 +266,7 @@ namespace DoubleFile
 
             Util.WriteLine("IWinProgressClosing.ConfirmClose B");
 
-            Statics.FileDictionary
+            Statics.DupeFileDictionary
                 .Abort();
                     
             _tree?.EndThread();

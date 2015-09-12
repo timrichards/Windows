@@ -42,9 +42,9 @@ namespace DoubleFile
             LVprojectVM { set { _wr.Get(s => s._lvProjectVM = value); } }
         LV_ProjectVM _lvProjectVM;
 
-        static internal FileDictionary
-            FileDictionary { get { return _wr.Get(s => s._fileDictionary); } set { _wr.Get(s => s._fileDictionary = value); } }
-        FileDictionary _fileDictionary = new FileDictionary();
+        static internal DupeFileDictionary
+            DupeFileDictionary { get { return _wr.Get(s => s._fileDictionary); } set { _wr.Get(s => s._fileDictionary = value); } }
+        DupeFileDictionary _fileDictionary = new DupeFileDictionary();
 
         static internal SaveDirListings
             SaveDirListings { get { return _wr.Get(s => s._saveDirListings); } set { _wr.Get(s => s._saveDirListings = value); } }

@@ -1,7 +1,7 @@
 ﻿
 namespace DoubleFile
 {
-    partial class FileDictionary
+    partial class DupeFileDictionary
     {
         internal struct DuplicateStruct
         {

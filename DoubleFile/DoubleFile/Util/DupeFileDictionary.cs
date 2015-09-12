@@ -13,9 +13,9 @@ namespace DoubleFile
         void Callback(bool bDone = false, double nProgress = double.NaN);
     }
     
-    partial class FileDictionary : IDisposable
+    partial class DupeFileDictionary : IDisposable
     {
-        internal FileDictionary()
+        internal DupeFileDictionary()
         {
             // ProjectFile.OnSavingProject += Serialize;
             // ProjectFile.OnOpenedProject += Deserialize;
@@ -30,12 +30,12 @@ namespace DoubleFile
         internal void
             Clear()
         {
-            _dictFiles = null;
+            _dictDuplicateFiles = null;
             _bAnyListingFilesHashV1pt0 = false;
         }
 
         internal bool
-            IsEmpty => null == _dictFiles;
+            IsEmpty => null == _dictDuplicateFiles;
 
         internal bool
             AllListingsHashV2
@@ -70,17 +70,6 @@ namespace DoubleFile
         }
         bool? _allListingsHashV2 = null;
 
-        internal uint
-            GetFileUID(FileKeyTuple fileKeyTuple)
-        {
-            var tuple = _dictFiles.TryGetValue(fileKeyTuple);
-
-            return
-                (null != tuple)
-                ? tuple.Item1
-                : 0;
-        }
-
         internal IReadOnlyList<DuplicateStruct>
             GetDuplicates(string[] asFileLine)
         {
@@ -92,16 +81,16 @@ namespace DoubleFile
             if (asFileLine.Length <= nHashColumn)
                 return null;
 
-            var tuple =
-                _dictFiles?.TryGetValue(FileKeyTuple.FactoryCreate(
+            var lsLookup =
+                _dictDuplicateFiles?.TryGetValue(FileKeyTuple.FactoryCreate(
                 asFileLine[nHashColumn],
                 ("" + asFileLine[7]).ToUlong()));
 
-            if (null == tuple)
+            if (null == lsLookup)
                 return null;
 
             return
-                tuple.Item2.AsParallel()
+                lsLookup.AsParallel()
                 .Select(lookup => new DuplicateStruct
             {
                 LVitemProjectVM = _dictItemNumberToLV[GetLVitemProjectVM(lookup)],
@@ -110,12 +99,12 @@ namespace DoubleFile
                 .ToList();
         }
 
-        internal FileDictionary
+        internal DupeFileDictionary
             DoThreadFactory(LV_ProjectVM lvProjectVM, WeakReference<ICreateFileDictStatus> callbackWR)
         {
             _LVprojectVM = lvProjectVM;
             _callbackWR = callbackWR;
-            _dictFiles = null;
+            _dictDuplicateFiles = null;
             IsAborted = false;
             _thread = Util.ThreadMake(() => { Go(); _blockingFrame.Continue = false; });
             _blockingFrame.PushFrameTrue();
@@ -252,17 +241,14 @@ namespace DoubleFile
 
             var dt = DateTime.Now;
             var nFolderCount = (uint)(_bAnyListingFilesHashV1pt0 ? nFolderCount1pt0 : nFolderCount2);
-            uint nFileUID = 0;           // < 1M: int; can't be short
 
-            _dictFiles =
+            _dictDuplicateFiles =
                 (_bAnyListingFilesHashV1pt0 ? dictV1pt0 : dictV2)
                 .Where(kvp => 1 < kvp.Value.Count)
                 .OrderBy(kvp => kvp.Key.Item2)
-                .ToDictionary(kvp => kvp.Key, kvp => Tuple.Create(++nFileUID,
-                    kvp.Value.AsEnumerable()));
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.AsEnumerable());
 
-            Util.Assert(99895, 1 == nFolderCount - nFileUID, bTraceOnly: true);
-            Util.Assert(99896, _dictFiles.Count == nFolderCount - 1, bTraceOnly: true);
+            Util.Assert(99896, _dictDuplicateFiles.Count == nFolderCount - 1, bTraceOnly: true);
             Util.WriteLine("_DictFiles " + (DateTime.Now - dt).TotalMilliseconds + " ms");   // 650 ms 
 
             // Skip enumerating AllListingsHashV2 when possible: not important, but it'd be a small extra step
@@ -324,8 +310,8 @@ namespace DoubleFile
             _dictLVtoItemNumber = null;
         IReadOnlyDictionary<int, LVitemProject_Explorer>
             _dictItemNumberToLV = null;
-        IReadOnlyDictionary<FileKeyTuple, Tuple<uint, IEnumerable<int>>>
-            _dictFiles = null;
+        IReadOnlyDictionary<FileKeyTuple, IEnumerable<int>>
+            _dictDuplicateFiles = null;
         bool
             _bAnyListingFilesHashV1pt0 = false;
 

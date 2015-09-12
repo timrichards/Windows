@@ -202,10 +202,10 @@ namespace DoubleFile
 
                 var dt = DateTime.Now;
                 var nAllFilesHash = 0;
-                var lsFilesHereUIDs = new List<uint> { };
+                var lsFilesHereHashes = new List<int> { };
 
                 var nHashColumn =
-                    Statics.FileDictionary.AllListingsHashV2
+                    Statics.DupeFileDictionary.AllListingsHashV2
                     ? 11
                     : 10;
 
@@ -233,8 +233,10 @@ namespace DoubleFile
                             return;
                         }
 
-                        nAllFilesHash += fileKeyTuple.GetHashCode();
-                        lsFilesHereUIDs.Add(Statics.FileDictionary.GetFileUID(fileKeyTuple));
+                        var nFileKeyHash = fileKeyTuple.GetHashCode();
+
+                        nAllFilesHash += nFileKeyHash;
+                        lsFilesHereHashes.Add(nFileKeyHash);
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {
@@ -242,9 +244,9 @@ namespace DoubleFile
                             asLine[2],
                             (uint)("" + asLine[1]).ToInt(),
                             ("" + asLine[knColLength]).ToUlong(),
-                            nAllFilesHash, lsFilesHereUIDs);
+                            nAllFilesHash, lsFilesHereHashes);
 
-                        lsFilesHereUIDs = new List<uint> { };
+                        lsFilesHereHashes = new List<int> { };
                     }
                 }
 

@@ -80,7 +80,7 @@ namespace DoubleFile
             });
         }
 
-        internal IEnumerable<FileDictionary.DuplicateStruct>
+        internal IEnumerable<DupeFileDictionary.DuplicateStruct>
             LSduplicates = null;
         internal IReadOnlyList<string>
             FileLine;

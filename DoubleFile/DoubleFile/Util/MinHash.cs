@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DoubleFile
 {
@@ -63,9 +62,5 @@ namespace DoubleFile
 
             return minHashes;
         }
-
-        // Calculates the similarity of two lists of min hash values. Approximately Numerically equivilant to Jaccard Similarity
-        internal double
-            Similarity(List<int> l1, List<int> l2) => Jaccard.Calc(l1, l2);
     }
 }

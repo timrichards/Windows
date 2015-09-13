@@ -3,55 +3,62 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    internal class LocalitySensitiveHashing
+    class LocalitySensitiveHashing
     {
-        internal LocalitySensitiveHashing(IReadOnlyList<IReadOnlyList<int>> minHashes, int rowsPerBand)
+        internal
+            LocalitySensitiveHashing(int[,] minHashes, int rowsPerBand)
         {
-            _minHashes = minHashes;
-        }
+            var thisHash = 0;
+            var numSets = minHashes.GetUpperBound(0) + 1;
+            var numBands = (minHashes.GetUpperBound(1) + 1) / rowsPerBand;
 
-        internal void Calc()
-        {
-            var lsSets = new Dictionary<int, List<int>>();
-            var nRows = _minHashes.Count;
-
-            for (var s = 0; s < nRows; ++s)
+            for (var b = 0; b < numBands; ++b)
             {
-                var hashValue = 0;
-                var nCols = _minHashes[s].Count;
+                var thisSL = new Dictionary<int, List<int>>();
 
-                for (var h = 0; h < nCols; ++h)
-                    hashValue = unchecked(hashValue * 1174247 + _minHashes[s][h]);
+                for (int s = 0; s < numSets; s++)
+                {
+                    var hashValue = 0;
 
-                if (false == lsSets.ContainsKey(hashValue))
-                    lsSets.Add(hashValue, new List<int>());
+                    for (var th = thisHash; th < thisHash + rowsPerBand; ++th)
+                        hashValue = unchecked(hashValue * 1174247 + minHashes[s, th]);
 
-                lsSets[hashValue].Add(s);
+                    if (false == thisSL.ContainsKey(hashValue))
+                        thisSL.Add(hashValue, new List<int>());
+
+                    thisSL[hashValue].Add(s);
+                }
+
+                _lshBuckets.Add(thisSL.Values.Where(value => 1 < value.Count));
             }
-
-            var copy = new SortedList<int, List<int>>();
-
-            foreach (var kvp in lsSets.Where(kvp => 1 < kvp.Value.Count))
-                copy.Add(kvp.Key, kvp.Value);
-
-            _lshBuckets.Add(copy);
         }
 
         internal List<int>
             GetNearest(int n)
         {
             var nearest = new List<int>();
+            var bFound = false;
 
             foreach (var b in _lshBuckets)
             {
-                foreach (var li in b.Values)
+                foreach (var li in b)
                 {
                     if (li.Contains(n))
                     {
                         nearest.AddRange(li);
-                        break;
+
+                        if (bFound)
+                            Util.Assert(0, false);
+
+                        bFound = true;
                     }
+
+                    if (bFound)
+                        break;
                 }
+
+                //if (bFound)
+                //    break;
             }
 
             nearest = nearest.Distinct().ToList();
@@ -59,8 +66,7 @@ namespace DoubleFile
             return nearest;
         }
 
-        Dictionary<int, HashSet<int>> _dicthBuckets = new Dictionary<int, HashSet<int>>();
-        List<SortedList<int, List<int>>> _lshBuckets = new List<SortedList<int, List<int>>>();
-        IReadOnlyList<IReadOnlyList<int>> _minHashes;
+        List<IEnumerable<List<int>>>
+            _lshBuckets = new List<IEnumerable<List<int>>>();
     }
 }

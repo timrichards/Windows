@@ -182,10 +182,20 @@ namespace DoubleFile
                 Util.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");
 
                 // Locality sensitive hashing
-                const int maxObs = 20;
+                CalcMinHashes(new MinHash(1 << 7, 20), _rootNodes);
+                _lsh = new LocalitySensitiveHashing(Util.CreateRectangularArray(GetMinHashes(_rootNodes)), 20);
 
-                CalcMinHashes(new MinHash(1 << 7, maxObs), _rootNodes);
-                _lsh = new LSH(Util.CreateRectangularArray(GetMinHashes(_rootNodes)), maxObs);
+                //for (int i = 0; i < _lshIndex; ++i)
+                //{
+                //    var thisNode = _dictLSH[i];
+                //    var similarNodes = _lsh.GetNearest(i).Select(n => _dictLSH[n]).ToList();
+
+                //    if (0 == similarNodes.Count)
+                //        continue;
+
+                //    if (1 << 30 < thisNode.NodeDatum.TotalLength)
+                //        continue;
+                // }
             }
 
             _bTreeDone = true;      // should precede closing status dialog: returns true to the caller
@@ -196,41 +206,77 @@ namespace DoubleFile
             _dictNodes = null;      // saving memory here.
         }
 
-        static internal List<IReadOnlyList<int>>
+        internal List<IReadOnlyList<int>>
             CalcMinHashes(MinHash minHashClassObj, IReadOnlyList<LocalTreeNode> nodes, bool bStart = true)
         {
+            if (null == nodes)
+                return null;
+
             var lsAllFilesHashes = new List<IReadOnlyList<int>> { };
 
-            nodes?.ForEach(treeNode =>
+            foreach (var treeNode in nodes)
             {
                 var lsAllFileHashes_treeNode = treeNode.NodeDatum.FilesHereHashes.ToList();
 
-                foreach (var allFileHashes in CalcMinHashes(minHashClassObj, treeNode.Nodes, bStart: false))    // recurse
-                    lsAllFileHashes_treeNode.AddRange(allFileHashes);
+                if (null != treeNode.Nodes)
+                {
+                    foreach (var allFileHashes in CalcMinHashes(minHashClassObj, treeNode.Nodes, bStart: false))    // recurse
+                        lsAllFileHashes_treeNode.AddRange(allFileHashes);
+                }
 
-                treeNode.NodeDatum.FilesHereHashes = minHashClassObj.GetMinHash(lsAllFileHashes_treeNode);      // Coopt - A
+                treeNode.NodeDatum.FilesHereHashes = minHashClassObj.GetMinHash(lsAllFileHashes_treeNode);          // Coopt - A
 
                 if (false == bStart)
                     lsAllFilesHashes.Add(lsAllFileHashes_treeNode);
-            });
+            }
 
+            _lshIndex = 0;
             return lsAllFilesHashes;
         }
 
-        static internal List<IReadOnlyList<int>>
-            GetMinHashes(IReadOnlyList<LocalTreeNode> nodes)
+        internal List<IReadOnlyList<int>>
+            GetMinHashes(IReadOnlyList<LocalTreeNode> nodes, bool bStart = true)
         {
+            if (null == nodes)
+                return null;
+
             var lsMinhashes = new List<IReadOnlyList<int>> { };
 
-            nodes?.ForEach(treeNode =>
+            foreach (var treeNode in nodes)
             {
-                lsMinhashes.AddRange(GetMinHashes(treeNode.Nodes));                                             // recurse
-                lsMinhashes.Add(treeNode.NodeDatum.FilesHereHashes);                                            // Coopt - B
-                treeNode.NodeDatum.FilesHereHashes = null;
-            });
+                var nIndex = 0;
+
+                if (_dictClones.TryGetValue(treeNode.NodeDatum.AllFilesHash, out nIndex))
+                {
+                    treeNode.NodeDatum.LSH_Index = nIndex;
+                    continue;
+                }
+
+                if (null != treeNode.Nodes)
+                    lsMinhashes.AddRange(GetMinHashes(treeNode.Nodes, bStart: false));                              // recurse
+
+                if (_dictClones.TryGetValue(treeNode.NodeDatum.AllFilesHash, out nIndex))
+                {
+                    treeNode.NodeDatum.LSH_Index = nIndex;
+                    continue;
+                }
+
+                lsMinhashes.Add(treeNode.NodeDatum.FilesHereHashes);                                                // Coopt - B
+                treeNode.NodeDatum.LSH_Index = _lshIndex++;
+                _dictClones.Add(treeNode.NodeDatum.AllFilesHash, treeNode.NodeDatum.LSH_Index);
+                _dictLSH.Add(treeNode.NodeDatum.LSH_Index, treeNode);
+            }
+
+            if (bStart)
+                _dictClones = null;
 
             return lsMinhashes;
         }
+        int _lshIndex = 0;
+        Dictionary<int, LocalTreeNode>
+            _dictLSH = new Dictionary<int, LocalTreeNode>();
+        Dictionary<int, int>
+            _dictClones = new Dictionary<int, int>();
 
         bool IProgressOverlayClosing.ConfirmClose()
         {

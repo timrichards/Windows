@@ -3,6 +3,7 @@ using System.Threading;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Windows;
+using System.Diagnostics;
 
 namespace DoubleFile
 {
@@ -46,7 +47,9 @@ namespace DoubleFile
             Util.WriteLine();
             Util.WriteLine("Creating tree.");
 
-            var dtStart = DateTime.Now;
+            var stopwatch = new Stopwatch();
+
+            stopwatch.Start();
 
             foreach (var treeRoot
                 in from lvItemProjectVM
@@ -60,8 +63,9 @@ namespace DoubleFile
             foreach (var worker in _cbagWorkers)
                 worker.Join();
 
+            stopwatch.Stop();
             Util.WriteLine(string.Format("Completed tree in {0} seconds.",
-                ((int)(DateTime.Now - dtStart).TotalMilliseconds / 10) / 100d));
+                ((int)stopwatch.ElapsedMilliseconds / 10) / 100d));
 
             if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                 IsAborted)

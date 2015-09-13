@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections.Concurrent;
 using System;
 using System.Reactive.Linq;
+using System.Diagnostics;
 
 namespace DoubleFile
 {
@@ -239,7 +240,10 @@ namespace DoubleFile
                 return;     // from inner lambda
             }
 
-            var dt = DateTime.Now;
+            var stopwatch = new Stopwatch();
+
+            stopwatch.Start();
+
             var nFolderCount = (uint)(_bAnyListingFilesHashV1pt0 ? nFolderCount1pt0 : nFolderCount2);
 
             _dictDuplicateFiles =
@@ -249,7 +253,8 @@ namespace DoubleFile
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.AsEnumerable());
 
             Util.Assert(99896, _dictDuplicateFiles.Count == nFolderCount - 1, bTraceOnly: true);
-            Util.WriteLine("_DictFiles " + (DateTime.Now - dt).TotalMilliseconds + " ms");   // 650 ms 
+            stopwatch.Stop();
+            Util.WriteLine("_DictFiles " + stopwatch.ElapsedMilliseconds + " ms");   // 650 ms 
 
             // Skip enumerating AllListingsHashV2 when possible: not important, but it'd be a small extra step
             // Otherwise note that _LVprojectVM gets nulled six lines down so the value has to be set by now.

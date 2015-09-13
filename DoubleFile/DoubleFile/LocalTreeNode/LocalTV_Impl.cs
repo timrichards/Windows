@@ -4,6 +4,7 @@ using System.Windows;
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
 using System.Linq;
+using System.Diagnostics;
 
 namespace DoubleFile
 {
@@ -162,11 +163,14 @@ namespace DoubleFile
                     _rootNodes, _allNodes,
                     lsLVignore: lsLocalLVignore, bLoose: true);
 
-                var dtStart = DateTime.Now;
+                var stopwatch = new Stopwatch();
 
+                stopwatch.Start();
                 collate.Step1(d => nProgress = d);
-                Util.WriteLine("Step1_OnThread " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");
-                dtStart = DateTime.Now;
+                stopwatch.Stop();
+                Util.WriteLine("Step1_OnThread " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
+                stopwatch.Reset();
+                stopwatch.Start();
 
                 if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                     return;
@@ -179,9 +183,13 @@ namespace DoubleFile
                 if (null == _selectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
                     _selectedNode = _topNode;
 
-                Util.WriteLine("Step2_OnForm " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");
+                stopwatch.Stop();
+                Util.WriteLine("Step2_OnForm " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
+                stopwatch.Reset();
+                stopwatch.Start();
 
                 // Locality sensitive hashing
+
                 CalcMinHashes(new MinHash(1 << 7, 20), _rootNodes);
                 _lsh = new LocalitySensitiveHashing(Util.CreateRectangularArray(GetMinHashes(_rootNodes)), 20);
 
@@ -196,6 +204,13 @@ namespace DoubleFile
                 //    if (1 << 30 < thisNode.NodeDatum.TotalLength)
                 //        continue;
                 // }
+
+                //LocalitySensitiveHashing 128933 16.876 seconds.
+                //LocalitySensitiveHashing 128933 18.003 seconds.
+                //LocalitySensitiveHashing 562906 18.275 seconds.
+
+                stopwatch.Stop();       // < 20s
+                Util.WriteLine("LocalitySensitiveHashing " + _lshIndex + " "+ stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
             }
 
             _bTreeDone = true;      // should precede closing status dialog: returns true to the caller
@@ -231,6 +246,8 @@ namespace DoubleFile
             }
 
             _lshIndex = 0;
+            _dictLSH = new Dictionary<int, LocalTreeNode>();
+            _dictClones = new Dictionary<int, int>();
             return lsAllFilesHashes;
         }
 
@@ -274,9 +291,9 @@ namespace DoubleFile
         }
         int _lshIndex = 0;
         Dictionary<int, LocalTreeNode>
-            _dictLSH = new Dictionary<int, LocalTreeNode>();
+            _dictLSH = null;
         Dictionary<int, int>
-            _dictClones = new Dictionary<int, int>();
+            _dictClones = null;
 
         bool IProgressOverlayClosing.ConfirmClose()
         {

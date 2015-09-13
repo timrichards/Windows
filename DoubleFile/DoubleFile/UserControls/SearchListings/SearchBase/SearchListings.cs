@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -27,7 +28,9 @@ namespace DoubleFile
 
             Util.WriteLine("Searching for '" + _strSearch + "'");
 
-            var dtStart = DateTime.Now;
+            var stopwatch = new Stopwatch();
+
+            stopwatch.Start();
 
             foreach (var lvItemProjectVM in _lvProjectVM.Items.Cast<LVitemProject_Explorer>())
                 _cbagWorkers.Add(new SearchListing(this, lvItemProjectVM, Abort).DoThreadFactory());
@@ -35,7 +38,8 @@ namespace DoubleFile
             foreach (SearchListing worker in _cbagWorkers)
                 worker.Join();
 
-            Util.WriteLine(string.Format("Completed Search for {0} in {1} seconds.", _strSearch, ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10d));
+            stopwatch.Stop();
+            Util.WriteLine(string.Format("Completed Search for {0} in {1} seconds.", _strSearch, ((int)stopwatch.ElapsedMilliseconds / 100) / 10d));
 
             if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                 return;

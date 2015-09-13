@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.Concurrent;
 using System.Windows;
+using System.Diagnostics;
 
 namespace DoubleFile
 {
@@ -76,7 +77,10 @@ namespace DoubleFile
 
             if (0 < _lsLVignore.Count)
             {
-                var dtStart = DateTime.Now;
+                var stopwatch = new Stopwatch();
+
+                stopwatch.Start();
+
                 var nMaxLevel = _lsLVignore.Max(i => ("" + i.SubItems[1]).ToInt() - 1);
                 var sbMatch = new StringBuilder();
 
@@ -84,7 +88,8 @@ namespace DoubleFile
                     sbMatch.AppendLine(lvItem.Folder);
 
                 IgnoreNodeQuery(("" + sbMatch).ToLower(), nMaxLevel, _lsRootNodes[0]);
-                Util.WriteLine("IgnoreNode " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds."); dtStart = DateTime.Now;
+                stopwatch.Stop();
+                Util.WriteLine("IgnoreNode " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
             }
 
             var dictIgnoreMark = new Dictionary<LocalTreeNode, LVitem_ClonesVM>();

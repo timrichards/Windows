@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Windows;
 using System.ServiceModel.Channels;
+using System.Diagnostics;
 
 namespace DoubleFile
 {
@@ -55,7 +56,9 @@ namespace DoubleFile
             Util.WriteLine();
             Util.WriteLine("Saving directory listings.");
 
-            var dtStart = DateTime.Now;
+            var stopwatch = new Stopwatch();
+
+            stopwatch.Start();
 
             var bufferManager = BufferManager.CreateBufferManager(16 * (1 << 19), (1 << 20));
 
@@ -71,8 +74,9 @@ namespace DoubleFile
             foreach (var worker in _cbagWorkers)
                 worker.Join();
 
+            stopwatch.Stop();
             Util.WriteLine(string.Format("Finished saving directory listings in {0} seconds.",
-                ((int)(DateTime.Now - dtStart).TotalMilliseconds / 100) / 10d));
+                ((int)stopwatch.ElapsedMilliseconds / 100) / 10d));
 
             if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                 IsAborted)

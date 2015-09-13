@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace DoubleFile
 {
@@ -36,7 +37,10 @@ namespace DoubleFile
         internal void Add<T>(IEnumerable<T> ieItems, bool bQuiet = false)
             where T : ListViewItemVM_Base
         {
-            var dt = DateTime.Now;
+            var stopwatch = new Stopwatch();
+
+            stopwatch.Start();
+
             var nCounter = 0;
 
             foreach (var item in ieItems)
@@ -46,15 +50,18 @@ namespace DoubleFile
                 if (1000 > ++nCounter)
                     continue;
 
-                if (100 < (DateTime.Now - dt).TotalMilliseconds)
+                if (100 < stopwatch.ElapsedMilliseconds)
                 {
                     // When there are too many items you get UI thread lockup.
                     Util.Block(33);
-                    dt = DateTime.Now;
+                    stopwatch.Reset();
+                    stopwatch.Start();
                 }
 
                 nCounter = 0;
             }
+
+            stopwatch.Stop();
 
             if (false == bQuiet)
                 RaiseItems();

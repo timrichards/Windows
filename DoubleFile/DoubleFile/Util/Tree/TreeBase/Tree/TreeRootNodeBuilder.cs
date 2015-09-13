@@ -5,6 +5,7 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Windows;
 using System.IO.IsolatedStorage;
+using System.Diagnostics;
 
 namespace DoubleFile
 {
@@ -99,7 +100,9 @@ namespace DoubleFile
             void
                 Go()
             {
-                var dtStart = DateTime.Now;
+                var stopwatch = new Stopwatch();
+
+                stopwatch.Start();
 
                 if (_lvItemProjectVM.CanLoad == false)
                 {
@@ -200,7 +203,6 @@ namespace DoubleFile
                     .Select(s => new DirData(s.Split('\t')[1].ToInt()))
                     .FirstOnlyAssert();
 
-                var dt = DateTime.Now;
                 var nAllFilesHash = 0;
                 var lsFilesHereHashes = new List<int> { };
 
@@ -259,11 +261,12 @@ namespace DoubleFile
                     TreeSubnodeDetails(rootTreeNode);
                 }
 
-                // 8s
-                Util.WriteLine("TreeRootNodeBuilder " + (DateTime.Now - dt).TotalMilliseconds + " ms - " + _lvItemProjectVM.SourcePath);
+                stopwatch.Stop();       // 8s
+                Util.WriteLine("TreeRootNodeBuilder " + stopwatch.ElapsedMilliseconds + " ms - " + _lvItemProjectVM.SourcePath);
                 StatusCallback(_lvItemProjectVM, rootTreeNode);
 
 #if (DEBUG && FOOBAR)
+                stopwatch.Start();
                 Util.WriteLine("" + _lvItemProjectVM.ListingFile.ReadLines(99787).Where(s => s.StartsWith(ksLineType_File)).Sum(s => (decimal)(s.Split('\t')[knColLength]).ToUlong()));
                 Util.WriteLine("" + _lvItemProjectVM.ListingFile.ReadLines(99728).Where(s => s.StartsWith(ksLineType_Directory)).Sum(s => (decimal)(s.Split('\t')[knColLength]).ToUlong()));
 
@@ -292,7 +295,7 @@ namespace DoubleFile
                     Util.Assert(1301.23101m, false, "nScannedLength != nTotalLength\n" + _lvItemProjectVM.ListingFile, bTraceOnly: true);
                 }
 
-                Util.WriteLine(_lvItemProjectVM.ListingFile + " tree took " + (DateTime.Now - dtStart).TotalMilliseconds / 1000d + " seconds.");
+                Util.WriteLine(_lvItemProjectVM.ListingFile + " tree took " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
 #endif
             }
 

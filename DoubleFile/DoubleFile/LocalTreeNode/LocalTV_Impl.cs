@@ -163,9 +163,8 @@ namespace DoubleFile
                     _rootNodes, _allNodes,
                     lsLVignore: lsLocalLVignore, bLoose: true);
 
-                var stopwatch = new Stopwatch();
+                var stopwatch = Stopwatch.StartNew();
 
-                stopwatch.Start();
                 collate.Step1(d => nProgress = d);
                 stopwatch.Stop();
                 Util.WriteLine("Step1_OnThread " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");

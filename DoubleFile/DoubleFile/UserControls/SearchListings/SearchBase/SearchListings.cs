@@ -28,9 +28,7 @@ namespace DoubleFile
 
             Util.WriteLine("Searching for '" + _strSearch + "'");
 
-            var stopwatch = new Stopwatch();
-
-            stopwatch.Start();
+            var stopwatch = Stopwatch.StartNew();
 
             foreach (var lvItemProjectVM in _lvProjectVM.Items.Cast<LVitemProject_Explorer>())
                 _cbagWorkers.Add(new SearchListing(this, lvItemProjectVM, Abort).DoThreadFactory());

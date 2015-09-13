@@ -56,10 +56,7 @@ namespace DoubleFile
             Util.WriteLine();
             Util.WriteLine("Saving directory listings.");
 
-            var stopwatch = new Stopwatch();
-
-            stopwatch.Start();
-
+            var stopwatch = Stopwatch.StartNew();
             var bufferManager = BufferManager.CreateBufferManager(16 * (1 << 19), (1 << 20));
 
             foreach (var lvItemProjectVM

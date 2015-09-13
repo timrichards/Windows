@@ -46,10 +46,8 @@ namespace DoubleFile
         {
             Util.WriteLine();
             Util.WriteLine("Creating tree.");
-
-            var stopwatch = new Stopwatch();
-
-            stopwatch.Start();
+            
+            var stopwatch = Stopwatch.StartNew();
 
             foreach (var treeRoot
                 in from lvItemProjectVM

@@ -100,9 +100,7 @@ namespace DoubleFile
             void
                 Go()
             {
-                var stopwatch = new Stopwatch();
-
-                stopwatch.Start();
+                var stopwatch = Stopwatch.StartNew();
 
                 if (_lvItemProjectVM.CanLoad == false)
                 {

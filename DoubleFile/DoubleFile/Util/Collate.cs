@@ -77,10 +77,7 @@ namespace DoubleFile
 
             if (0 < _lsLVignore.Count)
             {
-                var stopwatch = new Stopwatch();
-
-                stopwatch.Start();
-
+                var stopwatch = Stopwatch.StartNew();
                 var nMaxLevel = _lsLVignore.Max(i => ("" + i.SubItems[1]).ToInt() - 1);
                 var sbMatch = new StringBuilder();
 

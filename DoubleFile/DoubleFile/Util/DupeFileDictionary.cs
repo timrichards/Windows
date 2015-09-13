@@ -240,10 +240,7 @@ namespace DoubleFile
                 return;     // from inner lambda
             }
 
-            var stopwatch = new Stopwatch();
-
-            stopwatch.Start();
-
+            var stopwatch = Stopwatch.StartNew();
             var nFolderCount = (uint)(_bAnyListingFilesHashV1pt0 ? nFolderCount1pt0 : nFolderCount2);
 
             _dictDuplicateFiles =

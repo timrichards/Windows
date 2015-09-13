@@ -37,9 +37,7 @@ namespace DoubleFile
         internal void Add<T>(IEnumerable<T> ieItems, bool bQuiet = false)
             where T : ListViewItemVM_Base
         {
-            var stopwatch = new Stopwatch();
-
-            stopwatch.Start();
+            var stopwatch = Stopwatch.StartNew();
 
             var nCounter = 0;
 

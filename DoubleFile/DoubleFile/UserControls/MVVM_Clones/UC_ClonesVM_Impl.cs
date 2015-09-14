@@ -93,7 +93,7 @@ namespace DoubleFile
             var tuple = initiatorTuple.Item1;
 
             ItemsCast
-                .Where(lvItem => lvItem.WithLocalTreeNode(t => t) == tuple.treeNode)
+                .Where(lvItem => lvItem.WithLocalTreeNode(t => t == tuple.treeNode))
                 .FirstOnlyAssert(SelectedItem_Set);
         }
 

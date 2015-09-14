@@ -1,4 +1,5 @@
-﻿- can't score the files using a linear sum. Need to use covariance matrix.
+﻿- select clone TreeSelect_FolderDetailUpdated
+- cancel dupe file dictionary leaves progress window open
 - set progress to current window: e.g. search
 - restore goofball
 - treemap doesn't always draw when zoomed into a folder with many files, mismatching proper user selection rect
@@ -191,8 +192,6 @@ Specific code areas:
 	Listings can be searched when volumes are off site. Can read any volume mounted in Windows Explorer, including Linux and Mac volumes. Supports long path names.
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
-
-99912
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
 99635 next low assert

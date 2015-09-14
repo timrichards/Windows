@@ -8,41 +8,18 @@ namespace DoubleFile
     /// </summary>
     partial class UC_FolderList
     {
-        static internal readonly IReadOnlyDictionary<string, string>
-            FolderListFragments = new Dictionary<string, string>
-        {
-            {FolderListLarge  , "ANOVA weighted large" },   // These are all menu case (sentence case), even though
-            {FolderListSmall  , "ANOVA weighted small" },   // M:UI makes them all caps: future proof.
-            {FolderListRandom , "ANOVA weighted random"}
-        };
-
-        internal const string FolderListLarge = "large";
-        internal const string FolderListSmall = "small";
-        internal const string FolderListRandom = "random";
-
         public UC_FolderList()
         {
-            InitializeComponent();            
+            InitializeComponent();
+            CantDupeThisUsercontrol = true;
         }
 
-        protected override void LocalNavigatedTo() =>
-            _bNavigatedTo = true;
-
-        protected override void LocalFragmentNavigation(string strFragment)
+        protected override void LocalNavigatedTo()
         {
-            if (false == _bNavigatedTo)
-                _bNicknames = formChk_Nicknames.IsChecked ?? false;
-
-            _bNavigatedTo = false;
-
             DataContext = 
                 _vm =
-                new UC_FolderListVM(strFragment) { UseNicknames = _bNicknames }
+                new UC_FolderListVM { UseNicknames = _bNicknames }
                 .Init();
-
-            LocalTitle =
-                new CultureInfo("en-US", false).TextInfo            // future proof to title case
-                .ToTitleCase(FolderListFragments[strFragment]);
         }
 
         protected override void LocalNavigatedFrom()
@@ -59,7 +36,5 @@ namespace DoubleFile
             _vm = null;
         bool
             _bNicknames = false;
-        bool
-            _bNavigatedTo = false;
     }
 }

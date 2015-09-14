@@ -24,22 +24,6 @@ namespace DoubleFile
             }
         }
 
-        class FolderListLink : Link
-        {
-            internal FolderListLink(KeyValuePair<string, string> kvp)
-            {
-                if (false == _bFolderListLinkCheck)
-                {
-                    Util.Assert(99886, 3 == UC_FolderList.FolderListFragments.Count);
-                    _bFolderListLinkCheck = true;
-                }
-
-                Source = new Uri("/UserControls/UC_FolderList.xaml#" + kvp.Key, UriKind.Relative);
-                DisplayName = kvp.Value;
-            }
-        }
-        static bool _bFolderListLinkCheck = false;
-
         class ClonesLink : Link
         {
             internal ClonesLink(KeyValuePair<string, string> kvp)
@@ -267,11 +251,9 @@ namespace DoubleFile
                 new MyLink("Folders", "/UserControls/UC_TreeView.xaml"),
                 new MyLink("Tree list", "/UserControls/UC_TreeList.xaml")
             }},
-            new LinkGroup { DisplayName="Variance", Links =
+            new LinkGroup { DisplayName="Nearest", Links =
             {
-                new FolderListLink(UC_FolderList.FolderListFragments.ElementAt(0)),
-                new FolderListLink(UC_FolderList.FolderListFragments.ElementAt(1)),
-                new FolderListLink(UC_FolderList.FolderListFragments.ElementAt(2)),
+                new MyLink("Nearest", "/UserControls/UC_FolderList.xaml"),
             }},
             new LinkGroup { DisplayName="Clones", Links =
             {

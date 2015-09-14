@@ -183,62 +183,18 @@ namespace DoubleFile
                 Util.WriteLine("collate.Step2 " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
                 stopwatch.Reset();
                 stopwatch.Start();
-                _dictClones = new Dictionary<int, IReadOnlyList<int>>();
-                ConsolidateFileHashes(_rootNodes);
-                _dictClones = null;
                 GC.Collect();
                 stopwatch.Stop();
-                Util.WriteLine("ConsolidateFileHashes " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
-
-                ProgressOverlay.WithProgressOverlay(w => w
-                    .SetCompleted(_ksFolderTreeKey));
+                Util.WriteLine("GC.Collect " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
             }
 
+            _dictNodes = null;      // saving memory here.
             _bTreeDone = true;      // should precede closing status dialog: returns true to the caller
 
             ProgressOverlay.WithProgressOverlay(w => w
+                .SetCompleted(_ksFolderTreeKey)
                 .CloseIfNatural());
-
-            _dictNodes = null;      // saving memory here.
         }
-
-        internal List<IReadOnlyList<int>>
-            ConsolidateFileHashes(IReadOnlyList<LocalTreeNode> nodes, bool bStart = true)
-        {
-            if (null == nodes)
-                return null;
-
-            var lsAllFilesHashes = new List<IReadOnlyList<int>> { };
-
-            foreach (var treeNode in nodes)
-            {
-                var lsAllFileHashes_treeNode = treeNode.NodeDatum.FileHashes.ToList();
-
-                if (null != treeNode.Nodes)
-                {
-                    foreach (var allFileHashes in ConsolidateFileHashes(treeNode.Nodes, bStart: false))    // recurse
-                        lsAllFileHashes_treeNode.AddRange(allFileHashes);
-                }
-
-                IReadOnlyList<int> lsClone = null;
-
-                if (_dictClones.TryGetValue(treeNode.NodeDatum.AllFilesHash, out lsClone))
-                {
-                    treeNode.NodeDatum.FileHashes = null;
-                    continue;
-                }
-
-                treeNode.NodeDatum.FileHashes = lsAllFileHashes_treeNode.Distinct().ToList();
-                _dictClones.Add(treeNode.NodeDatum.AllFilesHash, treeNode.NodeDatum.FileHashes);
-
-                if (false == bStart)
-                    lsAllFilesHashes.Add(lsAllFileHashes_treeNode);
-            }
-
-            return lsAllFilesHashes;
-        }
-        Dictionary<int, IReadOnlyList<int>>
-            _dictClones = null;
 
         bool IProgressOverlayClosing.ConfirmClose()
         {

@@ -17,8 +17,10 @@ namespace DoubleFile
         internal int
             AllFilesHash = 0;
 
-        internal IReadOnlyList<int>
+        internal readonly IEnumerable<int>
             FileHashes = null;
+        internal IEnumerable<int>
+            AllFileHashes_Scratch = null;
 
         internal ulong
             TotalLength;
@@ -41,7 +43,7 @@ namespace DoubleFile
             LineNo = nLineNo;
             Length = nLength;
             AllFilesHash = nAllFilesHash;
-            FileHashes = lsFilesHereHashes.ToArray();
+            FileHashes = lsFilesHereHashes.Distinct().ToArray();
         }
 
         protected DetailsDatum(DetailsDatum datum)

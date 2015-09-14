@@ -135,7 +135,7 @@ namespace DoubleFile
         }
 
         internal static double
-            Jaccard(HashSet<int> hs1, HashSet<int> hs2) => (hs1.Intersect(hs2).Count() / (double)hs1.Union(hs2).Count());
+            Jaccard(IEnumerable<int> hs1, IEnumerable<int> hs2) => (hs1.Intersect(hs2).Count() / (double)hs1.Union(hs2).Count());
 
         static internal T
             CreateJaggedArray<T>(params int[] lengths) => (T)InitializeJaggedArray(typeof(T).GetElementType(), 0, lengths);

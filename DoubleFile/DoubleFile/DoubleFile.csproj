@@ -199,8 +199,6 @@
     <Compile Include="LocalTreeNode\LocalColorItemBase.cs" />
     <Compile Include="LocalTreeNode\LVitemProject_Explorer.cs" />
     <Compile Include="Statics.cs" />
-    <Compile Include="Util\LocalitySensitiveHashing.cs" />
-    <Compile Include="Util\MinHash.cs" />
     <Compile Include="Util\UC_ContentPresenter.cs" />
     <Compile Include="Util\LocalIsoStore.cs" />
     <Compile Include="Util\Iterator.cs" />

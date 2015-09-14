@@ -134,6 +134,9 @@ namespace DoubleFile
             return "0 bytes";
         }
 
+        internal static double
+            Jaccard(HashSet<int> hs1, HashSet<int> hs2) => (hs1.Intersect(hs2).Count() / (double)hs1.Union(hs2).Count());
+
         static internal T
             CreateJaggedArray<T>(params int[] lengths) => (T)InitializeJaggedArray(typeof(T).GetElementType(), 0, lengths);
         static object InitializeJaggedArray(Type type, int index, int[] lengths)
@@ -150,7 +153,8 @@ namespace DoubleFile
             return array;
         }
 
-        static internal T[,] CreateRectangularArray<T>(IReadOnlyList<IReadOnlyList<T>> arrays)
+        static internal T[,]
+            CreateRectangularArray<T>(IReadOnlyList<IReadOnlyList<T>> arrays)
         {
             var rowLength = arrays[0].Count;
             var retVal = new T[arrays.Count, rowLength];

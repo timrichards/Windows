@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 
 namespace DoubleFile
@@ -17,10 +18,7 @@ namespace DoubleFile
             AllFilesHash = 0;
 
         internal IReadOnlyList<int>
-            FilesHereHashes { get { return _LSH_object.As<IReadOnlyList<int>>(); } set { _LSH_object = value; } }
-        internal int
-            LSH_Index { get { return (int)_LSH_object; } set { _LSH_object = value; } }
-        object _LSH_object = null;
+            FileHashes = null;
 
         internal ulong
             TotalLength;
@@ -43,7 +41,7 @@ namespace DoubleFile
             LineNo = nLineNo;
             Length = nLength;
             AllFilesHash = nAllFilesHash;
-            FilesHereHashes = lsFilesHereHashes;
+            FileHashes = lsFilesHereHashes.ToArray();
         }
 
         protected DetailsDatum(DetailsDatum datum)
@@ -57,7 +55,7 @@ namespace DoubleFile
             LineNo = datum.LineNo;
             Length = datum.Length;
             AllFilesHash = datum.AllFilesHash;
-            FilesHereHashes = datum.FilesHereHashes;
+            FileHashes = datum.FileHashes;
         }
 
         static public DetailsDatum

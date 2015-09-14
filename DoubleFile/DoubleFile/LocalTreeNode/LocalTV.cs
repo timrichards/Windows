@@ -9,10 +9,6 @@ namespace DoubleFile
         static internal LV_ProjectVM
             LVprojectVM => _wr.Get(s => s._lvProjectVM);
 
-        static internal LocalitySensitiveHashing
-            LSH => _wr.Get(o => o._lsh);
-        LocalitySensitiveHashing _lsh = null;
-
         static internal IReadOnlyList<LocalTreeNode>
             AllNodes => _wr.Get(o => o._allNodes);
         List<LocalTreeNode> _allNodes = new List<LocalTreeNode> { };

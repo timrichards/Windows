@@ -1,4 +1,5 @@
-﻿- select clone TreeSelect_FolderDetailUpdated
+﻿- slider is skipping desired location
+- select clone TreeSelect_FolderDetailUpdated
 - cancel dupe file dictionary leaves progress window open
 - set progress to current window: e.g. search
 - restore goofball

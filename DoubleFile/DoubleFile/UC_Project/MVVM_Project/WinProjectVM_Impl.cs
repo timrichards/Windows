@@ -50,7 +50,10 @@ namespace DoubleFile
 
             foreach (var strLine in Metadata.ReadLines(99652))
             {
-                for (int i = 0; i < asLVitems.Count; ++i)
+                var i = 0;
+                var nCount = asLVitems.Count;
+
+                for (; i < nCount; ++i)
                 {
                     if (asLVitems[i].Deserialize(strLine))
                     {
@@ -58,9 +61,10 @@ namespace DoubleFile
                         break;
                     }
                 }
+
+                Util.Assert(99857, i < nCount);
             }
 
-            Util.Assert(99857, 0 == asLVitems.Count);
             LocalIsoStore.DeleteFile(Metadata);
         }
 

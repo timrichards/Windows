@@ -87,7 +87,8 @@ namespace DoubleFile
             {
                 ListingFile = ListingFile,
                 IncludeYN = IncludeYN,
-                VolumeGroup = VolumeGroup
+                VolumeGroup = VolumeGroup,
+                Status = Status
             }))
             {
                 var lvItemTemp = new LVitem_ProjectVM(str.Split('\t'));

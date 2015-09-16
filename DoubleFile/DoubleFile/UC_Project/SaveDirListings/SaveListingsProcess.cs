@@ -44,7 +44,7 @@ namespace DoubleFile
                 WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this),
             })
                 .AllowSubsequentProcess()
-                .ShowDialog();
+                .ShowOverlay();
         }
 
         void ISaveDirListingsStatus.Status(LVitem_ProjectVM lvItemProjectVM,

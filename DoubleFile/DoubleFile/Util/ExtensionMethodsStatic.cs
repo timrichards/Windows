@@ -2,7 +2,9 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace DoubleFile
 {
@@ -16,7 +18,24 @@ namespace DoubleFile
             {
                 try
                 {
-                    onNext(t);
+                    var dispatcher = Dispatcher.CurrentDispatcher;
+
+                    try
+                    {
+                        var blockingFrame = new LocalDispatcherFrame(99634) { Continue = true };
+
+                        dispatcher.Invoke(() =>
+                        {
+                            onNext(t);
+                            blockingFrame.Continue = false;     // 2
+                        });
+
+                        // fast operation may exit dispatcher.Invoke() before this line is even hit:
+                        // 2 then 1 not the reverse.
+                        if (blockingFrame.Continue)             // 1
+                            blockingFrame.PushFrameTrue();
+                    }
+                    catch (TaskCanceledException) { }
                 }
                 catch (Exception e)
                 {

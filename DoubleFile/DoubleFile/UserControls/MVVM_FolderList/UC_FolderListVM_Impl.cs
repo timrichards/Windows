@@ -12,7 +12,7 @@ namespace DoubleFile
     {
         internal UC_FolderListVM()
         {
-            new ProgressOverlay(new[] { "" }, new[] { "Setting up Nearest view" }, x =>
+            Util.ThreadMake(() =>
             {
                 var stopwatch = Stopwatch.StartNew();
 
@@ -22,14 +22,12 @@ namespace DoubleFile
                 stopwatch.Stop();
                 Util.WriteLine("Setup_AllFileHashes_Scratch " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
                 _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99701, TreeSelect_FolderDetailUpdated));
-                ProgressOverlay.CloseForced();
-            })
-                .ShowDialog();
 
-            var folderDetail = LocalTV.TreeSelect_FolderDetail;
+                var folderDetail = LocalTV.TreeSelect_FolderDetail;
 
-            if (null != folderDetail)
-                TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, 0));
+                if (null != folderDetail)
+                    TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, 0));
+            });
         }
 
         internal UC_FolderListVM Init()
@@ -43,40 +41,43 @@ namespace DoubleFile
 
         public void Dispose()
         {
-            new ProgressOverlay(new[] { "" }, new[] { "Cleaning up Nearest view" }, x =>
+            Util.ThreadMake(() =>
             {
+                _bDisposed = true;
+                _cts.Cancel();
                 Util.LocalDispose(_lsDisposable);
                 Cleanup_AllFileHashes_Scratch(LocalTV.RootNodes);
                 GC.Collect();
-                ProgressOverlay.CloseForced();
-            })
-                .ShowDialog();
+            });
         }
 
         void TreeSelect_FolderDetailUpdated(Tuple<TreeSelect.FolderDetailUpdated, int> initiatorTuple)
         {
-            new ProgressOverlay(new[] { "" }, new[] { "Finding Nearest" }, x =>
+            ClearItems();
+            _cts.Cancel();
+
+            while (0 < _nRefCount)
+                Util.Block(20);
+
+            if (_bDisposed)
+                return;
+
+            ++_nRefCount;
+
+            Util.ThreadMake(() =>
             {
-                ClearItems();
-                _cts.Cancel();
-
-                while (0 < _nRefCount)
-                    Util.Block(20);
-
                 var tuple = initiatorTuple.Item1;
                 var thisNode = tuple.treeNode;
 
                 if (null == thisNode.NodeDatum.AllFileHashes_Scratch)
-                    return;
+                    return;     // from lambda
 
                 _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_FolderListVM>>();
-                ++_nRefCount;
                 _cts = new CancellationTokenSource();
                 FindMatchingFolders(thisNode, LocalTV.RootNodes);
-                --_nRefCount;
 
                 if (_cts.IsCancellationRequested)
-                    return;
+                    return;     // from lambda
 
                 if (_lsMatchingFolders?.Any() ?? false)
                 {
@@ -90,9 +91,8 @@ namespace DoubleFile
                 }
 
                 Util.WriteLine("FindMatchingFolders " + thisNode.NodeDatum.AllFileHashes_Scratch.GetHashCode());
-                ProgressOverlay.CloseForced();
-            })
-                .ShowDialog();
+                --_nRefCount;
+            });
         }
 
         bool FindMatchingFolders(LocalTreeNode thisNode, IReadOnlyList<LocalTreeNode> nodes)
@@ -227,5 +227,7 @@ namespace DoubleFile
             _nicknameUpdater = new ListUpdater<bool>(99667);
         readonly IList<IDisposable>
             _lsDisposable = new List<IDisposable>();
+        bool
+            _bDisposed = false;
     }
 }

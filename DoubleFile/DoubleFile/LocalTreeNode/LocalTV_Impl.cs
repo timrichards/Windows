@@ -71,7 +71,7 @@ namespace DoubleFile
                 Title = "Initializing Explorer",
                 WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this)
             })
-                .ShowDialog();
+                .ShowOverlay();
 
             if (null == _topNode)
                 TabledString<TabledStringType_Folders>.GenerationEnded();

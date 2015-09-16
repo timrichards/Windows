@@ -189,7 +189,7 @@ namespace DoubleFile
             {
                 WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this)
             }
-                .ShowDialog();
+                .ShowOverlay();
         }
 
         internal bool

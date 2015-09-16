@@ -59,7 +59,7 @@ namespace DoubleFile
         protected Action<ProgressOverlay> _initClient = null;
 
         internal void
-            ShowDialog()
+            ShowOverlay()
         {
             LocalModernWindowBase mainWindow = null;
             UC_Progress ucProgress = null;

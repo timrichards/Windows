@@ -363,7 +363,7 @@ namespace DoubleFile
                 }
             })
             { WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this) })
-                .ShowDialog();
+                .ShowOverlay();
 
             return true;
         }

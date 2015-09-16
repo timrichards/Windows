@@ -246,7 +246,7 @@ namespace DoubleFile
                 if (ieLVitems.Any())
                     Util.UIthread(99816, () => Add(ieLVitems));
             }))
-                .ShowDialog();
+                .ShowOverlay();
         }
 
         void SearchFoldersAndFiles(bool bSearchFilesOnly = false)
@@ -274,7 +274,7 @@ namespace DoubleFile
             {
                 WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this)
             })
-                .ShowDialog();
+                .ShowOverlay();
         }
 
         readonly ListUpdater<bool>

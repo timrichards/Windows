@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Windows;
+using System.Windows.Input;
 
 namespace DoubleFile
 {
@@ -6,6 +7,9 @@ namespace DoubleFile
     {
         public ICommand Icmd_Nicknames { get; private set; }
         public ICommand Icmd_GoTo { get; private set; }
+
+        public Visibility NoResultsVisibility { get; private set; } = Visibility.Collapsed;
+        public string NoResultsFolder { get; private set; }
 
         public bool UseNicknames { private get; set; }
 

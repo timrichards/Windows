@@ -32,10 +32,10 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <TextBlock Visibility="{Binding NoResultsVisibility}" Grid.Column="0" TextAlignment="Center" VerticalAlignment="Center" >
-            <Run>No results for</Run>
+        <TextBlock Visibility="{Binding NoResultsVisibility}" Grid.Column="0" TextAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">
+            <Run Text="{Binding NoResultsFolder, Mode=OneWay}" FontWeight="SemiBold" Foreground="AntiqueWhite"/>
             <LineBreak/>
-            <Run Text="{Binding NoResultsFolder, Mode=OneWay}"/>
+            <Run>No results</Run>
         </TextBlock>
         <CheckBox Name="formChk_Nicknames" IsChecked="{Binding UseNicknames}" Command="{Binding Icmd_Nicknames}" Content="Nicknames" Grid.Column="1" Margin="5,0,0,0">
             <CheckBox.LayoutTransform>

@@ -8,8 +8,8 @@ namespace DoubleFile
         public ICommand Icmd_Nicknames { get; private set; }
         public ICommand Icmd_GoTo { get; private set; }
 
-        public Visibility NoResultsVisibility { get; private set; } = Visibility.Collapsed;
-        public string NoResultsFolder { get; private set; }
+        public Visibility NoResultsVisibility { get; private set; } = Visibility.Visible;
+        public string NoResultsFolder { get; private set; } = "setting up Nearest view";
 
         public bool UseNicknames { private get; set; }
 

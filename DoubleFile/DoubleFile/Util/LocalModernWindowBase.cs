@@ -37,25 +37,27 @@ namespace DoubleFile
             return retVal;
         }
 
-        internal void
+        internal LocalModernWindowBase
             Progress_Darken()
         {
             Darken(_locProgress);
             GetProgressCtl().Visibility = Visibility.Visible;
+            return this;
         }
-        internal void
+        internal LocalModernWindowBase
             Progress_Undarken()
         {
             Undarken(_locProgress);
             GetProgressCtl().Visibility = Visibility.Collapsed;
+            return this;
         }
         decimal _locProgress = 99637;
 
-        internal void
+        internal LocalModernWindowBase
             Darken(decimal loc)
         {
             if (0 != _locDarkened)
-                return;
+                return this;
 
             _locDarkened = loc;
 
@@ -64,12 +66,14 @@ namespace DoubleFile
                 Application.Current.Windows.OfType<ModernWindow>()
                     .ForEach(w => SetDarkened(w, Visibility.Visible));
             });
+
+            return this;
         }
-        internal void
+        internal LocalModernWindowBase
             Undarken(decimal loc)
         {
             if (loc != _locDarkened)
-                return;
+                return this;
 
             _locDarkened = 0;
 
@@ -78,6 +82,8 @@ namespace DoubleFile
                 Application.Current.Windows.OfType<ModernWindow>()
                     .ForEach(w => SetDarkened(w, Visibility.Collapsed));
             });
+
+            return this;
         }
         decimal _locDarkened = 0;
 

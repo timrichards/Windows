@@ -220,34 +220,31 @@ namespace DoubleFile
 
             (new ProgressOverlay(new[] { "" }, new[] { _ksSearchKey }, x =>
             {
+                var blockingFrame = new LocalDispatcherFrame(99860) { Continue = true };
+                IEnumerable<ListViewItemVM_Base> ieLVitems = null;
+
                 Util.ThreadMake(() =>
                 {
-                    var blockingFrame = new LocalDispatcherFrame(99860) { Continue = true };
-                    IEnumerable<ListViewItemVM_Base> ieLVitems = null;
+                    ieLVitems =
+                        lsTreeNodes
+                        .GroupBy(treeNode => treeNode.Root)
+                        .Select(g => new { lvItemProjectVM = new LVitemProject_Updater<bool>(g.Key.NodeDatum.As<RootNodeDatum>().LVitemProjectVM, _nicknameUpdater), g = g })
+                        .SelectMany(g => g.g, (g, treeNode) => new LVitem_SearchVM(g.lvItemProjectVM, treeNode))
+                        .OrderBy(lvItem => lvItem.LocalTreeNode.FullPathGet(_nicknameUpdater.Value))
+                        .ToList();
 
-                    Util.ThreadMake(() =>
-                    {
-                        ieLVitems =
-                            lsTreeNodes
-                            .GroupBy(treeNode => treeNode.Root)
-                            .Select(g => new { lvItemProjectVM = new LVitemProject_Updater<bool>(g.Key.NodeDatum.As<RootNodeDatum>().LVitemProjectVM, _nicknameUpdater), g = g })
-                            .SelectMany(g => g.g, (g, treeNode) => new LVitem_SearchVM(g.lvItemProjectVM, treeNode))
-                            .OrderBy(lvItem => lvItem.LocalTreeNode.FullPathGet(_nicknameUpdater.Value))
-                            .ToList();
-
-                        blockingFrame.Continue = false;     // 2
-                    });
-
-                    // fast operation may exit ThreadMake() before this line is even hit:
-                    // 2 then 1 not the reverse.
-                    if (blockingFrame.Continue)             // 1
-                        blockingFrame.PushFrameTrue();
-
-                    ProgressOverlay.CloseForced();
-
-                    if (ieLVitems.Any())
-                        Util.UIthread(99816, () => Add(ieLVitems));
+                    blockingFrame.Continue = false;     // 2
                 });
+
+                // fast operation may exit ThreadMake() before this line is even hit:
+                // 2 then 1 not the reverse.
+                if (blockingFrame.Continue)             // 1
+                    blockingFrame.PushFrameTrue();
+
+                ProgressOverlay.CloseForced();
+
+                if (ieLVitems.Any())
+                    Util.UIthread(99816, () => Add(ieLVitems));
             }))
                 .ShowDialog();
         }

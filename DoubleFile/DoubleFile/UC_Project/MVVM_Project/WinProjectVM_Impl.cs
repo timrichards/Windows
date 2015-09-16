@@ -179,14 +179,13 @@ namespace DoubleFile
 
             var strPlural = (1 < dlg.FileNames.Length) ? "s" : "";
 
-            new ProgressOverlay(new[] { "Opening listing file" + strPlural }, new[] { "" }, winProgress =>
-                Util.ThreadMake(() =>
-                {
-                    if (OpenListingFiles(dlg.FileNames, userCanceled: () => _bUserCanceled))
-                        _lvVM.Unsaved = true;
+            new ProgressOverlay(new[] { "Opening listing file" + strPlural }, new[] { "" }, x =>
+            {
+                if (OpenListingFiles(dlg.FileNames, userCanceled: () => _bUserCanceled))
+                    _lvVM.Unsaved = true;
 
-                    ProgressOverlay.CloseForced();
-                }))
+                ProgressOverlay.CloseForced();
+            })
             {
                 WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this)
             }

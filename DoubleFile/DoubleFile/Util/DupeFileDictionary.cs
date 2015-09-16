@@ -107,6 +107,7 @@ namespace DoubleFile
             _callbackWR = callbackWR;
             _dictDuplicateFiles = null;
             IsAborted = false;
+            _blockingFrame = new LocalDispatcherFrame(99881);
             _thread = Util.ThreadMake(() => { Go(); _blockingFrame.Continue = false; });
             _blockingFrame.PushFrameTrue();
             return this;
@@ -324,7 +325,7 @@ namespace DoubleFile
 
         // 7/1/15 Make this synchronous so NodeDatum can use folder scorer
         LocalDispatcherFrame 
-            _blockingFrame = new LocalDispatcherFrame(99881);
+            _blockingFrame = null;
 
         LV_ProjectVM
             _LVprojectVM = null;

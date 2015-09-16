@@ -22,15 +22,14 @@ namespace DoubleFile
                 stopwatch.Stop();
                 Util.WriteLine("Setup_AllFileHashes_Scratch " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
                 _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99701, TreeSelect_FolderDetailUpdated));
-
-                var folderDetail = LocalTV.TreeSelect_FolderDetail;
-
-                if (null != folderDetail)
-                    TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, 0));
-
                 ProgressOverlay.CloseForced();
             })
                 .ShowDialog();
+
+            var folderDetail = LocalTV.TreeSelect_FolderDetail;
+
+            if (null != folderDetail)
+                TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, 0));
         }
 
         internal UC_FolderListVM Init()

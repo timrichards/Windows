@@ -5,7 +5,7 @@ namespace DoubleFile
     class LVitem_FolderListVM : ListViewItemVM_Base, IListUpdater
     {
         public bool
-            Alternate { get; }
+            Alternate { get; internal set; }
         public string
             Folder => LocalTreeNode.Text;
         public string
@@ -31,10 +31,9 @@ namespace DoubleFile
 
         void IListUpdater.RaiseListUpdate() => RaisePropertyChanged("Parent");
 
-        internal LVitem_FolderListVM(LocalTreeNode folder, bool bAlternate, ListUpdater<bool> nicknameUpdater)
+        internal LVitem_FolderListVM(LocalTreeNode folder, ListUpdater<bool> nicknameUpdater)
         {
             LocalTreeNode = folder;
-            Alternate = bAlternate;
             _nicknameUpdater = nicknameUpdater;
         }
 

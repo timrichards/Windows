@@ -66,89 +66,123 @@ namespace DoubleFile
 
             Util.ThreadMake(() =>
             {
-                var tuple = initiatorTuple.Item1;
-                var thisNode = tuple.treeNode;
-
-                if (null == thisNode.NodeDatum.AllFileHashes_Scratch)
-                    return;     // from lambda
-
-                _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_FolderListVM>>();
-                _cts = new CancellationTokenSource();
-                FindMatchingFolders(thisNode, LocalTV.RootNodes);
-
-                if (_cts.IsCancellationRequested)
-                    return;     // from lambda
-
-                if (_lsMatchingFolders?.Any() ?? false)
+                Util.Closure(() =>
                 {
-                    var lsItems =
-                        _lsMatchingFolders
-                        .OrderByDescending(tupleA => tupleA.Item1)
-                        .Select(tupleA => tupleA.Item2);
+                    var tuple = initiatorTuple.Item1;
+                    var thisNode = tuple.treeNode;
 
-                    _lsMatchingFolders = null;
-                    Util.UIthread(99912, () => Add(lsItems));
-                }
+                    if (null == thisNode.NodeDatum.AllFileHashes_Scratch)
+                        return;     // from lambda
 
-                Util.WriteLine("FindMatchingFolders " + thisNode.NodeDatum.AllFileHashes_Scratch.GetHashCode());
+                    _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_FolderListVM>>();
+                    _cts = new CancellationTokenSource();
+                    FindMatchingFolders(thisNode, LocalTV.RootNodes);
+
+                    if (_cts.IsCancellationRequested)
+                        return;     // from lambda
+
+                    if (_lsMatchingFolders?.Any() ?? false)
+                    {
+                        var lsFolders =
+                            _lsMatchingFolders
+                            .OrderByDescending(tupleA => tupleA.Item1);
+
+                        _lsMatchingFolders = null;
+
+                        int nMatch = 0;
+                        var bAlternate = false;
+
+                        foreach (var folder in lsFolders)
+                        {
+                            if (folder.Item1 != nMatch)
+                            {
+                                bAlternate = (false == bAlternate);
+                                nMatch = folder.Item1;
+                            }
+
+                            folder.Item2.Alternate = bAlternate;
+                        }
+
+                        Util.UIthread(99912, () => Add(lsFolders.Select(tupleA => tupleA.Item2)));
+                    }
+
+                    Util.WriteLine("FindMatchingFolders " + thisNode.NodeDatum.AllFileHashes_Scratch.GetHashCode());
+                });
+
                 --_nRefCount;
             });
         }
 
-        bool FindMatchingFolders(LocalTreeNode thisNode, IReadOnlyList<LocalTreeNode> nodes)
+        bool FindMatchingFolders(LocalTreeNode searchFolder, IReadOnlyList<LocalTreeNode> nodes)
         {
             if (_cts.IsCancellationRequested)
                 return false;
 
-            var allChildrenSet = thisNode.NodeDatum.AllFileHashes_Scratch;
+            if (null == nodes)
+                return false;
+
+            var searchSet = searchFolder.NodeDatum.AllFileHashes_Scratch.ToList();
+
+            searchSet.AddRange(searchFolder.NodeDatum.FileHashes);
+
+            if (0 == searchSet.Count)
+                return false;
+
+            searchSet = searchSet.OrderBy(n => n).Distinct().ToList();
+
             var bDoNotAddParent = false;
 
-            Util.ParallelForEach(0, nodes,
+            Util.ParallelForEach(99634, nodes,
                 new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount, CancellationToken = _cts.Token },
-                treeNode =>
+                testFolder =>
             {
-                if ((thisNode.NodeDatum.AllFilesHash == treeNode.NodeDatum.AllFilesHash) ||
-                    treeNode.IsChildOf(thisNode) ||
-                    thisNode.IsChildOf(treeNode))
+                if (_cts.IsCancellationRequested)
+                    return;     // from lambda: continue
+
+                if ((searchFolder.NodeDatum.AllFilesHash == testFolder.NodeDatum.AllFilesHash) ||
+                    testFolder.IsChildOf(searchFolder))
                 {
                     bDoNotAddParent = true;
                     return;     // from lambda: continue
                 }
 
-                if (null == treeNode.NodeDatum.AllFileHashes_Scratch)
+                var testSet = testFolder.NodeDatum.AllFileHashes_Scratch.ToList();
+
+                {
+                    var nTestHereCount = testFolder.NodeDatum.FileHashes.Intersect(searchSet).Count();
+
+                    if (0 < nTestHereCount)
+                    {
+                        _lsMatchingFolders.Add(Tuple.Create(nTestHereCount, new LVitem_FolderListVM(testFolder, _nicknameUpdater)));
+                        testSet = testSet.Union(searchFolder.NodeDatum.FileHashes).OrderBy(n => n).Distinct().ToList();
+                    }
+                }
+
+                if (_cts.IsCancellationRequested)
                     return;     // from lambda: continue
 
-                var set = treeNode.NodeDatum.AllFileHashes_Scratch;
-                var nSame = allChildrenSet.Where(n => set.Contains(n)).Count();
-
-                if (nSame < allChildrenSet.Count/2)
+                if (0 == testFolder.NodeDatum.AllFileHashes_Scratch.Count)
                     return;     // from lambda: continue
 
-                //if (thisNode.NodeDatum.FileHashes == nSame)
-                //{
-                //    // thisNode has all elements of treeNode. Find deepest subnode like this.
-                //    var bFound = true;
+                var nTestChildrenCount = testSet.Intersect(searchSet).Count();
 
-                //    if (null != treeNode.Nodes)
-                //        bFound = FindMatchingFolders(thisNode, treeNode.Nodes); // recurse 1 of 2
+                if (0 == nTestChildrenCount)
+                    return;     // from lambda: continue
 
-                //    if (false == bFound)
-                //        _lsMatchingFolders.Add(Tuple.Create(1, new LVitem_FolderListVM(treeNode, false, _nicknameUpdater)));
+                var bDoNotAddParentA = FindMatchingFolders(searchFolder, testFolder.Nodes);     // recurse
 
-                //    bDoNotAddParent = true;
-                //    return;     // from lambda: continue
-                //}
+                if (_cts.IsCancellationRequested)
+                    return;     // from lambda: continue
 
-                //if (.8 < jaccard)
-                //{
-                //    _lsMatchingFolders.Add(Tuple.Create(jaccard, new LVitem_FolderListVM(treeNode, false, _nicknameUpdater)));
-                //    bDoNotAddParent = true;
-                //}
-                //else if (.2 < jaccard)
-                //{
-                //    if (null != treeNode.Nodes)
-                //        FindMatchingFolders(thisNode, treeNode.Nodes);          // recurse 2 of 2
-                //}
+                if (nTestChildrenCount == searchSet.Count)
+                {
+                    // testFolder contains all elements in searchFolder.
+                    // Find deepest subnode like this. Omit testFolder from results if a child folder is the same way or is a clone.
+                    if (false == bDoNotAddParentA)
+                        _lsMatchingFolders.Add(Tuple.Create(searchSet.Count, new LVitem_FolderListVM(testFolder, _nicknameUpdater)));
+
+                    bDoNotAddParent = true;
+                }
             });
 
             return bDoNotAddParent;
@@ -188,7 +222,7 @@ namespace DoubleFile
                 }
                 else
                 {
-                    treeNode.NodeDatum.AllFileHashes_Scratch = lsAllFileHashes_childNodes.Distinct().OrderBy(n => n).ToArray();
+                    treeNode.NodeDatum.AllFileHashes_Scratch = lsAllFileHashes_childNodes.OrderBy(n => n).Distinct().ToList();
                     _dictClones.Add(treeNode.NodeDatum.AllFilesHash, treeNode.NodeDatum.AllFileHashes_Scratch);
                 }
 

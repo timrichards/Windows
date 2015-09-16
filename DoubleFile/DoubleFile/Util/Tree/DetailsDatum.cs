@@ -43,7 +43,7 @@ namespace DoubleFile
             LineNo = nLineNo;
             Length = nLength;
             AllFilesHash = nAllFilesHash;
-            FileHashes = lsFilesHereHashes.Distinct().OrderBy(n => n).ToArray();
+            FileHashes = lsFilesHereHashes.OrderBy(n => n).Distinct().ToArray();
         }
 
         protected DetailsDatum(DetailsDatum datum)

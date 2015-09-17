@@ -8,29 +8,37 @@ namespace DoubleFile
     {
         partial class TreeRootNodeBuilder
         {
+            // can't be struct because of object ==
             class Node
             {
-                // can't be struct because of object ==
-                internal
-                    Node(string in_str, uint nLineNo, ulong nLength, int nAllFilesHash, IReadOnlyList<int> lsFilesHereHashes,
-                        IDictionary<string, Node> nodes,
-                        uint nPrevLineNo)
+                Node(string in_str, uint nPrevLineNo, uint nLineNo)
                 {
-                    if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
-                        return;
-
-                    Util.Assert(1301.2303m, 0 < nLineNo);
-                    _nodes = nodes;
-
-                    if (false == in_str.EndsWith(@":\"))
-                        Util.Assert(1301.2304m, in_str.Trim().EndsWith(@"\") == false);
-
                     _strPath = in_str;
                     _nPrevLineNo = nPrevLineNo;
                     _nLineNo = nLineNo;
+
+                    Util.Assert(1301.2303m, 0 < nLineNo);
+
+                    if (false == _strPath.EndsWith(@":\"))
+                        Util.Assert(1301.2304m, _strPath.Trim().EndsWith(@"\") == false);
+                }
+
+                internal
+                    Node(
+                        string in_str,
+                        uint nPrevLineNo, uint nLineNo,
+                        ulong nLength,
+                        int nAllFilesHash, IReadOnlyList<int> lsFilesHereHashes,
+                        IDictionary<string, Node> nodes)
+                    : this(in_str, nPrevLineNo, nLineNo)
+                {
+                    _nodes = nodes;
                     _nLength = nLength;
                     _nAllFilesHash = nAllFilesHash;
                     _lsFilesHereHashes = lsFilesHereHashes;
+
+                    if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
+                        return;
 
                     // Path.GetDirectoryName() does not preserve filesystem root
 
@@ -54,7 +62,7 @@ namespace DoubleFile
 
                     if (null == nodeParent)
                     {
-                        nodeParent = new Node(strParent, nLineNo, 0, 0, null, _nodes, nPrevLineNo);
+                        nodeParent = new Node(strParent, nPrevLineNo, nLineNo);
                         _nodes.Add(strParent, nodeParent);
                     }
 
@@ -76,7 +84,7 @@ namespace DoubleFile
                     {
                         var subNode = _subNodes.Values.First();
 
-                        if (this == _nodes.Values.First())
+                        if (this == _nodes?.Values.First())
                         {
                             Util.WriteLine(_strPath + " cull all root node single-chains");
                             _nodes = _subNodes;
@@ -111,29 +119,29 @@ namespace DoubleFile
                         treeNode = new LocalTreeNode(strShortPath);
                     }
 
-                    treeNode.NodeDatum = new NodeDatum(new DetailsDatum(
-                        _nPrevLineNo, _nLineNo, _nLength, _nAllFilesHash, _lsFilesHereHashes));  // this is almost but not quite always newly assigned here.
+                    treeNode.NodeDatum =
+                        new NodeDatum(new DetailsDatum(_nPrevLineNo, _nLineNo));  // this is almost but not quite always newly assigned here.
 
                     return treeNode;
                 }
 
                 IDictionary<string, Node>
                     _nodes = null;
+                bool
+                    _bUseShortPath = true;
                 readonly SortedDictionary<string, Node>
                     _subNodes = new SortedDictionary<string, Node>();
                 readonly string 
                     _strPath = null;
-                uint
+                readonly uint
                     _nPrevLineNo = 0;
-                uint
+                readonly uint
                     _nLineNo = 0;
-                ulong
+                readonly ulong
                     _nLength = 0;
-                bool
-                    _bUseShortPath = true;
-                int
+                readonly int
                     _nAllFilesHash = 0;
-                IReadOnlyList<int>
+                readonly IReadOnlyList<int>
                     _lsFilesHereHashes = null;
             }
         }

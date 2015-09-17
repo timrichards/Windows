@@ -19,7 +19,7 @@ namespace DoubleFile
                 {
                     var str = str_in.TrimEnd('\\');
 
-                    Nodes.Add(str, new Node(str, nLineNo, nLength, nAllFilesHash, lsFilesHereHashes, Nodes, _nPrevLineNo));
+                    Nodes.Add(str, new Node(str, _nPrevLineNo, nLineNo, nLength, nAllFilesHash, lsFilesHereHashes, Nodes));
                     _nPrevLineNo = nLineNo;
                 }
 

@@ -36,13 +36,13 @@ namespace DoubleFile
             TreeMapRect;
 
         internal DetailsDatum() { }
-        internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, int nAllFilesHash, IReadOnlyList<int> lsFilesHereHashes)
+        internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength = 0, int nAllFilesHash = 0, IReadOnlyList<int> lsFilesHereHashes = null)
         {
             PrevLineNo = nPrevLineNo;
             LineNo = nLineNo;
             Length = nLength;
             Hash_AllFiles = nAllFilesHash;
-            Hashes_FilesHere = lsFilesHereHashes.OrderBy(n => n).Distinct().ToArray();
+            Hashes_FilesHere = lsFilesHereHashes?.OrderBy(n => n).Distinct().ToArray() ?? new int[0];
         }
 
         protected DetailsDatum(DetailsDatum datum)

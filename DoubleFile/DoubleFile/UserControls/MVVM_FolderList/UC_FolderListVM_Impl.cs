@@ -145,7 +145,14 @@ namespace DoubleFile
                 return;
 
             if (1 << 11 < searchSet.Count)
-                return;
+            {
+                searchSet =
+                    searchFolder.NodeDatum.FileHashes
+                    .ToList();
+
+                if (1 << 11 < searchSet.Count)
+                    return;
+            }
 
             Util.ParallelForEach(99634, nodes,
                 new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount, CancellationToken = _cts.Token },

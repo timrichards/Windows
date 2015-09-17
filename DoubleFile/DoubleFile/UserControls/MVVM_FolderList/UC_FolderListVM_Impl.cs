@@ -79,20 +79,20 @@ namespace DoubleFile
 
                 Util.Closure(() =>
                 {
-                    if (null == searchFolder.NodeDatum.AllFileHashes_Scratch)
+                    if (null == searchFolder.NodeDatum.Hashes_SubnodeFiles_Scratch)
                         return;     // from lambda
 
                     _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_FolderListVM>>();
 
                     var searchSet =
-                        searchFolder.NodeDatum.AllFileHashes_Scratch
-                        .Union(searchFolder.NodeDatum.FileHashes)
+                        searchFolder.NodeDatum.Hashes_SubnodeFiles_Scratch
+                        .Union(searchFolder.NodeDatum.Hashes_FilesHere)
                         .ToList();
 
                     if (1 << 11 < searchSet.Count)
                     {
                         searchSet =
-                            searchFolder.NodeDatum.FileHashes
+                            searchFolder.NodeDatum.Hashes_FilesHere
                             .ToList();
 
                         if (1 << 11 < searchSet.Count)
@@ -133,7 +133,7 @@ namespace DoubleFile
                         bNoResults = false;
                     }
 
-                    Util.WriteLine("FindMatchingFolders " + searchFolder.NodeDatum.AllFileHashes_Scratch.GetHashCode());
+                    Util.WriteLine("FindMatchingFolders " + searchFolder.NodeDatum.Hashes_SubnodeFiles_Scratch.GetHashCode());
                 });
 
                 if (bNoResults)
@@ -164,19 +164,19 @@ namespace DoubleFile
                 if (_cts.IsCancellationRequested)
                     return;     // from lambda: continue
 
-                if ((searchFolder.NodeDatum.AllFilesHash == testFolder.NodeDatum.AllFilesHash) ||
+                if ((searchFolder.NodeDatum.Hash_AllFiles == testFolder.NodeDatum.Hash_AllFiles) ||
                     testFolder.IsChildOf(searchFolder))
                 {
                     return;     // from lambda: continue
                 }
 
                 var nTestChildrenCount =
-                    testFolder.NodeDatum.AllFileHashes_Scratch
+                    testFolder.NodeDatum.Hashes_SubnodeFiles_Scratch
                     .Intersect(searchSet)
                     .Count();
 
                 var nTestHereCount =
-                    testFolder.NodeDatum.FileHashes
+                    testFolder.NodeDatum.Hashes_FilesHere
                     .Intersect(searchSet)
                     .Count();
 
@@ -219,19 +219,19 @@ namespace DoubleFile
 
                 IReadOnlyList<int> lsClone = null;
 
-                if (_dictClones.TryGetValue(treeNode.NodeDatum.AllFilesHash, out lsClone))
+                if (_dictClones.TryGetValue(treeNode.NodeDatum.Hash_AllFiles, out lsClone))
                 {
-                    treeNode.NodeDatum.AllFileHashes_Scratch = lsClone;
+                    treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch = lsClone;
                 }
                 else
                 {
-                    treeNode.NodeDatum.AllFileHashes_Scratch = lsAllFileHashes_childNodes.OrderBy(n => n).Distinct().ToList();
-                    _dictClones.Add(treeNode.NodeDatum.AllFilesHash, treeNode.NodeDatum.AllFileHashes_Scratch);
+                    treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch = lsAllFileHashes_childNodes.OrderBy(n => n).Distinct().ToList();
+                    _dictClones.Add(treeNode.NodeDatum.Hash_AllFiles, treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch);
                 }
 
                 if (false == bStart)
                 {
-                    lsAllFilesHashes.AddRange(treeNode.NodeDatum.FileHashes);
+                    lsAllFilesHashes.AddRange(treeNode.NodeDatum.Hashes_FilesHere);
                     lsAllFilesHashes.AddRange(lsAllFileHashes_childNodes);
                 }
             }
@@ -247,7 +247,7 @@ namespace DoubleFile
 
             foreach (var treeNode in nodes)
             {
-                treeNode.NodeDatum.AllFileHashes_Scratch = null;
+                treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch = null;
                 Cleanup_AllFileHashes_Scratch(treeNode.Nodes);                 // recurse
             }
         }

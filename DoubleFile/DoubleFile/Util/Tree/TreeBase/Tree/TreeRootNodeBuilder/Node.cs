@@ -12,20 +12,22 @@ namespace DoubleFile
             {
                 // can't be struct because of object ==
                 internal
-                    Node(string in_str, uint nLineNo, ulong nLength, int nAllFilesHash, IReadOnlyList<int> lsFilesHereHashes, RootNode rootNode)
+                    Node(string in_str, uint nLineNo, ulong nLength, int nAllFilesHash, IReadOnlyList<int> lsFilesHereHashes,
+                        IDictionary<string, Node> nodes,
+                        uint nPrevLineNo)
                 {
                     if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                         return;
 
                     Util.Assert(1301.2303m, 0 < nLineNo);
-                    _rootNode = rootNode;
+                    _nodes = nodes;
 
                     if (false == in_str.EndsWith(@":\"))
                         Util.Assert(1301.2304m, in_str.Trim().EndsWith(@"\") == false);
 
                     _strPath = in_str;
-                    _nPrevLineNo = _rootNode.FirstLineNo;
-                    _rootNode.FirstLineNo = _nLineNo = nLineNo;
+                    _nPrevLineNo = nPrevLineNo;
+                    _nLineNo = nLineNo;
                     _nLength = nLength;
                     _nAllFilesHash = nAllFilesHash;
                     _lsFilesHereHashes = lsFilesHereHashes;
@@ -36,16 +38,24 @@ namespace DoubleFile
                     var nIndex = strParent.LastIndexOf('\\');
 
                     if (0 > nIndex)
+                    {
+                        Util.Assert(99633, 2 == strParent.Length);
+                        Util.Assert(99632, 'A' <= strParent[0]);
+                        Util.Assert(99631, 'Z' >= strParent[0]);
+                        Util.Assert(99630, ':' == strParent[1]);
                         return;
+                    }
 
-                    strParent = strParent.Remove(nIndex).TrimEnd('\\');
+                    Util.Assert(99629, 3 < strParent.Length);
 
-                    var nodeParent = _rootNode.Nodes.TryGetValue(strParent);
+                    strParent = strParent.Remove(nIndex);
+
+                    var nodeParent = _nodes.TryGetValue(strParent);
 
                     if (null == nodeParent)
                     {
-                        nodeParent = new Node(strParent, _rootNode.FirstLineNo, 0, 0, null, _rootNode);
-                        _rootNode.Nodes.Add(strParent, nodeParent);
+                        nodeParent = new Node(strParent, nLineNo, 0, 0, null, _nodes, nPrevLineNo);
+                        _nodes.Add(strParent, nodeParent);
                     }
 
                     if (null == nodeParent._subNodes.TryGetValue(_strPath))
@@ -66,10 +76,10 @@ namespace DoubleFile
                     {
                         var subNode = _subNodes.Values.First();
 
-                        if (this == _rootNode.Nodes.Values.First())
+                        if (this == _nodes.Values.First())
                         {
                             Util.WriteLine(_strPath + " cull all root node single-chains");
-                            _rootNode.Nodes = _subNodes;
+                            _nodes = _subNodes;
                             subNode._bUseShortPath = false;
                             treeNode = subNode.AddToTree();
 
@@ -107,8 +117,8 @@ namespace DoubleFile
                     return treeNode;
                 }
 
-                readonly RootNode
-                    _rootNode = null;
+                IDictionary<string, Node>
+                    _nodes = null;
                 readonly SortedDictionary<string, Node>
                     _subNodes = new SortedDictionary<string, Node>();
                 readonly string 

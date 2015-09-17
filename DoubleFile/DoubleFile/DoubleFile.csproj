@@ -315,7 +315,6 @@
     <Compile Include="Util\Tree\TreeBase\Tree\TreeRootNodeBuilder.cs" />
     <Compile Include="Util\Tree\TreeBase\Tree\TreeRootNodeBuilder\DirData.cs" />
     <Compile Include="Util\Tree\TreeBase\Tree\TreeRootNodeBuilder\Node.cs" />
-    <Compile Include="Util\Tree\TreeBase\Tree\TreeRootNodeBuilder\RootNode.cs" />
     <Compile Include="Util\TreeSelect.cs" />
     <Compile Include="Util\FolderKeyTuple.cs" />
     <Compile Include="Util\Tree\LVitemFileTag.cs" />

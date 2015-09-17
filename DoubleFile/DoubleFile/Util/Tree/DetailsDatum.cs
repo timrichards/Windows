@@ -15,12 +15,11 @@ namespace DoubleFile
             Length;
 
         internal int
-            AllFilesHash = 0;
-
+            Hash_AllFiles = 0;
         internal readonly IReadOnlyList<int>
-            FileHashes = null;
+            Hashes_FilesHere = null;
         internal IReadOnlyList<int>
-            AllFileHashes_Scratch = null;
+            Hashes_SubnodeFiles_Scratch = null;
 
         internal ulong
             TotalLength;
@@ -42,8 +41,8 @@ namespace DoubleFile
             PrevLineNo = nPrevLineNo;
             LineNo = nLineNo;
             Length = nLength;
-            AllFilesHash = nAllFilesHash;
-            FileHashes = lsFilesHereHashes.OrderBy(n => n).Distinct().ToArray();
+            Hash_AllFiles = nAllFilesHash;
+            Hashes_FilesHere = lsFilesHereHashes.OrderBy(n => n).Distinct().ToArray();
         }
 
         protected DetailsDatum(DetailsDatum datum)
@@ -56,8 +55,8 @@ namespace DoubleFile
             PrevLineNo = datum.PrevLineNo;
             LineNo = datum.LineNo;
             Length = datum.Length;
-            AllFilesHash = datum.AllFilesHash;
-            FileHashes = datum.FileHashes;
+            Hash_AllFiles = datum.Hash_AllFiles;
+            Hashes_FilesHere = datum.Hashes_FilesHere;
         }
 
         static public DetailsDatum
@@ -69,10 +68,10 @@ namespace DoubleFile
             SubDirs = datum1.SubDirs + datum2.SubDirs,
             FileCountHere = datum1.FileCountHere + datum2.FileCountHere,
             DirsWithFiles = datum1.DirsWithFiles + datum2.DirsWithFiles,
-            AllFilesHash = datum1.AllFilesHash + datum2.AllFilesHash
+            Hash_AllFiles = datum1.Hash_AllFiles + datum2.Hash_AllFiles
         };
 
         internal FolderKeyTuple
-            Key => new FolderKeyTuple(TotalLength, FileCountTotal, DirsWithFiles, AllFilesHash);
+            Key => new FolderKeyTuple(TotalLength, FileCountTotal, DirsWithFiles, Hash_AllFiles);
     }
 }

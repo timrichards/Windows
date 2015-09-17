@@ -10,25 +10,28 @@ namespace DoubleFile
             // can't be struct because of null
             class DirData
             {
-                internal DirData(int nFirstLineNo)
+                internal DirData(uint nFirstLineNo)
                 {
-                    _rootNode.FirstLineNo = (uint)nFirstLineNo;
+                    _nPrevLineNo = nFirstLineNo;
                 }
 
                 internal void AddToTree(string str_in, uint nLineNo, ulong nLength, int nAllFilesHash, IReadOnlyList<int> lsFilesHereHashes)
                 {
                     var str = str_in.TrimEnd('\\');
 
-                    _rootNode.Nodes.Add(str, new Node(str, nLineNo, nLength, nAllFilesHash, lsFilesHereHashes, _rootNode));
+                    Nodes.Add(str, new Node(str, nLineNo, nLength, nAllFilesHash, lsFilesHereHashes, Nodes, _nPrevLineNo));
+                    _nPrevLineNo = nLineNo;
                 }
 
                 internal LocalTreeNode AddToTree() =>
-                    _rootNode.Nodes.Values
+                    Nodes.Values
                     .Select(rootNode => rootNode.AddToTree())
                     .FirstOrDefault();
 
-                readonly RootNode
-                    _rootNode = new RootNode { };
+                internal readonly IDictionary<string, Node>
+                    Nodes = new SortedDictionary<string, Node>();
+                uint
+                    _nPrevLineNo = 0;
             }
         }
     }

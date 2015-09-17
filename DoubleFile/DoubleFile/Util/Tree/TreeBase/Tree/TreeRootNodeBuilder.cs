@@ -58,7 +58,7 @@ namespace DoubleFile
                 nodeDatum.FileCountHere = nodeDatum.LineNo - nodeDatum.PrevLineNo - 1;
                 nodeDatum.FileCountTotal = (datum.FileCountTotal += nodeDatum.FileCountHere);
                 nodeDatum.SubDirs = (datum.SubDirs += (uint)(treeNode.Nodes?.Count ?? 0));
-                nodeDatum.AllFilesHash = (datum.AllFilesHash += nodeDatum.AllFilesHash);
+                nodeDatum.Hash_AllFiles = (datum.Hash_AllFiles += nodeDatum.Hash_AllFiles);
 
                 if (0 < nodeDatum.FileCountHere)
                     ++datum.DirsWithFiles;
@@ -198,7 +198,7 @@ namespace DoubleFile
                     _lvItemProjectVM.ListingFile
                     .ReadLines(99641)
                     .Where(s => s.StartsWith(ksLineType_Start))
-                    .Select(s => new DirData(s.Split('\t')[1].ToInt()))
+                    .Select(s => new DirData((uint)s.Split('\t')[1].ToInt()))
                     .FirstOnlyAssert();
 
                 var nAllFilesHash = 0;

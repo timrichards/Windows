@@ -160,34 +160,21 @@ namespace DoubleFile
                     return;     // from lambda: continue
                 }
 
-                {
-                    var nTestChildrenCount =
-                        testFolder.NodeDatum.AllFileHashes_Scratch
-                        .Intersect(searchSet)
-                        .Count();
+                var nTestChildrenCount =
+                    testFolder.NodeDatum.AllFileHashes_Scratch
+                    .Intersect(searchSet)
+                    .Count();
 
-                    var nTestHereCount =
-                        testFolder.NodeDatum.FileHashes
-                        .Intersect(searchSet)
-                        .Count();
+                var nTestHereCount =
+                    testFolder.NodeDatum.FileHashes
+                    .Intersect(searchSet)
+                    .Count();
 
-                    if (0 < nTestHereCount)
-                    {
-                        nTestChildrenCount += nTestHereCount;
-                        _lsMatchingFolders.Add(Tuple.Create(nTestChildrenCount, new LVitem_FolderListVM(testFolder, _nicknameUpdater)));
-                    }
+                if (0 < nTestHereCount)
+                    _lsMatchingFolders.Add(Tuple.Create(nTestChildrenCount + nTestHereCount, new LVitem_FolderListVM(testFolder, _nicknameUpdater)));
 
-                    if (0 == nTestChildrenCount)
-                        return;     // from lambda: continue
-                }
-
-                if (_cts.IsCancellationRequested)
-                    return;     // from lambda: continue
-
-                if (0 == testFolder.NodeDatum.AllFileHashes_Scratch.Count)
-                    return;     // from lambda: continue
-
-                FindMatchingFolders(searchFolder, testFolder.Nodes);         // recurse
+                if (0 < nTestChildrenCount)
+                    FindMatchingFolders(searchFolder, testFolder.Nodes);         // recurse
             });
         }
 

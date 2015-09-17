@@ -61,8 +61,7 @@ namespace DoubleFile
             //if (null != strTitle)
             //    Title = strTitle;
 
-            if (null != buttons)
-                Buttons = buttons.Value;
+            Buttons = buttons ?? MessageBoxButton.OKCancel;
 
             switch (_buttons)
             {
@@ -115,7 +114,9 @@ namespace DoubleFile
             _dispatcherFrame.Continue = false;
         }
 
-        MessageBoxResult _Result = MessageBoxResult.Cancel;
-        LocalDispatcherFrame _dispatcherFrame = new LocalDispatcherFrame(99786);
+        MessageBoxResult
+            _Result = MessageBoxResult.Cancel;
+        LocalDispatcherFrame
+            _dispatcherFrame = new LocalDispatcherFrame(99786);
     }
 }

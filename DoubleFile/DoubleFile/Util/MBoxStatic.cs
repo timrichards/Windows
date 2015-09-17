@@ -52,7 +52,7 @@ namespace DoubleFile
             else
             {
                 AssertUp = true;
-                MBoxStatic.ShowDialog(strErrorOut, "DoubleFile Assert");
+                ShowOverlay(strErrorOut, "DoubleFile Assert", MessageBoxButton.OK);
                 AssertUp = false;
             }
 #if (DEBUG && LOCALMBOX)
@@ -65,16 +65,16 @@ namespace DoubleFile
 
         // make MessageBox modal from a worker thread
         static internal MessageBoxResult
-            ShowDialog(string strMessage, string strTitle = null, MessageBoxButton? buttons = null, ILocalWindow owner = null)
+            ShowOverlay(string strMessage, string strTitle = null, MessageBoxButton? buttons = null, ILocalWindow owner = null)
         {
             MessageBoxResult retVal = MessageBoxResult.None;
 
             Util.UIthread(99916, () =>
-                retVal = ShowDialog_(strMessage, strTitle, buttons, owner));
+                retVal = ShowOverlay_(strMessage, strTitle, buttons, owner));
 
             return retVal;
         }
-        static MessageBoxResult ShowDialog_(string strMessage, string strTitle, MessageBoxButton? buttons, ILocalWindow owner)
+        static MessageBoxResult ShowOverlay_(string strMessage, string strTitle, MessageBoxButton? buttons, ILocalWindow owner)
         {
             if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                 return MessageBox.Show(strMessage + "\n(LocalMbox: application shutting down.)", strTitle, buttons ?? MessageBoxButton.OK);

@@ -88,7 +88,7 @@ namespace DoubleFile
 
                 bAskedYesOverwrite =
                     ((System.Windows.MessageBoxResult.Yes ==
-                    MBoxStatic.ShowDialog("Overwrite user-entered drive model and/or serial # for " +
+                    MBoxStatic.ShowOverlay("Overwrite user-entered drive model and/or serial # for " +
                     strDriveLetter + @"\ ?", "Save Directory Listings",
                     System.Windows.MessageBoxButton.YesNo)));
 

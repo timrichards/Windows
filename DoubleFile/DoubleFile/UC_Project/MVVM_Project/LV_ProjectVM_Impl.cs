@@ -78,7 +78,7 @@ namespace DoubleFile
             if (bAlreadyInProject &&
                 (false == bQuiet))
             {
-                MBoxStatic.ShowDialog("Listing file already in the project.", "Add Listing File");
+                MBoxStatic.ShowOverlay("Listing file already in the project.", "Add Listing File");
             }
 
             return bAlreadyInProject;
@@ -94,7 +94,7 @@ namespace DoubleFile
 
             return ItemsCast
                 .Where(item => (item.SourcePath.ToLower() == s) && item.WouldSave)
-                .FirstOnlyAssert(x => MBoxStatic.ShowDialog("Source path is already set to be scanned.", "Add Listing File"));
+                .FirstOnlyAssert(x => MBoxStatic.ShowOverlay("Source path is already set to be scanned.", "Add Listing File"));
         }
 
         internal void
@@ -185,7 +185,7 @@ namespace DoubleFile
             if (LocalIsoStore.FileExists(strListingFile) &&
                 ((false == strListingFile.StartsWith(LocalIsoStore.TempDir)) || FileParse.ValidateFile(strListingFile).Item1))
             {
-                MBoxStatic.ShowDialog("Listing file exists. Please manually delete it using the Save Listing\n" +
+                MBoxStatic.ShowOverlay("Listing file exists. Please manually delete it using the Save Listing\n" +
                     "File dialog by clicking the icon button after this alert closes.", "New Listing File");
 
                 return true;
@@ -211,7 +211,7 @@ namespace DoubleFile
 
             if (false == FileParse.ValidateFile(lvItem_Orig.ListingFile).Item1)
             {
-                MBoxStatic.ShowDialog("Bad listing file.", "Edit Listing File");
+                MBoxStatic.ShowOverlay("Bad listing file.", "Edit Listing File");
                 return false;
             }
 
@@ -304,7 +304,7 @@ namespace DoubleFile
                     }
                     catch (Exception e)
                     {
-                        MBoxStatic.ShowDialog("Couldn't overwrite file.\n" + e.GetBaseException().Message, "Edit Listing File");
+                        MBoxStatic.ShowOverlay("Couldn't overwrite file.\n" + e.GetBaseException().Message, "Edit Listing File");
                         return false;
                     }
                 }
@@ -343,7 +343,7 @@ namespace DoubleFile
         {
             if (SelectedItems().Any(lvItem => lvItem.WouldSave) &&
                 (MessageBoxResult.Yes !=
-                MBoxStatic.ShowDialog("Selected listings have not been saved. Continue?", "Remove Listing File",
+                MBoxStatic.ShowOverlay("Selected listings have not been saved. Continue?", "Remove Listing File",
                 MessageBoxButton.YesNo)))
             {
                 return;

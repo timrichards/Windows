@@ -79,7 +79,7 @@ namespace DoubleFile
 
             if (bClearItems && _lvVM.Unsaved &&
                 (MessageBoxResult.Cancel ==
-                MBoxStatic.ShowDialog(UnsavedWarning, strTitle, MessageBoxButton.OKCancel)))
+                MBoxStatic.ShowOverlay(UnsavedWarning, strTitle, MessageBoxButton.OKCancel)))
             {
                 return;
             }
@@ -122,7 +122,7 @@ namespace DoubleFile
 
                     if (File.Exists(strFilename))
                     {
-                        MBoxStatic.ShowDialog("Project file exists. Please manually delete it using the Save Project dialog after this alert closes.", "Save Project");
+                        MBoxStatic.ShowOverlay("Project file exists. Please manually delete it using the Save Project dialog after this alert closes.", "Save Project");
                         continue;
                     }
 
@@ -272,7 +272,7 @@ namespace DoubleFile
                 sbError.Append("Already in project.\n\n" + sbAlreadyInProject);
 
             if (0 < sbError.Length)
-                MBoxStatic.ShowDialog("" + sbError, "Open Listing File");
+                MBoxStatic.ShowOverlay("" + sbError, "Open Listing File");
 
             return bOpenedFiles;
         }
@@ -283,7 +283,7 @@ namespace DoubleFile
         bool IProgressOverlayClosing.ConfirmClose()
         {
             _bUserCanceled |= (MessageBoxResult.Yes ==
-                MBoxStatic.ShowDialog("Do you want to cancel?", "Opening Listing Files", MessageBoxButton.YesNo));
+                MBoxStatic.ShowOverlay("Do you want to cancel?", "Opening Listing Files", MessageBoxButton.YesNo));
 
             return false;   // it will close when the loop queries _bUserCanceled
         }

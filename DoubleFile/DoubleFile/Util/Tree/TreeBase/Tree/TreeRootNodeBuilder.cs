@@ -135,7 +135,7 @@ namespace DoubleFile
 
                     if (false == bValid)
                     {
-                        MBoxStatic.ShowDialog("Bad file: " + _lvItemProjectVM.ListingFile, "Tree");
+                        MBoxStatic.ShowOverlay("Bad file: " + _lvItemProjectVM.ListingFile, "Tree");
                         StatusCallback(_lvItemProjectVM, bError: true);
                         return;
                     }

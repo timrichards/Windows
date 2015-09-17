@@ -87,7 +87,6 @@ namespace DoubleFile
                     var searchSet =
                         searchFolder.NodeDatum.AllFileHashes_Scratch
                         .Union(searchFolder.NodeDatum.FileHashes)
-                        .OrderBy(n => n)
                         .ToList();
 
                     if (1 << 11 < searchSet.Count)
@@ -116,7 +115,7 @@ namespace DoubleFile
 
                         _lsMatchingFolders = null;
 
-                        int nMatch = 0;
+                        var nMatch = 0;
                         var bAlternate = false;
 
                         foreach (var folder in lsFolders)
@@ -150,7 +149,7 @@ namespace DoubleFile
             });
         }
 
-        void FindMatchingFolders(LocalTreeNode searchFolder, List<int> searchSet, IReadOnlyList<LocalTreeNode> nodes)
+        void FindMatchingFolders(LocalTreeNode searchFolder, IReadOnlyList<int> searchSet, IReadOnlyList<LocalTreeNode> nodes)
         {
             if (_cts.IsCancellationRequested)
                 return;

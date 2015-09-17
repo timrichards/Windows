@@ -141,7 +141,7 @@ namespace DoubleFile
 
             if (bUnsavedListings || bIsEmpty)
             {
-                MBoxStatic.ShowDialog("One or more volumes in the project have not yet had directory listings saved for it." +
+                MBoxStatic.ShowOverlay("One or more volumes in the project have not yet had directory listings saved for it." +
                     " Click an explorer link at the top of the window to start saving directory listings of your drives.",
                     "Save Project");
 
@@ -249,7 +249,7 @@ namespace DoubleFile
                 strMessage = " Copied the listing files to\n" + strDir;
             }
 
-            MBoxStatic.ShowDialog("Couldn't save the project." + strMessage, "Save Project");
+            MBoxStatic.ShowOverlay("Couldn't save the project." + strMessage, "Save Project");
         }
 
         bool OpenProject_(string strProjectFilename, WeakReference<IOpenListingFiles> openListingFilesWR, bool bClearItems)
@@ -262,7 +262,7 @@ namespace DoubleFile
                 "e \"" + strProjectFilename + "\" -y",
                 () => bRet = OpenProjectExited(openListingFilesWR, bClearItems)))
             {
-                MBoxStatic.ShowDialog("Couldn't open the project. Reinstall Double File or open your project file " +
+                MBoxStatic.ShowOverlay("Couldn't open the project. Reinstall Double File or open your project file " +
                     "and get to your listing files using a download from 7-zip.org.", "Open Project");
             }
 
@@ -374,7 +374,7 @@ namespace DoubleFile
                 return true;
 
             if (MessageBoxResult.Yes == ProgressOverlay.WithProgressOverlay(w =>
-                MBoxStatic.ShowDialog("Do you want to cancel?", _status, MessageBoxButton.YesNo, w)))
+                MBoxStatic.ShowOverlay("Do you want to cancel?", _status, MessageBoxButton.YesNo, w)))
             {
                 _bUserCanceled = true;
 
@@ -430,7 +430,7 @@ namespace DoubleFile
 
             // One-shot: no need to dispose
             Observable.Timer(TimeSpan.FromMilliseconds(33)).Timestamp()
-                .LocalSubscribe(99722, x => MBoxStatic.ShowDialog(strError, "Error " + strMode + " Project"));
+                .LocalSubscribe(99722, x => MBoxStatic.ShowOverlay(strError, "Error " + strMode + " Project"));
 
             return true;
         }

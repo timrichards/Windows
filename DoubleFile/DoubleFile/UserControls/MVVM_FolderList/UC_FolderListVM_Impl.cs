@@ -73,16 +73,37 @@ namespace DoubleFile
 
             Util.ThreadMake(() =>
             {
+                var bNoResults = true;
+                var tuple = initiatorTuple.Item1;
+                var searchFolder = tuple.treeNode;
+
                 Util.Closure(() =>
                 {
-                    var tuple = initiatorTuple.Item1;
-                    var searchFolder = tuple.treeNode;
-
                     if (null == searchFolder.NodeDatum.AllFileHashes_Scratch)
                         return;     // from lambda
 
                     _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_FolderListVM>>();
-                    FindMatchingFolders(searchFolder, LocalTV.RootNodes);
+
+                    var searchSet =
+                        searchFolder.NodeDatum.AllFileHashes_Scratch
+                        .Union(searchFolder.NodeDatum.FileHashes)
+                        .OrderBy(n => n)
+                        .ToList();
+
+                    if (1 << 11 < searchSet.Count)
+                    {
+                        searchSet =
+                            searchFolder.NodeDatum.FileHashes
+                            .ToList();
+
+                        if (1 << 11 < searchSet.Count)
+                            return;     // from lambda
+                    }
+
+                    if (0 == searchSet.Count)
+                        return;     // from lambda
+
+                    FindMatchingFolders(searchFolder, searchSet, LocalTV.RootNodes);
 
                     if (_cts.IsCancellationRequested)
                         return;     // from lambda
@@ -110,48 +131,31 @@ namespace DoubleFile
                         }
 
                         Util.UIthread(99912, () => Add(lsFolders.Select(tupleA => tupleA.Item2)));
-                    }
-                    else
-                    {
-                        NoResultsFolder = searchFolder.Text;
-                        NoResultsVisibility = Visibility.Visible;
-                        RaisePropertyChanged("NoResultsFolder");
-                        RaisePropertyChanged("NoResultsVisibility");
+                        bNoResults = false;
                     }
 
                     Util.WriteLine("FindMatchingFolders " + searchFolder.NodeDatum.AllFileHashes_Scratch.GetHashCode());
                 });
+
+                if (bNoResults)
+                {
+                    NoResultsFolder = searchFolder.Text;
+                    NoResultsVisibility = Visibility.Visible;
+                    RaisePropertyChanged("NoResultsFolder");
+                    RaisePropertyChanged("NoResultsVisibility");
+                }
 
                 --_nRefCount;
                 GC.Collect();
             });
         }
 
-        void FindMatchingFolders(LocalTreeNode searchFolder, IReadOnlyList<LocalTreeNode> nodes)
+        void FindMatchingFolders(LocalTreeNode searchFolder, List<int> searchSet, IReadOnlyList<LocalTreeNode> nodes)
         {
             if (_cts.IsCancellationRequested)
                 return;
 
             if (null == nodes)
-                return;
-
-            var searchSet =
-                searchFolder.NodeDatum.AllFileHashes_Scratch
-                .Union(searchFolder.NodeDatum.FileHashes)
-                .OrderBy(n => n)
-                .ToList();
-
-            if (1 << 11 < searchSet.Count)
-            {
-                searchSet =
-                    searchFolder.NodeDatum.FileHashes
-                    .ToList();
-
-                if (1 << 11 < searchSet.Count)
-                    return;
-            }
-
-            if (0 == searchSet.Count)
                 return;
 
             Util.ParallelForEach(99634, nodes,
@@ -181,7 +185,7 @@ namespace DoubleFile
                     _lsMatchingFolders.Add(Tuple.Create(nTestChildrenCount + nTestHereCount, new LVitem_FolderListVM(testFolder, _nicknameUpdater)));
 
                 if (0 < nTestChildrenCount)
-                    FindMatchingFolders(searchFolder, testFolder.Nodes);         // recurse
+                    FindMatchingFolders(searchFolder, searchSet, testFolder.Nodes);         // recurse
             });
         }
 

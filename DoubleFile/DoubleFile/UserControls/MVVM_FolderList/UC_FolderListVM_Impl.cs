@@ -139,13 +139,12 @@ namespace DoubleFile
                 searchFolder.NodeDatum.AllFileHashes_Scratch
                 .Union(searchFolder.NodeDatum.FileHashes)
                 .OrderBy(n => n)
-                .Distinct()
                 .ToList();
 
             if (0 == searchSet.Count)
                 return;
 
-            if (1 << 10 < searchSet.Count)
+            if (1 << 11 < searchSet.Count)
                 return;
 
             Util.ParallelForEach(99634, nodes,
@@ -161,12 +160,12 @@ namespace DoubleFile
                     return;     // from lambda: continue
                 }
 
-                var nTestChildrenCount =
-                    testFolder.NodeDatum.AllFileHashes_Scratch
-                    .Intersect(searchSet)
-                    .Count();
-
                 {
+                    var nTestChildrenCount =
+                        testFolder.NodeDatum.AllFileHashes_Scratch
+                        .Intersect(searchSet)
+                        .Count();
+
                     var nTestHereCount =
                         testFolder.NodeDatum.FileHashes
                         .Intersect(searchSet)
@@ -174,18 +173,18 @@ namespace DoubleFile
 
                     if (0 < nTestHereCount)
                     {
-                        _lsMatchingFolders.Add(Tuple.Create(nTestHereCount, new LVitem_FolderListVM(testFolder, _nicknameUpdater)));
                         nTestChildrenCount += nTestHereCount;
+                        _lsMatchingFolders.Add(Tuple.Create(nTestChildrenCount, new LVitem_FolderListVM(testFolder, _nicknameUpdater)));
                     }
+
+                    if (0 == nTestChildrenCount)
+                        return;     // from lambda: continue
                 }
 
                 if (_cts.IsCancellationRequested)
                     return;     // from lambda: continue
 
                 if (0 == testFolder.NodeDatum.AllFileHashes_Scratch.Count)
-                    return;     // from lambda: continue
-
-                if (0 == nTestChildrenCount)
                     return;     // from lambda: continue
 
                 FindMatchingFolders(searchFolder, testFolder.Nodes);         // recurse
@@ -207,12 +206,15 @@ namespace DoubleFile
             Setup_AllFileHashes_Scratch(IReadOnlyList<LocalTreeNode> nodes, bool bStart = true)
         {
             if (null == nodes)
-                return null;
+                return new int[0];
 
             var lsAllFilesHashes = new List<int> { };
 
             foreach (var treeNode in nodes)
             {
+                if (_bDisposed)
+                    return new int[0];
+
                 var lsAllFileHashes_childNodes = new List<int> { };
 
                 if (null != treeNode.Nodes)

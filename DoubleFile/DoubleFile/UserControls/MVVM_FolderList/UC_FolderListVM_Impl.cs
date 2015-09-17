@@ -141,9 +141,6 @@ namespace DoubleFile
                 .OrderBy(n => n)
                 .ToList();
 
-            if (0 == searchSet.Count)
-                return;
-
             if (1 << 11 < searchSet.Count)
             {
                 searchSet =
@@ -153,6 +150,9 @@ namespace DoubleFile
                 if (1 << 11 < searchSet.Count)
                     return;
             }
+
+            if (0 == searchSet.Count)
+                return;
 
             Util.ParallelForEach(99634, nodes,
                 new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount, CancellationToken = _cts.Token },

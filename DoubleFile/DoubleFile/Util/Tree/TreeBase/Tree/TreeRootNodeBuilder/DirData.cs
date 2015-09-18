@@ -12,25 +12,24 @@ namespace DoubleFile
             {
                 internal DirData(uint nFirstLineNo)
                 {
-                    _nPrevLineNo = nFirstLineNo;
+                    _rootNode.PrevLineNo = nFirstLineNo;
                 }
 
                 internal void AddToTree(string str_in, uint nLineNo, ulong nLength, int nAllFilesHash, IReadOnlyList<int> lsFilesHereHashes)
                 {
                     var str = str_in.TrimEnd('\\');
 
-                    _nodes.Add(str, new Node(str, nLineNo, nLength, nAllFilesHash, lsFilesHereHashes, _nodes, _nPrevLineNo));
+                    _rootNode.Nodes.Add(str, new Node(str, nLineNo, nLength, nAllFilesHash, lsFilesHereHashes, _rootNode));
                 }
 
-                internal LocalTreeNode AddToTree() =>
-                    _nodes.Values
+                internal LocalTreeNode
+                    AddToTree() =>
+                    _rootNode.Nodes.Values
                     .Select(rootNode => rootNode.AddToTree())
                     .FirstOrDefault();
 
-                IDictionary<string, Node>
-                    _nodes = new SortedDictionary<string, Node>();
-                uint
-                    _nPrevLineNo = 0;
+                RootNode
+                    _rootNode = new RootNode();
             }
         }
     }

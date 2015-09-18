@@ -12,20 +12,19 @@ namespace DoubleFile
             class Node
             {
                 internal
-                    Node(string in_str, uint nLineNo, ulong nLength, int nAllFilesHash, IReadOnlyList<int> lsFilesHereHashes,
-                    IDictionary<string, Node> nodes, uint nPrevLineNo)
+                    Node(string strPath, uint nLineNo, ulong nLength, int nAllFilesHash, IReadOnlyList<int> lsFilesHereHashes, RootNode rootNode)
                 {
                     if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                         return;
 
-                    Util.Assert(1301.2303m, 0 < nLineNo);
-                    _nodes = nodes;
-                    _nPrevLineNo = nPrevLineNo;
+                    _rootNode = rootNode;
+                    _nPrevLineNo = _rootNode.PrevLineNo;
+                    _rootNode.PrevLineNo = nLineNo;
 
-                    if (false == in_str.EndsWith(@":\"))
-                        Util.Assert(1301.2304m, in_str.Trim().EndsWith(@"\") == false);
+                    if (false == strPath.EndsWith(@":\"))
+                        Util.Assert(1301.2304m, strPath.Trim().EndsWith(@"\") == false);
 
-                    _strPath = in_str;
+                    _strPath = strPath;
                     _nLineNo = nLineNo;
                     _nLength = nLength;
                     _nAllFilesHash = nAllFilesHash;
@@ -47,15 +46,15 @@ namespace DoubleFile
                     Util.Assert(99629, 3 < _strPath.Length);
 
                     var strParent = _strPath.Remove(nIndex);
-                    var nodeParent = _nodes.TryGetValue(strParent);
+                    var nodeParent = _rootNode.Nodes.TryGetValue(strParent);
 
                     if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                         return;
 
                     if (null == nodeParent)
                     {
-                        nodeParent = new Node(strParent, _nPrevLineNo, 0, 0, null, _nodes, _nPrevLineNo);
-                        _nodes.Add(strParent, nodeParent);
+                        nodeParent = new Node(strParent, _nLineNo, 0, 0, null, _rootNode);
+                        _rootNode.Nodes.Add(strParent, nodeParent);
                     }
 
                     if (null == nodeParent._subNodes.TryGetValue(_strPath))
@@ -76,10 +75,10 @@ namespace DoubleFile
                     {
                         var subNode = _subNodes.Values.First();
 
-                        if (this == _nodes.Values.First())
+                        if (this == _rootNode.Nodes.Values.First())
                         {
                             Util.WriteLine(_strPath + " cull all root node single-chains");
-                            _nodes = _subNodes;
+                            _rootNode.Nodes = _subNodes;
                             subNode._bUseShortPath = false;
                             treeNode = subNode.AddToTree();
 
@@ -117,8 +116,8 @@ namespace DoubleFile
                     return treeNode;
                 }
 
-                IDictionary<string, Node>
-                    _nodes = null;
+                RootNode
+                    _rootNode = null;
                 bool
                     _bUseShortPath = true;
                 readonly IDictionary<string, Node>

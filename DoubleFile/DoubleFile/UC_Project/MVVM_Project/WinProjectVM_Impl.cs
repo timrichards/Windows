@@ -62,7 +62,13 @@ namespace DoubleFile
                     }
                 }
 
-                Util.Assert(99857, i < nCount);
+                if (i >= nCount)
+                {
+                    var lvItemProjectVM = new LVitem_ProjectVM(strLine.Split('\t'));
+
+                    Util.Assert(99857, FileParse.ksNotSaved == lvItemProjectVM.Status);
+                    // can't seem to add the unsaved listing to the project LV
+                }
             }
 
             LocalIsoStore.DeleteFile(Metadata);

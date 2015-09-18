@@ -294,20 +294,6 @@ namespace DoubleFile
                     using (var sw = new StreamWriter(LocalIsoStore.CreateFile(strIsoFile)))
                         sw.Write("" + sbOut);
                 }
-                else
-                {
-                    Util.Assert(99988, false == LocalIsoStore.FileExists(strIsoFile));
-
-                    try
-                    {
-                        LocalIsoStore.DeleteFile(strIsoFile);
-                    }
-                    catch (Exception e)
-                    {
-                        MBoxStatic.ShowOverlay("Couldn't overwrite file.\n" + e.GetBaseException().Message, "Edit Listing File");
-                        return false;
-                    }
-                }
 
                 using (var sw = new StreamWriter(LocalIsoStore.OpenFile(strIsoFile, FileMode.Append)))
                     Util.CopyStream(sr, sw, (buffer, nRead) =>

@@ -327,9 +327,16 @@ namespace DoubleFile
         internal void
             RemoveListingFile()
         {
-            if (SelectedItems().Any(lvItem => lvItem.WouldSave) &&
+            var strMessage = "";
+
+            if (SelectedItems().Any(lvItem => lvItem.WouldSave))
+                strMessage = "Selected listings have";
+            else if (Unsaved)
+                strMessage = "Project has";
+
+            if ((0 < strMessage.Length) &&
                 (MessageBoxResult.Yes !=
-                MBoxStatic.ShowOverlay("Selected listings have not been saved. Continue?", "Remove Listing File",
+                MBoxStatic.ShowOverlay(strMessage + " not been saved. Continue?", "Remove Listing File",
                 MessageBoxButton.YesNo)))
             {
                 return;

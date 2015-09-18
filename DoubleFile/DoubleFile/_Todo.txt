@@ -4,6 +4,7 @@
 - slider is skipping desired location
 - select clone TreeSelect_FolderDetailUpdated
 - set progress to current window: e.g. search
+	- use the M:UI progress indicator for uninterruptible waits such as setting up and searching nearest
 - restore goofball
 - treemap doesn't always draw when zoomed into a folder with many files, mismatching proper user selection rect
 - treemap still selects the tooltip when closing extra window.

@@ -11,58 +11,50 @@ namespace DoubleFile
             // can't be struct because of object ==
             class Node
             {
-                Node(string in_str, uint nPrevLineNo, uint nLineNo)
+                internal
+                    Node(string in_str, uint nLineNo, ulong nLength, int nAllFilesHash, IReadOnlyList<int> lsFilesHereHashes,
+                    IDictionary<string, Node> nodes, uint nPrevLineNo)
                 {
-                    _strPath = in_str;
-                    _nPrevLineNo = nPrevLineNo;
-                    _nLineNo = nLineNo;
+                    if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
+                        return;
 
                     Util.Assert(1301.2303m, 0 < nLineNo);
-
-                    if (false == _strPath.EndsWith(@":\"))
-                        Util.Assert(1301.2304m, _strPath.Trim().EndsWith(@"\") == false);
-                }
-
-                internal
-                    Node(
-                        string in_str,
-                        uint nPrevLineNo, uint nLineNo,
-                        ulong nLength,
-                        int nAllFilesHash, IReadOnlyList<int> lsFilesHereHashes,
-                        IDictionary<string, Node> nodes)
-                    : this(in_str, nPrevLineNo, nLineNo)
-                {
                     _nodes = nodes;
+                    _nPrevLineNo = nPrevLineNo;
+
+                    if (false == in_str.EndsWith(@":\"))
+                        Util.Assert(1301.2304m, in_str.Trim().EndsWith(@"\") == false);
+
+                    _strPath = in_str;
+                    _nLineNo = nLineNo;
                     _nLength = nLength;
                     _nAllFilesHash = nAllFilesHash;
-                    _lsFilesHereHashes = lsFilesHereHashes;
+                    _lsFilesHereHashes = lsFilesHereHashes ?? new int[0];
+
+                    // Path.GetDirectoryName() does not preserve filesystem root
+
+                    var nIndex = _strPath.LastIndexOf('\\');
+
+                    if (0 > nIndex)
+                    {
+                        Util.Assert(99633, 2 == _strPath.Length);
+                        Util.Assert(99632, 'A' <= _strPath[0]);
+                        Util.Assert(99631, 'Z' >= _strPath[0]);
+                        Util.Assert(99630, ':' == _strPath[1]);
+                        return;
+                    }
+
+                    Util.Assert(99629, 3 < _strPath.Length);
+
+                    var strParent = _strPath.Remove(nIndex);
+                    var nodeParent = _nodes.TryGetValue(strParent);
 
                     if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                         return;
 
-                    // Path.GetDirectoryName() does not preserve filesystem root
-
-                    var strParent = _strPath;
-                    var nIndex = strParent.LastIndexOf('\\');
-
-                    if (0 > nIndex)
-                    {
-                        Util.Assert(99633, 2 == strParent.Length);
-                        Util.Assert(99632, 'A' <= strParent[0]);
-                        Util.Assert(99631, 'Z' >= strParent[0]);
-                        Util.Assert(99630, ':' == strParent[1]);
-                        return;
-                    }
-
-                    Util.Assert(99629, 3 < strParent.Length);
-
-                    strParent = strParent.Remove(nIndex);
-
-                    var nodeParent = _nodes.TryGetValue(strParent);
-
                     if (null == nodeParent)
                     {
-                        nodeParent = new Node(strParent, nPrevLineNo, nLineNo);
+                        nodeParent = new Node(strParent, _nPrevLineNo, 0, 0, null, _nodes, _nPrevLineNo);
                         _nodes.Add(strParent, nodeParent);
                     }
 
@@ -84,7 +76,7 @@ namespace DoubleFile
                     {
                         var subNode = _subNodes.Values.First();
 
-                        if (this == _nodes?.Values.First())
+                        if (this == _nodes.Values.First())
                         {
                             Util.WriteLine(_strPath + " cull all root node single-chains");
                             _nodes = _subNodes;
@@ -119,8 +111,8 @@ namespace DoubleFile
                         treeNode = new LocalTreeNode(strShortPath);
                     }
 
-                    treeNode.NodeDatum =
-                        new NodeDatum(new DetailsDatum(_nPrevLineNo, _nLineNo));  // this is almost but not quite always newly assigned here.
+                    treeNode.NodeDatum = new NodeDatum(new DetailsDatum(
+                        _nPrevLineNo, _nLineNo, _nLength, _nAllFilesHash, _lsFilesHereHashes));  // this is almost but not quite always newly assigned here.
 
                     return treeNode;
                 }
@@ -129,7 +121,7 @@ namespace DoubleFile
                     _nodes = null;
                 bool
                     _bUseShortPath = true;
-                readonly SortedDictionary<string, Node>
+                readonly IDictionary<string, Node>
                     _subNodes = new SortedDictionary<string, Node>();
                 readonly string 
                     _strPath = null;

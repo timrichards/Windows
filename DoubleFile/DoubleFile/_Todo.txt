@@ -1,4 +1,5 @@
-﻿- slider is skipping desired location
+﻿- Deserialize: can't seem to add the unsaved listing to the project LV
+- slider is skipping desired location
 - select clone TreeSelect_FolderDetailUpdated
 - set progress to current window: e.g. search
 - restore goofball

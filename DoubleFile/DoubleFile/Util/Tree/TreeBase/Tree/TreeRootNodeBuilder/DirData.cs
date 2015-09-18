@@ -19,17 +19,16 @@ namespace DoubleFile
                 {
                     var str = str_in.TrimEnd('\\');
 
-                    Nodes.Add(str, new Node(str, _nPrevLineNo, nLineNo, nLength, nAllFilesHash, lsFilesHereHashes, Nodes));
-                    _nPrevLineNo = nLineNo;
+                    _nodes.Add(str, new Node(str, nLineNo, nLength, nAllFilesHash, lsFilesHereHashes, _nodes, _nPrevLineNo));
                 }
 
                 internal LocalTreeNode AddToTree() =>
-                    Nodes.Values
+                    _nodes.Values
                     .Select(rootNode => rootNode.AddToTree())
                     .FirstOrDefault();
 
-                internal readonly IDictionary<string, Node>
-                    Nodes = new SortedDictionary<string, Node>();
+                IDictionary<string, Node>
+                    _nodes = new SortedDictionary<string, Node>();
                 uint
                     _nPrevLineNo = 0;
             }

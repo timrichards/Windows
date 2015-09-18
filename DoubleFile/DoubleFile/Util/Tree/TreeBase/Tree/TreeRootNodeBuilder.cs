@@ -193,12 +193,38 @@ namespace DoubleFile
                     }
                 }
 
-                var dirData =
-                    _lvItemProjectVM.ListingFile
-                    .ReadLines(99641)
-                    .Where(s => s.StartsWith(ksLineType_Start))
-                    .Select(s => new DirData((uint)s.Split('\t')[1].ToInt()))
-                    .FirstOnlyAssert();
+                RootNode rootNode = null;
+
+                {
+                    var bHit = false;
+
+                    var asLines =
+                        _lvItemProjectVM.ListingFile
+                        .ReadLines(99641)
+                        .TakeWhile(s =>
+                        {
+                            if (bHit)
+                                return false;
+
+                            bHit = s.StartsWith(ksLineType_Start);
+                            return true;
+                        })
+                        .ToArray();
+
+                    var driveLetter =
+                        asLines
+                        .Where(s => s.StartsWith(ksLineType_Path))
+                        .Select(s => s.Split('\t')[2][0])
+                        .FirstOnlyAssert();
+
+                    var nFirstLineNo =
+                        asLines
+                        .Where(s => s.StartsWith(ksLineType_Start))
+                        .Select(s => (uint)s.Split('\t')[1].ToInt())
+                        .FirstOnlyAssert();
+
+                    rootNode = new RootNode(nFirstLineNo, driveLetter);
+                }
 
                 var nAllFilesHash = 0;
                 var lsFilesHereHashes = new List<int> { };
@@ -233,7 +259,7 @@ namespace DoubleFile
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {
-                        dirData.AddToTree(
+                        rootNode.AddToTree(
                             asLine[2],
                             (uint)("" + asLine[1]).ToInt(),
                             ("" + asLine[knColLength]).ToUlong(),
@@ -244,7 +270,7 @@ namespace DoubleFile
                     }
                 }
 
-                var rootTreeNode = dirData.AddToTree();
+                var rootTreeNode = rootNode.AddToTree();
 
                 if (null != rootTreeNode)
                 {

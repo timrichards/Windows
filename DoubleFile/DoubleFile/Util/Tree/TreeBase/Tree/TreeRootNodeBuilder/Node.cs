@@ -21,10 +21,6 @@ namespace DoubleFile
                     _nPrevLineNo = _rootNode.PrevLineNo;
                     _rootNode.PrevLineNo = nLineNo;
 
-                    if (false == strPath.EndsWith(@":\"))
-                        Util.Assert(1301.2304m, strPath.Trim().EndsWith(@"\") == false);
-
-                    _strPath = strPath;
                     _nLineNo = nLineNo;
                     _nLength = nLength;
                     _nAllFilesHash = nAllFilesHash;
@@ -32,14 +28,13 @@ namespace DoubleFile
 
                     // Path.GetDirectoryName() does not preserve filesystem root
 
+                    _strPath = strPath;
+
                     var nIndex = _strPath.LastIndexOf('\\');
 
                     if (0 > nIndex)
                     {
                         Util.Assert(99633, 2 == _strPath.Length);
-                        Util.Assert(99632, 'A' <= _strPath[0]);
-                        Util.Assert(99631, 'Z' >= _strPath[0]);
-                        Util.Assert(99630, ':' == _strPath[1]);
                         return;
                     }
 
@@ -67,15 +62,14 @@ namespace DoubleFile
                     if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                         return new LocalTreeNode();
 
-                    var nIndex = _strPath.LastIndexOf('\\');
-                    var strShortPath = _bUseShortPath ? _strPath.Substring(nIndex + 1) : _strPath;
+                    var strShortPath = _bUseShortPath ? _strPath.Substring(_strPath.LastIndexOf('\\') + 1) : _strPath;
                     LocalTreeNode treeNode = null;
 
                     if (1 == _subNodes.Count)
                     {
                         var subNode = _subNodes.Values.First();
 
-                        if (this == _rootNode.Nodes.Values.First())
+                        if (ReferenceEquals(this, _rootNode.Nodes.Values.First()))
                         {
                             Util.WriteLine(_strPath + " cull all root node single-chains");
                             _rootNode.Nodes = _subNodes;

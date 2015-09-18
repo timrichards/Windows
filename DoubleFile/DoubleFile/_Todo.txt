@@ -1,4 +1,5 @@
-﻿- Deserialize: can't seem to add the unsaved listing to the project LV
+﻿- change drive letter did not change one line and screwed up culling, which is fixed. do a check for [A-Z}:\ when verifying the file.
+- Deserialize: can't seem to add the unsaved listing to the project LV
 - slider is skipping desired location
 - select clone TreeSelect_FolderDetailUpdated
 - set progress to current window: e.g. search
@@ -195,4 +196,4 @@ Specific code areas:
 - Source repository: http://github.com/timrichards/Windows
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
-99628 next low assert
+99627 next low assert

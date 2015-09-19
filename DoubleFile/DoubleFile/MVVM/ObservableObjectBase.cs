@@ -68,8 +68,8 @@ namespace DoubleFile
             if (null == PropertyChanged)
                 return false;
 
-            Util.UIthread(99889, () => PropertyChanged(this, new PropertyChangedEventArgs(strPropName)));
-            return true;
+            Util.UIthread(99889, () => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(strPropName)));
+            return null != PropertyChanged;
         }
 
         #endregion // INotifyPropertyChanged Members    

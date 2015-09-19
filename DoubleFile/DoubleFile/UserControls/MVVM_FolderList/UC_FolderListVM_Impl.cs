@@ -62,17 +62,17 @@ namespace DoubleFile
             NoResultsVisibility = Visibility.Collapsed;
             RaisePropertyChanged("NoResultsVisibility");
 
-            while (0 < _nRefCount)
-                Util.Block(20);
-
-            if (_bDisposed)
-                return;
-
-            _cts = new CancellationTokenSource();
-            ++_nRefCount;
-
             Util.ThreadMake(() =>
             {
+                while (0 < _nRefCount)
+                    Util.Block(20);
+
+                if (_bDisposed)
+                    return;
+
+                _cts = new CancellationTokenSource();
+                ++_nRefCount;
+
                 var bNoResults = true;
                 var tuple = initiatorTuple.Item1;
                 var searchFolder = tuple.treeNode;
@@ -141,9 +141,13 @@ namespace DoubleFile
                     NoResultsFolder = searchFolder.Text;
                     NoResultsVisibility = Visibility.Visible;
                     RaisePropertyChanged("NoResultsFolder");
-                    RaisePropertyChanged("NoResultsVisibility");
+                }
+                else
+                {
+                    NoResultsVisibility = Visibility.Collapsed;
                 }
 
+                RaisePropertyChanged("NoResultsVisibility");
                 --_nRefCount;
                 GC.Collect();
             });

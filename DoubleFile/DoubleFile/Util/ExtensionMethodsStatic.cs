@@ -151,7 +151,7 @@ namespace DoubleFile
 
             var s =
                 string.Join("",
-                ("" + source).Where(c => Char.IsControl(c) == false))
+                ("" + source).Where(c => false == char.IsControl(c)))
                 .Trim();
 
             return (0 < s.Length) ? s : null;
@@ -239,10 +239,7 @@ namespace DoubleFile
         }
 
         static internal Rect
-            GetRect(this Window window)
-        {
-            return new Rect(window.Left, window.Top, window.Width, window.Height);
-        }
+            GetRect(this Window window) => new Rect(window.Left, window.Top, window.Width, window.Height);
 
         static internal T
             SetRect<T>(this T window, Rect r) where T : Window

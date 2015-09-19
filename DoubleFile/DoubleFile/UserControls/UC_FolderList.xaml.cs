@@ -1,6 +1,4 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
-
-namespace DoubleFile
+﻿namespace DoubleFile
 {
     /// <summary>
     /// Interaction logic for WinFolderList.xaml

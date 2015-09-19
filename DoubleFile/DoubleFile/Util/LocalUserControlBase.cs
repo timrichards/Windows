@@ -29,8 +29,6 @@ namespace DoubleFile
 
         public void OnNavigatedFrom(NavigationEventArgs e)
         {
-            //Util.UIthread(99627, () => LocalOwner.GetLocalModernFrame().HideProgressbar());
-            
             if (false == _bNavigatedFromAlready)
                 LocalNavigatedFrom();
         }
@@ -39,7 +37,6 @@ namespace DoubleFile
 
         public void OnNavigatedTo(NavigationEventArgs e)
         {
-            //Util.UIthread(99626, () => LocalOwner?.GetLocalModernFrame().HideProgressbar());
             Statics.CurrentPage = this;
             LocalOwner = (LocalModernWindowBase)Application.Current.MainWindow;
 

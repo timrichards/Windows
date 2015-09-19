@@ -213,8 +213,7 @@ namespace DoubleFile
                 "/DoubleFile;component/Assets/LocalModernWindow.xaml",
                 "/DoubleFile;component/Assets/LocalMUIdark.xaml",
                 "/DoubleFile;component/Assets/Strings.xaml",
-                "/DoubleFile;component/Assets/LocalStyles.xaml",
-                "/DoubleFile;component/Assets/LocalModernFrame.xaml"
+                "/DoubleFile;component/Assets/LocalStyles.xaml"
             })
                 Application.Current?.Resources.MergedDictionaries.Add(new ResourceDictionary
             {

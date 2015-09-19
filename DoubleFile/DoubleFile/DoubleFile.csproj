@@ -589,6 +589,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Util\LocalModernFrame.cs" />
     <Resource Include="_Scracthpad.txt" />
     <Resource Include="Assets\ic_assistant_photo_white_18dp.png" />
     <Resource Include="Assets\ic_content_copy_white_18dp.png" />
@@ -596,6 +597,10 @@
     <Resource Include="Assets\ic_save_white_18dp.png" />
     <Resource Include="Assets\ic_error_black_18dp.png" />
     <Resource Include="Assets\ic_skip_next_white_18dp.png" />
+    <Page Include="Assets\LocalModernFrame.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Content Include="UC_Project\7z920x86\7z.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

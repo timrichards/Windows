@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Linq;
+using System.Reflection;
 
 namespace DoubleFile
 {
@@ -102,6 +103,17 @@ namespace DoubleFile
             return str;
         }
 
+        public static T
+            GetDependencyObjectField<T>(Type dependencyObjectType, string dpName) where T : class
+        {
+            var fieldInfo = dependencyObjectType.GetField(dpName, BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+
+            if (null == fieldInfo)
+                return null;
+
+            return fieldInfo.GetValue(null).As<T>();
+        }
+
         static internal string
             FormatSize(string in_str, bool bBytes = false) =>
             FormatSize((in_str ?? "0").ToUlong(), bBytes);
@@ -166,7 +178,7 @@ namespace DoubleFile
         }
 
         static internal string
-            Localized(string key) => App.Current?.Resources[key]?.ToString();
+            Localized(string key) => Application.Current?.Resources[key]?.ToString();
 
         static internal void
             LocalDispose(IEnumerable<IDisposable> ieDisposable)

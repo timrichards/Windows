@@ -9,6 +9,9 @@ namespace DoubleFile
 {
     abstract public class LocalModernWindowBase : ModernWindow, ILocalWindow
     {
+        internal LocalModernFrame
+            GetLocalModernFrame() => (LocalModernFrame)GetTemplateChild("ContentFrame");
+
         public static Visibility GetDarkened(DependencyObject obj) => (Visibility)obj.GetValue(DarkenedProperty);
         public static void SetDarkened(DependencyObject obj, Visibility value) => obj.SetValue(DarkenedProperty, value);
         public static readonly DependencyProperty DarkenedProperty = DependencyProperty.RegisterAttached(

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Globalization;
+﻿using FirstFloor.ModernUI.Windows.Controls;
 
 namespace DoubleFile
 {

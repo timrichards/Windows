@@ -26,6 +26,8 @@ namespace DoubleFile
                 _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99701, TreeSelect_FolderDetailUpdated));
                 NoResultsVisibility = Visibility.Collapsed;
                 RaisePropertyChanged("NoResultsVisibility");
+                ProgressbarVisibility = Visibility.Collapsed;
+                RaisePropertyChanged("ProgressbarVisibility");
 
                 var folderDetail = LocalTV.TreeSelect_FolderDetail;
 
@@ -61,6 +63,8 @@ namespace DoubleFile
             _cts.Cancel();
             NoResultsVisibility = Visibility.Collapsed;
             RaisePropertyChanged("NoResultsVisibility");
+            ProgressbarVisibility = Visibility.Visible;
+            RaisePropertyChanged("ProgressbarVisibility");
 
             Util.ThreadMake(() =>
             {
@@ -113,7 +117,7 @@ namespace DoubleFile
                             _lsMatchingFolders
                             .OrderByDescending(tupleA => tupleA.Item1);
 
-                        _lsMatchingFolders = null;
+                        _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_FolderListVM>>();
 
                         var nMatch = 0;
                         var bAlternate = false;
@@ -148,6 +152,8 @@ namespace DoubleFile
                 }
 
                 RaisePropertyChanged("NoResultsVisibility");
+                ProgressbarVisibility = Visibility.Collapsed;
+                RaisePropertyChanged("ProgressbarVisibility");
                 --_nRefCount;
             });
         }
@@ -256,7 +262,7 @@ namespace DoubleFile
         }
 
         ConcurrentBag<Tuple<int, LVitem_FolderListVM>>
-            _lsMatchingFolders = null;
+            _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_FolderListVM>>();
         CancellationTokenSource
             _cts = new CancellationTokenSource();
         int

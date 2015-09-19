@@ -16,7 +16,7 @@ namespace DoubleFile
 
         internal bool CantDupeThisUsercontrol = false;
 
-        protected Window
+        protected LocalModernWindowBase
             LocalOwner = null;
 
         public void OnFragmentNavigation(FragmentNavigationEventArgs e)
@@ -27,14 +27,21 @@ namespace DoubleFile
         virtual protected void LocalFragmentNavigation(string strFragment) { }
         string _strFragment = null;
 
-        public void OnNavigatedFrom(NavigationEventArgs e) { if (false == _bNavigatedFromAlready) LocalNavigatedFrom(); }
+        public void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            //Util.UIthread(99627, () => LocalOwner.GetLocalModernFrame().HideProgressbar());
+            
+            if (false == _bNavigatedFromAlready)
+                LocalNavigatedFrom();
+        }
         virtual protected void LocalNavigatedFrom() { }
         bool _bNavigatedFromAlready = false;
 
         public void OnNavigatedTo(NavigationEventArgs e)
         {
+            //Util.UIthread(99626, () => LocalOwner?.GetLocalModernFrame().HideProgressbar());
             Statics.CurrentPage = this;
-            LocalOwner = App.Current.MainWindow;
+            LocalOwner = (LocalModernWindowBase)Application.Current.MainWindow;
 
             if (false == _bNavigatedFromAlready)
                 LocalNavigatedTo();

@@ -127,10 +127,10 @@ namespace DoubleFile
                 if (LV_TreeListChildrenVM.kChildSelectedOnNext == initiatorTuple.Item2)
                     return;
 
-                var tuple = initiatorTuple.Item1;
+                var folderDetail = initiatorTuple.Item1;
 
                 Util.Write("M");
-                RenderD(tuple.treeNode, initiatorTuple.Item2);
+                RenderD(folderDetail.treeNode, initiatorTuple.Item2);
                 _bTreeSelect = false;
             }));
 

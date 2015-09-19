@@ -46,6 +46,9 @@ namespace DoubleFile
                 if (null != _allListingsHashV2)
                     return _allListingsHashV2.Value;
 
+                // 7/1/15 DoThreadFactory() is now synchronous so TreeRootNodeBuilder can use folder scorer
+                //Util.Assert(99906, false);        9/18/15
+
                 if (null == _LVprojectVM)
                 {
                     Util.Assert(99959, false);

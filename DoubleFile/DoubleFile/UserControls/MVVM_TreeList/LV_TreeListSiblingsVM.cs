@@ -66,13 +66,13 @@ namespace DoubleFile
                 return;
             }
 
-            var tuple = initiatorTuple.Item1;
+            var folderDetail = initiatorTuple.Item1;
             var bSiblingFolder = (UC_TreeMapVM.kSelRectAndTooltip != initiatorTuple.Item2);
 
             Util.Write("L");
 
             if (bSiblingFolder &&
-                Populate(tuple.treeNode))
+                Populate(folderDetail.treeNode))
             {
                 return;
             }
@@ -80,8 +80,8 @@ namespace DoubleFile
             {
                 var siblingFolder =
                     bSiblingFolder
-                    ? tuple.treeNode
-                    : tuple.treeNode.Parent;
+                    ? folderDetail.treeNode
+                    : folderDetail.treeNode.Parent;
 
                 ItemsCast
                     .Where(lvItem => lvItem.LocalTreeNode == siblingFolder)
@@ -92,11 +92,11 @@ namespace DoubleFile
                 return;
 
             // no-op on descending treemap subfolders.
-            if (false == ReferenceEquals(tuple.treeNode.Parent, _selectedItem?.LocalTreeNode))
+            if (false == ReferenceEquals(folderDetail.treeNode.Parent, _selectedItem?.LocalTreeNode))
                 return;
 
             _lvChildrenVM.ItemsCast
-                .Where(lvItem => lvItem.LocalTreeNode == tuple.treeNode)
+                .Where(lvItem => lvItem.LocalTreeNode == folderDetail.treeNode)
                 .FirstOnlyAssert(_lvChildrenVM.SelectedItem_Set);
         }
 

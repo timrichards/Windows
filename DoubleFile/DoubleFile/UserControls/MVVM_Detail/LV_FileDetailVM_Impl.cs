@@ -15,9 +15,9 @@ namespace DoubleFile
 
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99707, initiatorTuple =>
             {
-                var tuple = initiatorTuple.Item1;
+                var folderDetailA = initiatorTuple.Item1;
 
-                Util.Write("E"); if (null != tuple.treeNode) LocalPath_Set(tuple.treeNode);
+                Util.Write("E"); if (null != folderDetailA.treeNode) LocalPath_Set(folderDetailA.treeNode);
             }));
 
             var folderDetail = LocalTV.TreeSelect_FolderDetail;

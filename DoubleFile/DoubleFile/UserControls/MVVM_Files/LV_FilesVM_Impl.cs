@@ -37,22 +37,22 @@ namespace DoubleFile
 
         void TreeSelect_FileListUpdated(Tuple<TreeSelect.FileListUpdated, int> initiatorTuple)
         {
-            var tuple = initiatorTuple.Item1;
+            var fileList = initiatorTuple.Item1;
 
             Util.Write("J");
-            if (tuple.treeNode == _treeNode)
+            if (fileList.treeNode == _treeNode)
                 return;
 
             SelectedItem_Set(null, initiatorTuple.Item2);
             ClearItems();
-            _treeNode = tuple.treeNode;
+            _treeNode = fileList.treeNode;
 
-            if (null == tuple.ieFiles)
+            if (null == fileList.ieFiles)
                 return;
 
             var lsItems = new List<LVitem_FilesVM>();
 
-            foreach (var strFileLine in tuple.ieFiles)
+            foreach (var strFileLine in fileList.ieFiles)
             {
                 var asFileLine =
                     strFileLine
@@ -75,7 +75,7 @@ namespace DoubleFile
                     lvItem.LSduplicates =
                         lsDuplicates
                         .Where(dupe =>
-                            (dupe.LVitemProjectVM.ListingFile != tuple.strListingFile) ||    // exactly once every query
+                            (dupe.LVitemProjectVM.ListingFile != fileList.strListingFile) ||    // exactly once every query
                             (dupe.LineNumber != nLine));
 
                     lvItem.SameVolume =
@@ -89,9 +89,9 @@ namespace DoubleFile
 
             Util.UIthread(99813, () => Add(lsItems));
 
-            if (null != tuple.strFilename)
+            if (null != fileList.strFilename)
             {
-                this[tuple.strFilename].FirstOnlyAssert(fileVM =>
+                this[fileList.strFilename].FirstOnlyAssert(fileVM =>
                     SelectedItem_Set(fileVM, initiatorTuple.Item2));
             }
         }

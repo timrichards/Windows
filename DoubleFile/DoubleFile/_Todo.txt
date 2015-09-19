@@ -2,7 +2,6 @@
 - change drive letter did not change one line and screwed up culling, which is fixed. do a check for [A-Z}:\ when verifying the file.
 - Deserialize: can't seem to add the unsaved listing to the project LV
 - slider is skipping desired location
-- select clone TreeSelect_FolderDetailUpdated
 - set progress to current window: e.g. search
 	- use the M:UI progress indicator for uninterruptible waits such as setting up and searching nearest
 - restore goofball
@@ -11,12 +10,8 @@
 - GoTo file only works with file list open
 	- Detail doesn't listen for selected file change
 - Click OK on a dialog and Double File disappears behind another app. -fix example: end of save listings it comes to front.
-- Eliminate no files here + just one subfolder from folder score (but why's it different?) -looks ok on 9/6/15
-	- Why does a folder with the same # items as subfolder have a different folder score? (i.e. no files here)
-	- why does e.g. monkey_house have a nFolderScorer of 0? -seems fixed on 9/5/15
-	- SDL small then check outer folder score: 0 0 0 - because the total mean subtracts out. Need to use covariance matrix instead
+- Does a folder with the same # items as subfolder still have a different hash? (i.e. no files here)
 	- Why are some folders white? Why do some folders not say they're duplicated?
-	- What is the distribution of sums of "random" hash folder score?
 - Add folder name to suffix title Tree List: My Documents; Files in Folder: My Documents; Folders Here: My Documents; etc.
 - Option to show drive label and model/serial in Volume text (Nickname)
 - Allow a notes field
@@ -82,7 +77,6 @@
 	- ISaveDirListingsStatus.Status ignores WinProgress.WithWinProgress lambda 
 	- WinProject doesn't test its weak reference which is understandable
 - if (null == tuple.Item3.NodeDatum.TreeMapFiles)     // TODO: Why would this be null?
-- rename "tuple" in TreeSelect clients
 - same volume / solitary red forecolors are too similar
 - object.MemberwiseClone()
 - check and remove Linq/enumeration for arrays - prob OK: tests for ICollection

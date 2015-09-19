@@ -18,17 +18,17 @@ namespace DoubleFile
 
         void VolumeDetailUpdated(Tuple<TreeSelect.VolumeDetailUpdated, int> initiatorTuple)
         {
-            var tuple = initiatorTuple.Item1;
+            var volumeDetail = initiatorTuple.Item1;
 
             Util.Write("H");
-            Title = tuple.strVolume;
+            Title = volumeDetail.strVolume;
             ClearItems();
 
-            if (null == tuple.ieDetail)
+            if (null == volumeDetail.ieDetail)
                 return;
 
             Util.UIthread(99819, () =>
-                Add(tuple.ieDetail.Select(ieLine => new LVitem_VolumeDetailVM(ieLine.ToList()))));
+                Add(volumeDetail.ieDetail.Select(ieLine => new LVitem_VolumeDetailVM(ieLine.ToList()))));
         }
 
         public void Dispose() => Util.LocalDispose(_lsDisposable);

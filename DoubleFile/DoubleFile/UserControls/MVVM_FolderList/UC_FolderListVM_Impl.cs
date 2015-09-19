@@ -74,8 +74,8 @@ namespace DoubleFile
                 ++_nRefCount;
 
                 var bNoResults = true;
-                var tuple = initiatorTuple.Item1;
-                var searchFolder = tuple.treeNode;
+                var folderDetail = initiatorTuple.Item1;
+                var searchFolder = folderDetail.treeNode;
 
                 Util.Closure(() =>
                 {
@@ -149,7 +149,6 @@ namespace DoubleFile
 
                 RaisePropertyChanged("NoResultsVisibility");
                 --_nRefCount;
-                GC.Collect();
             });
         }
 

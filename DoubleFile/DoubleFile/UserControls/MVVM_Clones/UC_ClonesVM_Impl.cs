@@ -90,10 +90,19 @@ namespace DoubleFile
 
         void TreeSelect_FolderDetailUpdated(Tuple<TreeSelect.FolderDetailUpdated, int> initiatorTuple)
         {
-            var tuple = initiatorTuple.Item1;
+            var folderDetail = initiatorTuple.Item1;
 
             ItemsCast
-                .Where(lvItem => lvItem.WithLocalTreeNode(t => t == tuple.treeNode))
+                .Where(lvItem =>
+                {
+                    foreach (var treeNode in lvItem.TreeNodes)
+                    {
+                        if (ReferenceEquals(treeNode, folderDetail.treeNode))
+                            return true;
+                    }
+
+                    return false;
+                })
                 .FirstOnlyAssert(SelectedItem_Set);
         }
 

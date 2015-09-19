@@ -109,7 +109,7 @@ namespace DoubleFile
             IsAborted = false;
             _blockingFrame = new LocalDispatcherFrame(99881);
             _thread = Util.ThreadMake(() => { Go(); _blockingFrame.Continue = false; });
-        //    _blockingFrame.PushFrameTrue();
+        //    _blockingFrame.PushFrameTrue();        9/18/15
             return this;
         }
 

@@ -170,21 +170,22 @@ Coding purpose:
 Skills used:
 - WinMerge; GitHub; Spy++; JetBrains dotMemory and dotTrace; Visual Studio 2015
 - Reactive Extensions; subject-observer
-- Weak reference; try-catch; extension methods; closures; C# 4; Linq to objects; generics
+- Weak reference; try-catch; extension methods; closures; C# 6; Linq to objects; generics
 - External process (7-zip.exe); Native methods (PInvoke); bit shifting; datum ints; binary search
 - Threading; parallel; dispatcher frame
-- Interactivity (System.Windows); triggers; behaviors; DRY xaml in styles
+- System.Windows.Interactivity; triggers; templates; dependency properties; DRY xaml in styles
 
 Specific code areas:
-- UX surrounding compressed project file containing any number of flat directory listings
-- Metro UI; consistent page-by-page, based on M:UI
+- UX surrounding compressed project file holding nested directory listings and metadata
+- Metro/modern UI; consistent page-by-page, based on M:UI
 - Progress UI
 - String table
-- Bespoke UX; tree list (vs. tree view); tree map (with tool tip; animation; drill-down hit testing)
+- Bespoke UX: tree list (vs. tree view); tree map (tool tip; animation; drill-down hit testing)
 - Regex search; duplicate files and folders; Nearest folders; studied ANOVA; LSH; MinHash; Jaccard
 - Fast long-path large fetch native directory listings
 - Fast 1 MB sample faux checksum per file on your drive (512K from head; 512K from tail)
-- 2nd assembly, view of Double File: simplified view for current drive, without checksum.
+- 2nd assembly, view of Double File: simplified view for current drive, without checksum
+- Began without a System.Windows.Controls refernce: now it does not reference System.Windows.Forms
 
 	On the surface, Double File may look like WinDirStat (from which it borrows code) or similar graphical drive utilization utilities: e.g. the second assembly 'Volume Treemap'. However, Double File is project-based: it saves file checksums in directory listings you store locally. It facilitates planning and transitioning between computers and operating systems: snapshot your drive and safely archive it.
 	Listings can be searched when volumes are off site. Can read any volume mounted in Windows Explorer, including Linux and Mac volumes. Supports long path names.

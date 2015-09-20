@@ -82,8 +82,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\ModernUI.WPF.1.0.6\lib\net45\FirstFloor.ModernUI.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
-    <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml">
@@ -91,7 +91,6 @@
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

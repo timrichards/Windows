@@ -68,7 +68,7 @@ namespace DoubleFile
             {
                 case NativeMethods.FolderBrowserDialogMessage.Initialized:
                 {
-                    if (0 < SelectedPath.Length)
+                    if (0 < (SelectedPath?.Length ?? 0))
                         NativeMethods.SendMessage(hwnd, NativeMethods.FolderBrowserDialogMessage.SetSelection, new IntPtr(1), SelectedPath);
 
                     break;

@@ -79,7 +79,7 @@ namespace DoubleFile
             if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                 return MessageBox.Show(strMessage + "\n(LocalMbox: application shutting down.)", strTitle, buttons ?? MessageBoxButton.OK);
 
-            var mainWindow = MainWindow.WithMainWindow(w => w);
+            var mainWindow = (LocalModernWindowBase)Application.Current.MainWindow;
 
             if (null == mainWindow)
                 return MessageBox.Show(strMessage + "\n(LocalMbox: no main window.)", strTitle, buttons ?? MessageBoxButton.OK);

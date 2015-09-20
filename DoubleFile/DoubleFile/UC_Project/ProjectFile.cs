@@ -76,7 +76,7 @@ namespace DoubleFile
                 {
                     FileName =
                         Path.GetDirectoryName(new Uri(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)
-                        .LocalPath) + @"\UC_Project\7z920x86\7z.exe",
+                        .LocalPath) + @"\UC_Project\7z920x86\7zr.exe",
 
                     CreateNoWindow = true,
                     UseShellExecute = false,

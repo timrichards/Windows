@@ -593,15 +593,13 @@
     <Resource Include="Assets\ic_save_white_18dp.png" />
     <Resource Include="Assets\ic_error_black_18dp.png" />
     <Resource Include="Assets\ic_skip_next_white_18dp.png" />
-    <Content Include="UC_Project\7z920x86\7z.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="UC_Project\7z920x86\7z.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Resource Include="_Todo.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="UC_Project\7z920x86\7zr.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

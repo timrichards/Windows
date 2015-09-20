@@ -2,8 +2,6 @@
 - change drive letter did not change one line and screwed up culling, which is fixed. do a check for [A-Z}:\ when verifying the file.
 - Deserialize: can't seem to add the unsaved listing to the project LV
 - slider is skipping desired location
-- set progress to current window: e.g. search
-	- use the M:UI progress indicator for uninterruptible/passive waits such as setting up and searching nearest
 - restore goofball
 - treemap doesn't always draw when zoomed into a folder with many files, mismatching proper user selection rect
 - treemap still selects the tooltip when closing extra window.
@@ -159,6 +157,7 @@
 - replace .Cast with (ICollection<>)
 - replace IEnumerable with ICollection where possible
 - replace null member vars like Thread with instances so no need to test for null
+- 7zr.exe is the archiver of choice. It is in the LZMA SDK found at http://www.7-zip.org/a/lzma920.tar.bz2
 
 Coding purpose:
 - Built a reusable platform to rapidly create apps: focus on the business logic

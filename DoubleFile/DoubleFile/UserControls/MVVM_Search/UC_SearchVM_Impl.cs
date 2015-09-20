@@ -7,6 +7,8 @@ namespace DoubleFile
 {
     partial class UC_SearchVM : IDisposable, ISearchStatus, IProgressOverlayClosing
     {
+        internal LocalModernWindowBase
+            LocalOwner = null;
         internal Func<bool> IsEditBoxNonEmpty = null;
         bool IsSearchEnabled() => IsEditBoxNonEmpty() && (null == _searchType2);
 
@@ -246,7 +248,7 @@ namespace DoubleFile
                 if (ieLVitems.Any())
                     Util.UIthread(99816, () => Add(ieLVitems));
             }))
-                .ShowOverlay();
+                .ShowOverlay(LocalOwner);
         }
 
         void SearchFoldersAndFiles(bool bSearchFilesOnly = false)
@@ -274,7 +276,7 @@ namespace DoubleFile
             {
                 WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this)
             })
-                .ShowOverlay();
+                .ShowOverlay(LocalOwner);
         }
 
         readonly ListUpdater<bool>

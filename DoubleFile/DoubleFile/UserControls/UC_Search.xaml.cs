@@ -27,7 +27,8 @@ namespace DoubleFile
             {
                 IsEditBoxNonEmpty = () => false == string.IsNullOrWhiteSpace(formEdit_search.Text),
                 Regex = _bRegex,
-                UseNicknames = _bNicknames
+                UseNicknames = _bNicknames,
+                LocalOwner = LocalOwner
             }
                 .Init();
 

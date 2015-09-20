@@ -59,19 +59,18 @@ namespace DoubleFile
         protected Action<ProgressOverlay> _initClient = null;
 
         internal void
-            ShowOverlay()
+            ShowOverlay(LocalModernWindowBase window = null)
         {
-            LocalModernWindowBase mainWindow = null;
             UC_Progress ucProgress = null;
 
             Util.UIthread(99729, () =>
             {
-                mainWindow =
-                    ((LocalModernWindowBase)Application.Current.MainWindow)
-                    .Progress_Darken();
+                if (null == window)
+                    window = ((LocalModernWindowBase)Application.Current.MainWindow);
 
+                window.Progress_Darken();
                 _vm.Init();
-                ucProgress = mainWindow.GetProgressCtl();
+                ucProgress = window.GetProgressCtl();
                 ucProgress.DataContext = _vm;
                 ucProgress.LocalShow();
             });
@@ -85,7 +84,7 @@ namespace DoubleFile
             Util.UIthread(99635, () =>
             {
                 ucProgress.LocalHide();
-                mainWindow.Progress_Undarken();
+                window.Progress_Undarken();
             });
 
             _vm.Dispose();

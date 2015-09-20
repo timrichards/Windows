@@ -10,7 +10,7 @@ namespace DoubleFile
         public void OnNext(Tuple<T, int> value) => _subject.OnNext(value);
         public IDisposable Subscribe(IObserver<Tuple<T, int>> observer) => _subject.Subscribe(observer);
 
-        Subject<Tuple<T, int>>
+        ISubject<Tuple<T, int>>
             _subject = new Subject<Tuple<T, int>>();
     }
 }

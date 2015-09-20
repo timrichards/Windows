@@ -68,7 +68,7 @@ namespace DoubleFile
             {
                 case NativeMethods.FolderBrowserDialogMessage.Initialized:
                 {
-                    if (0 < (SelectedPath?.Length ?? 0))
+                    if (false == string.IsNullOrEmpty(SelectedPath))
                         NativeMethods.SendMessage(hwnd, NativeMethods.FolderBrowserDialogMessage.SetSelection, new IntPtr(1), SelectedPath);
 
                     break;
@@ -78,10 +78,8 @@ namespace DoubleFile
                 {
                     if (IntPtr.Zero != lParam)
                     {
-                        var path = new StringBuilder(260);
-                        var validPath = NativeMethods.SHGetPathFromIDList(lParam, path);
-
-                        NativeMethods.SendMessage(hwnd, NativeMethods.FolderBrowserDialogMessage.EnableOk, IntPtr.Zero, validPath ? new IntPtr(1) : IntPtr.Zero);
+                        NativeMethods.SendMessage(hwnd, NativeMethods.FolderBrowserDialogMessage.EnableOk, IntPtr.Zero,
+                            NativeMethods.SHGetPathFromIDList(lParam, new StringBuilder(260)) ? new IntPtr(1) : IntPtr.Zero);
                     }
 
                     break;

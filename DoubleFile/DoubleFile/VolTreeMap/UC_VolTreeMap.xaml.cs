@@ -1,7 +1,6 @@
 ﻿using FirstFloor.ModernUI.Windows.Controls;
 using System;
 using System.Windows;
-using System.Windows.Forms;
 
 namespace DoubleFile
 {
@@ -23,8 +22,7 @@ namespace DoubleFile
                 ShowNewFolderButton = false
             };
 
-            if (DialogResult.OK !=
-                ModalThread.Go(darkWindow => dlg.ShowDialog(((NativeWindow)(Window)darkWindow))))
+            if (false == (ModalThread.Go(darkWindow => dlg.ShowDialog((Window)darkWindow))))
             {
                 Dispatcher.InvokeShutdown();
                 return;

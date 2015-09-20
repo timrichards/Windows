@@ -37,9 +37,6 @@ namespace DoubleFile
         }
         LVitem_ClonesVM _selectedItem = null;
 
-        internal LVitem_ClonesVM
-            TopItem;
-
         public string WidthFolder => SCW;                   // franken all NaN
         public string WidthClones => SCW;
         public string WidthClonePaths => SCW;

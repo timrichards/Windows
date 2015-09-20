@@ -1,5 +1,4 @@
-﻿- implement FolderBrowserDialog using Ooki and ditch Forms
-- nodeParent = new Node(strParent, _nLineNo, 0, 0, null, _rootNode)
+﻿- nodeParent = new Node(strParent, _nLineNo, 0, 0, null, _rootNode)
 - change drive letter did not change one line and screwed up culling, which is fixed. do a check for [A-Z}:\ when verifying the file.
 - Deserialize: can't seem to add the unsaved listing to the project LV
 - slider is skipping desired location
@@ -182,7 +181,7 @@ Specific code areas:
 - Progress UI
 - String table
 - Bespoke UX; tree list (vs. tree view); tree map (with tool tip; animation; drill-down hit testing)
-- Search with regex; statistics: ANOVA: similar folders; duplicate files and folders
+- Regex search; duplicate files and folders; Nearest folders; studied ANOVA; LSH; MinHash; Jaccard
 - Fast long-path large fetch native directory listings
 - Fast 1 MB sample faux checksum per file on your drive (512K from head; 512K from tail)
 - 2nd assembly, view of Double File: simplified view for current drive, without checksum.

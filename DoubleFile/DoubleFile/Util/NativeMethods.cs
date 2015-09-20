@@ -11,7 +11,7 @@ using System.Windows.Interop;
 
 namespace DoubleFile
 {
-    internal class NativeWindow : IEquatable<NativeWindow>, IWin32Window, System.Windows.Forms.IWin32Window
+    internal class NativeWindow : IEquatable<NativeWindow>, IWin32Window //, System.Windows.Forms.IWin32Window
     {
         static public implicit operator
             IntPtr(NativeWindow h) => h.Handle;
@@ -39,7 +39,7 @@ namespace DoubleFile
         static int nBadCount = 0;
     }
 
-    static class NativeMethods
+    static partial class NativeMethods
     {
         static internal int
             Command(IntPtr wParam) => unchecked(wParam.ToInt32() & 0xFFF0);

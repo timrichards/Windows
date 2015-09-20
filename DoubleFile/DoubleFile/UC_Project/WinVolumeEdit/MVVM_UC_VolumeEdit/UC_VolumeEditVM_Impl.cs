@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Forms;
 
 namespace DoubleFile
 {
@@ -14,11 +13,8 @@ namespace DoubleFile
                 ShowNewFolderButton = false
             };
 
-            if (DialogResult.OK ==
-                ModalThread.Go(darkWindow => dlg.ShowDialog(((NativeWindow)(Window)darkWindow))))
-            {
+            if (ModalThread.Go(darkWindow => dlg.ShowDialog((Window)darkWindow)))
                 FromSourcePathDlg(dlg.SelectedPath);
-            }
         }
 
         internal void Probe()

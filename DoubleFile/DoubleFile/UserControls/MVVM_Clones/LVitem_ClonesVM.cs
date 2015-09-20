@@ -42,13 +42,6 @@ namespace DoubleFile
         internal IList<LocalTreeNode>
             TreeNodes = new LocalTreeNode[0];
 
-        internal int            // currently unused: when this pretended to be a WinForms ListViewItem
-            Index = 0;          // LVitemNameComparerStruct.MarkItemsFrom1notIn2 for compare mode: set lv.TopItem
-        internal TabledString<TabledStringType_Folders>
-            Name;               // kinda ditto
-        //internal LocalLVitem
-        //    IgnoreLVItem;
-
         internal T
             WithLocalTreeNode<T>(Func<LocalTreeNode, T> doSomethingWith) =>
             (0 < TreeNodes.Count) ? doSomethingWith(TreeNodes[_clonePathIndex % TreeNodes.Count]) : default(T);

@@ -114,15 +114,7 @@
                                               Data="F1 M1,10 L3,10 M5,10 L7,10 M9,10 L11,10 M2,9 L2,11 M6,9 L6,11 M10,9 L10,11 M5,6 L7,6 M9,6 L11,6 M6,5 L6,7 M10,5 L10,7 M9,2 L11,2 M10,1 L10,3" />
                                     </Grid>
 
-                                    <local:UC_ContentPresenter InitiallyHidden="False" Visibility="{TemplateBinding local:LocalModernWindowBase.Darkened}" Grid.RowSpan="999" Grid.ColumnSpan="999" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                        <Grid>
-                                            <Grid.Background>
-                                                <SolidColorBrush Color="Black" Opacity=".4"/>
-                                            </Grid.Background>
-                                            <local:UC_Progress x:Name="UC_Progress" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-                                            <local:UC_Messagebox x:Name="UC_Messagebox" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-                                        </Grid>
-                                    </local:UC_ContentPresenter>
+                                    <local:UC_Darken x:Name="DarkenCtl"/>
                                 </Grid>
                             </AdornerDecorator>
                         </Border>

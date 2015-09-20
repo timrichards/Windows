@@ -9,18 +9,15 @@ namespace DoubleFile
 {
     abstract public class LocalModernWindowBase : ModernWindow, ILocalWindow
     {
-        public static Visibility GetDarkened(DependencyObject obj) => (Visibility)obj.GetValue(DarkenedProperty);
-        public static void SetDarkened(DependencyObject obj, Visibility value) => obj.SetValue(DarkenedProperty, value);
-        public static readonly DependencyProperty DarkenedProperty = DependencyProperty.RegisterAttached(
-            "Darkened", typeof(Visibility), typeof(LocalModernWindowBase), new FrameworkPropertyMetadata(Visibility.Collapsed));
-
+        UC_Darken
+            DarkenCtl => (UC_Darken)GetTemplateChild("DarkenCtl");
         internal UC_Progress
-            GetProgressCtl() => (UC_Progress)GetTemplateChild("UC_Progress");
+            ProgressCtl => DarkenCtl.ProgressCtl;
 
         internal MessageBoxResult
             ShowMessagebox(string strMessage, string strTitle = null, MessageBoxButton? buttons = null)
         {
-            var ucMessagebox = (UC_Messagebox)GetTemplateChild("UC_Messagebox");
+            var ucMessagebox = DarkenCtl.MessageboxCtl;
             var retVal = MessageBoxResult.None;
 
             Util.UIthread(99789, () =>
@@ -41,14 +38,14 @@ namespace DoubleFile
             Progress_Darken()
         {
             Darken(_locProgress);
-            GetProgressCtl().Visibility = Visibility.Visible;
+            ProgressCtl.Visibility = Visibility.Visible;
             return this;
         }
         internal LocalModernWindowBase
             Progress_Undarken()
         {
             Undarken(_locProgress);
-            GetProgressCtl().Visibility = Visibility.Collapsed;
+            ProgressCtl.Visibility = Visibility.Collapsed;
             return this;
         }
         decimal _locProgress = 99637;
@@ -63,8 +60,8 @@ namespace DoubleFile
 
             Util.UIthread(99727, () =>
             {
-                Application.Current.Windows.OfType<ModernWindow>()
-                    .ForEach(w => SetDarkened(w, Visibility.Visible));
+                Application.Current.Windows.OfType<LocalModernWindowBase>()
+                    .ForEach(w => w.DarkenCtl.Visibility = Visibility.Visible);
             });
 
             return this;
@@ -79,8 +76,8 @@ namespace DoubleFile
 
             Util.UIthread(99726, () =>
             {
-                Application.Current.Windows.OfType<ModernWindow>()
-                    .ForEach(w => SetDarkened(w, Visibility.Collapsed));
+                Application.Current.Windows.OfType<LocalModernWindowBase>()
+                    .ForEach(w => w.DarkenCtl.Visibility = Visibility.Collapsed);
             });
 
             return this;
@@ -264,7 +261,7 @@ namespace DoubleFile
 
             IsEnabled = true;
             base.Show();
-            SetDarkened(this, Visibility.Collapsed);    //jic
+            DarkenCtl.Visibility = Visibility.Collapsed;    //jic
             return this;
         }
 
@@ -305,7 +302,7 @@ namespace DoubleFile
             if (false == LocalIsClosing)
             {
                 base.Show();
-                SetDarkened(this, Visibility.Collapsed);
+                DarkenCtl.Visibility = Visibility.Collapsed;
                 _blockingFrame.PushFrameTrue();
             }
 

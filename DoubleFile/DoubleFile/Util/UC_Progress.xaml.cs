@@ -70,7 +70,7 @@ namespace DoubleFile
 
                 window.Progress_Darken();
                 _vm.Init();
-                ucProgress = window.GetProgressCtl();
+                ucProgress = window.ProgressCtl;
                 ucProgress.DataContext = _vm;
                 ucProgress.LocalShow();
             });

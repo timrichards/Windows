@@ -225,6 +225,9 @@
     <Compile Include="Util\TabledString\TabledStringBase\TabledStringGenerated.cs" />
     <Compile Include="Util\TabledString\TabledStringBase\TabledStringGenerating.cs" />
     <Compile Include="Util\TabledString\TabledStringTypesBase.cs" />
+    <Compile Include="Util\UC_Darken.xaml.cs">
+      <DependentUpon>UC_Darken.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Util\UC_Progress.xaml.cs">
       <DependentUpon>UC_Progress.xaml</DependentUpon>
     </Compile>
@@ -502,6 +505,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <ContainsDesignTimeResources>true</ContainsDesignTimeResources>
+    </Page>
+    <Page Include="Util\UC_Darken.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Util\UC_Messagebox.xaml">
       <Generator>MSBuild:Compile</Generator>

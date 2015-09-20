@@ -30,9 +30,9 @@ namespace DoubleFile
 
                 this.SetRect(new Rect());
                 Owner = owner;
-                Background = Brushes.Black;
+                Background = Brushes.Transparent;   // Brushes.Black;
                 AllowsTransparency = true;
-                Opacity = 0.4;
+                Opacity = 0;                        // 0.4;
                 WindowStyle = WindowStyle.None;
                 ResizeMode = ResizeMode.NoResize;
                 Focusable = false;

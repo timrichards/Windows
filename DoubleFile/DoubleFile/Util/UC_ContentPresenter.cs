@@ -13,9 +13,9 @@ namespace DoubleFile
         public bool InitiallyHidden { private get; set; } = true;
 
         public static readonly RoutedEvent
-            ShownEvent = EventManager.RegisterRoutedEvent("Shown", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(UC_ContentPresenter));
+            ShownEvent = EventManager.RegisterRoutedEvent("Shown", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(UC_ContentPresenter));
         public static readonly RoutedEvent
-            HiddenEvent = EventManager.RegisterRoutedEvent("Hidden", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(UC_ContentPresenter));
+            HiddenEvent = EventManager.RegisterRoutedEvent("Hidden", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(UC_ContentPresenter));
 
         public event RoutedEventHandler Shown
         {

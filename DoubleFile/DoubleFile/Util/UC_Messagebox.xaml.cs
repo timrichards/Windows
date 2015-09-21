@@ -87,10 +87,15 @@ namespace DoubleFile
 
             form_Message.Text = strMessage;
             LocalShow();
+            _shown = this;
             _dispatcherFrame.PushFrameTrue();
+            _shown = new UC_Messagebox();
             LocalHide();
             return _Result;
         }
+        static UC_Messagebox _shown = new UC_Messagebox();
+        internal static void
+            Kill() => _shown._dispatcherFrame.Continue = false;
 
         void BtnOK_Click()
         {

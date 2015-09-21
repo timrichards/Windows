@@ -25,10 +25,10 @@ namespace DoubleFile
                 var locMessagebox = 99692;
 
                 Darken(locMessagebox);
-                ucMessagebox.Visibility = Visibility.Visible;
+                ucMessagebox.LocalShow();
                 retVal = ucMessagebox.ShowMessagebox(strMessage, strTitle, buttons);
                 Undarken(locMessagebox);
-                ucMessagebox.Visibility = Visibility.Collapsed;
+                ucMessagebox.LocalHide();
             });
 
             return retVal;
@@ -38,14 +38,14 @@ namespace DoubleFile
             Progress_Darken()
         {
             Darken(_locProgress);
-            ProgressCtl.Visibility = Visibility.Visible;
+            ProgressCtl.LocalShow();
             return this;
         }
         internal LocalModernWindowBase
             Progress_Undarken()
         {
             Undarken(_locProgress);
-            ProgressCtl.Visibility = Visibility.Collapsed;
+            ProgressCtl.LocalHide();
             return this;
         }
         decimal _locProgress = 99637;
@@ -62,7 +62,7 @@ namespace DoubleFile
             {
                 Application.Current.Windows.OfType<LocalModernWindowBase>()
                     .Where(w => w.IsLoaded)
-                    .ForEach(w => w.DarkenCtl.Visibility = Visibility.Visible);
+                    .ForEach(w => w.DarkenCtl.LocalShow());
             });
 
             return this;
@@ -79,7 +79,7 @@ namespace DoubleFile
             {
                 Application.Current.Windows.OfType<LocalModernWindowBase>()
                     .Where(w => w.IsLoaded)
-                    .ForEach(w => w.DarkenCtl.Visibility = Visibility.Collapsed);
+                    .ForEach(w => w.DarkenCtl.LocalHide());
             });
 
             return this;

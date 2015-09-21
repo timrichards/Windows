@@ -255,6 +255,9 @@ namespace DoubleFile
 
             if (_bClosing)
             {
+                if (DateTime.MinValue != _dtConfirmingClose)
+                    UC_Messagebox.Kill();
+
                 _vm.Dispose();
                 return;
             }

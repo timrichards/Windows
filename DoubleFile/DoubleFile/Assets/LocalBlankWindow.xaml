@@ -8,6 +8,7 @@
         <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/Button.xaml" />
         <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/Converters.xaml" />
         <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/TextBlock.xaml" />
+        <ResourceDictionary Source="/DoubleFile;component/Assets/LocalStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <!-- additional ModernWindow styles -->
@@ -15,12 +16,12 @@
     <!-- Resource key 'EmptyWindow' is considered obsolete, use 'BlankWindow' instead (see below). EmptyWindow resource is kept here for backwards compatibility. -->
     
     <!-- blank window style, no backbutton, menu and title links -->
-    <Style x:Key="LocalEmptyWindow" TargetType="controls:ModernWindow" BasedOn="{StaticResource {x:Type controls:ModernWindow}}" >
+    <Style x:Key="LocalEmptyWindow" TargetType="local:LocalModernWindowBase" BasedOn="{StaticResource {x:Type controls:ModernWindow}}" >
         <Setter Property="Padding" Value="8" />
         <Setter Property="IsTitleVisible" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="controls:ModernWindow">
+                <ControlTemplate TargetType="local:LocalModernWindowBase">
                     <Border x:Name="WindowBorder" Margin="{Binding Source={x:Static SystemParameters.WindowNonClientFrameThickness}}">
                         <Border.Background>
                             <SolidColorBrush x:Name="WindowBorderBackground" Color="{DynamicResource WindowBackgroundColor}" />
@@ -147,6 +148,6 @@
     </Style>
 
     <!-- Same as 'EmptyWindow', but a better resource name -->
-    <Style x:Key="LocalBlankWindow" TargetType="controls:ModernWindow" BasedOn="{StaticResource LocalEmptyWindow}" />
+    <Style x:Key="LocalBlankWindow" TargetType="local:LocalModernWindowBase" BasedOn="{StaticResource LocalEmptyWindow}" />
         
 </ResourceDictionary>

@@ -61,6 +61,7 @@ namespace DoubleFile
             Util.UIthread(99727, () =>
             {
                 Application.Current.Windows.OfType<LocalModernWindowBase>()
+                    .Where(w => w.IsLoaded)
                     .ForEach(w => w.DarkenCtl.Visibility = Visibility.Visible);
             });
 
@@ -77,6 +78,7 @@ namespace DoubleFile
             Util.UIthread(99726, () =>
             {
                 Application.Current.Windows.OfType<LocalModernWindowBase>()
+                    .Where(w => w.IsLoaded)
                     .ForEach(w => w.DarkenCtl.Visibility = Visibility.Collapsed);
             });
 

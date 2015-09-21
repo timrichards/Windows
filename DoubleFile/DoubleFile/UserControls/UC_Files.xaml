@@ -85,8 +85,8 @@
                 <DataGridTextColumn Header="Created" Binding="{Binding Created}" SortMemberPath="CreatedRaw" Width="{Binding WidthCreated}"/>
                 <DataGridTextColumn Header="Modified" Binding="{Binding Modified}" SortMemberPath="ModifiedRaw" Width="{Binding WidthModified}"/>
                 <DataGridTextColumn Header="Attributes" Binding="{Binding Attributes}" Width="{Binding WidthAttributes}"/>
-                <DataGridTextColumn Header="Error 1" Binding="{Binding Error1}" Width="{Binding WidthError1}"/>
-                <DataGridTextColumn Header="Error 2" Binding="{Binding Error2}" Width="{Binding WidthError2}"/>
+                <DataGridTextColumn Header="" Binding="{Binding Error1}" Width="{Binding WidthError1}"/>
+                <DataGridTextColumn Header="" Binding="{Binding Error2}" Width="{Binding WidthError2}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

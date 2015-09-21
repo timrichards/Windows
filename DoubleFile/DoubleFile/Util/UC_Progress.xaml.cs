@@ -61,33 +61,23 @@ namespace DoubleFile
         internal void
             ShowOverlay(LocalModernWindowBase window = null)
         {
-            UC_Progress ucProgress = null;
-            var loc = 99626;
-
             Util.UIthread(99729, () =>
             {
                 if (null == window)
                     window = ((LocalModernWindowBase)Application.Current.MainWindow);
 
-                window.Progress_Darken();
-                _vm.Init();
-                ucProgress = window.ProgressCtl;
-                ucProgress.DataContext = _vm;
-                ucProgress.LocalShow(loc);
+                window.ProgressCtl.DataContext = _vm;
             });
 
+            window.Progress_Darken();
+            _vm.Init();
             Util.ThreadMake(() => _initClient?.Invoke((ProgressOverlay)this));
             _dispatcherFrame.PushFrameTrue();
 
             if (_bWentModeless)
                 return;
 
-            Util.UIthread(99635, () =>
-            {
-                ucProgress.LocalHide(loc);
-                window.Progress_Undarken();
-            });
-
+            window.Progress_Undarken();
             _vm.Dispose();
         }
     }

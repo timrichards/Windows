@@ -252,7 +252,7 @@ namespace DoubleFile
 
             IsEnabled = true;
             base.Show();
-            DarkenCtl.Visibility = Visibility.Collapsed;    //jic
+            DarkenCtl.LocalHide(-1, bForce: true);    //jic
             return this;
         }
 
@@ -293,7 +293,7 @@ namespace DoubleFile
             if (false == LocalIsClosing)
             {
                 base.Show();
-                DarkenCtl.Visibility = Visibility.Collapsed;
+                DarkenCtl.LocalHide(-1, bForce: true);
                 _blockingFrame.PushFrameTrue();
             }
 

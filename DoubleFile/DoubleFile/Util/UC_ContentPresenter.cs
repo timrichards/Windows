@@ -10,7 +10,7 @@ namespace DoubleFile
     /// </summary>
     public partial class UC_ContentPresenter : UserControl
     {
-        public bool InitiallyHidden { private get; set; } = true;
+        public new Visibility Visibility { set { Util.Assert(99626, false, "always initially hidden: use LocalShow() and LocalHide()"); } }
 
         public static readonly RoutedEvent
             ShownEvent = EventManager.RegisterRoutedEvent("Shown", RoutingStrategy.Direct, typeof(RoutedEventHandler), typeof(UC_ContentPresenter));
@@ -51,14 +51,10 @@ namespace DoubleFile
 
             _grid.Children.Add(new ContentPresenter { Content = Content });
             Content = _grid;
-
-            if (false == InitiallyHidden)
-                return;
-
             MakeFadeTrigger(ShownEvent, 0, 1);
             MakeFadeTrigger(HiddenEvent, 1, 0);
             _grid.Opacity = 0;
-            Visibility = Visibility.Collapsed;
+            base.Visibility = Visibility.Collapsed;
         }
 
         internal void LocalShow(decimal loc)
@@ -67,18 +63,24 @@ namespace DoubleFile
                 return;
 
             _loc = loc;
-            Visibility = Visibility.Visible;
+            base.Visibility = Visibility.Visible;
             _grid.RaiseEvent(new RoutedEventArgs(ShownEvent));
         }
 
-        internal void LocalHide(decimal loc)
+        internal void LocalHide(decimal loc, bool bForce = false)
         {
+            if (bForce)
+            {
+                base.Visibility = Visibility.Collapsed;
+                return;
+            }
+
             if (_loc != loc)
                 return;
 
             _loc = 0;
             _grid.RaiseEvent(new RoutedEventArgs(HiddenEvent));
-            Visibility = Visibility.Collapsed;
+            base.Visibility = Visibility.Collapsed;
         }
 
         decimal _loc = 0;

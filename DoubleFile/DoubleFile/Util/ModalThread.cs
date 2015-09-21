@@ -142,8 +142,15 @@ namespace DoubleFile
                     .SetRect(darkWindow.Rect)
                     .Show();
 
+                var mainWindow = (LocalModernWindowBase)Application.Current.MainWindow;
+                var locDarken = 99988;
+
+                mainWindow.Darken(locDarken);
+
                 using (new Push())
                     retVal = showDialog(darkWindow);
+
+                mainWindow.Undarken(locDarken);
 
                 if (false == darkWindow.LocalIsClosed)      // happens with system dialogs
                     darkWindow.Close();

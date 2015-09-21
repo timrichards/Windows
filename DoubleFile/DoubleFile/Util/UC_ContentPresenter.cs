@@ -61,9 +61,27 @@ namespace DoubleFile
             Visibility = Visibility.Collapsed;
         }
 
-        internal void LocalShow() { Visibility = Visibility.Visible; _grid.RaiseEvent(new RoutedEventArgs(ShownEvent)); }
-        internal void LocalHide() { _grid.RaiseEvent(new RoutedEventArgs(HiddenEvent)); Visibility = Visibility.Collapsed; }
+        internal void LocalShow(decimal loc)
+        {
+            if (0 != _loc)
+                return;
 
+            _loc = loc;
+            Visibility = Visibility.Visible;
+            _grid.RaiseEvent(new RoutedEventArgs(ShownEvent));
+        }
+
+        internal void LocalHide(decimal loc)
+        {
+            if (_loc != loc)
+                return;
+
+            _loc = 0;
+            _grid.RaiseEvent(new RoutedEventArgs(HiddenEvent));
+            Visibility = Visibility.Collapsed;
+        }
+
+        decimal _loc = 0;
         Grid _grid = new Grid();
     }
 }

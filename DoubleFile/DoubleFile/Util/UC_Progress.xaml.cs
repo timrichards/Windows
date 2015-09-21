@@ -62,6 +62,7 @@ namespace DoubleFile
             ShowOverlay(LocalModernWindowBase window = null)
         {
             UC_Progress ucProgress = null;
+            var loc = 99626;
 
             Util.UIthread(99729, () =>
             {
@@ -72,7 +73,7 @@ namespace DoubleFile
                 _vm.Init();
                 ucProgress = window.ProgressCtl;
                 ucProgress.DataContext = _vm;
-                ucProgress.LocalShow();
+                ucProgress.LocalShow(loc);
             });
 
             Util.ThreadMake(() => _initClient?.Invoke((ProgressOverlay)this));
@@ -83,7 +84,7 @@ namespace DoubleFile
 
             Util.UIthread(99635, () =>
             {
-                ucProgress.LocalHide();
+                ucProgress.LocalHide(loc);
                 window.Progress_Undarken();
             });
 

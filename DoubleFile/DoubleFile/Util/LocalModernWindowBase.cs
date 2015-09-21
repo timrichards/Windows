@@ -25,10 +25,10 @@ namespace DoubleFile
                 var locMessagebox = 99692;
 
                 Darken(locMessagebox);
-                ucMessagebox.LocalShow();
+                ucMessagebox.LocalShow(locMessagebox);
                 retVal = ucMessagebox.ShowMessagebox(strMessage, strTitle, buttons);
                 Undarken(locMessagebox);
-                ucMessagebox.LocalHide();
+                ucMessagebox.LocalHide(locMessagebox);
             });
 
             return retVal;
@@ -38,14 +38,14 @@ namespace DoubleFile
             Progress_Darken()
         {
             Darken(_locProgress);
-            ProgressCtl.LocalShow();
+            ProgressCtl.LocalShow(_locProgress);
             return this;
         }
         internal LocalModernWindowBase
             Progress_Undarken()
         {
             Undarken(_locProgress);
-            ProgressCtl.LocalHide();
+            ProgressCtl.LocalHide(_locProgress);
             return this;
         }
         decimal _locProgress = 99637;
@@ -53,16 +53,11 @@ namespace DoubleFile
         internal LocalModernWindowBase
             Darken(decimal loc)
         {
-            if (0 != _locDarkened)
-                return this;
-
-            _locDarkened = loc;
-
             Util.UIthread(99727, () =>
             {
                 Application.Current.Windows.OfType<LocalModernWindowBase>()
                     .Where(w => w.IsLoaded)
-                    .ForEach(w => w.DarkenCtl.LocalShow());
+                    .ForEach(w => w.DarkenCtl.LocalShow(loc));
             });
 
             return this;
@@ -70,21 +65,15 @@ namespace DoubleFile
         internal LocalModernWindowBase
             Undarken(decimal loc)
         {
-            if (loc != _locDarkened)
-                return this;
-
-            _locDarkened = 0;
-
             Util.UIthread(99726, () =>
             {
                 Application.Current.Windows.OfType<LocalModernWindowBase>()
                     .Where(w => w.IsLoaded)
-                    .ForEach(w => w.DarkenCtl.LocalHide());
+                    .ForEach(w => w.DarkenCtl.LocalHide(loc));
             });
 
             return this;
         }
-        decimal _locDarkened = 0;
 
         internal bool LocalIsClosing { get; private set; }
         public bool LocalIsClosed { get; private set; } = true;

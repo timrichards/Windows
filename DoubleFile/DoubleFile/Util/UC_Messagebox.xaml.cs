@@ -85,12 +85,14 @@ namespace DoubleFile
                 }
             }
 
+            var loc = 99627;
+
             form_Message.Text = strMessage;
-            LocalShow();
+            LocalShow(loc);
             _shown = this;
             _dispatcherFrame.PushFrameTrue();
             _shown = new UC_Messagebox();
-            LocalHide();
+            LocalHide(loc);
             return _Result;
         }
         static UC_Messagebox _shown = new UC_Messagebox();

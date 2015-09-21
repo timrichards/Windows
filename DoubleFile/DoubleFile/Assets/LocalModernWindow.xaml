@@ -9,10 +9,9 @@
         <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/Button.xaml" />
         <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/Converters.xaml" />
         <ResourceDictionary Source="/FirstFloor.ModernUI;component/Assets/TextBlock.xaml" />
-        <ResourceDictionary Source="/DoubleFile;component/Assets/LocalStyles.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <Style x:Key="LocalModernWindow" TargetType="local:LocalModernWindowBase" BasedOn="{StaticResource {x:Type controls:ModernWindow}}" >
+    <Style x:Key="LocalModernWindow" TargetType="controls:ModernWindow" BasedOn="{StaticResource {x:Type controls:ModernWindow}}" >
         <Setter Property="BackgroundContent" Value="{DynamicResource WindowBackgroundContent}" />
         <Setter Property="FontFamily" Value="{DynamicResource DefaultFontFamily}" />
         <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
@@ -28,7 +27,7 @@
 
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:LocalModernWindowBase">
+                <ControlTemplate TargetType="controls:ModernWindow">
                     <Border x:Name="WindowBorder" Margin="{Binding Source={x:Static SystemParameters.WindowNonClientFrameThickness}}">
                         <Border.Background>
                             <SolidColorBrush x:Name="WindowBorderBackground" Color="{DynamicResource WindowBackgroundColor}" />

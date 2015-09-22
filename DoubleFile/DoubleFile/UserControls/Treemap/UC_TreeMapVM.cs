@@ -20,34 +20,17 @@ namespace DoubleFile
             internal GeometryDrawing
                 GeometryDrawing => new GeometryDrawing(Fill, new Pen(Brushes.Black, .25), new RectangleGeometry(_rc.Scale(ScaleFactor)));
 
-            internal TreeMapFolderRect(Rect rc, int? fill = null)
+            internal TreeMapFolderRect(Rect rc, int fill = -1)
             {
                 _rc = rc;
                 _fill = fill;
             }
 
             Brush
-                Fill
-            {
-                get
-                {
-                    switch (_fill)      // nullable type gets converted when not null (i.e. don't have to use .Value)
-                    {
-                        case null: return Brushes.Transparent;
-                        case UtilColorcode.Transparent: return _brushSandyBrown;
-                        case UtilColorcode.Solitary: return _brushSolitary;
-                        case UtilColorcode.OneCopy: return _brushOneCopy;
-                        case UtilColorcode.TreemapFolder: return _brushTreemapFolder;
-                        case UtilColorcode.TreemapFile: return _brushTreemapFile;
-                        default: return new RadialGradientBrush(_kCenterColor, UtilColorcode.Dark(UtilColorcode.FromArgb(_fill.Value))) { RadiusX = 1, RadiusY = 1 };
-                    }
-                }
-            }
-            static Brush _brushSandyBrown = null;
-            static Brush _brushSolitary = null;
-            static Brush _brushOneCopy = null;
-            static Brush _brushTreemapFolder = null;
-            static Brush _brushTreemapFile = null;
+                Fill =>
+                _dictBrushes.TryGetValue(_fill)
+                ?? new RadialGradientBrush(_kCenterColor, UtilColorcode.Dark(UtilColorcode.FromArgb(_fill))) { RadiusX = 1, RadiusY = 1 };
+            static IDictionary<int, Brush> _dictBrushes = null;
 
             static readonly Color _kCenterColor = Colors.PapayaWhip;
 
@@ -55,21 +38,25 @@ namespace DoubleFile
             static internal void
                 Init()
             {
-                if (null != _brushSandyBrown)
+                if (null != _dictBrushes)
                     return;
 
                 Util.UIthread(99979, () =>
                 {
-                    _brushSandyBrown = new RadialGradientBrush(_kCenterColor, UtilColorcode.Dark(Colors.SandyBrown)) { RadiusX = 1, RadiusY = 1 };
-                    _brushSolitary = Init(UtilColorcode.Solitary);
-                    _brushOneCopy = Init(UtilColorcode.OneCopy);
-                    _brushTreemapFolder = Init(UtilColorcode.TreemapFolder);
-                    _brushTreemapFile = Init(UtilColorcode.TreemapFile);
+                    _dictBrushes = new Dictionary<int, Brush>
+                    {
+                        { -1, Brushes.Transparent },
+                        { UtilColorcode.Transparent, new RadialGradientBrush(_kCenterColor, UtilColorcode.Dark(Colors.SandyBrown)) { RadiusX = 1, RadiusY = 1 } },
+                        { UtilColorcode.Solitary, Init(UtilColorcode.Solitary) },
+                        { UtilColorcode.OneCopy, Init(UtilColorcode.OneCopy) },
+                        { UtilColorcode.TreemapFolder, Init(UtilColorcode.TreemapFolder) },
+                        { UtilColorcode.TreemapFile, Init(UtilColorcode.TreemapFile) },
+                    };
                 });
             }
 
             readonly Rect _rc = default(Rect);
-            readonly int? _fill = null;
+            readonly int _fill = -1;
         }
 
         public Visibility GoofballVisibility => /*(null != _deepNodeDrawn) ? Visibility.Visible :*/ Visibility.Collapsed;

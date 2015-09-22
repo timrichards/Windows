@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reactive.Linq;
+using System.Windows;
 using System.Windows.Input;
 
 namespace DoubleFile
@@ -10,6 +11,12 @@ namespace DoubleFile
     /// </summary>
     public partial class UC_TreeMap
     {
+        public static readonly DependencyProperty GoofballXProperty =
+            DependencyProperty.Register("GoofballX", typeof(double), typeof(UC_TreeMap));
+
+        public static readonly DependencyProperty GoofballYProperty =
+            DependencyProperty.Register("GoofballY", typeof(double), typeof(UC_TreeMap));
+
         public UC_TreeMap()
         {
             InitializeComponent();
@@ -48,6 +55,15 @@ namespace DoubleFile
                 }
 
                 bMouseDown = false;
+            }));
+
+            _lsDisposable.Add(Observable.FromEventPattern(form_rectGoofball, "LayoutUpdated")
+                .LocalSubscribe(99625, args =>
+            {
+                var pt = new Point(form_rectGoofball.ActualWidth, form_rectGoofball.ActualHeight);
+
+                SetValue(GoofballXProperty, form_rectGoofball.TransformToAncestor(this).Transform(pt).X - form_Goofball.ActualWidth / 2);
+                SetValue(GoofballYProperty, form_rectGoofball.TransformToAncestor(this).Transform(pt).Y - form_Goofball.ActualHeight / 2);
             }));
 
             var folderDetail = LocalTV.TreeSelect_FolderDetail;

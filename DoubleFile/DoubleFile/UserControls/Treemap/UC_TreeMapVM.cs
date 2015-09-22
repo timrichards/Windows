@@ -38,9 +38,6 @@ namespace DoubleFile
             static internal void
                 Init()
             {
-                if (null != _dictBrushes)
-                    return;
-
                 Util.UIthread(99979, () =>
                 {
                     _dictBrushes = new Dictionary<int, Brush>
@@ -50,7 +47,7 @@ namespace DoubleFile
                         { UtilColorcode.Solitary, Init(UtilColorcode.Solitary) },
                         { UtilColorcode.OneCopy, Init(UtilColorcode.OneCopy) },
                         { UtilColorcode.TreemapFolder, Init(UtilColorcode.TreemapFolder) },
-                        { UtilColorcode.TreemapFile, Init(UtilColorcode.TreemapFile) },
+                        { UtilColorcode.TreemapFile, Init(UtilColorcode.TreemapFile) }
                     };
                 });
             }
@@ -59,7 +56,7 @@ namespace DoubleFile
             readonly int _fill = -1;
         }
 
-        public Visibility GoofballVisibility => /*(null != _deepNodeDrawn) ? Visibility.Visible :*/ Visibility.Collapsed;
+        public Visibility GoofballVisibility => (null != _deepNodeDrawn) ? Visibility.Visible : Visibility.Collapsed;
         public double GoofballLeft => _deepNodeDrawn?.NodeDatum.TreeMapRect.Scale(TreeMapFolderRect.ScaleFactor).CenterX() ?? 0;
         public double GoofballTop => _deepNodeDrawn?.NodeDatum.TreeMapRect.Scale(TreeMapFolderRect.ScaleFactor).CenterY() ?? 0;
 

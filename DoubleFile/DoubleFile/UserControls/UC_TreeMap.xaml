@@ -46,7 +46,9 @@
 
 
         <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Grid Canvas.Left="{Binding Path=ActualWidth, ElementName=form_rectGoofball}" Canvas.Top="{Binding Path=ActualHeight, ElementName=form_rectGoofball}" Visibility="{Binding GoofballVisibility}" x:Name="form_Goofball" Width="24" Height="24" RenderTransformOrigin="0.5,0.5">
+            <Grid Canvas.Left="{Binding GoofballX, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
+                  Canvas.Top="{Binding GoofballY, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
+                  Visibility="{Binding GoofballVisibility}" x:Name="form_Goofball" Width="24" Height="24" RenderTransformOrigin="0.5,0.5">
                 <Grid.RenderTransform>
                     <RotateTransform/>
                 </Grid.RenderTransform>

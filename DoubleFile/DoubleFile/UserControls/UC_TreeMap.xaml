@@ -5,6 +5,22 @@
         xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
         LocalTitle="Tree Map">
     <Grid>
+        <Grid.Resources>
+            <Storyboard x:Key="Storyboard1" RepeatBehavior="Forever">
+                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" Storyboard.TargetName="form_Goofball">
+                    <EasingDoubleKeyFrame KeyTime="0" Value="0"/>
+                    <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="180"/>
+                </DoubleAnimationUsingKeyFrames>
+            </Storyboard>
+        </Grid.Resources>
+
+        <Grid.Triggers>
+            <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                <BeginStoryboard Storyboard="{StaticResource Storyboard1}"/>
+            </EventTrigger>
+        </Grid.Triggers>
+
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
@@ -17,7 +33,8 @@
                     </Image.Source>
                 </Image>
                 <Canvas Name="form_Canvas">
-                    <Rectangle Fill="Black" Opacity=".4" Canvas.Left="{Binding SelectionLeft}" Canvas.Top="{Binding SelectionTop}" Width="{Binding SelectionWidth}" Height="{Binding SelectionHeight}"/>
+                    <Rectangle Canvas.Left="{Binding SelectionLeft}" Canvas.Top="{Binding SelectionTop}" Width="{Binding SelectionWidth}" Height="{Binding SelectionHeight}" Fill="Black" Opacity=".4"/>
+                    <Rectangle Width="{Binding GoofballLeft}" Height="{Binding GoofballTop}" x:Name="form_rectGoofball" Visibility="Hidden"/>
                 </Canvas>
             </Grid>
         </Viewbox>
@@ -26,5 +43,64 @@
                 LargeChange="1" SmallChange="1" TickFrequency="1"
                 TickPlacement="TopLeft" Orientation="Vertical"
                 Delay="200"/>
+
+
+        <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid Canvas.Left="{Binding Path=ActualWidth, ElementName=form_rectGoofball}" Canvas.Top="{Binding Path=ActualHeight, ElementName=form_rectGoofball}" Visibility="{Binding GoofballVisibility}" x:Name="form_Goofball" Width="24" Height="24" RenderTransformOrigin="0.5,0.5">
+                <Grid.RenderTransform>
+                    <RotateTransform/>
+                </Grid.RenderTransform>
+                <Ellipse>
+                    <Ellipse.Fill>
+                        <RadialGradientBrush>
+                            <GradientStop Color="Transparent"/>
+                            <GradientStop Color="White" Offset="6"/>
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <Grid Margin="3">
+                    <Ellipse Stroke="Black" Margin="5">
+                        <Ellipse.Fill>
+                            <RadialGradientBrush>
+                                <GradientStop Color="Black"/>
+                                <GradientStop Color="Transparent" Offset="1"/>
+                            </RadialGradientBrush>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <ed:Arc ArcThickness="1" ArcThicknessUnit="Percent" Stretch="None">
+                        <ed:Arc.Fill>
+                            <RadialGradientBrush GradientOrigin="0,1" Center="0,1" RadiusX="1" RadiusY="1">
+                                <GradientStop Color="Transparent" Offset="1"/>
+                                <GradientStop Color="White" Offset=".25"/>
+                            </RadialGradientBrush>
+                        </ed:Arc.Fill>
+                    </ed:Arc>
+                    <ed:Arc ArcThickness="1" ArcThicknessUnit="Percent" Stretch="None" StartAngle="180" EndAngle="270">
+                        <ed:Arc.Fill>
+                            <RadialGradientBrush GradientOrigin="1,0" Center="1,0" RadiusX="1" RadiusY="1">
+                                <GradientStop Color="Transparent" Offset="1"/>
+                                <GradientStop Color="White" Offset=".25"/>
+                            </RadialGradientBrush>
+                        </ed:Arc.Fill>
+                    </ed:Arc>
+                    <ed:Arc ArcThickness="1" ArcThicknessUnit="Percent" Stretch="None" StartAngle="90" EndAngle="180">
+                        <ed:Arc.Fill>
+                            <RadialGradientBrush GradientOrigin="0,0" Center="0,0" RadiusX="1" RadiusY="1">
+                                <GradientStop Color="Black" Offset=".25"/>
+                                <GradientStop Color="Transparent" Offset="1"/>
+                            </RadialGradientBrush>
+                        </ed:Arc.Fill>
+                    </ed:Arc>
+                    <ed:Arc ArcThickness="1" ArcThicknessUnit="Percent" Stretch="None" StartAngle="270" EndAngle="360">
+                        <ed:Arc.Fill>
+                            <RadialGradientBrush GradientOrigin="1,1" Center="1,1" RadiusX="1" RadiusY="1">
+                                <GradientStop Color="Black" Offset=".25" />
+                                <GradientStop Color="Transparent" Offset="1"/>
+                            </RadialGradientBrush>
+                        </ed:Arc.Fill>
+                    </ed:Arc>
+                </Grid>
+            </Grid>
+        </Canvas>
     </Grid>
 </local:LocalUserControlBase>

@@ -258,5 +258,10 @@ namespace DoubleFile
             Right(this Rect r) => r.X + r.Width;
         static internal double
             Bottom(this Rect r) => r.Y + r.Height;
+
+        static internal double
+            CenterX(this Rect r) => r.X + r.Width / 2;
+        static internal double
+            CenterY(this Rect r) => r.Y + r.Height / 2;
     }
 }

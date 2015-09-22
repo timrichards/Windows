@@ -1,3 +1,6 @@
+        xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
+
+
                     <Canvas.Resources>
                         <Storyboard x:Key="Storyboard1" RepeatBehavior="Forever">
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)" Storyboard.TargetName="form_Goofball">

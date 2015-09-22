@@ -72,6 +72,10 @@ namespace DoubleFile
             readonly int? _fill = null;
         }
 
+        public Visibility GoofballVisibility => /*(null != _deepNodeDrawn) ? Visibility.Visible :*/ Visibility.Collapsed;
+        public double GoofballLeft => _deepNodeDrawn?.NodeDatum.TreeMapRect.Scale(TreeMapFolderRect.ScaleFactor).CenterX() ?? 0;
+        public double GoofballTop => _deepNodeDrawn?.NodeDatum.TreeMapRect.Scale(TreeMapFolderRect.ScaleFactor).CenterY() ?? 0;
+
         public Drawing
             TreeMapDrawing { get; private set; }
         public const double
@@ -147,7 +151,7 @@ namespace DoubleFile
 
         internal void MouseUp(Point ptLocation)
         {
-            var treeNode = ZoomOrTooltip(new Point(ptLocation.X * BitmapSize, ptLocation.Y * BitmapSize));
+            var treeNode = ShowTooltip(new Point(ptLocation.X * BitmapSize, ptLocation.Y * BitmapSize));
 
             if (null != treeNode)
                 LocalTV.SelectedNode = treeNode;
@@ -171,7 +175,7 @@ namespace DoubleFile
             _prevNode = null;
         }
 
-        internal LocalTreeNode ZoomOrTooltip(Point pt)
+        internal LocalTreeNode ShowTooltip(Point pt)
         {
             if (_bTreeSelect ||
                 _bSelRecAndTooltip)
@@ -186,22 +190,6 @@ namespace DoubleFile
 
             if (null == TreeNode)
                 return null;
-
-            if (_rectCenter.Contains(pt))   // click once to hide goofball. Click again within 5 seconds to return to the deep node.
-            {
-                if (DateTime.MinValue == _dtHideGoofball)
-                {
-                    _dtHideGoofball = DateTime.Now;
-                    return null;
-                }
-                else if (DateTime.Now - _dtHideGoofball < TimeSpan.FromSeconds(5))
-                {
-                    _dtHideGoofball = DateTime.MinValue;
-                    return DeepNode;
-                }
-            }
-
-            _dtHideGoofball = DateTime.MinValue;   // click anywhere else on the treemap and the goofball returns.
 
             LocalTreeNode nodeRet = null;
             var bFilesHere = false;
@@ -571,9 +559,11 @@ namespace DoubleFile
             });
 
             RaisePropertyChanged("TreeMapDrawing");
+            RaisePropertyChanged("GoofballVisibility");
+            RaisePropertyChanged("GoofballLeft");
+            RaisePropertyChanged("GoofballTop");
             SelChildNode = null;
             _prevNode = null;
-            _dtHideGoofball = DateTime.MinValue;
         }
 
         // treemap.cpp	- Implementation of CColorSpace, CTreemap and CTreemapPreview
@@ -650,7 +640,11 @@ namespace DoubleFile
                 timer.Dispose();
                 timerA.Dispose();
 
-                deepNodeDrawn_out = _deepNodeDrawn;
+                deepNodeDrawn_out =
+                    (_deepNodeDrawn != treeNode)
+                    ? _deepNodeDrawn
+                    : null;
+
                 return _lsRenderActions.Concat(_lsFrames);
             }
             
@@ -1070,12 +1064,6 @@ namespace DoubleFile
         // Recurse class
         LocalTreeNode
             _deepNodeDrawn = null;
-
-        // goofball
-        Rect
-            _rectCenter = Rect.Empty;
-        DateTime
-            _dtHideGoofball = DateTime.MinValue;
 
         LocalTreeNode
             _prevNode = null;

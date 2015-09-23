@@ -62,8 +62,9 @@ namespace DoubleFile
             {
                 var pt = new Point(form_rectGoofball.ActualWidth, form_rectGoofball.ActualHeight);
 
-                SetValue(GoofballXProperty, form_rectGoofball.TransformToAncestor(this).Transform(pt).X - form_Goofball.ActualWidth / 2);
-                SetValue(GoofballYProperty, form_rectGoofball.TransformToAncestor(this).Transform(pt).Y - form_Goofball.ActualHeight / 2);
+                pt = form_rectGoofball.TransformToAncestor(this).Transform(pt);
+                SetValue(GoofballXProperty, pt.X - form_Goofball.ActualWidth / 2);
+                SetValue(GoofballYProperty, pt.Y - form_Goofball.ActualHeight / 2);
             }));
 
             var folderDetail = LocalTV.TreeSelect_FolderDetail;

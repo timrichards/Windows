@@ -1086,8 +1086,6 @@ namespace DoubleFile
         // goofball
         Rect
             _rectDeepnode = Rect.Empty;
-        DateTime
-            _dtHideGoofball = DateTime.MinValue;
 
         LocalTreeNode
             _prevNode = null;

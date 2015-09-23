@@ -12,6 +12,7 @@
     </ResourceDictionary.MergedDictionaries>
 
     <Style x:Key="LocalModernWindow" TargetType="controls:ModernWindow" BasedOn="{StaticResource {x:Type controls:ModernWindow}}" >
+        <Setter Property="IsTitleVisible" Value="True" />
         <Setter Property="BackgroundContent" Value="{DynamicResource WindowBackgroundContent}" />
         <Setter Property="FontFamily" Value="{DynamicResource DefaultFontFamily}" />
         <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />

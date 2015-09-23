@@ -6,43 +6,60 @@ using System.Collections.Concurrent;
 using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Media;
+using System.Collections.ObjectModel;
 
 namespace DoubleFile
 {
     class UC_TreeMapVM : SliderVM_Base<ListViewItemVM_Base>, IDisposable
     {
-        class TreeMapFolderRect
+        public ObservableCollection<TreeMapFrame>
+            Frames => _frames;
+        ObservableCollection<TreeMapFrame> _frames = new ObservableCollection<TreeMapFrame>();
+        public class TreeMapFrame
         {
             internal const int
                 ScaleFactor = 1 << 2;
             internal double
                 Area => _rc.Width * _rc.Height;
-            internal GeometryDrawing
-                GeometryDrawing => new GeometryDrawing(Fill, new Pen(Brushes.Black, .25), new RectangleGeometry(_rc.Scale(ScaleFactor)));
 
-            internal TreeMapFolderRect(Rect rc, int fill = -1)
+            public double X => _rc.X;
+            public double Y => _rc.Y;
+            public double Width => _rc.Width;
+            public double Height => _rc.Height;
+
+            internal TreeMapFrame(Rect rc)
             {
-                _rc = rc;
+                _rc = rc.Scale(ScaleFactor);
+            }
+
+            protected readonly Rect _rc = default(Rect);
+        }
+
+        class Folder : TreeMapFrame
+        {
+            internal GeometryDrawing
+                GeometryDrawing => new GeometryDrawing(Fill, new Pen(), new RectangleGeometry(_rc));
+
+            internal Folder(Rect rc, int fill)
+                : base(rc)
+            {
                 _fill = fill;
             }
 
             Brush
                 Fill =>
-                _dictBrushes.TryGetValue(_fill)
+                _brushes.TryGetValue(_fill)
                 ?? new RadialGradientBrush(_kCenterColor, UtilColorcode.Dark(UtilColorcode.FromArgb(_fill))) { RadiusX = 1, RadiusY = 1 };
-            static IDictionary<int, Brush> _dictBrushes = null;
-
+            static IDictionary<int, Brush> _brushes = null;
             static readonly Color _kCenterColor = Colors.PapayaWhip;
-
             static Brush Init(int color) => new RadialGradientBrush(_kCenterColor, UtilColorcode.Dark(UtilColorcode.FromArgb(color))) { RadiusX = 1, RadiusY = 1 };
             static internal void
                 Init()
             {
                 Util.UIthread(99979, () =>
                 {
-                    _dictBrushes = new Dictionary<int, Brush>
+                    _brushes = new Dictionary<int, Brush>
                     {
-                        { -1, Brushes.Transparent },
                         { UtilColorcode.Transparent, new RadialGradientBrush(_kCenterColor, UtilColorcode.Dark(Colors.SandyBrown)) { RadiusX = 1, RadiusY = 1 } },
                         { UtilColorcode.Solitary, Init(UtilColorcode.Solitary) },
                         { UtilColorcode.OneCopy, Init(UtilColorcode.OneCopy) },
@@ -52,13 +69,12 @@ namespace DoubleFile
                 });
             }
 
-            readonly Rect _rc = default(Rect);
             readonly int _fill = -1;
         }
 
-        public Visibility GoofballVisibility => (null != _deepNodeDrawn) ? Visibility.Visible : Visibility.Collapsed;
-        public double GoofballLeft => _deepNodeDrawn?.NodeDatum.TreeMapRect.Scale(TreeMapFolderRect.ScaleFactor).CenterX() ?? 0;
-        public double GoofballTop => _deepNodeDrawn?.NodeDatum.TreeMapRect.Scale(TreeMapFolderRect.ScaleFactor).CenterY() ?? 0;
+        public Visibility GoofballVisibility => (Rect.Empty != _rectDeepnode) ? Visibility.Visible : Visibility.Collapsed;
+        public double GoofballX => _rectDeepnode.Scale(TreeMapFrame.ScaleFactor).CenterX();
+        public double GoofballY => _rectDeepnode.Scale(TreeMapFrame.ScaleFactor).CenterY();
 
         public Drawing
             TreeMapDrawing { get; private set; }
@@ -76,7 +92,7 @@ namespace DoubleFile
             set
             {
                 var rect =
-                    value?.NodeDatum.TreeMapRect.Scale(TreeMapFolderRect.ScaleFactor)
+                    value?.NodeDatum.TreeMapRect.Scale(TreeMapFrame.ScaleFactor)
                     ?? default(Rect);
 
                 SelectionLeft = rect.Left;
@@ -124,7 +140,7 @@ namespace DoubleFile
 
             _lsDisposable.Add(LV_TreeListChildrenVM.TreeListChildSelected.LocalSubscribe(99695, LV_TreeListChildrenVM_TreeListChildSelected));
             _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.Observable.LocalSubscribe(99694, LV_FilesVM_SelectedFileChanged));
-            TreeMapFolderRect.Init();
+            Folder.Init();
         }
 
         public void Dispose()
@@ -352,8 +368,8 @@ namespace DoubleFile
 
         static LocalTreeNode FindMapNode(LocalTreeNode treeNode_in, Point pt)
         {
-            pt.X /= TreeMapFolderRect.ScaleFactor;
-            pt.Y /= TreeMapFolderRect.ScaleFactor;
+            pt.X /= TreeMapFrame.ScaleFactor;
+            pt.Y /= TreeMapFrame.ScaleFactor;
             return FindMapNode_(treeNode_in, pt);
         }
 
@@ -515,7 +531,8 @@ namespace DoubleFile
             var timer = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Timestamp()
                 .LocalSubscribe(0, x => Util.WriteLine(DateTime.Now.Ticks + " " + treeNode + " DrawTreemap"));
 
-            var ieRenderActions = DrawTreemap();
+            IEnumerable<TreeMapFrame> ieFrames = null;
+            var ieFills = DrawTreemap(out ieFrames);
 
             timer.Dispose();
 
@@ -525,27 +542,48 @@ namespace DoubleFile
                     LocalOwner.Title = "Double File";
 
                 TreeMapDrawing = null;
+                _frames.Clear();
 
-                if (null == ieRenderActions)
+                if (null == ieFills)
                     return;     // from lambda
 
                 var drawingGroup = new DrawingGroup();
 
                 drawingGroup.Children.Add(new GeometryDrawing(new SolidColorBrush(Color.FromRgb(193, 176, 139)), new Pen(), new RectangleGeometry(new Rect(0, 0, BitmapSize, BitmapSize))));
 
-                foreach (var render in ieRenderActions.OrderByDescending(r => r.Area).Take(1 << 11))
+                foreach (var render in ieFills.OrderByDescending(r => r.Area).Take(1 << 11))
                     drawingGroup.Children.Add(render.GeometryDrawing);
 
+                drawingGroup.Freeze();
                 TreeMapDrawing = drawingGroup;
+
+                if (null != ieFrames)
+                {
+                    foreach (var frame in ieFrames.OrderByDescending(r => r.Area).Take(1 << 10))
+                        _frames.Add(frame);
+                }
 
                 if (null != LocalOwner)
                     LocalOwner.Title = treeNode.Text;
             });
 
             RaisePropertyChanged("TreeMapDrawing");
+            RaisePropertyChanged("Frames");
+
+            if ((null == _deepNodeDrawn) ||
+                ReferenceEquals(_deepNodeDrawn, TreeNode))
+            {
+                _rectDeepnode = Rect.Empty;
+            }
+            else
+            {
+                _rectDeepnode =
+                    _deepNodeDrawn.NodeDatum.TreeMapRect;
+            }
+
             RaisePropertyChanged("GoofballVisibility");
-            RaisePropertyChanged("GoofballLeft");
-            RaisePropertyChanged("GoofballTop");
+            RaisePropertyChanged("GoofballX");
+            RaisePropertyChanged("GoofballY");
             SelChildNode = null;
             _prevNode = null;
         }
@@ -573,10 +611,11 @@ namespace DoubleFile
         //
         // Last modified: $Date: 2004/11/05 16:53:08 $
         
-        IEnumerable<TreeMapFolderRect> 
-            DrawTreemap()
+        IEnumerable<Folder>
+            DrawTreemap(out IEnumerable<TreeMapFrame> ieFrames)
         {
             _deepNodeDrawn = null;
+            ieFrames = null;
 
             var nodeDatum = TreeNode.NodeDatum;
 
@@ -586,29 +625,29 @@ namespace DoubleFile
                 return null;
             }
 
-            var rc = new Rect(0, 0, BitmapSize, BitmapSize).Scale(1d / TreeMapFolderRect.ScaleFactor);
+            var rc = new Rect(0, 0, BitmapSize, BitmapSize).Scale(1d / TreeMapFrame.ScaleFactor);
 
             return
                 (0 < nodeDatum.TotalLength)
-                ? new Recurse().Render(TreeNode, rc, DeepNode, out _deepNodeDrawn)
-                : new[] { new TreeMapFolderRect(rc, Colors.Wheat.ToArgb()) };
+                ? new Recurse().Render(TreeNode, rc, DeepNode, out _deepNodeDrawn, out ieFrames)
+                : new[] { new Folder(rc, Colors.Wheat.ToArgb()) };
         }
 
         class
             Recurse
         {
-            internal IEnumerable<TreeMapFolderRect>
-                Render(LocalTreeNode treeNode, Rect rc, LocalTreeNode deepNode, out LocalTreeNode deepNodeDrawn_out)
+            internal IEnumerable<Folder>
+                Render(LocalTreeNode treeNode, Rect rc, LocalTreeNode deepNode,
+                out LocalTreeNode deepNodeDrawn_out, out IEnumerable<TreeMapFrame> ieFrames)
             {
-                _lsRenderActions = new ConcurrentBag<TreeMapFolderRect> { };
-                _lsFrames = new ConcurrentBag<TreeMapFolderRect> { };
+                _lsFills = new ConcurrentBag<Folder> { };
+                _lsFrames = new ConcurrentBag<TreeMapFrame> { };
                 _deepNode = deepNode;
                 RecurseDrawGraph(treeNode, rc, true);
 
-                var timerA = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Timestamp()
-                    .LocalSubscribe(0, x => Util.WriteLine(_nWorkerCount + " " + treeNode + " DrawTreemap"));
-
-                var timer = Observable.Timer(TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(100)).Timestamp()
+                using (Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Timestamp()
+                    .LocalSubscribe(0, x => Util.WriteLine(_nWorkerCount + " " + treeNode + " DrawTreemap")))
+                using (Observable.Timer(TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(100)).Timestamp()
                     .LocalSubscribe(99825, x =>
                 {
                     if (0 < _nWorkerCount)
@@ -616,20 +655,15 @@ namespace DoubleFile
 
                     _blockingFrame.Continue = false;
                     Util.WriteLine(DateTime.Now.Ticks + " " + treeNode + " DrawTreemap - cleared stuck worker count during 100ms check");
-                });
+                }))
+                {
+                    if (0 < _nWorkerCount)
+                        _blockingFrame.PushFrameTrue();
+                }
 
-                if (0 < _nWorkerCount)
-                    _blockingFrame.PushFrameTrue();
-
-                timer.Dispose();
-                timerA.Dispose();
-
-                deepNodeDrawn_out =
-                    (_deepNodeDrawn != treeNode)
-                    ? _deepNodeDrawn
-                    : null;
-
-                return _lsRenderActions.Concat(_lsFrames);
+                deepNodeDrawn_out = _deepNodeDrawn;
+                ieFrames = _lsFrames;
+                return _lsFills;
             }
             
             void
@@ -655,7 +689,7 @@ namespace DoubleFile
                     (32 > rc.Height))
                 {
                     // Speedup. Draw an "empty" folder in place of too much detail
-                    _lsRenderActions.Add(new TreeMapFolderRect(rc, treeNode.ForeColor));
+                    _lsFills.Add(new Folder(rc, treeNode.ForeColor));
                     return;
                 }
 
@@ -777,7 +811,7 @@ namespace DoubleFile
                 }
 
                 // There are no children. Draw a file or an empty folder.
-                _lsRenderActions.Add(new TreeMapFolderRect(rc, treeNode.ForeColor));
+                _lsFills.Add(new Folder(rc, treeNode.ForeColor));
             }
 
             //My first approach was to make this member pure virtual and have three
@@ -907,7 +941,7 @@ namespace DoubleFile
                         );
 
                         if (bStart)
-                            _lsFrames.Add(new TreeMapFolderRect(rcChild));
+                            _lsFrames.Add(new TreeMapFrame(rcChild));
 
                         if (lastChild)
                         {
@@ -1021,9 +1055,9 @@ namespace DoubleFile
                 return rowHeight;
             }
 
-            ConcurrentBag<TreeMapFolderRect>
-                _lsRenderActions = null;
-            ConcurrentBag<TreeMapFolderRect>
+            ConcurrentBag<Folder>
+                _lsFills = null;
+            ConcurrentBag<TreeMapFrame>
                 _lsFrames = null;
             LocalTreeNode
                 _deepNode = null;
@@ -1048,6 +1082,12 @@ namespace DoubleFile
         // Recurse class
         LocalTreeNode
             _deepNodeDrawn = null;
+
+        // goofball
+        Rect
+            _rectDeepnode = Rect.Empty;
+        DateTime
+            _dtHideGoofball = DateTime.MinValue;
 
         LocalTreeNode
             _prevNode = null;

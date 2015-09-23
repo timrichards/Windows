@@ -20,7 +20,6 @@
             </EventTrigger>
         </Grid.Triggers>
 
-
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
@@ -32,9 +31,27 @@
                         <DrawingImage Drawing="{Binding TreeMapDrawing}"/>
                     </Image.Source>
                 </Image>
+                <ItemsControl ItemsSource="{Binding Frames}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                            <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Rectangle Width="{Binding Width}" Height="{Binding Height}" Fill="Transparent" Stroke="Black"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
                 <Canvas Name="form_Canvas">
                     <Rectangle Canvas.Left="{Binding SelectionLeft}" Canvas.Top="{Binding SelectionTop}" Width="{Binding SelectionWidth}" Height="{Binding SelectionHeight}" Fill="Black" Opacity=".4"/>
-                    <Rectangle Width="{Binding GoofballLeft}" Height="{Binding GoofballTop}" x:Name="form_rectGoofball" Visibility="Hidden"/>
+                    <Rectangle Width="{Binding GoofballX}" Height="{Binding GoofballY}" x:Name="form_rectGoofball" Opacity="0"/>
                 </Canvas>
             </Grid>
         </Viewbox>
@@ -43,7 +60,6 @@
                 LargeChange="1" SmallChange="1" TickFrequency="1"
                 TickPlacement="TopLeft" Orientation="Vertical"
                 Delay="200"/>
-
 
         <Canvas HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <Grid Canvas.Left="{Binding GoofballX, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"

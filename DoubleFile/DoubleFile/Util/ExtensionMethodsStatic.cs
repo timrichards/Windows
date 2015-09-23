@@ -229,6 +229,9 @@ namespace DoubleFile
         static internal Rect
             Scale(this Rect rc_in, double scale)
         {
+            if (Rect.Empty == rc_in)
+                return Rect.Empty;
+
             Rect rc = rc_in;
 
             rc.X *= scale;

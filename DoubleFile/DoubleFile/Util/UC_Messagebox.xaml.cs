@@ -8,6 +8,8 @@ namespace DoubleFile
 {
     public partial class UC_Messagebox : UC_ContentPresenter
     {
+        internal static bool Showing = false;
+
         MessageBoxButton Buttons
         {
             set
@@ -58,7 +60,7 @@ namespace DoubleFile
                 .LocalSubscribe(99754, x => BtnOK_Click()));
 
             _lsDisposable.Add(Observable.FromEventPattern(formBtn_Cancel, "Click")
-                .LocalSubscribe(99753, x => _dispatcherFrame.Continue = false));
+                .LocalSubscribe(99753, x => Kill()));
 
             _lsDisposable.Add(Statics.EscKey.LocalSubscribe(99623, x => Kill()));
 
@@ -91,18 +93,24 @@ namespace DoubleFile
 
             var loc = 99627;
 
+            if (Showing)
+                return MessageBox.Show(strMessage + "\nUC_Messagebox: there is a message already up", strTitle, buttons ?? MessageBoxButton.OK);
+
+            Showing = true;
             form_Message.Text = strMessage;
             LocalShow(loc);
             _shown = this;
             _dispatcherFrame.PushFrameTrue();
-            _shown = new UC_Messagebox();
+            _shown = null;
             LocalHide(loc);
             Util.LocalDispose(_lsDisposable);
+            Showing = false;
             return _Result;
         }
-        static UC_Messagebox _shown = new UC_Messagebox();
+        static UC_Messagebox _shown = null;
+        void Kill_() => _dispatcherFrame.Continue = false;
         internal static void
-            Kill() => _shown._dispatcherFrame.Continue = false;
+            Kill() => _shown?.Kill_();
 
         void BtnOK_Click()
         {
@@ -123,7 +131,7 @@ namespace DoubleFile
                 }
             }
 
-            _dispatcherFrame.Continue = false;
+            Kill_();
         }
 
         MessageBoxResult

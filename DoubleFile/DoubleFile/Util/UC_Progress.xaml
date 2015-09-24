@@ -25,7 +25,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <Button x:Name="formBtn_Cancel" IsCancel="True" Style="{StaticResource SystemCloseButton}" VerticalAlignment="Top" HorizontalAlignment="Right" ToolTip="cancel process">
+        <Button x:Name="formBtn_Cancel" IsCancel="True" Focusable="False" Style="{StaticResource SystemCloseButton}" VerticalAlignment="Top" HorizontalAlignment="Right" ToolTip="cancel process">
             <Button.Content>
                 <Path Data="M1,0 L9,7 M9,0 L1,7 Z" Width="9" Height="7" VerticalAlignment="Center" HorizontalAlignment="Center" Stroke="Black" StrokeThickness="1.5"  />
             </Button.Content>

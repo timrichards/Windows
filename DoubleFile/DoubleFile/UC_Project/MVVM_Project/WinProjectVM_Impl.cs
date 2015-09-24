@@ -48,10 +48,14 @@ namespace DoubleFile
 
             var asLVitems = _lvVM.ItemsCast.ToList();
 
+            var nCount = asLVitems.Count;
+
+            if (0 == nCount)
+                return;
+
             foreach (var strLine in Metadata.ReadLines(99652))
             {
                 var i = 0;
-                var nCount = asLVitems.Count;
 
                 for (; i < nCount; ++i)
                 {

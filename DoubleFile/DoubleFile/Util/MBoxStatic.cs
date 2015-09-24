@@ -40,14 +40,15 @@ namespace DoubleFile
             _nLastAssertLoc = nLocation;
             _dtLastAssert = DateTime.Now;
 
-            if (AssertUp)
+            if (AssertUp ||
+                UC_Messagebox.Showing)
             {
                 var owner = (LocalModernWindowBase)Application.Current?.MainWindow;
 
                 if (owner?.LocalIsClosing ?? true)
                     owner = null;
 
-                MessageBox.Show(owner, strErrorOut + "\n(LocalMbox: there is a local assert box already up.)");
+                MessageBox.Show(owner, strErrorOut + "\n(MBoxStatic: there is a local assert box already up.)");
             }
             else
             {
@@ -77,12 +78,12 @@ namespace DoubleFile
         static MessageBoxResult ShowOverlay_(string strMessage, string strTitle, MessageBoxButton? buttons, ILocalWindow owner)
         {
             if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
-                return MessageBox.Show(strMessage + "\n(LocalMbox: application shutting down.)", strTitle, buttons ?? MessageBoxButton.OK);
+                return MessageBox.Show(strMessage + "\n(MBoxStatic: application shutting down.)", strTitle, buttons ?? MessageBoxButton.OK);
 
             var mainWindow = (LocalModernWindowBase)Application.Current.MainWindow;
 
             if (null == mainWindow)
-                return MessageBox.Show(strMessage + "\n(LocalMbox: no main window.)", strTitle, buttons ?? MessageBoxButton.OK);
+                return MessageBox.Show(strMessage + "\n(MBoxStatic: no main window.)", strTitle, buttons ?? MessageBoxButton.OK);
 
             return mainWindow.ShowMessagebox(strMessage, strTitle, buttons);
         }

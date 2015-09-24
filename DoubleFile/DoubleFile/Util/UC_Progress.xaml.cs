@@ -40,24 +40,22 @@ namespace DoubleFile
             return this;
         }
 
-        protected void GoModeless() { _bWentModeless = true; _dispatcherFrame.Continue = false; }
+        void GoModeless() { _bWentModeless = true; _dispatcherFrame.Continue = false; }
         bool _bWentModeless = false;
 
-        public bool Activate() => false;
-        public bool LocalIsClosed => null == _vm;
-        public bool SimulatingModal { get; set; } = true;
+        internal bool LocalIsClosed => null == _vm;
 
         LocalDispatcherFrame _dispatcherFrame = new LocalDispatcherFrame(99730);
 
-        protected LV_ProgressVM
+        LV_ProgressVM
             _vm = null;
 
         protected Action<ProgressOverlay> _initClient = null;
 
         internal void
-            ShowOverlay(LocalModernWindowBase window = null)
+            ShowOverlay(LocalModernWindowBase window = null) { _window = window; ShowOverlay(); }
+        void ShowOverlay()
         {
-            _window = window;
             _lsDisposable.Add(_vm = new LV_ProgressVM());
             _vm.Add(_ieStr);
 

@@ -8,8 +8,6 @@ namespace DoubleFile
 {
     class LV_ProgressVM : ListViewVM_Base<LVitem_ProgressVM>, IDisposable
     {
-        public ICommand Icmd_Cancel { get; private set; }
-
         public string WidthBigLabel => SCW;             // franken all NaN
         public string WidthSmallKeyLabel => SCW;
         public string WidthStatus => SCW;

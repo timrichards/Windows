@@ -240,7 +240,16 @@ namespace DoubleFile
 
             if (0 == ((int)msg.lParam & (1 << 30)))
             {
-                EscKeyOnNext();
+                if (TimeSpan.FromMilliseconds(250) > (DateTime.Now - _dtLastEsc))
+                {
+                    LocalDispatcherFrame.ClearFrames();
+                }
+                else
+                {
+                    EscKeyOnNext();
+                    _dtLastEsc = DateTime.Now;
+                }
+
                 return;           // previous state is not key down
             }
 
@@ -249,6 +258,7 @@ namespace DoubleFile
 
             handled = true;
         }
+        DateTime _dtLastEsc = DateTime.MinValue;
 
         static readonly WeakReference<Statics> _wr = new WeakReference<Statics>(null);
 

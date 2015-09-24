@@ -12,7 +12,7 @@ namespace DoubleFile
 {
     partial class UC_NearestVM : IDisposable
     {
-        internal UC_NearestVM()
+        internal UC_NearestVM Init()
         {
             Util.ThreadMake(() =>
             {
@@ -28,20 +28,16 @@ namespace DoubleFile
                 RaisePropertyChanged("NoResultsFolder");
                 ProgressbarVisibility = Visibility.Collapsed;
                 RaisePropertyChanged("ProgressbarVisibility");
+                Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
+                Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateViewport(UseNicknames));
+                _nicknameUpdater.Clear();
+                _nicknameUpdater.UpdateViewport(UseNicknames);
+
+                var folderDetail = LocalTV.TreeSelect_FolderDetail;
+
+                if (null != folderDetail)
+                    TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, 0));
             });
-        }
-
-        internal UC_NearestVM Init()
-        {
-            Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
-            Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateViewport(UseNicknames));
-            _nicknameUpdater.Clear();
-            _nicknameUpdater.UpdateViewport(UseNicknames);
-
-            var folderDetail = LocalTV.TreeSelect_FolderDetail;
-
-            if (null != folderDetail)
-                TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, 0));
 
             return this;
         }

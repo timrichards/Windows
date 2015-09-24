@@ -39,6 +39,7 @@ namespace DoubleFile
                     lvItem.TimerTick();
             }));
 
+            _lsDisposable.Add(Statics.EscKey.LocalSubscribe(99623, x => Cancel_Action?.Invoke()));
             Icmd_Cancel = new RelayCommand(() => Cancel_Action?.Invoke());
             return this;
         }

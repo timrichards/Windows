@@ -1,4 +1,6 @@
-﻿using System.Reactive.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Reactive.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -52,11 +54,13 @@ namespace DoubleFile
         internal MessageBoxResult
             ShowMessagebox(string strMessage, string strTitle, MessageBoxButton? buttons)
         {
-            Observable.FromEventPattern(formBtn_OK, "Click")
-                .LocalSubscribe(99754, x => BtnOK_Click());
+            _lsDisposable.Add(Observable.FromEventPattern(formBtn_OK, "Click")
+                .LocalSubscribe(99754, x => BtnOK_Click()));
 
-            Observable.FromEventPattern(formBtn_Cancel, "Click")
-                .LocalSubscribe(99753, x => _dispatcherFrame.Continue = false);
+            _lsDisposable.Add(Observable.FromEventPattern(formBtn_Cancel, "Click")
+                .LocalSubscribe(99753, x => _dispatcherFrame.Continue = false));
+
+            _lsDisposable.Add(Statics.EscKey.LocalSubscribe(99623, x => Kill()));
 
             //if (null != strTitle)
             //    Title = strTitle;
@@ -93,6 +97,7 @@ namespace DoubleFile
             _dispatcherFrame.PushFrameTrue();
             _shown = new UC_Messagebox();
             LocalHide(loc);
+            Util.LocalDispose(_lsDisposable);
             return _Result;
         }
         static UC_Messagebox _shown = new UC_Messagebox();
@@ -125,5 +130,7 @@ namespace DoubleFile
             _Result = MessageBoxResult.Cancel;
         LocalDispatcherFrame
             _dispatcherFrame = new LocalDispatcherFrame(99786);
+        readonly IList<IDisposable>
+            _lsDisposable = new List<IDisposable>();
     }
 }

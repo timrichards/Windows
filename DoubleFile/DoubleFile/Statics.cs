@@ -11,6 +11,11 @@ namespace DoubleFile
 {
     public class Statics
     {
+        static internal IObservable<Tuple<bool, int>>
+            EscKey => _escKey;
+        static readonly LocalSubject<bool> _escKey = new LocalSubject<bool>();      // bool is a no-op: generic placeholder
+        static void EscKeyOnNext() => _escKey.LocalOnNext(false, 99624);
+
         static internal string
             Namespace => _wr.Get(s => s._namespace);
         readonly string _namespace = null;
@@ -154,7 +159,7 @@ namespace DoubleFile
             _lockTempIsoDir = LocalIsoStore.LockFile(lockFilename);
             LocalIsoStore.CreateDirectory(LocalIsoStore.TempDir);
 
-            // Do not allow the Esc key to repeat
+            // handle Esc key globally: prevent repeat; escape lockup
             ComponentDispatcher.ThreadPreprocessMessage += ComponentDispatcher_ThreadPreprocessMessage;
 
             // set up App parameters, starting with the Exit event; then the App events for CanFlashWindow_ResetsIt etc.
@@ -223,8 +228,7 @@ namespace DoubleFile
 
         private void ComponentDispatcher_ThreadPreprocessMessage(ref MSG msg, ref bool handled)
         {
-            // Do not allow the Esc key to repeat
-
+            // handle Esc key globally: prevent repeat; escape lockup
             const int WM_KEYDOWN = 0x100;
             const int VK_ESCAPE = 0x1B;
 
@@ -235,7 +239,10 @@ namespace DoubleFile
                 return;
 
             if (0 == ((int)msg.lParam & (1 << 30)))
+            {
+                EscKeyOnNext();
                 return;           // previous state is not key down
+            }
 
             if (0 == ((int)msg.lParam & ((1 << 16) - 1)))
                 return;           // repeat count is zero, jic

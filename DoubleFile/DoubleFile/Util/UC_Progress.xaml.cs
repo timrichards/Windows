@@ -41,8 +41,8 @@ namespace DoubleFile
         protected void GoModeless() { _bWentModeless = true; _dispatcherFrame.Continue = false; }
         bool _bWentModeless = false;
 
-        public bool Activate() { return false; }
-        public bool LocalIsClosed => (false == _vm.Any());
+        public bool Activate() => false;
+        public bool LocalIsClosed => false == _vm.Any();
         public bool SimulatingModal { get; set; } = true;
 
         LocalDispatcherFrame _dispatcherFrame = new LocalDispatcherFrame(99730);
@@ -100,7 +100,7 @@ namespace DoubleFile
             return
                 (w.LocalIsClosed)
                 ? w
-                : (ProgressOverlay) w.Abort().Close();
+                : (ProgressOverlay)w.Abort().Close();
         });
         internal ProgressOverlay
             Abort() { _bAborted = true; return this; }

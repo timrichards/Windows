@@ -1,4 +1,6 @@
-﻿- nodeParent = new Node(strParent, _nLineNo, 0, 0, null, _rootNode)
+﻿- process completed. You may now close the window.
+- script source: total size savings of and list outer subdirectories that are clones, so I can delete them
+- nodeParent = new Node(strParent, _nLineNo, 0, 0, null, _rootNode)
 - change drive letter did not change one line and screwed up culling, which is fixed. do a check for [A-Z}:\ when verifying the file.
 - Deserialize: can't seem to add the unsaved listing to the project LV
 - treemap doesn't always draw when zoomed into a folder with many files, mismatching proper user selection rect
@@ -190,4 +192,4 @@ Specific code areas:
 - Source repository: http://github.com/timrichards/Windows
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
-99624 next low assert
+99622 next low assert

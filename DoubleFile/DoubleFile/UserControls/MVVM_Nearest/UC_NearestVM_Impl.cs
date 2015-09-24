@@ -24,15 +24,8 @@ namespace DoubleFile
                 stopwatch.Stop();
                 Util.WriteLine("Setup_AllFileHashes_Scratch " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
                 _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99701, TreeSelect_FolderDetailUpdated));
-                NoResultsVisibility = Visibility.Collapsed;
-                RaisePropertyChanged("NoResultsVisibility");
                 ProgressbarVisibility = Visibility.Collapsed;
                 RaisePropertyChanged("ProgressbarVisibility");
-
-                var folderDetail = LocalTV.TreeSelect_FolderDetail;
-
-                if (null != folderDetail)
-                    TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, 0));
             });
         }
 
@@ -42,6 +35,12 @@ namespace DoubleFile
             Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateViewport(UseNicknames));
             _nicknameUpdater.Clear();
             _nicknameUpdater.UpdateViewport(UseNicknames);
+
+            var folderDetail = LocalTV.TreeSelect_FolderDetail;
+
+            if (null != folderDetail)
+                TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, 0));
+
             return this;
         }
 
@@ -59,30 +58,29 @@ namespace DoubleFile
 
         void TreeSelect_FolderDetailUpdated(Tuple<TreeSelect.FolderDetailUpdated, int> initiatorTuple)
         {
-            ClearItems();
-            _cts.Cancel();
-            NoResultsVisibility = Visibility.Collapsed;
-            RaisePropertyChanged("NoResultsVisibility");
-            ProgressbarVisibility = Visibility.Visible;
-            RaisePropertyChanged("ProgressbarVisibility");
-
             Util.ThreadMake(() =>
             {
+                ClearItems();
+                _cts.Cancel();
+                NoResultsVisibility = Visibility.Collapsed;
+                RaisePropertyChanged("NoResultsVisibility");
+                ProgressbarVisibility = Visibility.Visible;
+                RaisePropertyChanged("ProgressbarVisibility");
+
                 while (_bSearching)
                     Util.Block(20);
-
-                if (_bDisposed)
-                    return;
 
                 _cts = new CancellationTokenSource();
                 _bSearching = true;
 
-                var bNoResults = true;
                 var folderDetail = initiatorTuple.Item1;
                 var searchFolder = folderDetail.treeNode;
 
                 Util.Closure(() =>
                 {
+                    if (_bDisposed)
+                        return;     // from lambda
+
                     if (null == searchFolder.NodeDatum.Hashes_SubnodeFiles_Scratch)
                         return;     // from lambda
 
@@ -134,21 +132,20 @@ namespace DoubleFile
                         }
 
                         Util.UIthread(99912, () => Add(lsFolders.Select(tupleA => tupleA.Item2)));
-                        bNoResults = false;
                     }
 
                     Util.WriteLine("FindMatchingFolders " + searchFolder.NodeDatum.Hashes_SubnodeFiles_Scratch.GetHashCode());
                 });
 
-                if (bNoResults)
+                if (Items.Any())
+                {
+                    NoResultsVisibility = Visibility.Collapsed;
+                }
+                else
                 {
                     NoResultsFolder = searchFolder.Text;
                     NoResultsVisibility = Visibility.Visible;
                     RaisePropertyChanged("NoResultsFolder");
-                }
-                else
-                {
-                    NoResultsVisibility = Visibility.Collapsed;
                 }
 
                 RaisePropertyChanged("NoResultsVisibility");

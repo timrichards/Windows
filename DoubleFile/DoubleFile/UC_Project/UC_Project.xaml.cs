@@ -98,6 +98,8 @@ namespace DoubleFile
             {
                 Util.UIthread(99843, () =>
                 {
+                    mainWindow.Title = Util.Localized("Title");
+
                     foreach (Window window in mainWindow.OwnedWindows)
                         window.Close();
 

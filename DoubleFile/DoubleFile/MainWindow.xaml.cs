@@ -253,7 +253,7 @@ namespace DoubleFile
             }},
             new LinkGroup { DisplayName="Nearest", Links =
             {
-                new MyLink("Nearest", "/UserControls/UC_FolderList.xaml"),
+                new MyLink("Nearest", "/UserControls/UC_Nearest.xaml"),
             }},
             new LinkGroup { DisplayName="Clones", Links =
             {

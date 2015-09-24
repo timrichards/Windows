@@ -539,7 +539,7 @@ namespace DoubleFile
             Util.UIthread(99823, () =>
             {
                 if (null != LocalOwner)
-                    LocalOwner.Title = "Double File";
+                    LocalOwner.Title = Util.Localized("Title");
 
                 TreeMapDrawing = null;
                 _frames.Clear();

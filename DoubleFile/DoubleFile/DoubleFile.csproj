@@ -194,6 +194,12 @@
     <Compile Include="LocalTreeNode\LocalColorItemBase.cs" />
     <Compile Include="LocalTreeNode\LVitemProject_Explorer.cs" />
     <Compile Include="Statics.cs" />
+    <Compile Include="UserControls\UC_FolderList_Base.xaml.cs">
+      <DependentUpon>UC_FolderList_Base.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UC_Nearest.xaml.cs">
+      <DependentUpon>UC_Nearest.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Util\FolderBrowserDialog\NativeMethods.cs" />
     <Compile Include="Util\FolderBrowserDialog\ShellComInterfaces.cs" />
     <Compile Include="Util\FolderBrowserDialog\FolderBrowserDialog.cs" />
@@ -252,9 +258,6 @@
     <Compile Include="UserControls\ListUpdater.cs" />
     <Compile Include="UserControls\UC_Clones.xaml.cs">
       <DependentUpon>UC_Clones.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\UC_Nearest.xaml.cs">
-      <DependentUpon>UC_Nearest.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\MVVM_Search\LVitem_SearchVM.cs" />
     <Compile Include="UserControls\MVVM_Search\UC_SearchVM_Impl.cs" />
@@ -507,6 +510,14 @@
       <Generator>MSBuild:Compile</Generator>
       <ContainsDesignTimeResources>true</ContainsDesignTimeResources>
     </Page>
+    <Page Include="UserControls\UC_FolderList_Base.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\UC_Nearest.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Util\UC_Darken.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -524,10 +535,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\UC_Clones.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UserControls\UC_Nearest.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -1,0 +1,54 @@
+﻿<local:LocalUserControlBase x:Class="DoubleFile.UC_FolderList_Base"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:DoubleFile"
+        LocalTitle="Nearest">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <DataGrid Grid.Column="0">
+            <DataGrid.Resources>
+                <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Alternate}" Value="True">
+                            <Setter Property="Foreground" Value="AntiqueWhite" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </DataGrid.Resources>
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="Folders" Width="{Binding WidthFolder}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock>
+                                <Run Text="{Binding Folder, Mode=OneWay}" FontWeight="SemiBold"/>
+                                <Run Text="{Binding In, Mode=OneWay}" FontWeight="ExtraLight"/>
+                                <Run Text="{Binding Parent, Mode=OneWay}"/>
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Grid Height="50" Visibility="{Binding ProgressbarVisibility}" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+            <ProgressBar IsIndeterminate="True" VerticalAlignment="Bottom" Height="4" />
+        </Grid>
+        <TextBlock Visibility="{Binding NoResultsVisibility}" Grid.Column="0" TextAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">
+            <Run Text="{Binding NoResultsFolder, Mode=OneWay}" FontWeight="SemiBold" Foreground="AntiqueWhite"/>
+            <LineBreak/>
+            <Run>No results</Run>
+        </TextBlock>
+        <CheckBox Name="formChk_Nicknames" IsChecked="{Binding UseNicknames}" Command="{Binding Icmd_Nicknames}" Content="Nicknames" Grid.Column="1" Margin="5,0,0,0">
+            <CheckBox.LayoutTransform>
+                <RotateTransform Angle="90" />
+            </CheckBox.LayoutTransform>
+        </CheckBox>
+        <Button Command="{Binding Icmd_GoTo}" Content="Go To" Grid.Column="1" Margin="5,0,0,0" VerticalAlignment="Bottom">
+            <Button.LayoutTransform>
+                <RotateTransform Angle="90" />
+            </Button.LayoutTransform>
+        </Button>
+    </Grid>
+</local:LocalUserControlBase>

@@ -24,6 +24,8 @@ namespace DoubleFile
                 stopwatch.Stop();
                 Util.WriteLine("Setup_AllFileHashes_Scratch " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
                 _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99701, TreeSelect_FolderDetailUpdated));
+                NoResultsFolder = null;
+                RaisePropertyChanged("NoResultsFolder");
                 ProgressbarVisibility = Visibility.Collapsed;
                 RaisePropertyChanged("ProgressbarVisibility");
             });

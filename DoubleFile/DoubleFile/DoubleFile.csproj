@@ -200,6 +200,12 @@
     <Compile Include="UserControls\UC_Nearest.xaml.cs">
       <DependentUpon>UC_Nearest.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\UC_ClonesHere.xaml.cs">
+      <DependentUpon>UC_ClonesHere.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UC_SolitaryHere.xaml.cs">
+      <DependentUpon>UC_SolitaryHere.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Util\FolderBrowserDialog\NativeMethods.cs" />
     <Compile Include="Util\FolderBrowserDialog\ShellComInterfaces.cs" />
     <Compile Include="Util\FolderBrowserDialog\FolderBrowserDialog.cs" />
@@ -517,6 +523,14 @@
     <Page Include="UserControls\UC_Nearest.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\UC_ClonesHere.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\UC_SolitaryHere.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Util\UC_Darken.xaml">
       <Generator>MSBuild:Compile</Generator>

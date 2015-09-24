@@ -272,7 +272,9 @@ namespace DoubleFile
             }},
             new LinkGroup { DisplayName="Detailed info", Links =
             {
-                new MyLink("Detailed info", "/UserControls/UC_Detail.xaml")
+                new MyLink("Detailed info", "/UserControls/UC_Detail.xaml"),
+                new MyLink("Solitary here", "/UserControls/UC_SolitaryHere.xaml"),
+                new MyLink("Clones here", "/UserControls/UC_ClonesHere.xaml")
             }}
         };
 

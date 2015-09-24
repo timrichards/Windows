@@ -1,0 +1,7 @@
+﻿<local:LocalUserControlBase x:Class="DoubleFile.UC_ClonesHere"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:DoubleFile"
+        LocalTitle="All cloned folders here">
+    <local:UC_FolderList_Base x:Name="form_ucFolderList"/>
+</local:LocalUserControlBase>

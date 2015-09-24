@@ -1,8 +1,7 @@
-﻿<local:LocalUserControlBase x:Class="DoubleFile.UC_FolderList_Base"
+﻿<UserControl x:Class="DoubleFile.UC_FolderList_Base"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:DoubleFile"
-        LocalTitle="Nearest">
+        xmlns:local="clr-namespace:DoubleFile">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -51,4 +50,4 @@
             </Button.LayoutTransform>
         </Button>
     </Grid>
-</local:LocalUserControlBase>
+</UserControl>

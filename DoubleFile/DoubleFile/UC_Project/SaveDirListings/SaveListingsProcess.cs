@@ -95,7 +95,7 @@ namespace DoubleFile
                 return true;
 
             if (MessageBoxResult.Yes !=
-                MBoxStatic.ShowOverlay("Did you want to cancel?", "Saving Directory Listings", MessageBoxButton.YesNo))
+                MBoxStatic.AskToCancel("Saving Directory Listings"))
             {
                 return false;
             }

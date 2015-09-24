@@ -47,7 +47,6 @@ namespace DoubleFile
                 return;
 
             var asLVitems = _lvVM.ItemsCast.ToList();
-
             var nCount = asLVitems.Count;
 
             if (0 == nCount)
@@ -293,7 +292,7 @@ namespace DoubleFile
         bool IProgressOverlayClosing.ConfirmClose()
         {
             _bUserCanceled |= (MessageBoxResult.Yes ==
-                MBoxStatic.ShowOverlay("Did you want to cancel?", "Opening Listing Files", MessageBoxButton.YesNo));
+                MBoxStatic.AskToCancel("Opening Listing Files"));
 
             return false;   // it will close when the loop queries _bUserCanceled
         }

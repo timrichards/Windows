@@ -52,7 +52,9 @@ namespace DoubleFile
 
                         break;
                     }
-                    catch (IOException)
+                    catch (Exception e)
+                    when ((e is IOException) ||
+                    (e is UnauthorizedAccessException))
                     {
                         Util.Block(100);
                     }
@@ -374,7 +376,7 @@ namespace DoubleFile
                 return true;
 
             if (MessageBoxResult.Yes ==
-                MBoxStatic.ShowOverlay("Did you want to cancel?", _status, MessageBoxButton.YesNo))
+                MBoxStatic.AskToCancel(_status))
             {
                 _bUserCanceled = true;
 

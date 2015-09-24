@@ -6,14 +6,11 @@ namespace DoubleFile
 {
     static class MBoxStatic
     {
-        static internal bool AssertUp { get; private set; }
+        static internal bool FailUp { get; private set; }
 
         static internal bool
-            Assert(decimal nLocation, bool bCondition, string strError_in, bool bTraceOnly)
+            Fail(decimal nLocation, string strError_in, bool bTraceOnly)
         {
-            if (bCondition)
-                return true;
-
             if ((_nLastAssertLoc == nLocation) &&
                 (1 > (DateTime.Now - _dtLastAssert).Seconds))
             {
@@ -40,7 +37,7 @@ namespace DoubleFile
             _nLastAssertLoc = nLocation;
             _dtLastAssert = DateTime.Now;
 
-            if (AssertUp ||
+            if (FailUp ||
                 UC_Messagebox.Showing)
             {
                 var owner = (LocalModernWindowBase)Application.Current?.MainWindow;
@@ -52,9 +49,9 @@ namespace DoubleFile
             }
             else
             {
-                AssertUp = true;
+                FailUp = true;
                 ShowOverlay(strErrorOut, "DoubleFile Assert", MessageBoxButton.OK);
-                AssertUp = false;
+                FailUp = false;
             }
 #if (DEBUG && LOCALMBOX)
             if (Debugger.IsAttached)
@@ -65,6 +62,9 @@ namespace DoubleFile
         }
 
         // make MessageBox modal from a worker thread
+        static internal MessageBoxResult
+            AskToCancel(string strTitle) => ShowOverlay(_ksAskToCancel, strTitle, MessageBoxButton.YesNo);
+
         static internal MessageBoxResult
             ShowOverlay(string strMessage, string strTitle = null, MessageBoxButton? buttons = null, ILocalWindow owner = null)
         {
@@ -88,6 +88,8 @@ namespace DoubleFile
             return mainWindow.ShowMessagebox(strMessage, strTitle, buttons);
         }
 
+        static readonly string
+            _ksAskToCancel = Util.Localized("MBoxStatic_AskToCancel");
         static decimal
             _nLastAssertLoc = -1;
         static DateTime

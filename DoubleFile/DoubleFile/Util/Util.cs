@@ -20,8 +20,14 @@ namespace DoubleFile
     class Util : FileParse
     {
         static internal bool
-            Assert(decimal nLocation, bool bCondition, string strError_in = null, bool bTraceOnly = false) =>
-            MBoxStatic.Assert(nLocation, bCondition, strError_in, bTraceOnly);
+            Assert(decimal nLocation, bool bCondition, string strError_in = null, bool bTraceOnly = false)
+        {
+            if (bCondition)
+                return true;
+
+            MBoxStatic.Fail(nLocation, strError_in, bTraceOnly);
+            return false;
+        }
 
         static internal T
             AssertNotNull<T>(decimal nLocation, T t, string strError_in = null, bool bTraceOnly = false)

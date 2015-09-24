@@ -5,4 +5,5 @@
     <clr:String x:Key="Include_No">No</clr:String>
     <clr:String x:Key="Status_NotSaved">Not saved.</clr:String>
     <clr:String x:Key="Status_UsingFile">Using file.</clr:String>
+    <clr:String x:Key="MBoxStatic_AskToCancel">Did you want to cancel?</clr:String>
 </ResourceDictionary>

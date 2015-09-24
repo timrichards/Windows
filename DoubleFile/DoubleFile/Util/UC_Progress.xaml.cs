@@ -206,7 +206,7 @@ namespace DoubleFile
             if (_bAborted)
                 return this;        // don't close: there may be an error message
 
-            if (MBoxStatic.AssertUp)
+            if (MBoxStatic.FailUp)
                 return this;        // don't close: there Is an error message
 
             //Util.UIthread(99774, () =>

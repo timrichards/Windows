@@ -258,7 +258,7 @@ namespace DoubleFile
         // properly focus: a second click is needed to move the window or do anything in it.
 
         // 3/26/15 This is true because e.g. 1) left open or cancel during Explorer initialize:
-        // the Folders VM disappears and crashes on close. 2) Do you want to cancel, left open,
+        // the Folders VM disappears and crashes on close. 2) Did you want to cancel, left open,
         // mysteriously leaves WinProject unpopulated after clicking OK: does not run any code
         // in MainWindow.xaml.cs after volumes.ShowDialog. Acts like a suppressed null pointer.
 

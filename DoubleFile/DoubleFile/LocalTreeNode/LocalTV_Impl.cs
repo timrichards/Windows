@@ -216,7 +216,7 @@ namespace DoubleFile
 
                 return              // from lambda Util.Closure
                     (MessageBoxResult.Yes == ProgressOverlay.WithProgressOverlay(w =>
-                    MBoxStatic.ShowOverlay("Do you want to cancel?", w.Title, MessageBoxButton.YesNo)));
+                    MBoxStatic.ShowOverlay("Did you want to cancel?", w.Title, MessageBoxButton.YesNo)));
             }))
             {
                 return false;       // Iff user said no then cancel and don't close.

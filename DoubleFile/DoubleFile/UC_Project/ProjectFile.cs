@@ -374,7 +374,7 @@ namespace DoubleFile
                 return true;
 
             if (MessageBoxResult.Yes ==
-                MBoxStatic.ShowOverlay("Do you want to cancel?", _status, MessageBoxButton.YesNo))
+                MBoxStatic.ShowOverlay("Did you want to cancel?", _status, MessageBoxButton.YesNo))
             {
                 _bUserCanceled = true;
 

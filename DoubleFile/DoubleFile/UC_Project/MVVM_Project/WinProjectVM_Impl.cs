@@ -289,7 +289,7 @@ namespace DoubleFile
         bool IProgressOverlayClosing.ConfirmClose()
         {
             _bUserCanceled |= (MessageBoxResult.Yes ==
-                MBoxStatic.ShowOverlay("Do you want to cancel?", "Opening Listing Files", MessageBoxButton.YesNo));
+                MBoxStatic.ShowOverlay("Did you want to cancel?", "Opening Listing Files", MessageBoxButton.YesNo));
 
             return false;   // it will close when the loop queries _bUserCanceled
         }

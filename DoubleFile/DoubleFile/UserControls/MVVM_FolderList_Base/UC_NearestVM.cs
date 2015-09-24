@@ -5,14 +5,14 @@ using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Diagnostics;
-using System.Windows;
 using System.Reactive.Linq;
 
 namespace DoubleFile
 {
     partial class UC_NearestVM : UC_FolderListVM
     {
-        internal new UC_NearestVM Init()
+        internal new UC_NearestVM               // new to hide then call base.Init() and return this
+            Init()
         {
             base.Init();
 
@@ -27,128 +27,83 @@ namespace DoubleFile
                 Util.WriteLine("Setup_AllFileHashes_Scratch " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
                 NoResultsFolder = null;
                 RaisePropertyChanged("NoResultsFolder");
-                ProgressbarVisibility = Visibility.Collapsed;
-                RaisePropertyChanged("ProgressbarVisibility");
+                HideProgressbar();
 
                 var folderDetail = LocalTV.TreeSelect_FolderDetail;
 
                 if (null != folderDetail)
-                    TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, 0));
+                    TreeSelect_FolderDetailUpdated(folderDetail.treeNode);
             });
 
             return this;
         }
 
-        public override void Dispose()
+        public override void Dispose()          // calls base.Dispose() which implements IDisposable
         {
-            base.Dispose();
-
             Util.ThreadMake(() =>
             {
-                _bDisposed = true;
-                _cts.Cancel();
+                base.Dispose();                 // sets _bDisposed and _cts.Cancel()
                 Cleanup_AllFileHashes_Scratch(LocalTV.RootNodes);
                 GC.Collect();
             });
         }
 
-        protected override void TreeSelect_FolderDetailUpdated(Tuple<TreeSelect.FolderDetailUpdated, int> initiatorTuple)
+        protected override void TreeSelect_FolderDetailUpdated(LocalTreeNode searchFolder)
         {
-            Util.ThreadMake(() =>
+            if (null == searchFolder.NodeDatum.Hashes_SubnodeFiles_Scratch)
+                return;
+
+            _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_FolderListVM>>();
+
+            var searchSet =
+                searchFolder.NodeDatum.Hashes_SubnodeFiles_Scratch
+                .Union(searchFolder.NodeDatum.Hashes_FilesHere)
+                .ToList();
+
+            if (1 << 11 < searchSet.Count)
             {
-                ClearItems();
-                _cts.Cancel();
-                NoResultsVisibility = Visibility.Collapsed;
-                RaisePropertyChanged("NoResultsVisibility");
-                ProgressbarVisibility = Visibility.Visible;
-                RaisePropertyChanged("ProgressbarVisibility");
+                searchSet =
+                    searchFolder.NodeDatum.Hashes_FilesHere
+                    .ToList();
 
-                while (_bSearching)
-                    Util.Block(20);
+                if (1 << 11 < searchSet.Count)
+                    return;
+            }
 
-                _cts = new CancellationTokenSource();
-                _bSearching = true;
+            if (0 == searchSet.Count)
+                return;
 
-                var folderDetail = initiatorTuple.Item1;
-                var searchFolder = folderDetail.treeNode;
+            FindMatchingFolders(searchFolder, searchSet, LocalTV.RootNodes);
 
-                Util.Closure(() =>
+            if (_cts.IsCancellationRequested)
+                return;
+
+            if (_lsMatchingFolders?.Any() ?? false)
+            {
+                var lsFolders =
+                    _lsMatchingFolders
+                    .OrderByDescending(tupleA => tupleA.Item1);
+
+                _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_FolderListVM>>();
+
+                var nMatch = 0;
+                var bAlternate = false;
+
+                foreach (var folder in lsFolders)
                 {
-                    if (_bDisposed)
-                        return;     // from lambda
-
-                    if (null == searchFolder.NodeDatum.Hashes_SubnodeFiles_Scratch)
-                        return;     // from lambda
-
-                    _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_FolderListVM>>();
-
-                    var searchSet =
-                        searchFolder.NodeDatum.Hashes_SubnodeFiles_Scratch
-                        .Union(searchFolder.NodeDatum.Hashes_FilesHere)
-                        .ToList();
-
-                    if (1 << 11 < searchSet.Count)
+                    if (folder.Item1 != nMatch)
                     {
-                        searchSet =
-                            searchFolder.NodeDatum.Hashes_FilesHere
-                            .ToList();
-
-                        if (1 << 11 < searchSet.Count)
-                            return;     // from lambda
+                        bAlternate = (false == bAlternate);
+                        nMatch = folder.Item1;
                     }
 
-                    if (0 == searchSet.Count)
-                        return;     // from lambda
-
-                    FindMatchingFolders(searchFolder, searchSet, LocalTV.RootNodes);
-
-                    if (_cts.IsCancellationRequested)
-                        return;     // from lambda
-
-                    if (_lsMatchingFolders?.Any() ?? false)
-                    {
-                        var lsFolders =
-                            _lsMatchingFolders
-                            .OrderByDescending(tupleA => tupleA.Item1);
-
-                        _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_FolderListVM>>();
-
-                        var nMatch = 0;
-                        var bAlternate = false;
-
-                        foreach (var folder in lsFolders)
-                        {
-                            if (folder.Item1 != nMatch)
-                            {
-                                bAlternate = (false == bAlternate);
-                                nMatch = folder.Item1;
-                            }
-
-                            folder.Item2.Alternate = bAlternate;
-                        }
-
-                        Util.UIthread(99912, () => Add(lsFolders.Select(tupleA => tupleA.Item2)));
-                    }
-
-                    Util.WriteLine("FindMatchingFolders " + searchFolder.NodeDatum.Hashes_SubnodeFiles_Scratch.GetHashCode());
-                });
-
-                if (Items.Any())
-                {
-                    NoResultsVisibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    NoResultsFolder = searchFolder.Text;
-                    NoResultsVisibility = Visibility.Visible;
-                    RaisePropertyChanged("NoResultsFolder");
+                    folder.Item2.Alternate = bAlternate;
                 }
 
-                RaisePropertyChanged("NoResultsVisibility");
-                ProgressbarVisibility = Visibility.Collapsed;
-                RaisePropertyChanged("ProgressbarVisibility");
-                _bSearching = false;
-            });
+                Util.UIthread(99912, () => Add(lsFolders.Select(tupleA => tupleA.Item2)));
+            }
+
+            Util.WriteLine("FindMatchingFolders " + searchFolder.NodeDatum.Hashes_SubnodeFiles_Scratch.GetHashCode());
         }
 
         void FindMatchingFolders(LocalTreeNode searchFolder, IReadOnlyList<int> searchSet, IReadOnlyList<LocalTreeNode> nodes)
@@ -245,13 +200,7 @@ namespace DoubleFile
 
         ConcurrentBag<Tuple<int, LVitem_FolderListVM>>
             _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_FolderListVM>>();
-        CancellationTokenSource
-            _cts = new CancellationTokenSource();
-        bool
-            _bSearching = false;
         Dictionary<int, IReadOnlyList<int>>
             _dictClones = null;
-        bool
-            _bDisposed = false;
     }
 }

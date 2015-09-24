@@ -1,5 +1,4 @@
 ﻿- allow text selection and copy in message box and most lists
-- process completed. You may now close the window.
 - script source: total size savings of and list outer subdirectories that are clones, so I can delete them
 - nodeParent = new Node(strParent, _nLineNo, 0, 0, null, _rootNode)
 - change drive letter did not change one line and screwed up culling, which is fixed. do a check for [A-Z}:\ when verifying the file.

@@ -3,9 +3,9 @@
     /// <summary>
     /// Interaction logic for WinFolderList.xaml
     /// </summary>
-    partial class UC_FolderList
+    partial class UC_Nearest
     {
-        public UC_FolderList()
+        public UC_Nearest()
         {
             InitializeComponent();
             CantDupeThisUsercontrol = true;
@@ -15,7 +15,7 @@
         {
             DataContext = 
                 _vm =
-                new UC_FolderListVM { UseNicknames = _bNicknames }
+                new UC_NearestVM { UseNicknames = _bNicknames }
                 .Init();
         }
 
@@ -29,7 +29,7 @@
                 null;
         }
 
-        UC_FolderListVM
+        UC_NearestVM
             _vm = null;
         bool
             _bNicknames = false;

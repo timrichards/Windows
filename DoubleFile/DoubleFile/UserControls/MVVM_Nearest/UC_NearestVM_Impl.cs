@@ -10,9 +10,9 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    partial class UC_FolderListVM : IDisposable
+    partial class UC_NearestVM : IDisposable
     {
-        internal UC_FolderListVM()
+        internal UC_NearestVM()
         {
             Util.ThreadMake(() =>
             {
@@ -36,7 +36,7 @@ namespace DoubleFile
             });
         }
 
-        internal UC_FolderListVM Init()
+        internal UC_NearestVM Init()
         {
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
             Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateViewport(UseNicknames));
@@ -68,14 +68,14 @@ namespace DoubleFile
 
             Util.ThreadMake(() =>
             {
-                while (0 < _nRefCount)
+                while (_bSearching)
                     Util.Block(20);
 
                 if (_bDisposed)
                     return;
 
                 _cts = new CancellationTokenSource();
-                ++_nRefCount;
+                _bSearching = true;
 
                 var bNoResults = true;
                 var folderDetail = initiatorTuple.Item1;
@@ -86,7 +86,7 @@ namespace DoubleFile
                     if (null == searchFolder.NodeDatum.Hashes_SubnodeFiles_Scratch)
                         return;     // from lambda
 
-                    _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_FolderListVM>>();
+                    _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_NearestVMVM>>();
 
                     var searchSet =
                         searchFolder.NodeDatum.Hashes_SubnodeFiles_Scratch
@@ -117,7 +117,7 @@ namespace DoubleFile
                             _lsMatchingFolders
                             .OrderByDescending(tupleA => tupleA.Item1);
 
-                        _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_FolderListVM>>();
+                        _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_NearestVMVM>>();
 
                         var nMatch = 0;
                         var bAlternate = false;
@@ -154,7 +154,7 @@ namespace DoubleFile
                 RaisePropertyChanged("NoResultsVisibility");
                 ProgressbarVisibility = Visibility.Collapsed;
                 RaisePropertyChanged("ProgressbarVisibility");
-                --_nRefCount;
+                _bSearching = false;
             });
         }
 
@@ -190,7 +190,7 @@ namespace DoubleFile
                     .Count();
 
                 if (0 < nTestHereCount)
-                    _lsMatchingFolders.Add(Tuple.Create(nTestChildrenCount + nTestHereCount, new LVitem_FolderListVM(testFolder, _nicknameUpdater)));
+                    _lsMatchingFolders.Add(Tuple.Create(nTestChildrenCount + nTestHereCount, new LVitem_NearestVMVM(testFolder, _nicknameUpdater)));
 
                 if (0 < nTestChildrenCount)
                     FindMatchingFolders(searchFolder, searchSet, testFolder.Nodes);         // recurse
@@ -261,12 +261,12 @@ namespace DoubleFile
             }
         }
 
-        ConcurrentBag<Tuple<int, LVitem_FolderListVM>>
-            _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_FolderListVM>>();
+        ConcurrentBag<Tuple<int, LVitem_NearestVMVM>>
+            _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_NearestVMVM>>();
         CancellationTokenSource
             _cts = new CancellationTokenSource();
-        int
-            _nRefCount = 0;
+        bool
+            _bSearching = false;
         Dictionary<int, IReadOnlyList<int>>
             _dictClones = null;
         readonly ListUpdater<bool>

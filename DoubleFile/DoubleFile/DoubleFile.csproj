@@ -246,15 +246,15 @@
     <Compile Include="UserControls\MVVM_Clones\UC_ClonesVM_Impl.cs" />
     <Compile Include="UserControls\MVVM_Clones\UC_ClonesVM.cs" />
     <Compile Include="UserControls\MVVM_Files\LV_FilesVM_Duplicates.cs" />
-    <Compile Include="UserControls\MVVM_FolderList\LVitem_FolderListVM.cs" />
-    <Compile Include="UserControls\MVVM_FolderList\UC_FolderListVM.cs" />
-    <Compile Include="UserControls\MVVM_FolderList\UC_FolderListVM_Impl.cs" />
+    <Compile Include="UserControls\MVVM_Nearest\LVitem_NearestVM.cs" />
+    <Compile Include="UserControls\MVVM_Nearest\UC_NearestVM.cs" />
+    <Compile Include="UserControls\MVVM_Nearest\UC_NearestVM_Impl.cs" />
     <Compile Include="UserControls\ListUpdater.cs" />
     <Compile Include="UserControls\UC_Clones.xaml.cs">
       <DependentUpon>UC_Clones.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\UC_FolderList.xaml.cs">
-      <DependentUpon>UC_FolderList.xaml</DependentUpon>
+    <Compile Include="UserControls\UC_Nearest.xaml.cs">
+      <DependentUpon>UC_Nearest.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\MVVM_Search\LVitem_SearchVM.cs" />
     <Compile Include="UserControls\MVVM_Search\UC_SearchVM_Impl.cs" />
@@ -527,7 +527,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UserControls\UC_FolderList.xaml">
+    <Page Include="UserControls\UC_Nearest.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

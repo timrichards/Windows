@@ -2,7 +2,7 @@
 
 namespace DoubleFile
 {
-    class LVitem_FolderListVM : ListViewItemVM_Base, IListUpdater
+    class LVitem_NearestVMVM : ListViewItemVM_Base, IListUpdater
     {
         public bool
             Alternate { get; internal set; }
@@ -31,7 +31,7 @@ namespace DoubleFile
 
         void IListUpdater.RaiseListUpdate() => RaisePropertyChanged("Parent");
 
-        internal LVitem_FolderListVM(LocalTreeNode folder, ListUpdater<bool> nicknameUpdater)
+        internal LVitem_NearestVMVM(LocalTreeNode folder, ListUpdater<bool> nicknameUpdater)
         {
             LocalTreeNode = folder;
             _nicknameUpdater = nicknameUpdater;

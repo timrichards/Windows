@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 namespace DoubleFile
 {
-    partial class UC_FolderListVM : ListViewVM_Base<LVitem_FolderListVM>
+    partial class UC_NearestVM : ListViewVM_Base<LVitem_NearestVMVM>
     {
         public ICommand Icmd_Nicknames { get; private set; }
         public ICommand Icmd_GoTo { get; private set; }
@@ -14,7 +14,7 @@ namespace DoubleFile
 
         public bool UseNicknames { private get; set; }
 
-        public LVitem_FolderListVM SelectedItem
+        public LVitem_NearestVMVM SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -28,7 +28,7 @@ namespace DoubleFile
                     SelectedItem_AllTriggers();
             }
         }
-        internal void SelectedItem_Set(LVitem_FolderListVM value)
+        internal void SelectedItem_Set(LVitem_NearestVMVM value)
         {
             if (value == _selectedItem)
                 return;
@@ -40,12 +40,12 @@ namespace DoubleFile
         void SelectedItem_AllTriggers()
         {
         }
-        LVitem_FolderListVM _selectedItem = null;
+        LVitem_NearestVMVM _selectedItem = null;
 
         public string WidthFolder => SCW;                   // franken all NaN
         public string WidthIn => SCW;
         public string WidthParent => SCW;
 
-        internal override int NumCols => LVitem_FolderListVM.NumCols_;
+        internal override int NumCols => LVitem_NearestVMVM.NumCols_;
     }
 }

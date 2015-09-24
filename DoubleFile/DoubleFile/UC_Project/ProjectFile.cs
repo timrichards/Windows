@@ -373,8 +373,8 @@ namespace DoubleFile
             if (false == _bProcessing)
                 return true;
 
-            if (MessageBoxResult.Yes == ProgressOverlay.WithProgressOverlay(w =>
-                MBoxStatic.ShowOverlay("Do you want to cancel?", _status, MessageBoxButton.YesNo, w)))
+            if (MessageBoxResult.Yes ==
+                MBoxStatic.ShowOverlay("Do you want to cancel?", _status, MessageBoxButton.YesNo))
             {
                 _bUserCanceled = true;
 

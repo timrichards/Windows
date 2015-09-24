@@ -9,7 +9,6 @@ namespace DoubleFile
     class LV_ProgressVM : ListViewVM_Base<LVitem_ProgressVM>, IDisposable
     {
         public ICommand Icmd_Cancel { get; private set; }
-        internal Action Cancel_Action = null;
 
         public string WidthBigLabel => SCW;             // franken all NaN
         public string WidthSmallKeyLabel => SCW;
@@ -39,8 +38,6 @@ namespace DoubleFile
                     lvItem.TimerTick();
             }));
 
-            _lsDisposable.Add(Statics.EscKey.LocalSubscribe(99623, x => Cancel_Action?.Invoke()));
-            Icmd_Cancel = new RelayCommand(() => Cancel_Action?.Invoke());
             return this;
         }
 

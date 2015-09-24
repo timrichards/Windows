@@ -21,16 +21,18 @@ namespace DoubleFile
         }
     }
 
-    class _ProgressAsOverlay : ILocalWindow
+    // Window_Closed() calls Dispose() on the LV_ProgressVM member.
+    [SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
+    partial class
+        ProgressOverlay
     {
         internal string Title { get; set; }
 
-        protected Action<CancelEventArgs> OKtoClose = null;
-        internal ILocalWindow Close()
+        internal ProgressOverlay Close()
         {
             var cancelEventArgs = new CancelEventArgs { Cancel = false };
 
-            OKtoClose?.Invoke(cancelEventArgs);
+            Window_Closing(cancelEventArgs);
 
             if (false == cancelEventArgs.Cancel)
                 _dispatcherFrame.Continue = false;
@@ -42,7 +44,7 @@ namespace DoubleFile
         bool _bWentModeless = false;
 
         public bool Activate() => false;
-        public bool LocalIsClosed => false == _vm.Any();
+        public bool LocalIsClosed => null == _vm;
         public bool SimulatingModal { get; set; } = true;
 
         LocalDispatcherFrame _dispatcherFrame = new LocalDispatcherFrame(99730);
@@ -50,49 +52,54 @@ namespace DoubleFile
         protected LV_ProgressVM
             _vm = null;
 
-        internal _ProgressAsOverlay()
-        {
-            _vm = new LV_ProgressVM();
-            _vm.Cancel_Action = () => Close();
-        }
-
         protected Action<ProgressOverlay> _initClient = null;
 
         internal void
             ShowOverlay(LocalModernWindowBase window = null)
         {
+            _window = window;
+            _lsDisposable.Add(_vm = new LV_ProgressVM());
+            _vm.Add(_ieStr);
+
             Util.UIthread(99729, () =>
             {
-                if (null == window)
-                    window = ((LocalModernWindowBase)Application.Current.MainWindow);
+                if (null == _window)
+                    _window = (LocalModernWindowBase)Application.Current.MainWindow;
 
-                window.ProgressCtl.DataContext = _vm;
+                _window.ProgressCtl.DataContext = _vm;
+                _vm.Init();
             });
 
-            window.Progress_Darken();
-            _vm.Init();
-            Util.ThreadMake(() => _initClient?.Invoke((ProgressOverlay)this));
+            _lsDisposable.Add(Observable.FromEventPattern(_window.ProgressCtl.formBtn_Cancel, "Click")
+                .LocalSubscribe(99621, x => Close()));
+
+            _lsDisposable.Add(Statics.EscKey.LocalSubscribe(99623, x => Close()));
+
+            _window.Progress_Darken();
+            Util.ThreadMake(() => _initClient?.Invoke(this));
             _dispatcherFrame.PushFrameTrue();
 
             if (_bWentModeless)
                 return;
 
-            window.Progress_Undarken();
-            _vm.Dispose();
+            _window.Progress_Undarken();
+            Util.LocalDispose(_lsDisposable);
+            _vm = null;
+            Util.UIthread(99622, () => _window.ProgressCtl.DataContext = null);
         }
-    }
 
-    // Window_Closed() calls Dispose() on the LV_ProgressVM member.
-    [SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
-    partial class
-        ProgressOverlay : _ProgressAsOverlay
-    {
+        protected IEnumerable<Tuple<string, string>> _ieStr = null;
+
         internal WeakReference<IProgressOverlayClosing>
             WindowClosingCallback { private get; set; }
 
         internal ProgressOverlay
             AllowSubsequentProcess() { _bAllowSubsequentProcess = true; return this; }
         bool _bAllowSubsequentProcess = false;
+
+        internal static T
+            WithProgressOverlay<T>(Func<ProgressOverlay, T> doSomethingWith) => _wr.Get(o => doSomethingWith(o));
+        static readonly WeakReference<ProgressOverlay> _wr = new WeakReference<ProgressOverlay>(null);
 
         internal static ProgressOverlay
             CloseForced() => WithProgressOverlay(w =>
@@ -127,8 +134,7 @@ namespace DoubleFile
 
             _wr.SetTarget(this);
             _initClient = initClient;
-            OKtoClose = Window_Closing;
-            _vm.Add(astrBigLabels.Zip(astrSmallKeyLabels, (a, b) => Tuple.Create(a, b)));
+            _ieStr = astrBigLabels.Zip(astrSmallKeyLabels, (a, b) => Tuple.Create(a, b));
         }
 
         internal ProgressOverlay
@@ -155,7 +161,7 @@ namespace DoubleFile
 
                 if (_vm.ItemsCast.All(lvItemA => lvItemA.IsCompleted))
                 {
- //                   Util.UIthread(99827, () => formBtn_Cancel.ToolTip = "Process completed. You may now close the window");
+                    Util.UIthread(99827, () => _window.ProgressCtl.formBtn_Cancel.ToolTip = "Process completed. You may now close the window");
                     StopShowingConfirmMessage();
 
                     if (_bAllowSubsequentProcess)
@@ -196,7 +202,7 @@ namespace DoubleFile
             }
 
             _bAborted = true;
-            base.Close();
+            Close();
             return this;
         }
 
@@ -275,7 +281,7 @@ namespace DoubleFile
                 if (bConfirmClose)
                 {
                     _bAborted = true;
-                    base.Close();
+                    Close();
                 }
                 else
                 {
@@ -284,11 +290,10 @@ namespace DoubleFile
             });
         }
 
-        internal static T
-            WithProgressOverlay<T>(Func<ProgressOverlay, T> doSomethingWith) => _wr.Get(o => doSomethingWith(o));
-
-        static readonly WeakReference<ProgressOverlay> _wr = new WeakReference<ProgressOverlay>(null);
-
+        LocalModernWindowBase
+            _window = null;
+        readonly IList<IDisposable>
+            _lsDisposable = new List<IDisposable>();
         bool
             _bClosing = false;
         DateTime

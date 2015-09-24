@@ -8,10 +8,8 @@ namespace DoubleFile
 {
     class SaveListingsProcess : IProgressOverlayClosing, ISaveDirListingsStatus
     {
-        static internal void Go(LV_ProjectVM lvProjectVM)
-        {
-            new SaveListingsProcess(lvProjectVM);
-        }
+        static internal void
+            Go(LV_ProjectVM lvProjectVM) => new SaveListingsProcess(lvProjectVM);
 
         SaveListingsProcess(LV_ProjectVM lvProjectVM)
         {
@@ -89,10 +87,7 @@ namespace DoubleFile
             }
         }
 
-        void ISaveDirListingsStatus.Done()
-        {
-            Statics.SaveDirListings = null;
-        }
+        void ISaveDirListingsStatus.Done() => Statics.SaveDirListings = null;
 
         bool IProgressOverlayClosing.ConfirmClose()
         {
@@ -100,9 +95,10 @@ namespace DoubleFile
                 return true;
 
             if (MessageBoxResult.Yes !=
-                MBoxStatic.ShowOverlay("Do you want to cancel?", "Saving Directory Listings", MessageBoxButton.YesNo,
-                ProgressOverlay.WithProgressOverlay(w => w)))
+                MBoxStatic.ShowOverlay("Do you want to cancel?", "Saving Directory Listings", MessageBoxButton.YesNo))
+            {
                 return false;
+            }
 
             Statics.SaveDirListings?.EndThread();
             return true;

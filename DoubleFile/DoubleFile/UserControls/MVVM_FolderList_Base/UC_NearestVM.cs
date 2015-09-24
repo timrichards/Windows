@@ -10,10 +10,12 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    partial class UC_NearestVM : IDisposable
+    partial class UC_NearestVM : UC_FolderListVM
     {
-        internal UC_NearestVM Init()
+        internal new UC_NearestVM Init()
         {
+            base.Init();
+
             Util.ThreadMake(() =>
             {
                 var stopwatch = Stopwatch.StartNew();
@@ -23,15 +25,10 @@ namespace DoubleFile
                 _dictClones = null;
                 stopwatch.Stop();
                 Util.WriteLine("Setup_AllFileHashes_Scratch " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
-                _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99701, TreeSelect_FolderDetailUpdated));
                 NoResultsFolder = null;
                 RaisePropertyChanged("NoResultsFolder");
                 ProgressbarVisibility = Visibility.Collapsed;
                 RaisePropertyChanged("ProgressbarVisibility");
-                Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
-                Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateViewport(UseNicknames));
-                _nicknameUpdater.Clear();
-                _nicknameUpdater.UpdateViewport(UseNicknames);
 
                 var folderDetail = LocalTV.TreeSelect_FolderDetail;
 
@@ -42,19 +39,20 @@ namespace DoubleFile
             return this;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
+            base.Dispose();
+
             Util.ThreadMake(() =>
             {
                 _bDisposed = true;
                 _cts.Cancel();
-                Util.LocalDispose(_lsDisposable);
                 Cleanup_AllFileHashes_Scratch(LocalTV.RootNodes);
                 GC.Collect();
             });
         }
 
-        void TreeSelect_FolderDetailUpdated(Tuple<TreeSelect.FolderDetailUpdated, int> initiatorTuple)
+        protected override void TreeSelect_FolderDetailUpdated(Tuple<TreeSelect.FolderDetailUpdated, int> initiatorTuple)
         {
             Util.ThreadMake(() =>
             {
@@ -82,7 +80,7 @@ namespace DoubleFile
                     if (null == searchFolder.NodeDatum.Hashes_SubnodeFiles_Scratch)
                         return;     // from lambda
 
-                    _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_NearestVMVM>>();
+                    _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_FolderListVM>>();
 
                     var searchSet =
                         searchFolder.NodeDatum.Hashes_SubnodeFiles_Scratch
@@ -113,7 +111,7 @@ namespace DoubleFile
                             _lsMatchingFolders
                             .OrderByDescending(tupleA => tupleA.Item1);
 
-                        _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_NearestVMVM>>();
+                        _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_FolderListVM>>();
 
                         var nMatch = 0;
                         var bAlternate = false;
@@ -185,22 +183,11 @@ namespace DoubleFile
                     .Count();
 
                 if (0 < nTestHereCount)
-                    _lsMatchingFolders.Add(Tuple.Create(nTestChildrenCount + nTestHereCount, new LVitem_NearestVMVM(testFolder, _nicknameUpdater)));
+                    _lsMatchingFolders.Add(Tuple.Create(nTestChildrenCount + nTestHereCount, new LVitem_FolderListVM(testFolder, _nicknameUpdater)));
 
                 if (0 < nTestChildrenCount)
                     FindMatchingFolders(searchFolder, searchSet, testFolder.Nodes);         // recurse
             });
-        }
-
-        void GoTo()
-        {
-            if (null == _selectedItem)
-            {
-                Util.Assert(99897, false);    // binding should dim the button
-                return;
-            }
-
-            _selectedItem.LocalTreeNode.GoToFile(null);
         }
 
         IReadOnlyList<int>
@@ -256,18 +243,14 @@ namespace DoubleFile
             }
         }
 
-        ConcurrentBag<Tuple<int, LVitem_NearestVMVM>>
-            _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_NearestVMVM>>();
+        ConcurrentBag<Tuple<int, LVitem_FolderListVM>>
+            _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_FolderListVM>>();
         CancellationTokenSource
             _cts = new CancellationTokenSource();
         bool
             _bSearching = false;
         Dictionary<int, IReadOnlyList<int>>
             _dictClones = null;
-        readonly ListUpdater<bool>
-            _nicknameUpdater = new ListUpdater<bool>(99667);
-        readonly IList<IDisposable>
-            _lsDisposable = new List<IDisposable>();
         bool
             _bDisposed = false;
     }

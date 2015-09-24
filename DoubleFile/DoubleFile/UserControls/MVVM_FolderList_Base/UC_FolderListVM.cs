@@ -3,18 +3,18 @@ using System.Windows.Input;
 
 namespace DoubleFile
 {
-    partial class UC_NearestVM : ListViewVM_Base<LVitem_NearestVMVM>
+    partial class UC_FolderListVM : ListViewVM_Base<LVitem_FolderListVM>
     {
-        public ICommand Icmd_Nicknames { get; private set; }
-        public ICommand Icmd_GoTo { get; private set; }
+        public ICommand Icmd_Nicknames { get; protected set; }
+        public ICommand Icmd_GoTo { get; protected set; }
 
-        public Visibility ProgressbarVisibility { get; private set; } = Visibility.Visible;
-        public Visibility NoResultsVisibility { get; private set; } = Visibility.Visible;
-        public string NoResultsFolder { get; private set; } = "setting up Nearest view";
+        public Visibility ProgressbarVisibility { get; protected set; } = Visibility.Visible;
+        public Visibility NoResultsVisibility { get; protected set; } = Visibility.Visible;
+        public string NoResultsFolder { get; protected set; } = "setting up Nearest view";
 
-        public bool UseNicknames { private get; set; }
+        public bool UseNicknames { protected get; set; }
 
-        public LVitem_NearestVMVM SelectedItem
+        public LVitem_FolderListVM SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -28,7 +28,7 @@ namespace DoubleFile
                     SelectedItem_AllTriggers();
             }
         }
-        internal void SelectedItem_Set(LVitem_NearestVMVM value)
+        internal void SelectedItem_Set(LVitem_FolderListVM value)
         {
             if (value == _selectedItem)
                 return;
@@ -40,12 +40,12 @@ namespace DoubleFile
         void SelectedItem_AllTriggers()
         {
         }
-        LVitem_NearestVMVM _selectedItem = null;
+        protected LVitem_FolderListVM _selectedItem = null;
 
         public string WidthFolder => SCW;                   // franken all NaN
         public string WidthIn => SCW;
         public string WidthParent => SCW;
 
-        internal override int NumCols => LVitem_NearestVMVM.NumCols_;
+        internal override int NumCols => LVitem_FolderListVM.NumCols_;
     }
 }

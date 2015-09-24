@@ -194,6 +194,7 @@
     <Compile Include="LocalTreeNode\LocalColorItemBase.cs" />
     <Compile Include="LocalTreeNode\LVitemProject_Explorer.cs" />
     <Compile Include="Statics.cs" />
+    <Compile Include="UserControls\MVVM_FolderList_Base\UC_FolderListVM_Impl.cs" />
     <Compile Include="UserControls\UC_FolderList_Base.xaml.cs">
       <DependentUpon>UC_FolderList_Base.xaml</DependentUpon>
     </Compile>
@@ -258,9 +259,9 @@
     <Compile Include="UserControls\MVVM_Clones\UC_ClonesVM_Impl.cs" />
     <Compile Include="UserControls\MVVM_Clones\UC_ClonesVM.cs" />
     <Compile Include="UserControls\MVVM_Files\LV_FilesVM_Duplicates.cs" />
-    <Compile Include="UserControls\MVVM_Nearest\LVitem_NearestVM.cs" />
-    <Compile Include="UserControls\MVVM_Nearest\UC_NearestVM.cs" />
-    <Compile Include="UserControls\MVVM_Nearest\UC_NearestVM_Impl.cs" />
+    <Compile Include="UserControls\MVVM_FolderList_Base\LVitem_FolderListVM.cs" />
+    <Compile Include="UserControls\MVVM_FolderList_Base\UC_FolderListVM.cs" />
+    <Compile Include="UserControls\MVVM_FolderList_Base\UC_NearestVM.cs" />
     <Compile Include="UserControls\ListUpdater.cs" />
     <Compile Include="UserControls\UC_Clones.xaml.cs">
       <DependentUpon>UC_Clones.xaml</DependentUpon>
@@ -627,6 +628,10 @@
     <Content Include="UC_Project\lzma920\7zr.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="UserControls\MVVM_ClonesHere\" />
+    <Folder Include="UserControls\MVVM_SolitaryHere\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

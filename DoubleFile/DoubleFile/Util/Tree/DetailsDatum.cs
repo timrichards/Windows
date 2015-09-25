@@ -11,8 +11,6 @@ namespace DoubleFile
             PrevLineNo;                             // Found 21 bits
         internal readonly uint
             LineNo;                                 // Found 21 bits
-        internal readonly ulong
-            Length;
 
         internal int
             Hash_AllFiles = 0;
@@ -21,12 +19,16 @@ namespace DoubleFile
         internal IReadOnlyList<int>
             Hashes_SubnodeFiles_Scratch = null;
 
+        internal readonly ulong
+            LengthHere;
         internal ulong
-            TotalLength;
+            LengthTotal;
+
         internal uint
             FileCountHere;                          // Found 15 bits
         internal uint
             FileCountTotal;                         // Found 21 bits
+
         internal uint
             SubDirs;                                // Found 17 bits
         internal uint
@@ -40,21 +42,21 @@ namespace DoubleFile
         {
             PrevLineNo = nPrevLineNo;
             LineNo = nLineNo;
-            Length = nLength;
+            LengthHere = nLength;
             Hash_AllFiles = nAllFilesHash;
             Hashes_FilesHere = lsFilesHereHashes.OrderBy(n => n).Distinct().ToArray();
         }
 
         protected DetailsDatum(DetailsDatum datum)
         {
-            TotalLength = datum.TotalLength;
+            LengthTotal = datum.LengthTotal;
             FileCountTotal = datum.FileCountTotal;
             SubDirs = datum.SubDirs;
             FileCountHere = datum.FileCountHere;
             DirsWithFiles = datum.DirsWithFiles;
             PrevLineNo = datum.PrevLineNo;
             LineNo = datum.LineNo;
-            Length = datum.Length;
+            LengthHere = datum.LengthHere;
             Hash_AllFiles = datum.Hash_AllFiles;
             Hashes_FilesHere = datum.Hashes_FilesHere;
         }
@@ -63,7 +65,7 @@ namespace DoubleFile
             operator +(DetailsDatum datum1, DetailsDatum datum2) =>
             new DetailsDatum
         {
-            TotalLength = datum1.TotalLength + datum2.TotalLength,
+            LengthTotal = datum1.LengthTotal + datum2.LengthTotal,
             FileCountTotal = datum1.FileCountTotal + datum2.FileCountTotal,
             SubDirs = datum1.SubDirs + datum2.SubDirs,
             FileCountHere = datum1.FileCountHere + datum2.FileCountHere,
@@ -72,6 +74,6 @@ namespace DoubleFile
         };
 
         internal FolderKeyTuple
-            Key => new FolderKeyTuple(TotalLength, FileCountTotal, DirsWithFiles, Hash_AllFiles);
+            Key => new FolderKeyTuple(LengthTotal, FileCountTotal, DirsWithFiles, Hash_AllFiles);
     }
 }

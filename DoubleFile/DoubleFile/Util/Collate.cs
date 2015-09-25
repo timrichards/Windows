@@ -183,7 +183,7 @@ namespace DoubleFile
                             return;
                         }
 
-                        Util.Assert(1305.6316m, 0 < nodeDatum.TotalLength);
+                        Util.Assert(1305.6316m, 0 < nodeDatum.LengthTotal);
 
                         if (false == lsNodes.Contains(treeNode_A.Parent))
                             listKeep.Add(treeNode_A);
@@ -374,7 +374,7 @@ namespace DoubleFile
                 Util.WriteLine("Step1_OnThread " + nCount);
             }
 
-            lsSameVol.Sort((y, x) => x.NodeDatum.TotalLength.CompareTo(y.NodeDatum.TotalLength));
+            lsSameVol.Sort((y, x) => x.NodeDatum.LengthTotal.CompareTo(y.NodeDatum.LengthTotal));
             nProgressDenominator += lsSameVol.Count;
             ++nProgressItem;
 
@@ -462,7 +462,7 @@ namespace DoubleFile
             }
 
             var listClones = nodeDatum.Clones;
-            var nLength = nodeDatum.TotalLength;
+            var nLength = nodeDatum.LengthTotal;
 
             if (0 == nLength)
             {

@@ -53,7 +53,7 @@ namespace DoubleFile
                     return datum;
                 }
 
-                nodeDatum.TotalLength = (datum.TotalLength += nodeDatum.Length);
+                nodeDatum.LengthTotal = (datum.LengthTotal += nodeDatum.LengthHere);
                 nodeDatum.FileCountHere = nodeDatum.LineNo - nodeDatum.PrevLineNo - 1;
                 nodeDatum.FileCountTotal = (datum.FileCountTotal += nodeDatum.FileCountHere);
                 nodeDatum.SubDirs = (datum.SubDirs += (uint)(treeNode.Nodes?.Count ?? 0));
@@ -71,7 +71,7 @@ namespace DoubleFile
                     lock (lsTreeNodes)
                         lsTreeNodes.Add(treeNode);
                 }
-                else if (0 < nodeDatum.TotalLength)
+                else if (0 < nodeDatum.LengthTotal)
                 {
                     _dictNodes[nodeDatum.Key] = new List<LocalTreeNode> { treeNode };
                 }

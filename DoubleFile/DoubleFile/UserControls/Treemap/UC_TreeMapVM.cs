@@ -351,7 +351,7 @@ namespace DoubleFile
             WinTooltip.ShowTooltip(
                 new WinTooltip.ArgsStruct(
                     strFolder,
-                    Util.FormatSize(nodeDatum.TotalLength, bBytes: true),
+                    Util.FormatSize(nodeDatum.LengthTotal, bBytes: true),
                     LocalOwner,
                     Tooltip_Click,
                     () => ClearSelection(bDontCloseTooltip: true)),
@@ -462,7 +462,7 @@ namespace DoubleFile
                 lsFiles.Add(Tuple.Create(asFileLine[0], nLength));
             }
 
-            Util.Assert(1301.2313m, nLengthDebug == nodeDatum.Length);
+            Util.Assert(1301.2313m, nLengthDebug == nodeDatum.LengthHere);
 
             ulong nTotalLength = 0;
             var lsNodes = new List<LocalTreeMapFileNode>();
@@ -476,7 +476,7 @@ namespace DoubleFile
 
                 lsNodes.Add(new LocalTreeMapFileNode(tuple.Item1)
                 {
-                    NodeDatum = new NodeDatum { TotalLength = tuple.Item2 },
+                    NodeDatum = new NodeDatum { LengthTotal = tuple.Item2 },
                     ForeColor = UtilColorcode.TreemapFile
                 });
             }
@@ -484,11 +484,11 @@ namespace DoubleFile
             if (0 == nTotalLength)
                 return null;
 
-            Util.Assert(1302.3301m, nTotalLength == parent.NodeDatum.Length);
+            Util.Assert(1302.3301m, nTotalLength == parent.NodeDatum.LengthHere);
 
             return new LocalTreeMapFileListNode(parent, lsNodes)
             {
-                NodeDatum = new NodeDatum { TotalLength = nTotalLength, TreeMapRect = parent.NodeDatum.TreeMapRect }
+                NodeDatum = new NodeDatum { LengthTotal = nTotalLength, TreeMapRect = parent.NodeDatum.TreeMapRect }
             };
         }
 
@@ -628,7 +628,7 @@ namespace DoubleFile
             var rc = new Rect(0, 0, BitmapSize, BitmapSize).Scale(1d / TreeMapFrame.ScaleFactor);
 
             return
-                (0 < nodeDatum.TotalLength)
+                (0 < nodeDatum.LengthTotal)
                 ? new Recurse().Render(TreeNode, rc, DeepNode, out _deepNodeDrawn, out ieFrames)
                 : new[] { new Folder(rc, Colors.Wheat.ToArgb()) };
         }
@@ -726,7 +726,7 @@ namespace DoubleFile
                         if (false == rootNodeDatum.VolumeView)
                             return;     // from lambda
 
-                        var nodeDatumFree = new NodeDatum { TotalLength = rootNodeDatum.VolumeFree };
+                        var nodeDatumFree = new NodeDatum { LengthTotal = rootNodeDatum.VolumeFree };
 
                         var nodeFree = new LocalTreeMapFileNode(treeNode.Text + " (free space)")
                         {
@@ -740,19 +740,19 @@ namespace DoubleFile
                         var nUnreadLength =
                             (long)nVolumeLength -
                             (long)rootNodeDatum.VolumeFree -
-                            (long)rootNodeDatum.TotalLength;
+                            (long)rootNodeDatum.LengthTotal;
 
                         if (0 < nUnreadLength)
                         {
-                            nodeDatumUnread.TotalLength = (ulong)nUnreadLength;
+                            nodeDatumUnread.LengthTotal = (ulong)nUnreadLength;
                         }
                         else
                         {
                             // Faked length to make up for compression and hard links
                             nVolumeLength =
-                                rootNodeDatum.VolumeFree + rootNodeDatum.TotalLength;
+                                rootNodeDatum.VolumeFree + rootNodeDatum.LengthTotal;
 
-                            nodeDatumUnread.TotalLength = 0;
+                            nodeDatumUnread.LengthTotal = 0;
                         }
 
                         var nodeUnread = new LocalTreeMapFileNode(treeNode.Text + " (unread data)")
@@ -776,7 +776,7 @@ namespace DoubleFile
 
                         var nodeDatumVolume = new NodeDatum
                         {
-                            TotalLength = nVolumeLength,
+                            LengthTotal = nVolumeLength,
                             TreeMapRect = rootNodeDatum.TreeMapRect
                         };
 
@@ -791,7 +791,7 @@ namespace DoubleFile
 
                         ieChildren =
                             treeNode.Nodes
-                            .Where(t => 0 < t.NodeDatum.TotalLength);
+                            .Where(t => 0 < t.NodeDatum.LengthTotal);
                     }
 
                     if ((null == ieChildren) &&
@@ -832,11 +832,11 @@ namespace DoubleFile
                 {
                     ieChildren = ieChildren.Concat(new[] { nodeDatum.TreeMapFiles });
                 }
-                else if (0 < nodeDatum.Length)
+                else if (0 < nodeDatum.LengthHere)
                 {
                     ieChildren = ieChildren.Concat(new[] { new LocalTreeMapFileNode(parent.Text)
                     {
-                        NodeDatum = new NodeDatum { TotalLength = nodeDatum.Length },
+                        NodeDatum = new NodeDatum { LengthTotal = nodeDatum.LengthHere },
                         ForeColor = UtilColorcode.TreemapFolder
                     }});
                 }
@@ -844,7 +844,7 @@ namespace DoubleFile
                 // could do array here but it's slightly less efficient because element sizes have to be shrunk
                 var lsChildren =
                     ieChildren
-                    .OrderByDescending(treeNode => treeNode.NodeDatum.TotalLength)
+                    .OrderByDescending(treeNode => treeNode.NodeDatum.LengthTotal)
                     .ToList();
 
                 var nCount = lsChildren.Count;
@@ -985,14 +985,14 @@ namespace DoubleFile
                     return 0;
                 }
 
-                double mySize = nodeDatum.TotalLength;
+                double mySize = nodeDatum.LengthTotal;
                 ulong sizeUsed = 0;
                 double rowHeight = 0;
                 var i = 0;
 
                 for (i = nextChild; i < nCount; ++i)
                 {
-                    var childSize = listChildren[i].NodeDatum.TotalLength;
+                    var childSize = listChildren[i].NodeDatum.LengthTotal;
 
                     sizeUsed += childSize;
 
@@ -1045,7 +1045,7 @@ namespace DoubleFile
                         return 0;
                     }
 
-                    var childSize = (double)nodeDatum_A.TotalLength;
+                    var childSize = (double)nodeDatum_A.LengthTotal;
                     var cw = childSize / rowSize;
 
                     Util.Assert(1302.3315m, 0 <= cw);

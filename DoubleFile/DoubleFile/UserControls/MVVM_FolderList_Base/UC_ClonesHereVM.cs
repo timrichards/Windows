@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace DoubleFile
 {
-    partial class UC_SolitaryHereVM : UC_FolderListVM
+    partial class UC_ClonesHereVM : UC_FolderListVM
     {
-        internal new UC_SolitaryHereVM          // new to hide then call base.Init() and return this
+        internal new UC_ClonesHereVM          // new to hide then call base.Init() and return this
             Init()
         {
             base.Init();
@@ -39,28 +39,29 @@ namespace DoubleFile
             FillList(LocalTreeNode searchFolder)
         {
             _lsFolders = new ConcurrentBag<LocalTreeNode>();
-            FindAllSolitary(searchFolder);
+            FindAllClones(searchFolder);
 
             return _lsFolders.OrderByDescending(folder => folder.NodeDatum.LengthTotal)
                 .Select(folder => new LVitem_FolderListVM(folder, _nicknameUpdater));
         }
 
-        void FindAllSolitary(LocalTreeNode searchFolder)
+        void FindAllClones(LocalTreeNode searchFolder)
         {
             if (_cts.IsCancellationRequested)
                 return;
 
-            Util.ParallelForEach(99912, searchFolder.Nodes, new ParallelOptions { CancellationToken = _cts.Token },
+            Util.ParallelForEach(99620, searchFolder.Nodes, new ParallelOptions { CancellationToken = _cts.Token },
                 folder =>
             {
-                if (null != folder.NodeDatum.Clones)
+                if (null == folder.NodeDatum.Clones)
+                {
+                    if (null != folder.Nodes)
+                        FindAllClones(folder);
+
                     return;     // from lambda
+                }
 
-                if (0 < folder.NodeDatum.LengthHere)
-                    _lsFolders.Add(folder);
-
-                if (null != folder.Nodes)
-                    FindAllSolitary(folder);
+                _lsFolders.Add(folder);
             });
         }
 

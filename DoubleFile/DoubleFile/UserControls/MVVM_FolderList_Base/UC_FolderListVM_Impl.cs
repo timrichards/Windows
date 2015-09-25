@@ -33,10 +33,15 @@ namespace DoubleFile
             RaisePropertyChanged("ProgressbarVisibility");
         }
 
-        protected virtual void
-            TreeSelect_FolderDetailUpdated(LocalTreeNode searchFolder) { }
+        protected virtual IEnumerable<LVitem_FolderListVM>
+            FillList(LocalTreeNode searchFolder) { Util.Assert(99618, false); return null; }
 
-        void TreeSelect_FolderDetailUpdated(Tuple<TreeSelect.FolderDetailUpdated, int> initiatorTuple)
+        protected virtual void
+            Clear() { }
+
+        void TreeSelect_FolderDetailUpdated(Tuple<TreeSelect.FolderDetailUpdated, int> initiatorTuple) => StartSearch(initiatorTuple.Item1.treeNode);
+
+        protected void StartSearch(LocalTreeNode searchFolder)
         {
             ClearItems();
             NoResultsVisibility = Visibility.Collapsed;
@@ -51,17 +56,34 @@ namespace DoubleFile
                 while (_bSearching)
                     Util.Block(20);
 
-                _cts = new CancellationTokenSource();
-
                 if (_bDisposed)
                     return;     // from lambda
 
-                _bSearching = true;
-                TreeSelect_FolderDetailUpdated(initiatorTuple.Item1.treeNode);
+                if (null != searchFolder.Nodes)
+                {
+                    _cts = new CancellationTokenSource();
+                    _bSearching = true;
+
+                    var ieLVitems = FillList(searchFolder);
+
+                    if (null != ieLVitems)
+                    {
+                        Util.UIthread(99619, () =>
+                        {
+                            foreach (var lvItem in ieLVitems)
+                                Add(lvItem, bQuiet: true);
+
+                            if (Items.Any())
+                                RaiseItems();
+                        });
+                    }
+
+                    Clear();
+                }
 
                 if (false == Items.Any())
                 {
-                    NoResultsFolder = initiatorTuple.Item1.treeNode.Text;
+                    NoResultsFolder = searchFolder.Text;
                     RaisePropertyChanged("NoResultsFolder");
                     NoResultsVisibility = Visibility.Visible;
                     RaisePropertyChanged("NoResultsVisibility");
@@ -85,8 +107,8 @@ namespace DoubleFile
 
         bool
             _bSearching = false;
-        protected bool
-            _bDisposed { get; private set; }
+        bool
+            _bDisposed = false;
         protected CancellationTokenSource
             _cts { get; private set; } = new CancellationTokenSource();
         protected readonly ListUpdater<bool>

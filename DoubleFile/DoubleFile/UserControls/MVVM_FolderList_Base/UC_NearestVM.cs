@@ -32,7 +32,7 @@ namespace DoubleFile
                 var folderDetail = LocalTV.TreeSelect_FolderDetail;
 
                 if (null != folderDetail)
-                    TreeSelect_FolderDetailUpdated(folderDetail.treeNode);
+                    StartSearch(folderDetail.treeNode);
             });
 
             return this;
@@ -42,16 +42,17 @@ namespace DoubleFile
         {
             Util.ThreadMake(() =>
             {
-                base.Dispose();                 // sets _bDisposed and _cts.Cancel()
+                base.Dispose();                 // sets _cts.IsCancellationRequested
                 Cleanup_AllFileHashes_Scratch(LocalTV.RootNodes);
                 GC.Collect();
             });
         }
 
-        protected override void TreeSelect_FolderDetailUpdated(LocalTreeNode searchFolder)
+        protected override IEnumerable<LVitem_FolderListVM>
+            FillList(LocalTreeNode searchFolder)
         {
             if (null == searchFolder.NodeDatum.Hashes_SubnodeFiles_Scratch)
-                return;
+                return null;
 
             _lsMatchingFolders = new ConcurrentBag<Tuple<int, LVitem_FolderListVM>>();
 
@@ -67,16 +68,16 @@ namespace DoubleFile
                     .ToList();
 
                 if (1 << 11 < searchSet.Count)
-                    return;
+                    return null;
             }
 
             if (0 == searchSet.Count)
-                return;
+                return null;
 
             FindMatchingFolders(searchFolder, searchSet, LocalTV.RootNodes);
 
             if (_cts.IsCancellationRequested)
-                return;
+                return null;
 
             if (_lsMatchingFolders?.Any() ?? false)
             {
@@ -100,10 +101,11 @@ namespace DoubleFile
                     folder.Item2.Alternate = bAlternate;
                 }
 
-                Util.UIthread(99912, () => Add(lsFolders.Select(tupleA => tupleA.Item2)));
+                Util.WriteLine("FindMatchingFolders " + searchFolder.NodeDatum.Hashes_SubnodeFiles_Scratch.GetHashCode());
+                return lsFolders.Select(tupleA => tupleA.Item2);
             }
 
-            Util.WriteLine("FindMatchingFolders " + searchFolder.NodeDatum.Hashes_SubnodeFiles_Scratch.GetHashCode());
+            return null;
         }
 
         void FindMatchingFolders(LocalTreeNode searchFolder, IReadOnlyList<int> searchSet, IReadOnlyList<LocalTreeNode> nodes)
@@ -155,7 +157,7 @@ namespace DoubleFile
 
             foreach (var treeNode in nodes)
             {
-                if (_bDisposed)
+                if (_cts.IsCancellationRequested)
                     return new int[0];
 
                 var lsAllFileHashes_childNodes = new List<int> { };

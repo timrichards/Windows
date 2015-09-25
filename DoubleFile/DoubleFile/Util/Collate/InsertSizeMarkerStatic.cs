@@ -13,7 +13,7 @@ namespace DoubleFile
                     listLVitems[nIx].WithLocalTreeNode(localTreeNode => ((Util.FormatSize(
                     localTreeNode
                     .NodeDatum
-                    .TotalLength,
+                    .LengthTotal,
                     bNoDecimal: true)))) });
 
                 if (bAdd)

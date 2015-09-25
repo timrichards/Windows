@@ -150,7 +150,7 @@ namespace DoubleFile
             const string kStrFmt_thous = "###,###,###,##0";
 
             lieDetail.Add(new[] { "# Files Here", nodeDatum.FileCountHere.ToString(kStrFmt_thous) });
-            lieDetail.Add(new[] { "with Size of", FormatSize(nodeDatum.Length, bBytes: true) });
+            lieDetail.Add(new[] { "with Size of", FormatSize(nodeDatum.LengthHere, bBytes: true) });
             lieDetail.Add(new[] { "Total # Files", nodeDatum.FileCountTotal.ToString(kStrFmt_thous) });
             lieDetail.Add(new[] { "# Folders Here", (treeNode.Nodes?.Count ?? 0).ToString(kStrFmt_thous) });
 
@@ -172,7 +172,7 @@ namespace DoubleFile
                 lieDetail.Add(new[] { "# Subfolders", strItem });
             }
 
-            lieDetail.Add(new[] { "Total Size", FormatSize(nodeDatum.TotalLength, bBytes: true) });
+            lieDetail.Add(new[] { "Total Size", FormatSize(nodeDatum.LengthTotal, bBytes: true) });
             FolderDetailUpdatedOnNext(new FolderDetailUpdated(lieDetail, treeNode), nInitiator);
         }
 

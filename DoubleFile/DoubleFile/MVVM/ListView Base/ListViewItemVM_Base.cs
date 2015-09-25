@@ -8,6 +8,9 @@ namespace DoubleFile
 {
     abstract class ListViewItemVM_Base : ObservableObjectBase
     {
+        internal virtual string
+            ExportLine => string.Join(" ", _subItems);
+
         internal string this[int i] => _subItems[i];
 
         internal IList<string> SubItems

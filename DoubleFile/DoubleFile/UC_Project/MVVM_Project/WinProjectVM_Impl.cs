@@ -126,7 +126,7 @@ namespace DoubleFile
                     OverwritePrompt = false
                 };
 
-                if (ModalThread.Go(darkWindow => dlg.ShowDialog((Window)darkWindow)) ?? false)
+                if (ModalThread.Go(darkWindow => dlg.ShowDialog((Window)darkWindow) ?? false))
                 {
                     strFilename = dlg.FileName;
 

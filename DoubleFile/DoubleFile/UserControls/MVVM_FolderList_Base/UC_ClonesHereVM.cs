@@ -10,12 +10,14 @@ namespace DoubleFile
     {
         public ICommand Icmd_SolitaryIsAllOneVol { get; private set; }
         public bool SolitaryIsAllOneVol { internal get; set; }
+        public ICommand Icmd_Export { get; private set; }
 
         internal new UC_ClonesHereVM          // new to hide then call base.Init() and return this
             Init()
         {
             base.Init();
             Icmd_SolitaryIsAllOneVol = new RelayCommand(StartSearch);
+            Icmd_Export = new RelayCommand(Export);
 
             Util.ThreadMake(() =>
             {

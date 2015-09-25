@@ -4,6 +4,7 @@
         xmlns:local="clr-namespace:DoubleFile"
         LocalTitle="All cloned folders here">
     <local:UC_FolderList_Base x:Name="form_ucFolderList">
-        <CheckBox IsChecked="{Binding SolitaryIsAllOneVol}" Command="{Binding Icmd_SolitaryIsAllOneVol}" Content="Solitary is All One Vol"/>
+        <CheckBox IsChecked="{Binding SolitaryIsAllOneVol}" Command="{Binding Icmd_SolitaryIsAllOneVol}" Content="All One Vol: Solitary"/>
+        <Button Command="{Binding Icmd_Export}" Content="Export" />
     </local:UC_FolderList_Base>
 </local:LocalUserControlBase>

@@ -4,6 +4,9 @@ namespace DoubleFile
 {
     class LVitem_FolderListVM : ListViewItemVM_Base, IListUpdater
     {
+        internal override string
+            ExportLine => LocalTreeNode.FullPathGet(_nicknameUpdater.Value);
+
         public bool
             Alternate { get; internal set; }
         public string

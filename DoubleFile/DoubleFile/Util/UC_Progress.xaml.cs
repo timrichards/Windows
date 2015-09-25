@@ -68,9 +68,9 @@ namespace DoubleFile
             _ieStr = astrBigLabels.Zip(astrSmallKeyLabels, (a, b) => Tuple.Create(a, b));
         }
 
-        internal void
-            ShowOverlay(LocalModernWindowBase window = null) { _window = window; ShowOverlay(); }
-        void ShowOverlay()
+        internal ProgressOverlay
+            ShowOverlay(LocalModernWindowBase window = null) { _window = window; return ShowOverlay(); }
+        ProgressOverlay ShowOverlay()
         {
             _lsDisposable.Add(_vm = new LV_ProgressVM());
             _vm.Add(_ieStr);
@@ -92,12 +92,13 @@ namespace DoubleFile
             _dispatcherFrame.PushFrameTrue();
 
             if (_bWentModeless)
-                return;
+                return this;
 
             _window.Progress_Undarken();
             Util.LocalDispose(_lsDisposable);
             _vm = null;
             Util.UIthread(99622, () => _window.ProgressCtl.DataContext = null);
+            return this;
         }
 
         internal ProgressOverlay

@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -72,6 +75,35 @@ namespace DoubleFile
                 _items[0].RaiseColumnWidths();
             else
                 Util.Assert(99993, false);
+        }
+
+        protected void Export()
+        {
+            var dlg = new SaveFileDialog
+            {
+                Title = "Save List",
+                Filter = "Text file|*.txt",
+            };
+
+            if (false == ModalThread.Go(darkWindow => dlg.ShowDialog((Window)darkWindow) ?? false))
+                return;
+
+            var strKey = "Exporting list";
+
+            new ProgressOverlay(new[] { dlg.FileName }, new[] { strKey }, progress =>
+            {
+                Util.ThreadMake(() =>
+                {
+                    using (var sw = new StreamWriter(dlg.FileName))
+                    {
+                        foreach (var item in Items)
+                            sw.WriteLine(item.ExportLine);
+                    }
+
+                    progress.SetCompleted(strKey);
+                });
+            })
+                .ShowOverlay();
         }
     }
 }

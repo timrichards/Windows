@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 namespace DoubleFile
 {
-    partial class UC_FolderListVM : ListViewVM_Base<LVitem_FolderListVM>
+    partial class UC_FolderListVM_Base : ListViewVM_Base<LVitem_FolderListVM>
     {
         public ICommand Icmd_Nicknames { get; protected set; }
         public ICommand Icmd_GoTo { get; protected set; }

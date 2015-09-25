@@ -262,7 +262,7 @@
     <Compile Include="UserControls\MVVM_Clones\UC_ClonesVM.cs" />
     <Compile Include="UserControls\MVVM_Files\LV_FilesVM_Duplicates.cs" />
     <Compile Include="UserControls\MVVM_FolderList_Base\LVitem_FolderListVM.cs" />
-    <Compile Include="UserControls\MVVM_FolderList_Base\UC_FolderListVM.cs" />
+    <Compile Include="UserControls\MVVM_FolderList_Base\UC_FolderListVM_Base.cs" />
     <Compile Include="UserControls\MVVM_FolderList_Base\UC_NearestVM.cs" />
     <Compile Include="UserControls\ListUpdater.cs" />
     <Compile Include="UserControls\UC_Clones.xaml.cs">

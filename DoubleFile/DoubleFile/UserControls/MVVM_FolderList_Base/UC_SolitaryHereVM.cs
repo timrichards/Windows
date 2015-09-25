@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DoubleFile
 {
-    partial class UC_SolitaryHereVM : UC_FolderListVM
+    partial class UC_SolitaryHereVM : UC_FolderListVM_Base
     {
         internal new UC_SolitaryHereVM          // new to hide then call base.Init() and return this
             Init()

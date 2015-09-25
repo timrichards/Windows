@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace DoubleFile
 {
-    partial class UC_FolderListVM : IDisposable
+    partial class UC_FolderListVM_Base : IDisposable
     {
         protected void                              // new to hide then call base.Init() in the derived class and return itself
             Init()

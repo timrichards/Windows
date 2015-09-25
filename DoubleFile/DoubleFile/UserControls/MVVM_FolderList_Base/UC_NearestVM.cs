@@ -8,7 +8,7 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    partial class UC_NearestVM : UC_FolderListVM
+    partial class UC_NearestVM : UC_FolderListVM_Base
     {
         internal new UC_NearestVM               // new to hide then call base.Init() and return this
             Init()

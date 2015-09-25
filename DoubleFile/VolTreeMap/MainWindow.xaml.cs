@@ -33,10 +33,10 @@ namespace VolTreeMap
 
             var W = "/DoubleFile;component/UserControls";
 
-            MenuLinkGroups.Add(new LinkGroup { DisplayName="Explore", Links =
+            MenuLinkGroups.Add(new LinkGroup { DisplayName="Trees", Links =
             {
                 new MyLink("Tree map", W + "/UC_TreeMap.xaml"),
-                new MyLink("Folders", W + "/UC_TreeView.xaml"),
+                new MyLink("Tree view", W + "/UC_TreeView.xaml"),
                 new MyLink("Tree list", W + "/UC_TreeList.xaml")
             }});
 

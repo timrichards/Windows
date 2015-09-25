@@ -245,10 +245,10 @@ namespace DoubleFile
         static readonly IReadOnlyList<LinkGroup>
             _links = new[]
         {
-            new LinkGroup { DisplayName="Explore", Links =
+            new LinkGroup { DisplayName="Trees", Links =
             {
                 new MyLink("Tree map", "/UserControls/UC_TreeMap.xaml"),
-                new MyLink("Folders", "/UserControls/UC_TreeView.xaml"),
+                new MyLink("Tree view", "/UserControls/UC_TreeView.xaml"),
                 new MyLink("Tree list", "/UserControls/UC_TreeList.xaml")
             }},
             new LinkGroup { DisplayName="Clones", Links =

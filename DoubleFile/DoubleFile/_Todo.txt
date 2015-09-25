@@ -1,4 +1,5 @@
-﻿- checkbox in clones here view which excludes clones all on the same drive
+﻿- fix the clones nickname checkboxes
+- alternate highlight the all one vol is solitary items
 - checkbox and button on lists: turn off auto-sync to current treenode, sync now button
 	- Sync To button in tree view
 - allow text selection and copy in message box and most lists
@@ -197,4 +198,4 @@ Specific code areas:
 - Source repository: http://github.com/timrichards/Windows
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
-99615 next low assert
+99616 next low assert

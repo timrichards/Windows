@@ -41,11 +41,15 @@ namespace DoubleFile
         protected virtual void
             Clear() { }
 
+        protected void StartSearch() => StartSearch(null);
         protected void StartSearch(TreeSelect.FolderDetailUpdated folderDetail)
         {
-            if (null == folderDetail)
+            var searchFolder = folderDetail?.treeNode ?? _prevSearchFolder;
+
+            if (null == searchFolder)
                 return;
 
+            _prevSearchFolder = searchFolder;
             ClearItems();
             NoResultsVisibility = Visibility.Collapsed;
             RaisePropertyChanged("NoResultsVisibility");
@@ -61,8 +65,6 @@ namespace DoubleFile
 
                 if (_bDisposed)
                     return;     // from lambda
-
-                var searchFolder = folderDetail.treeNode;
 
                 if (null != searchFolder.Nodes)
                 {
@@ -101,6 +103,8 @@ namespace DoubleFile
             _selectedItem.LocalTreeNode.GoToFile(null);
         }
 
+        LocalTreeNode
+            _prevSearchFolder = null;
         bool
             _bSearching = false;
         bool

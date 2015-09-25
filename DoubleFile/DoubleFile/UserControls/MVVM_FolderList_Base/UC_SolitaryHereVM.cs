@@ -2,17 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace DoubleFile
 {
     partial class UC_SolitaryHereVM : UC_FolderListVM_Base
     {
+        public ICommand Icmd_SolitaryIsAllOneVol { get; private set; }
         public bool SolitaryIsAllOneVol { internal get; set; }
 
         internal new UC_SolitaryHereVM          // new to hide then call base.Init() and return this
             Init()
         {
             base.Init();
+            Icmd_SolitaryIsAllOneVol = new RelayCommand(StartSearch);
 
             Util.ThreadMake(() =>
             {

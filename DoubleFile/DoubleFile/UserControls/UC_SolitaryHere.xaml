@@ -4,6 +4,6 @@
         xmlns:local="clr-namespace:DoubleFile"
         LocalTitle="All solitary folders here">
     <local:UC_FolderList_Base x:Name="form_ucFolderList">
-        <CheckBox IsChecked="{Binding SolitaryIsAllOneVol}" Content="Solitary is All One Vol"/>
+        <CheckBox IsChecked="{Binding SolitaryIsAllOneVol}" Command="{Binding Icmd_SolitaryIsAllOneVol}" Content="Solitary is All One Vol"/>
     </local:UC_FolderList_Base>
 </local:LocalUserControlBase>

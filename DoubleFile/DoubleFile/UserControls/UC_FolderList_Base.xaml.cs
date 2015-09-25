@@ -13,34 +13,28 @@ namespace DoubleFile
         {
             InitializeComponent();
 
-            var margin = new Thickness(10, 0, 0, 0);
+            var sidePanelsCtls = new UIElementCollection(this, this);
 
-            Observable.FromEventPattern(form_StackPanel, "LayoutUpdated")
+            SetValue(SidePanelCtlsProperty, sidePanelsCtls);
+
+            Observable.FromEventPattern(this, "Loaded")
                 .LocalSubscribe(99617, x =>
             {
+                foreach (UIElement element in sidePanelsCtls.Cast<UIElement>().ToList())
+                {
+                    sidePanelsCtls.Remove(element);
+                    form_StackPanel.Children.Add(element);
+                }
+
+                var margin = new Thickness(10, 0, 0, 0);
+
                 foreach (var child in form_StackPanel.Children.OfType<FrameworkElement>())
                     child.Margin = margin;
             });
-
-            SidePanelCtls = new UIElementCollection(this, this);
-
-            Observable.FromEventPattern(this, "Loaded")
-                .LocalSubscribe(99616, x =>
-            {
-                foreach (UIElement element in SidePanelCtls.Cast<UIElement>().ToList())
-                {
-                    SidePanelCtls.Remove(element);
-                    form_StackPanel.Children.Add(element);
-                }
-            });
         }
 
-        public UIElementCollection SidePanelCtls
-        {
-            get { return (UIElementCollection)GetValue(SidePanelCtlsProperty); }
-            set { SetValue(SidePanelCtlsProperty, value); }
-        }
-
+        public UIElementCollection
+            SidePanelCtls => (UIElementCollection)GetValue(SidePanelCtlsProperty);
         public static readonly DependencyProperty
             SidePanelCtlsProperty = DependencyProperty.Register("SidePanelCtls", typeof(UIElementCollection), typeof(UC_FolderList_Base));
      }

@@ -1,4 +1,6 @@
-﻿namespace DoubleFile
+﻿using System.Windows.Controls;
+
+namespace DoubleFile
 {
     /// <summary>
     /// Interaction logic for UC_SolitaryHere.xaml
@@ -12,15 +14,16 @@
 
         protected override void LocalNavigatedTo()
         {
-            DataContext = 
+            DataContext =
                 _vm =
-                new UC_ClonesHereVM { UseNicknames = _bNicknames }
+                new UC_ClonesHereVM { UseNicknames = _bNicknames, SolitaryIsAllOneVol = _bSolitaryIsAllOneVol }
                 .Init();
         }
 
         protected override void LocalNavigatedFrom()
         {
-            _bNicknames = form_ucFolderList.formChk_Nicknames.IsChecked ?? false;
+            _bNicknames = _vm.UseNicknames;
+            _bSolitaryIsAllOneVol = _vm.SolitaryIsAllOneVol;
             _vm?.Dispose();
 
             DataContext =
@@ -32,5 +35,7 @@
             _vm = null;
         bool
             _bNicknames = false;
+        bool
+            _bSolitaryIsAllOneVol = false;
     }
 }

@@ -33,8 +33,9 @@ namespace DoubleFile
                 _bNicknames = formChk_Nicknames.IsChecked ?? false;
             
             _bNavigatedTo = false;
-            _vm = UC_ClonesVM.FactoryGetHolder(strFragment, _bNicknames);
-            DataContext = _vm;
+            
+            DataContext =
+                _vm = UC_ClonesVM.FactoryGetHolder(strFragment, _bNicknames);
 
             LocalTitle =
                 new CultureInfo("en-US", false).TextInfo            // future proof to title case

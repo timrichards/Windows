@@ -7,6 +7,8 @@ namespace DoubleFile
 {
     partial class UC_SolitaryHereVM : UC_FolderListVM_Base
     {
+        public bool SolitaryIsAllOneVol { internal get; set; }
+
         internal new UC_SolitaryHereVM          // new to hide then call base.Init() and return this
             Init()
         {
@@ -49,8 +51,11 @@ namespace DoubleFile
             Util.ParallelForEach(99912, searchFolder.Nodes, new ParallelOptions { CancellationToken = _cts.Token },
                 folder =>
             {
-                if (null != folder.NodeDatum.Clones)
+                if ((false == folder.IsSolitary)
+                    && (false == (SolitaryIsAllOneVol && folder.IsAllOnOneVolume)))
+                {
                     return;     // from lambda
+                }
 
                 if (0 < folder.NodeDatum.LengthHere)
                     _lsFolders.Add(folder);

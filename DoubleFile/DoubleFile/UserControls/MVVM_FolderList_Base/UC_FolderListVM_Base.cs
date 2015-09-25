@@ -12,7 +12,7 @@ namespace DoubleFile
         public Visibility NoResultsVisibility { get; protected set; } = Visibility.Visible;
         public string NoResultsFolder { get; protected set; } = "setting up Nearest view";
 
-        public bool UseNicknames { protected get; set; }
+        public bool UseNicknames { internal get; set; }
 
         public LVitem_FolderListVM SelectedItem
         {

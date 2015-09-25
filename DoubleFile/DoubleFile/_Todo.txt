@@ -196,7 +196,5 @@ Specific code areas:
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
 
-99619
-
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
-99617 next low assert
+99615 next low assert

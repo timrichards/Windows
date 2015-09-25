@@ -24,7 +24,7 @@
 
         protected override void LocalNavigatedFrom()
         {
-            _bNicknames = formChk_Nicknames.IsChecked ?? false;
+            _bNicknames = _vm.UseNicknames;
             _vm?.Dispose();
 
             DataContext =

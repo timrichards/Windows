@@ -11,7 +11,7 @@ namespace DoubleFile
         public ICommand Icmd_GoTo { get; private set; }
 
         public string SearchText { private get; set; }
-        public bool Regex { private get; set; }
+        public bool Regex { internal get; set; }
         public bool UseNicknames { private get; set; }
 
         public LVitem_SearchVM SelectedItem

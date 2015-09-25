@@ -39,11 +39,12 @@
             <LineBreak/>
             <Run>No results</Run>
         </TextBlock>
-        <CheckBox Name="formChk_Nicknames" IsChecked="{Binding UseNicknames}" Command="{Binding Icmd_Nicknames}" Content="Nicknames" Grid.Column="1" Margin="5,0,0,0">
-            <CheckBox.LayoutTransform>
+        <StackPanel x:Name="form_StackPanel" Grid.Column="1" Margin="5,0,0,0" Orientation="Horizontal">
+            <StackPanel.LayoutTransform>
                 <RotateTransform Angle="90" />
-            </CheckBox.LayoutTransform>
-        </CheckBox>
+            </StackPanel.LayoutTransform>
+            <CheckBox IsChecked="{Binding UseNicknames}" Command="{Binding Icmd_Nicknames}" Content="Nicknames" />
+        </StackPanel>
         <Button Command="{Binding Icmd_GoTo}" Content="Go To" Grid.Column="1" Margin="5,0,0,0" VerticalAlignment="Bottom">
             <Button.LayoutTransform>
                 <RotateTransform Angle="90" />

@@ -46,7 +46,7 @@ namespace DoubleFile
 
         protected override void LocalNavigatedFrom()
         {
-            _bRegex = formChk_Regex.IsChecked ?? false;
+            _bRegex = _vm.Regex;
             _bNicknames = formChk_Nicknames.IsChecked ?? false;
             _vm?.Dispose();
 

@@ -47,25 +47,26 @@ namespace DoubleFile
                 return;
 
             var asLVitems = _lvVM.ItemsCast.ToList();
-            var nCount = asLVitems.Count;
 
-            if (0 == nCount)
+            if (0 == asLVitems.Count)
                 return;
 
             foreach (var strLine in Metadata.ReadLines(99652))
             {
                 var i = 0;
+                var bFound = false;
 
-                for (; i < nCount; ++i)
+                for (; i < asLVitems.Count; ++i)
                 {
                     if (asLVitems[i].Deserialize(strLine))
                     {
                         asLVitems.RemoveAt(i);
+                        bFound = true;
                         break;
                     }
                 }
 
-                if (i >= nCount)
+                if (false == bFound)
                 {
                     var lvItemProjectVM = new LVitem_ProjectVM(strLine.Split('\t'));
 

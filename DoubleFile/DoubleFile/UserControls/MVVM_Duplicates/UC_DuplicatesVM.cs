@@ -8,7 +8,7 @@ namespace DoubleFile
         public ICommand Icmd_Nicknames { get; private set; }
         public ICommand Icmd_GoTo { get; private set; }
 
-        public bool UseNicknames { private get; set; }
+        public bool UseNicknames { internal get; set; }
 
         public LVitem_FileDuplicatesVM SelectedItem
         {

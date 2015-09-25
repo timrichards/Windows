@@ -51,6 +51,7 @@ namespace DoubleFile
 
             _prevSearchFolder = searchFolder;
             ClearItems();
+            SetFoldersHeader();
             NoResultsVisibility = Visibility.Collapsed;
             RaisePropertyChanged("NoResultsVisibility");
             ProgressbarVisibility = Visibility.Visible;

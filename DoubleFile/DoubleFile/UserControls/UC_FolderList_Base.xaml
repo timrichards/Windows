@@ -9,6 +9,7 @@
         </Grid.ColumnDefinitions>
         <DataGrid Grid.Column="0">
             <DataGrid.Resources>
+                <local:BindingProxy x:Key="proxy" Value="{Binding}" />
                 <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Alternate}" Value="True">
@@ -18,7 +19,7 @@
                 </Style>
             </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Folders" Width="{Binding WidthFolder}">
+                <DataGridTemplateColumn Header="{Binding Value.FoldersHeader, Source={StaticResource proxy}}" Width="{Binding WidthFolder}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock>

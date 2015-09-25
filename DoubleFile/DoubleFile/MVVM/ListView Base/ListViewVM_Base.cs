@@ -81,7 +81,7 @@ namespace DoubleFile
         {
             var dlg = new SaveFileDialog
             {
-                Title = "Save List",
+                Title = "Export List",
                 Filter = "Text file|*.txt",
             };
 

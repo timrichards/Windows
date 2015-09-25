@@ -5,6 +5,11 @@ namespace DoubleFile
 {
     partial class UC_FolderListVM_Base : ListViewVM_Base<LVitem_FolderListVM>
     {
+        public string FoldersHeader { get; private set; } = _ksFoldersHeader;
+        const string _ksFoldersHeader = "Folders";
+        protected void
+            SetFoldersHeader(string strHeader = null) { FoldersHeader = _ksFoldersHeader + " " + strHeader; RaisePropertyChanged("FoldersHeader"); }
+
         public ICommand Icmd_Nicknames { get; protected set; }
         public ICommand Icmd_GoTo { get; protected set; }
 

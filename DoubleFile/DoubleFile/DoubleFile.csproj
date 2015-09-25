@@ -194,6 +194,7 @@
     <Compile Include="LocalTreeNode\LocalColorItemBase.cs" />
     <Compile Include="LocalTreeNode\LVitemProject_Explorer.cs" />
     <Compile Include="Statics.cs" />
+    <Compile Include="UserControls\BindingProxy.cs" />
     <Compile Include="UserControls\MVVM_FolderList_Base\UC_FolderListVM_Impl.cs" />
     <Compile Include="UserControls\MVVM_FolderList_Base\UC_ClonesHereVM.cs" />
     <Compile Include="UserControls\MVVM_FolderList_Base\UC_SolitaryHereVM.cs" />

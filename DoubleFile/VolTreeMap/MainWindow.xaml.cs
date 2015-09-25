@@ -40,11 +40,6 @@ namespace VolTreeMap
                 new MyLink("Tree list", W + "/UC_TreeList.xaml")
             }});
 
-            MenuLinkGroups.Add(new LinkGroup { DisplayName = "Files", Links =
-            {
-                new MyLink("Files in folder", W + "/UC_Files.xaml"),
-            }});
-
             MenuLinkGroups.Add(new LinkGroup { DisplayName="Search", Links =
             {
                 new MyLink("Search", W + "/UC_Search.xaml")
@@ -52,7 +47,8 @@ namespace VolTreeMap
 
             MenuLinkGroups.Add(new LinkGroup { DisplayName = "Detailed info", Links =
             {
-                new MyLink("Detailed info", W + "/UC_Detail.xaml")
+                new MyLink("Detailed info", W + "/UC_Detail.xaml"),
+                new MyLink("Files here", W + "/UC_Files.xaml"),
             }});
 
             TitleLinks.Add(DoubleFile.MainWindow._extraWindowLink);

@@ -38,7 +38,6 @@ namespace DoubleFile
             where T : ListViewItemVM_Base
         {
             var stopwatch = Stopwatch.StartNew();
-
             var nCounter = 0;
 
             foreach (var item in ieItems)

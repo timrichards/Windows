@@ -251,20 +251,11 @@ namespace DoubleFile
                 new MyLink("Folders", "/UserControls/UC_TreeView.xaml"),
                 new MyLink("Tree list", "/UserControls/UC_TreeList.xaml")
             }},
-            new LinkGroup { DisplayName="Nearest", Links =
-            {
-                new MyLink("Nearest", "/UserControls/UC_Nearest.xaml"),
-            }},
             new LinkGroup { DisplayName="Clones", Links =
             {
                 new ClonesLink(UC_Clones.FolderListFragments.ElementAt(0)),
                 new ClonesLink(UC_Clones.FolderListFragments.ElementAt(1)),
                 new ClonesLink(UC_Clones.FolderListFragments.ElementAt(2))
-            }},
-            new LinkGroup { DisplayName="Files", Links =
-            {
-                new MyLink("Files in folder", "/UserControls/UC_Files.xaml"),
-                new MyLink("Duplicates", "/UserControls/UC_Duplicates.xaml")
             }},
             new LinkGroup { DisplayName="Search", Links =
             {
@@ -274,7 +265,10 @@ namespace DoubleFile
             {
                 new MyLink("Detailed info", "/UserControls/UC_Detail.xaml"),
                 new MyLink("Solitary here", "/UserControls/UC_SolitaryHere.xaml"),
-                new MyLink("Clones here", "/UserControls/UC_ClonesHere.xaml")
+                new MyLink("Clones here", "/UserControls/UC_ClonesHere.xaml"),
+                new MyLink("Nearest", "/UserControls/UC_Nearest.xaml"),
+                new MyLink("Files here", "/UserControls/UC_Files.xaml"),
+                new MyLink("Duplicate files", "/UserControls/UC_Duplicates.xaml")
             }}
         };
 

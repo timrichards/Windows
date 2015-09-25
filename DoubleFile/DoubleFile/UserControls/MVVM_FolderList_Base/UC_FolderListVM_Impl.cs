@@ -71,17 +71,8 @@ namespace DoubleFile
 
                     var ieLVitems = FillList(searchFolder);
 
-                    if (null != ieLVitems)
-                    {
-                        Util.UIthread(99619, () =>
-                        {
-                            foreach (var lvItem in ieLVitems)
-                                Add(lvItem, bQuiet: true);
-
-                            if (Items.Any())
-                                RaiseItems();
-                        });
-                    }
+                    if (ieLVitems?.Any() ?? false)
+                        Util.UIthread(99619, () => Add(ieLVitems));
 
                     Clear();
                 }

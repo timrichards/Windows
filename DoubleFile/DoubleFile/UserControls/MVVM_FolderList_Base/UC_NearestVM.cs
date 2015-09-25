@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
-using System.Threading;
 using System.Diagnostics;
 using System.Reactive.Linq;
 
@@ -28,11 +27,7 @@ namespace DoubleFile
                 NoResultsFolder = null;
                 RaisePropertyChanged("NoResultsFolder");
                 HideProgressbar();
-
-                var folderDetail = LocalTV.TreeSelect_FolderDetail;
-
-                if (null != folderDetail)
-                    StartSearch(folderDetail.treeNode);
+                StartSearch(LocalTV.TreeSelect_FolderDetail);
             });
 
             return this;

@@ -17,11 +17,7 @@ namespace DoubleFile
                 NoResultsFolder = null;
                 RaisePropertyChanged("NoResultsFolder");
                 HideProgressbar();
-
-                var folderDetail = LocalTV.TreeSelect_FolderDetail;
-
-                if (null != folderDetail)
-                    StartSearch(folderDetail.treeNode);
+                StartSearch(LocalTV.TreeSelect_FolderDetail);
             });
 
             return this;

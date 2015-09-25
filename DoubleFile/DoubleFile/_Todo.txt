@@ -1,5 +1,11 @@
-﻿- allow text selection and copy in message box and most lists
+﻿- checkbox in clones here view which excludes clones all on the same drive
+- checkbox and button on lists: turn off auto-sync to current treenode, sync now button
+	- Sync To button in tree view
+- allow text selection and copy in message box and most lists
 - script source: total size savings of and list outer subdirectories that are clones, so I can delete them
+	- save to text file on list views
+	- generate script app for when you get around to plugging in the drive which deletes all the files you want
+	- file management: these generated script apps strategize consolidating and space saving via separate steps
 - nodeParent = new Node(strParent, _nLineNo, 0, 0, null, _rootNode)
 - change drive letter did not change one line and screwed up culling, which is fixed. do a check for [A-Z}:\ when verifying the file.
 - Deserialize: can't seem to add the unsaved listing to the project LV
@@ -28,7 +34,6 @@
 	- compare the 4K vs 128K correlations to see what they caught. - quick see: nFolderCount1pt0 vs nFolderCount2
 - allow two different file windows to point to two different folders: each new folder window should have its own children
 - dupe vm event alerts: static vm internal counter or static transmit
-- Sync To button in tree view
 - Filtering user control header for tree list; tree view; files; search; duplicates: like search but restrict the view
 - open project; nav save listings; cancel; nav nav; complete save listings; nav explorer create; cancel: should project page.
 - show messagbox title

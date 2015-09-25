@@ -15,7 +15,9 @@ namespace DoubleFile
             Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateViewport(UseNicknames));
             _nicknameUpdater.Clear();           // in case Init() is reused on an existing list: future proof
             _nicknameUpdater.UpdateViewport(UseNicknames);
-            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99701, TreeSelect_FolderDetailUpdated));
+
+            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99701, initiatorTuple =>
+                StartSearch(initiatorTuple.Item1)));
         }
 
         public virtual void                         // call base.Dispose() in the derived class
@@ -39,10 +41,11 @@ namespace DoubleFile
         protected virtual void
             Clear() { }
 
-        void TreeSelect_FolderDetailUpdated(Tuple<TreeSelect.FolderDetailUpdated, int> initiatorTuple) => StartSearch(initiatorTuple.Item1.treeNode);
-
-        protected void StartSearch(LocalTreeNode searchFolder)
+        protected void StartSearch(TreeSelect.FolderDetailUpdated folderDetail)
         {
+            if (null == folderDetail)
+                return;
+
             ClearItems();
             NoResultsVisibility = Visibility.Collapsed;
             RaisePropertyChanged("NoResultsVisibility");
@@ -58,6 +61,8 @@ namespace DoubleFile
 
                 if (_bDisposed)
                     return;     // from lambda
+
+                var searchFolder = folderDetail.treeNode;
 
                 if (null != searchFolder.Nodes)
                 {

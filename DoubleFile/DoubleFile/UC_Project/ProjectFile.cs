@@ -28,8 +28,29 @@ namespace DoubleFile
         static internal bool
             SaveProject(LV_ProjectVM lvProjectVM, string strProjectFilename)
         {
-            using (var projectFile = new ProjectFile())
-                return projectFile.SaveProject_(lvProjectVM, strProjectFilename);
+            var bRet = false;
+
+            try
+            {
+                using (var projectFile = new ProjectFile())
+                    bRet = projectFile.SaveProject_(lvProjectVM, strProjectFilename);
+            }
+            finally
+            {
+                if (bRet)
+                {
+                    while (false == (ProgressOverlay.WithProgressOverlay(w => w?.LocalIsClosed) ?? true))
+                        Util.Block(TimeSpan.FromSeconds(1));
+
+                    var strKey = Path.GetFileName(strProjectFilename);
+
+                    new ProgressOverlay(new[] { "Saving project" }, new[] { strKey },
+                        progress => progress.SetCompleted(strKey))
+                        .ShowOverlay();
+                }
+            }
+
+            return bRet;
         }
 
         static internal bool
@@ -201,30 +222,18 @@ namespace DoubleFile
             var bErr = ReportAnyErrors(_process, "Saving",
                 new Win32Exception(Marshal.GetLastWin32Error()).Message);
 
-            if (bErr || _bUserCanceled)
+            bRet = false == (bErr || _bUserCanceled);
+
+            if (bRet)
             {
-                bRet = false;
-                _saveProcessBlockingFrame.Continue = false;
-                return;
+                if (File.Exists(strProjectFilename))
+                    File.Delete(strProjectFilename);
+
+                File.Move(strProjectFilename + ".7z", strProjectFilename);
             }
 
-            if (File.Exists(strProjectFilename))
-                File.Delete(strProjectFilename);
-
-            File.Move(strProjectFilename + ".7z", strProjectFilename);
             _bProcessing = false;
-            bRet = true;
-
-            while (false == (ProgressOverlay.WithProgressOverlay(w => w?.LocalIsClosed) ?? true))
-                Util.Block(TimeSpan.FromSeconds(1));
-
             _saveProcessBlockingFrame.Continue = false;
-
-            var strKey = Path.GetFileName(strProjectFilename);
-
-            new ProgressOverlay(new[] { "Saving project" }, new[] { strKey },
-                progress => progress.SetCompleted(strKey))
-                .ShowOverlay();
         }
 
         void SaveProjectFailedToStartProcess(string strProjectFilename, List<string> lsListingFiles)

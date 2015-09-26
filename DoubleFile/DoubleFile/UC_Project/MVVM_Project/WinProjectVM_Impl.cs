@@ -138,13 +138,18 @@ namespace DoubleFile
                     RaisePropertyChanged("SaveProjectProgressVisibility");
                     RaisePropertyChanged("IsEnabled");
 
-                    // if it's saved, don't set it to unsaved if SaveProject() bails.
-                    if (ProjectFile.SaveProject(_lvVM, strFilename))
-                        _lvVM.Unsaved = false;
-
-                    SaveProjectProgressVisibility = Visibility.Collapsed;
-                    RaisePropertyChanged("SaveProjectProgressVisibility");
-                    RaisePropertyChanged("IsEnabled");
+                    try
+                    {
+                        // if it's saved, don't set it to unsaved if SaveProject() bails.
+                        if (ProjectFile.SaveProject(_lvVM, strFilename))
+                            _lvVM.Unsaved = false;
+                    }
+                    finally
+                    {
+                        SaveProjectProgressVisibility = Visibility.Collapsed;
+                        RaisePropertyChanged("SaveProjectProgressVisibility");
+                        RaisePropertyChanged("IsEnabled");
+                    }
                 }
 
                 break;

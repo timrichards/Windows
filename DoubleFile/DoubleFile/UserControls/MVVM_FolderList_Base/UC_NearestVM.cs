@@ -126,13 +126,13 @@ namespace DoubleFile
 
                 var nTestChildrenCount =
                     testFolder.NodeDatum.Hashes_SubnodeFiles_Scratch
-                    .Intersect(searchSet)
-                    .Count();
+                    ?.Intersect(searchSet)
+                    .Count() ?? 0;
 
                 var nTestHereCount =
                     testFolder.NodeDatum.Hashes_FilesHere
-                    .Intersect(searchSet)
-                    .Count();
+                    ?.Intersect(searchSet)
+                    .Count() ?? 0;
 
                 if (0 < nTestHereCount)
                     _lsMatchingFolders.Add(Tuple.Create(nTestChildrenCount + nTestHereCount, new LVitem_FolderListVM(testFolder, _nicknameUpdater)));

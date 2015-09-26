@@ -6,9 +6,7 @@
 	- Invert the size matters principle: some of the most important files may go unnoticed: just a drop in the bucket.
 	- Restore the ignore list: nobody cares about the Windows or Program Files directories. Don't make moron reports.
 - either zoom into volume view or frame the folders and describe the empty and unread areas
-- background progress: saving project doesn't have to tie up the app.
 - fix the clones nickname checkboxes
-- alternate highlight the all one vol is solitary items
 - checkbox and button on lists: turn off auto-sync to current treenode, sync now button
 	- Sync To button in tree view
 	- allow two different file windows to point to two different folders: each new folder window should have its own children
@@ -98,6 +96,10 @@
 	- https://msdn.microsoft.com/en-us/library/Cc165449.aspx
 	- Ordinal is the fastest way to compare two strings.
 - Application.Current.MainWindow can be LocalMbox (when exiting app)
+- Can set up an ambiguous call which compiled:
+		internal ProgressOverlay
+            ShowOverlay(LocalModernWindowBase window = null) { _window = window; return ShowOverlay(); }
+        ProgressOverlay ShowOverlay()
 - The todo list is not read-only while debugging.
 - You can set a breakpoint condition false == new System.Diagnostics.StackTrace().ToString().Contains("AddToTree")
 - You can go to type definition on var right-click
@@ -183,8 +185,7 @@ Skills used:
 Specific code areas:
 - UX surrounding compressed project file holding nested directory listings and metadata
 - Metro/modern UI; consistent page-by-page, based on M:UI
-- Progress UI
-- String table
+- Progress UI; String table; Isolated Storage
 - Bespoke UX: tree list (vs. tree view); tree map (tool tip; animation; drill-down hit testing)
 - Regex search; duplicate files and folders; Nearest folders; studied ANOVA; LSH; MinHash; Jaccard
 - Fast long-path large fetch native directory listings
@@ -198,4 +199,4 @@ Specific code areas:
 - Source repository: http://github.com/timrichards/Windows
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
-99616 next low assert
+99615 next low assert

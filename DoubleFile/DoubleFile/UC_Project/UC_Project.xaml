@@ -40,10 +40,13 @@
                         </Setter>
                     </Style>
                 </StackPanel.Resources>
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Orientation="Horizontal" IsEnabled="{Binding IsEnabled}">
                     <TextBlock>project</TextBlock>
                     <Button Content="  OPEN" Command="{Binding Icmd_OpenProject}" ToolTip="Open project. Use shift key to append project" Tag="/DoubleFile;component/Assets/ic_folder_open_white_18dp.png" />
+                    <Grid>
                     <Button Content="  SAVE" Command="{Binding Icmd_SaveProject}" ToolTip="Save project" Tag="/DoubleFile;component/Assets/ic_save_white_18dp.png" />
+                    <ProgressBar Visibility="{Binding SaveProjectProgressVisibility}" IsIndeterminate="True" VerticalAlignment="Bottom" Height="4" />
+                    </Grid>
                     <TextBlock>volume</TextBlock>
                     <Button Content="  NEW" Command="{Binding Icmd_NewListingFile}" ToolTip="New listing file" Tag="/DoubleFile;component/Assets/ic_add_circle_white_18dp.png" />
                     <Button Content="  OPEN" Command="{Binding Icmd_OpenListingFile}" ToolTip="Open listing file(s)" Tag="/DoubleFile;component/Assets/ic_folder_open_white_18dp.png" />

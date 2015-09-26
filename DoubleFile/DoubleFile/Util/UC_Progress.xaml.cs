@@ -82,22 +82,27 @@ namespace DoubleFile
 
                 _window.ProgressCtl.DataContext = _vm;
                 _vm.Init();
+                _window.Progress_Darken();
             });
 
             _lsDisposable.Add(Observable.FromEventPattern(_window.ProgressCtl.formBtn_Cancel, "Click")
                 .LocalSubscribe(99621, x => Close()));
 
-            _window.Progress_Darken();
             Util.ThreadMake(() => _initClient?.Invoke(this));
             _dispatcherFrame.PushFrameTrue();
 
             if (_bWentModeless)
                 return this;
 
-            _window.Progress_Undarken();
             Util.LocalDispose(_lsDisposable);
             _vm = null;
-            Util.UIthread(99622, () => _window.ProgressCtl.DataContext = null);
+
+            Util.UIthread(99622, () =>
+            {
+                _window.Progress_Undarken();
+                _window.ProgressCtl.DataContext = null;
+            });
+
             return this;
         }
 

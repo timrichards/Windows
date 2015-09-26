@@ -158,13 +158,16 @@ namespace DoubleFile
                 .GetInvocationList()
                 .Select(onSavingProject => "" + onSavingProject.DynamicInvoke()));
 
+            if (false == Directory.Exists(_tempPath))
+                Directory.CreateDirectory(_tempPath);
+
             foreach (var strFilenameRO in lsSourceFiles)
             {
                 var strSourceFilename = strFilenameRO;
 
                 if (strFilenameRO.StartsWith(LocalIsoStore.TempDir))
                 {
-                    strSourceFilename = strFilenameRO.Replace(strPath, "");
+                    strSourceFilename = strFilenameRO.Replace(LocalIsoStore.TempDir, "");
 
                     using (var sr = new StreamReader(LocalIsoStore.OpenFile(strFilenameRO, FileMode.Open)))
                     using (var sw = new StreamWriter(File.OpenWrite(_tempPath + '\\' + strSourceFilename)))
@@ -189,6 +192,7 @@ namespace DoubleFile
                 bRet = false;
             }
 
+            _saveProcessBlockingFrame.PushFrameTrue();
             return bRet;
         }
 
@@ -200,6 +204,7 @@ namespace DoubleFile
             if (bErr || _bUserCanceled)
             {
                 bRet = false;
+                _saveProcessBlockingFrame.Continue = false;
                 return;
             }
 
@@ -209,9 +214,17 @@ namespace DoubleFile
             File.Move(strProjectFilename + ".7z", strProjectFilename);
             _bProcessing = false;
             bRet = true;
-            
-            ProgressOverlay.WithProgressOverlay(w =>
-                w.SetCompleted(Path.GetFileName(strProjectFilename)));
+
+            while (false == (ProgressOverlay.WithProgressOverlay(w => w?.LocalIsClosed) ?? true))
+                Util.Block(TimeSpan.FromSeconds(1));
+
+            _saveProcessBlockingFrame.Continue = false;
+
+            var strKey = Path.GetFileName(strProjectFilename);
+
+            new ProgressOverlay(new[] { "Saving project" }, new[] { strKey },
+                progress => progress.SetCompleted(strKey))
+                .ShowOverlay();
         }
 
         void SaveProjectFailedToStartProcess(string strProjectFilename, List<string> lsListingFiles)
@@ -256,11 +269,21 @@ namespace DoubleFile
         bool OpenProject_(string strProjectFilename, WeakReference<IOpenListingFiles> openListingFilesWR, bool bClearItems)
         {
             var bRet = false;
+            var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
+            var bCouldStart = false;
+            var status = (bClearItems ? "Opening" : "Appending") + " project";
 
-            if (false == StartProcess((bClearItems ? "Opening" : "Appending") + " project",
-                Path.GetFileName(strProjectFilename),
-                "e \"" + strProjectFilename + "\" -y",
-                () => bRet = OpenProjectExited(openListingFilesWR, bClearItems)))
+            (new ProgressOverlay(new[] { status }, new[] { strProjectFileNoPath }, x =>
+            {
+                bCouldStart = StartProcess(status,
+                    strProjectFileNoPath,
+                    "e \"" + strProjectFilename + "\" -y",
+                    () => bRet = OpenProjectExited(openListingFilesWR, bClearItems));
+            })
+            { WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this) })
+                .ShowOverlay();
+
+            if (false == bCouldStart)
             {
                 MBoxStatic.ShowOverlay("Couldn't open the project. Reinstall Double File or open your project file " +
                     "and get to your listing files using a download from 7-zip.org.", "Open Project");
@@ -322,8 +345,8 @@ namespace DoubleFile
             );
 
             OnOpenedProject?.Invoke();
-            ProgressOverlay.CloseForced();
             _bProcessing = false;
+            ProgressOverlay.CloseForced();
             return bRet && (false == _bUserCanceled);
         }
 
@@ -340,29 +363,24 @@ namespace DoubleFile
             Observable.FromEventPattern(_process, "Exited")
                 .LocalSubscribe(99723, x => onExit());
 
-            (new ProgressOverlay(new[] { _status }, new[] { strProjectFileNoPath }, x =>
+            try
             {
-                try
-                {
-                    if (false == Directory.Exists(_tempPath))
-                        Directory.CreateDirectory(_tempPath);
+                if (false == Directory.Exists(_tempPath))
+                    Directory.CreateDirectory(_tempPath);
 
-                    _process.StartInfo.WorkingDirectory = _tempPath;
-                    _sbError.AppendLine(DateTime.Now.ToLongTimeString().PadRight(80, '-'));
-                    _bProcessing = true;
-                    _process.Start();
-                    _process.BeginOutputReadLine();
-                }
-                catch (Exception e)
-                {
-                    var b = e.GetBaseException();
+                _process.StartInfo.WorkingDirectory = _tempPath;
+                _sbError.AppendLine(DateTime.Now.ToLongTimeString().PadRight(80, '-'));
+                _bProcessing = true;
+                _process.Start();
+                _process.BeginOutputReadLine();
+            }
+            catch (Exception e)
+            {
+                var b = e.GetBaseException();
 
-                    Util.Assert(99668, false, b.GetType() + " in StartProcess\n" +
-                        b.Message + "\n" + b.StackTrace);
-                }
-            })
-            { WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this) })
-                .ShowOverlay();
+                Util.Assert(99668, false, b.GetType() + " in StartProcess\n" +
+                    b.Message + "\n" + b.StackTrace);
+            }
 
             return true;
         }
@@ -439,6 +457,8 @@ namespace DoubleFile
         readonly StringBuilder 
             _sbError = new StringBuilder();
 
+        LocalDispatcherFrame
+            _saveProcessBlockingFrame = new LocalDispatcherFrame(99616);
         bool
             _bProcessing = false;
         bool

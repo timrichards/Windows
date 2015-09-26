@@ -1,9 +1,13 @@
-﻿using System.Windows.Input;
+﻿using System.Windows;
+using System.Windows.Input;
 
 namespace DoubleFile
 {
     partial class WinProjectVM : Observable_OwnerWindowBase
     {
+        public Visibility SaveProjectProgressVisibility { get; private set; } = Visibility.Collapsed;
+        public bool IsEnabled => Visibility.Visible != SaveProjectProgressVisibility;
+
         // In order of appearance on the form
         public ICommand Icmd_OpenProject { get; }
         public ICommand Icmd_SaveProject { get; }

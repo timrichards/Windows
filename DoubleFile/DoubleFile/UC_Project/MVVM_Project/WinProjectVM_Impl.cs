@@ -110,9 +110,7 @@ namespace DoubleFile
         }
 
         internal void
-            SaveProject() => SaveProject(_lvVM);
-        static internal void
-            SaveProject(LV_ProjectVM lvProjectVM)
+            SaveProject()
         {
             string strFilename = null;
 
@@ -136,9 +134,17 @@ namespace DoubleFile
                         continue;
                     }
 
+                    SaveProjectProgressVisibility = Visibility.Visible;
+                    RaisePropertyChanged("SaveProjectProgressVisibility");
+                    RaisePropertyChanged("IsEnabled");
+
                     // if it's saved, don't set it to unsaved if SaveProject() bails.
-                    if (ProjectFile.SaveProject(lvProjectVM, strFilename))
-                        lvProjectVM.Unsaved = false;
+                    if (ProjectFile.SaveProject(_lvVM, strFilename))
+                        _lvVM.Unsaved = false;
+
+                    SaveProjectProgressVisibility = Visibility.Collapsed;
+                    RaisePropertyChanged("SaveProjectProgressVisibility");
+                    RaisePropertyChanged("IsEnabled");
                 }
 
                 break;

@@ -140,10 +140,14 @@ namespace DoubleFile
 
                     Util.ThreadMake(() =>
                     {
+                        var bRet = false;
+
                         try
                         {
-                                // if it's saved, don't set it to unsaved if SaveProject() bails.
-                                if (ProjectFile.SaveProject(_lvVM, strFilename))
+                            bRet = ProjectFile.SaveProject(_lvVM, strFilename);
+
+                            // if it's saved, don't set it to unsaved if SaveProject() bails.
+                            if (bRet)
                                 _lvVM.Unsaved = false;
                         }
                         finally
@@ -151,6 +155,15 @@ namespace DoubleFile
                             SaveProjectProgressVisibility = Visibility.Collapsed;
                             RaisePropertyChanged("SaveProjectProgressVisibility");
                             RaisePropertyChanged("IsEnabled");
+
+                            while (false == (ProgressOverlay.WithProgressOverlay(w => w?.LocalIsClosed) ?? true))
+                                Util.Block(TimeSpan.FromSeconds(1));
+
+                            var strKey = Path.GetFileName(strFilename);
+
+                            new ProgressOverlay(new[] { "Saving project" }, new[] { strKey },
+                                progress => progress.SetCompleted(strKey))
+                                .ShowOverlay();
                         }
                     });
                 }

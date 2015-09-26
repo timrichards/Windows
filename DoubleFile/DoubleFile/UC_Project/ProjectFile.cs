@@ -28,29 +28,8 @@ namespace DoubleFile
         static internal bool
             SaveProject(LV_ProjectVM lvProjectVM, string strProjectFilename)
         {
-            var bRet = false;
-
-            try
-            {
-                using (var projectFile = new ProjectFile())
-                    bRet = projectFile.SaveProject_(lvProjectVM, strProjectFilename);
-            }
-            finally
-            {
-                if (bRet)
-                {
-                    while (false == (ProgressOverlay.WithProgressOverlay(w => w?.LocalIsClosed) ?? true))
-                        Util.Block(TimeSpan.FromSeconds(1));
-
-                    var strKey = Path.GetFileName(strProjectFilename);
-
-                    new ProgressOverlay(new[] { "Saving project" }, new[] { strKey },
-                        progress => progress.SetCompleted(strKey))
-                        .ShowOverlay();
-                }
-            }
-
-            return bRet;
+            using (var projectFile = new ProjectFile())
+                return projectFile.SaveProject_(lvProjectVM, strProjectFilename);
         }
 
         static internal bool

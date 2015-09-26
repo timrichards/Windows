@@ -4,7 +4,8 @@ namespace DoubleFile
 {
     partial class LV_ProjectVM : ListViewVM_Base<LVitem_ProjectVM>
     {
-        public Visibility Visible
+        public Visibility
+            Visibility
         {
             get
             {

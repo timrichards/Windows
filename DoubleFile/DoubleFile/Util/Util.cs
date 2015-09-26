@@ -37,7 +37,7 @@ namespace DoubleFile
         }
 
         static internal void
-            Block(int nMilliseconds) => Block(new TimeSpan(0, 0, 0, 0, nMilliseconds));
+            Block(int nMilliseconds) => Block(TimeSpan.FromMilliseconds(nMilliseconds));
         static internal void
             Block(TimeSpan napTime)
         {

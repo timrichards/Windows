@@ -40,7 +40,7 @@ namespace DoubleFile
 
             Add(lvProjectVM.ItemsCast.Select(lvItemVM => new LVitem_ProjectVM(lvItemVM)), bQuiet: true);
             _unsaved = lvProjectVM.Unsaved;
-            RaisePropertyChanged("Visible");
+            RaisePropertyChanged("Visibility");
         }
 
         internal new void
@@ -57,7 +57,7 @@ namespace DoubleFile
                 return false;
 
             base.Add(lvItem, bQuiet);
-            RaisePropertyChanged("Visible");
+            RaisePropertyChanged("Visibility");
             return true;
         }
 
@@ -347,7 +347,7 @@ namespace DoubleFile
 
             _unsaved = 0 < Items.Count;
             SetModified();
-            RaisePropertyChanged("Visible");
+            RaisePropertyChanged("Visibility");
             UC_Project.OKtoNavigate_UpdateSaveListingsLink();
         }
 

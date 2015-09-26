@@ -195,7 +195,7 @@ namespace DoubleFile
             }
 
             var strProjectFileNoPath = Path.GetFileName(strProjectFilename);
-            var bRet = true;
+            var bRet = false;
             var str7z = strProjectFilename + ".7z";
 
             if (File.Exists(str7z))
@@ -206,7 +206,6 @@ namespace DoubleFile
                 () => SaveProcessExited(out bRet, strProjectFilename)))
             {
                 SaveProjectFailedToStartProcess(strProjectFilename, lsSourceFiles);
-                bRet = false;
             }
 
             _saveProcessBlockingFrame.PushFrameTrue();

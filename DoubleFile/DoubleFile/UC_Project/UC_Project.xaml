@@ -57,7 +57,7 @@
                     <Button Content="  REMOVE" Command="{Binding Icmd_RemoveListingFile}" ToolTip="Remove listing file(s)" Tag="/DoubleFile;component/Assets/ic_remove_circle_white_18dp.png" />
                 </StackPanel>
             </StackPanel>
-            <DataGrid Name="form_lv" Margin="0,20,0,0" Visibility="{Binding Visible}" SelectionMode="Extended">
+            <DataGrid Name="form_lv" Visibility="{Binding Visibility}" SelectionMode="Extended">
                 <DataGrid.Resources>
                     <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
                         <Style.Triggers>

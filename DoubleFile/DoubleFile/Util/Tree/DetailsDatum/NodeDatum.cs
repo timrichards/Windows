@@ -4,6 +4,11 @@ namespace DoubleFile
 {
     class NodeDatum : DetailsDatum
     {
+        internal bool
+            IsSolitary => null == Clones;
+        internal bool
+            IsAllOnOneVolume => UtilColorcode.AllOnOneVolume == Clones?[0].ForeColor;
+
         internal List<LocalTreeNode>
             Clones;
         internal LVitem_ClonesVM

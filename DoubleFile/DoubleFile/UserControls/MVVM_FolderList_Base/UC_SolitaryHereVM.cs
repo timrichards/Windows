@@ -41,12 +41,11 @@ namespace DoubleFile
         protected override IEnumerable<LVitem_FolderListVM>
             FillList(LocalTreeNode searchFolder)
         {
-            _lsFolders = new ConcurrentBag<LocalTreeNode>();
+            _lsFolders = new ConcurrentBag<LVitem_FolderListVM>();
             FindAllSolitary(searchFolder);
-            SetFoldersHeader(Util.FormatSize((ulong)_lsFolders.Sum(folder => (long)folder.NodeDatum.LengthTotal)));
+            SetFoldersHeader(Util.FormatSize((ulong)_lsFolders.Sum(lvItem => (long)lvItem.Folder.NodeDatum.LengthTotal)));
 
-            return _lsFolders.OrderByDescending(folder => folder.NodeDatum.LengthTotal)
-                .Select(folder => new LVitem_FolderListVM(folder, _nicknameUpdater));
+            return _lsFolders.OrderByDescending(lvItem => lvItem.Folder.NodeDatum.LengthTotal);
         }
 
         void FindAllSolitary(LocalTreeNode searchFolder)
@@ -57,14 +56,14 @@ namespace DoubleFile
             Util.ParallelForEach(99912, searchFolder.Nodes, new ParallelOptions { CancellationToken = _cts.Token },
                 folder =>
             {
-                if ((false == folder.IsSolitary)
-                    && (false == (SolitaryIsAllOneVol && folder.IsAllOnOneVolume)))
+                if ((false == folder.NodeDatum.IsSolitary)
+                    && (false == (SolitaryIsAllOneVol && folder.NodeDatum.IsAllOnOneVolume)))
                 {
                     return;     // from lambda
                 }
 
                 if (0 < folder.NodeDatum.LengthHere)
-                    _lsFolders.Add(folder);
+                    _lsFolders.Add(new LVitem_FolderListVM(folder, _nicknameUpdater) { Alternate = folder.NodeDatum.IsAllOnOneVolume });
 
                 if (null != folder.Nodes)
                     FindAllSolitary(folder);
@@ -73,7 +72,7 @@ namespace DoubleFile
 
         protected override void Clear() => _lsFolders = null;
 
-        ConcurrentBag<LocalTreeNode>
+        ConcurrentBag<LVitem_FolderListVM>
             _lsFolders = null;
     }
 }

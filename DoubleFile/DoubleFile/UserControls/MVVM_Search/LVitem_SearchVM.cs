@@ -13,7 +13,7 @@ namespace DoubleFile
             TabledStringFilename;
 
         internal LocalTreeNode
-            LocalTreeNode => _datum.As<LocalTreeNode>();
+            Folder => _datum.As<LocalTreeNode>();
         readonly object _datum = null;
 
         public string
@@ -58,14 +58,14 @@ namespace DoubleFile
 
                 string strRet = null;
 
-                if (null != LocalTreeNode)
+                if (null != Folder)
                 {
-                    var parent = LocalTreeNode.Parent;
+                    var parent = Folder.Parent;
 
                     if (null != parent)
-                        return LocalTreeNode.Text;
+                        return Folder.Text;
 
-                    strRet = LocalTreeNode.FullPathGet(LVitemProject_Updater.ListUpdater.Value);
+                    strRet = Folder.FullPathGet(LVitemProject_Updater.ListUpdater.Value);
                 }
                 else
                 {
@@ -93,8 +93,8 @@ namespace DoubleFile
                 if (null == In)
                     return null;
 
-                if (null != LocalTreeNode)
-                    return LocalTreeNode.Parent?.FullPathGet(LVitemProject_Updater.ListUpdater.Value);
+                if (null != Folder)
+                    return Folder.Parent?.FullPathGet(LVitemProject_Updater.ListUpdater.Value);
 
                 var strDirectory =
                     (LVitemProject_Updater.ListUpdater.Value)

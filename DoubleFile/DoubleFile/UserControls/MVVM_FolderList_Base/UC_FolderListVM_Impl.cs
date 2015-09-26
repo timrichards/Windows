@@ -101,7 +101,7 @@ namespace DoubleFile
                 return;
             }
 
-            _selectedItem.LocalTreeNode.GoToFile(null);
+            _selectedItem.Folder.GoToFile(null);
         }
 
         LocalTreeNode

@@ -13,7 +13,7 @@ namespace DoubleFile
         public Visibility VisibilityOnClones => 2 <= (TreeNodes?.Count ?? 0) ? Visibility.Visible : Visibility.Collapsed;
 
         // marker node if treenode not present
-        public string Folder => WithLocalTreeNode(t => t)?.Text ?? SubItems[0];
+        public string Text => WithLocalTreeNode(t => t)?.Text ?? SubItems[0];
         public Brush Foreground => WithLocalTreeNode(t => t.Foreground) ?? Brushes.White;
         public Brush Background => WithLocalTreeNode(t => t.Background) ?? Brushes.DarkSlateGray;
         public FontWeight FontWeight => (0 < TreeNodes.Count) ? FontWeights.Normal : FontWeights.Bold;

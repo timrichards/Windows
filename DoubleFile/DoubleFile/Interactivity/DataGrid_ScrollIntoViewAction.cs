@@ -18,7 +18,7 @@ namespace DoubleFile
 
         protected override void Invoke(object parameter)
         {
-            DataGrid dataGrid = (DataGrid)SelectionChanged;
+            var dataGrid = (DataGrid)SelectionChanged;
 
             if (null == dataGrid.SelectedItem)
                 return;

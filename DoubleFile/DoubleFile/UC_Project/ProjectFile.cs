@@ -182,7 +182,6 @@ namespace DoubleFile
                 File.Delete(str7z);
 
             if (false == StartProcess("Saving project", strProjectFileNoPath,
-                _tempPath,
                 "a \"" + str7z + "\" " + sbSource + " -mx=3 -md=128m",
                 () => SaveProcessExited(out bRet, strProjectFilename)))
             {
@@ -260,7 +259,6 @@ namespace DoubleFile
 
             if (false == StartProcess((bClearItems ? "Opening" : "Appending") + " project",
                 Path.GetFileName(strProjectFilename),
-                _tempPath,
                 "e \"" + strProjectFilename + "\" -y",
                 () => bRet = OpenProjectExited(openListingFilesWR, bClearItems)))
             {
@@ -330,7 +328,6 @@ namespace DoubleFile
         }
 
         bool StartProcess(string status, string strProjectFileNoPath,
-            string strWorkingDirectory,
             string strArguments,
             Action onExit)
         {
@@ -338,7 +335,6 @@ namespace DoubleFile
                 return false;
 
             _status = status;
-            _process.StartInfo.WorkingDirectory = strWorkingDirectory;
             _process.StartInfo.Arguments = strArguments;
             
             Observable.FromEventPattern(_process, "Exited")
@@ -348,9 +344,10 @@ namespace DoubleFile
             {
                 try
                 {
-                    if (false == Directory.Exists(_process.StartInfo.WorkingDirectory))
-                        Directory.CreateDirectory(_process.StartInfo.WorkingDirectory);
+                    if (false == Directory.Exists(_tempPath))
+                        Directory.CreateDirectory(_tempPath);
 
+                    _process.StartInfo.WorkingDirectory = _tempPath;
                     _sbError.AppendLine(DateTime.Now.ToLongTimeString().PadRight(80, '-'));
                     _bProcessing = true;
                     _process.Start();

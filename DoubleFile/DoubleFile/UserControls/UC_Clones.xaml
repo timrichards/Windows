@@ -25,7 +25,7 @@
                 </Style>
             </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Folders" Binding="{Binding Folder}" Width="{Binding WidthFolder}" />
+                <DataGridTextColumn Header="Folders" Binding="{Binding Text}" Width="{Binding WidthText}" />
                 <DataGridTextColumn Header="Clones" Binding="{Binding Clones}" Width="{Binding WidthClones}" />
                 <DataGridTemplateColumn Header="Paths" Width="{Binding WidthClonePaths}">
                     <DataGridTemplateColumn.CellTemplate>

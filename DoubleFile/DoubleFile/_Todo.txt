@@ -1,7 +1,18 @@
-﻿- fix the clones nickname checkboxes
+﻿- This folder has no exact copy: so please itemize in a report what the exact differences are to the nearest copy.
+	- Show the global folder list which is ranked by similar neighbors; select this folder.
+	- Allow a list of important files and directories to watch, with alerts; links; etc.:
+		- Invert the exclusive principle. Start inclusive, not with an ignore list.
+	- Folders and files that are missing; or that are different.
+	- Invert the size matters principle: some of the most important files may go unnoticed: just a drop in the bucket.
+	- Restore the ignore list: nobody cares about the Windows or Program Files directories. Don't make moron reports.
+- either zoom into volume view or frame the folders and describe the empty and unread areas
+- background progress: saving project doesn't have to tie up the app.
+- fix the clones nickname checkboxes
 - alternate highlight the all one vol is solitary items
 - checkbox and button on lists: turn off auto-sync to current treenode, sync now button
 	- Sync To button in tree view
+	- allow two different file windows to point to two different folders: each new folder window should have its own children
+	- dupe vm event alerts: static vm internal counter or static transmit
 - allow text selection and copy in message box and most lists
 - script source instead of text file for clones and solitary at this folder
 	- generate script app for when you get around to plugging in the drive which deletes all the files you want
@@ -21,19 +32,10 @@
 - Allow rescan of drive, with history difference, or allow copying values of already saved to the new one
 - Allow opening values of listing file that failed scanning
 - compare mode - how is this folder different from that one besides looking at the details: show missing/different file.
-- This folder has no exact copy: so please itemize in a report what the exact differences are to the nearest copy.
-	- Show the global folder list which is ranked by similar neighbors; select this folder.
-	- Allow a list of important files and directories to watch, with alerts; links; etc.:
-		- Invert the exclusive principle. Start inclusive, not with an ignore list.
-	- Folders and files that are missing; or that are different.
-	- Invert the size matters principle: some of the most important files may go unnoticed: just a drop in the bucket.
-	- Restore the ignore list: nobody cares about the Windows or Program Files directories. Don't make moron reports.
 - A 64 bit hash has 1 chance in 18 quintillion. Do collision tests: e.g. run SHA1 against MD5. Put statistics under Advanced.
 	- last modified time as part of comparison; or notification: hash equal but mod times are different
 	- wolfram-alpha front-end; curate; data -> query language: what state are my backups in? What are the best queries to bring forward?
 	- compare the 4K vs 128K correlations to see what they caught. - quick see: nFolderCount1pt0 vs nFolderCount2
-- allow two different file windows to point to two different folders: each new folder window should have its own children
-- dupe vm event alerts: static vm internal counter or static transmit
 - Filtering user control header for tree list; tree view; files; search; duplicates: like search but restrict the view
 - open project; nav save listings; cancel; nav nav; complete save listings; nav explorer create; cancel: should project page.
 - show messagbox title
@@ -72,7 +74,6 @@
 - repeatedly scrolling to the end and cycling the Variance pages will eat up memory.
 - corner case: pounding search will increase memory usage
 - Assert box offset when app window partly off screen
-- background progress: saving project doesn't have to tie up the app.
 - Could remove ?? true: false != null
 - LocalTreeNode(TabledString<Tabled_Folders> strContent) is never called - keep it around. string passed in gets converted
 - Smells:
@@ -145,7 +146,7 @@
 - services, decouple: Unity frameork: rewrite in Node/Angular; C++; Linux etc. Start these with unit testing.
 - what C# features don't translate well to other languages like C++? is operator?
 - neither is nor as are reflection. as is 20x slower though. p. 123
-- Join() vs Block() - Join() completely locks up the Dispatcher? Does Block() wait At PushFrame() like a tr affic cop?
+- Join() vs Block() - Join() completely locks up the Dispatcher? Does Block() wait At PushFrame() like a traffic cop?
 
 - Count property is very slow on Dictionary even though it's an ICollection. List and stack to be trusted?
 - Replace First() with FirstOnlyAssert()

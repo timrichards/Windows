@@ -41,12 +41,11 @@ namespace DoubleFile
         protected override IEnumerable<LVitem_FolderListVM>
             FillList(LocalTreeNode searchFolder)
         {
-            _lsFolders = new ConcurrentBag<LocalTreeNode>();
+            _lsFolders = new ConcurrentBag<LVitem_FolderListVM>();
             FindAllClones(searchFolder);
-            SetFoldersHeader(Util.FormatSize((ulong)_lsFolders.Sum(folder => (long)folder.NodeDatum.LengthTotal)));
+            SetFoldersHeader(Util.FormatSize((ulong)_lsFolders.Sum(lvItem => (long)lvItem.Folder.NodeDatum.LengthTotal)));
 
-            return _lsFolders.OrderByDescending(folder => folder.NodeDatum.LengthTotal)
-                .Select(folder => new LVitem_FolderListVM(folder, _nicknameUpdater));
+            return _lsFolders.OrderByDescending(lvItem => lvItem.Folder.NodeDatum.LengthTotal);
         }
 
         void FindAllClones(LocalTreeNode searchFolder)
@@ -57,7 +56,7 @@ namespace DoubleFile
             Util.ParallelForEach(99620, searchFolder.Nodes, new ParallelOptions { CancellationToken = _cts.Token },
                 folder =>
             {
-                if (folder.IsSolitary)
+                if (folder.NodeDatum.IsSolitary)
                 {
                     if (null != folder.Nodes)
                         FindAllClones(folder);
@@ -65,14 +64,14 @@ namespace DoubleFile
                     return;     // from lambda
                 }
 
-                if (false == (SolitaryIsAllOneVol && folder.IsAllOnOneVolume))
-                    _lsFolders.Add(folder);
+                if (false == (SolitaryIsAllOneVol && folder.NodeDatum.IsAllOnOneVolume))
+                    _lsFolders.Add(new LVitem_FolderListVM(folder, _nicknameUpdater) { Alternate = folder.NodeDatum.IsAllOnOneVolume });
             });
         }
 
         protected override void Clear() => _lsFolders = null;
 
-        ConcurrentBag<LocalTreeNode>
+        ConcurrentBag<LVitem_FolderListVM>
             _lsFolders = null;
     }
 }

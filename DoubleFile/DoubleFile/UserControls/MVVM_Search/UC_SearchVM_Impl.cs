@@ -93,7 +93,7 @@ namespace DoubleFile
             if (null != _selectedItem.Directory)
                 GoToFileOnNext(Tuple.Create((LVitem_ProjectVM)_selectedItem.LVitemProject_Updater, "" + _selectedItem.Directory, "" + _selectedItem.TabledStringFilename));
             else
-                _selectedItem.LocalTreeNode.GoToFile(null);
+                _selectedItem.Folder.GoToFile(null);
         }
 
         void ISearchStatus.Status(SearchResults searchResults, bool bFirst, bool bLast)
@@ -232,7 +232,7 @@ namespace DoubleFile
                         .GroupBy(treeNode => treeNode.Root)
                         .Select(g => new { lvItemProjectVM = new LVitemProject_Updater<bool>(g.Key.NodeDatum.As<RootNodeDatum>().LVitemProjectVM, _nicknameUpdater), g = g })
                         .SelectMany(g => g.g, (g, treeNode) => new LVitem_SearchVM(g.lvItemProjectVM, treeNode))
-                        .OrderBy(lvItem => lvItem.LocalTreeNode.FullPathGet(_nicknameUpdater.Value))
+                        .OrderBy(lvItem => lvItem.Folder.FullPathGet(_nicknameUpdater.Value))
                         .ToList();
 
                     blockingFrame.Continue = false;     // 2

@@ -37,9 +37,6 @@ namespace DoubleFile
         //internal int
         //    SelectedImageIndex { get { return Datum16bits; } set { Datum16bits = value; } }
 
-        internal bool IsSolitary => null == NodeDatum.Clones;
-        internal bool IsAllOnOneVolume => UtilColorcode.AllOnOneVolume == NodeDatum.Clones?[0].ForeColor;
-
         internal LocalTreeNode Root
         {
             get

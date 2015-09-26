@@ -82,7 +82,7 @@ namespace DoubleFile
                 var sbMatch = new StringBuilder();
 
                 foreach (var lvItem in _lsLVignore)
-                    sbMatch.AppendLine(lvItem.Text);
+                    sbMatch.AppendLine(lvItem.PathShort);
 
                 IgnoreNodeQuery(("" + sbMatch).ToLower(), nMaxLevel, _lsRootNodes[0]);
                 stopwatch.Stop();
@@ -598,11 +598,11 @@ namespace DoubleFile
                     return;
                 }
 
-                if (sbMatch.Contains(treeNode.Text.ToLower()))
+                if (sbMatch.Contains(treeNode.PathShort.ToLower()))
                 {
                     if (_lsLVignore
                         .Where(lvItem => treeNode.Level == (("" + lvItem.SubItems[1]).ToInt() - 1))
-                        .Any(lvItem => ("" + lvItem.Text).Equals(treeNode.Text, StringComparison.Ordinal)))
+                        .Any(lvItem => ("" + lvItem.PathShort).Equals(treeNode.PathShort, StringComparison.Ordinal)))
                     {
                         Util.Assert(99898, false);    // replace the Tag field with an LVitem
                   //      IgnoreNodeAndSubnodes((LocalLVitem)lvItem.Tag, treeNode);

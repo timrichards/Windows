@@ -71,7 +71,7 @@ namespace DoubleFile
                 if (null == treeNode)
                     return false;
 
-                result.PathBuilder = PathBuilder.FactoryCreateOrFind(treeNode.FullPathGet(false));
+                result.PathBuilder = PathBuilder.FactoryCreateOrFind(treeNode.PathFullGet(false));
                 result.ListFiles.Add((TabledString<TabledStringType_Files>)strPath.Substring(nLastBackSlashIx + 1), false);
             }
 
@@ -216,9 +216,9 @@ namespace DoubleFile
             var lsTreeNodes =
                 bCase
                 ? LocalTV.AllNodes
-                    .Where(treeNode => contains(treeNode.Text, SearchText))
+                    .Where(treeNode => contains(treeNode.PathShort, SearchText))
                 : LocalTV.AllNodes
-                    .Where(treeNode => treeNode.Text.ToLower().Contains(SearchText));
+                    .Where(treeNode => treeNode.PathShort.ToLower().Contains(SearchText));
 
             (new ProgressOverlay(new[] { "" }, new[] { _ksSearchKey }, x =>
             {
@@ -232,7 +232,7 @@ namespace DoubleFile
                         .GroupBy(treeNode => treeNode.Root)
                         .Select(g => new { lvItemProjectVM = new LVitemProject_Updater<bool>(g.Key.NodeDatum.As<RootNodeDatum>().LVitemProjectVM, _nicknameUpdater), g = g })
                         .SelectMany(g => g.g, (g, treeNode) => new LVitem_SearchVM(g.lvItemProjectVM, treeNode))
-                        .OrderBy(lvItem => lvItem.Folder.FullPathGet(_nicknameUpdater.Value))
+                        .OrderBy(lvItem => lvItem.Folder.PathFullGet(_nicknameUpdater.Value))
                         .ToList();
 
                     blockingFrame.Continue = false;     // 2

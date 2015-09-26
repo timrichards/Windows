@@ -23,7 +23,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock>
-                                <Run Text="{Binding Text, Mode=OneWay}" FontWeight="SemiBold"/>
+                                <Run Text="{Binding PathShort, Mode=OneWay}" FontWeight="SemiBold"/>
                                 <Run Text="{Binding In, Mode=OneWay}" FontWeight="ExtraLight"/>
                                 <Run Text="{Binding Parent, Mode=OneWay}"/>
                             </TextBlock>

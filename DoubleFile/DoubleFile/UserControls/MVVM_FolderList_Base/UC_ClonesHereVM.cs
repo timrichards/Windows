@@ -9,7 +9,7 @@ namespace DoubleFile
     partial class UC_ClonesHereVM : UC_FolderListVM_Base
     {
         public ICommand Icmd_SolitaryIsAllOneVol { get; private set; }
-        public bool SolitaryIsAllOneVol { internal get; set; }
+        public bool AllOneVolIsSolitary { internal get; set; }
         public ICommand Icmd_Export { get; private set; }
 
         internal new UC_ClonesHereVM          // new to hide then call base.Init() and return this
@@ -64,7 +64,7 @@ namespace DoubleFile
                     return;     // from lambda
                 }
 
-                if (false == (SolitaryIsAllOneVol && folder.NodeDatum.IsAllOnOneVolume))
+                if (false == (AllOneVolIsSolitary && folder.NodeDatum.IsAllOnOneVolume))
                     _lsFolders.Add(new LVitem_FolderListVM(folder, _nicknameUpdater) { Alternate = folder.NodeDatum.IsAllOnOneVolume });
             });
         }

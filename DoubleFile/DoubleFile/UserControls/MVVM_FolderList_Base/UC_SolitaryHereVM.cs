@@ -9,7 +9,7 @@ namespace DoubleFile
     partial class UC_SolitaryHereVM : UC_FolderListVM_Base
     {
         public ICommand Icmd_SolitaryIsAllOneVol { get; private set; }
-        public bool SolitaryIsAllOneVol { internal get; set; }
+        public bool AllOneVolIsSolitary { internal get; set; }
         public ICommand Icmd_Export { get; private set; }
 
         internal new UC_SolitaryHereVM          // new to hide then call base.Init() and return this
@@ -57,7 +57,7 @@ namespace DoubleFile
                 folder =>
             {
                 if ((false == folder.NodeDatum.IsSolitary)
-                    && (false == (SolitaryIsAllOneVol && folder.NodeDatum.IsAllOnOneVolume)))
+                    && (false == (AllOneVolIsSolitary && folder.NodeDatum.IsAllOnOneVolume)))
                 {
                     return;     // from lambda
                 }

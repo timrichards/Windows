@@ -5,12 +5,12 @@ namespace DoubleFile
     class LVitem_FolderListVM : ListViewItemVM_Base, IListUpdater
     {
         internal override string
-            ExportLine => Folder.FullPathGet(_nicknameUpdater.Value);
+            ExportLine => Folder.PathFullGet(_nicknameUpdater.Value);
 
         public bool
             Alternate { get; internal set; }
         public string
-            Text => Folder.Text;
+            PathShort => Folder.PathShort;
         public string
             In { get; private set; } = " in ";    // interned
 
@@ -24,7 +24,7 @@ namespace DoubleFile
                 if (null != parent)
                 {
                     _nicknameUpdater.LastGet(this);
-                    return parent.FullPathGet(_nicknameUpdater.Value);
+                    return parent.PathFullGet(_nicknameUpdater.Value);
                 }
 
                 In = null;

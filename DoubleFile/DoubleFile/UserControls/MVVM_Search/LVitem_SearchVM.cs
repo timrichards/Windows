@@ -63,9 +63,9 @@ namespace DoubleFile
                     var parent = Folder.Parent;
 
                     if (null != parent)
-                        return Folder.Text;
+                        return Folder.PathShort;
 
-                    strRet = Folder.FullPathGet(LVitemProject_Updater.ListUpdater.Value);
+                    strRet = Folder.PathFullGet(LVitemProject_Updater.ListUpdater.Value);
                 }
                 else
                 {
@@ -94,7 +94,7 @@ namespace DoubleFile
                     return null;
 
                 if (null != Folder)
-                    return Folder.Parent?.FullPathGet(LVitemProject_Updater.ListUpdater.Value);
+                    return Folder.Parent?.PathFullGet(LVitemProject_Updater.ListUpdater.Value);
 
                 var strDirectory =
                     (LVitemProject_Updater.ListUpdater.Value)

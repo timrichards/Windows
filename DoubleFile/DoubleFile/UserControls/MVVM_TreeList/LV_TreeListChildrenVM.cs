@@ -68,7 +68,7 @@ namespace DoubleFile
             var lsLVitems = new List<LVitem_TreeListVM>();
 
             foreach (var treeNode in treeNodeParent.Nodes)
-                lsLVitems.Add(new LVitem_TreeListVM(new[] { treeNode.Text }) { LocalTreeNode = treeNode });
+                lsLVitems.Add(new LVitem_TreeListVM(new[] { treeNode.PathShort }) { LocalTreeNode = treeNode });
 
             SelectedItem_Set(null);
             Util.UIthread(99815, () => Add(lsLVitems));

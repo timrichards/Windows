@@ -143,7 +143,7 @@ namespace DoubleFile
             }
 
             TabledString<TabledStringType_Folders>.GenerationEnded();
-            _rootNodes.Sort((x, y) => x.Text.LocalCompare(y.Text));
+            _rootNodes.Sort((x, y) => x.PathShort.LocalCompare(y.PathShort));
             _topNode = _rootNodes[0];
             LocalTreeNode.SetLevel(_rootNodes);
             _tree = null;

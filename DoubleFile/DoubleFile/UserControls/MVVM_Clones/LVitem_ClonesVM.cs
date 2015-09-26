@@ -13,7 +13,7 @@ namespace DoubleFile
         public Visibility VisibilityOnClones => 2 <= (TreeNodes?.Count ?? 0) ? Visibility.Visible : Visibility.Collapsed;
 
         // marker node if treenode not present
-        public string Text => WithLocalTreeNode(t => t)?.Text ?? SubItems[0];
+        public string PathShort => WithLocalTreeNode(t => t.PathShort) ?? SubItems[0];
         public Brush Foreground => WithLocalTreeNode(t => t.Foreground) ?? Brushes.White;
         public Brush Background => WithLocalTreeNode(t => t.Background) ?? Brushes.DarkSlateGray;
         public FontWeight FontWeight => (0 < TreeNodes.Count) ? FontWeights.Normal : FontWeights.Bold;
@@ -28,7 +28,7 @@ namespace DoubleFile
                 return null;    // marker item
 
             NicknameUpdater.LastGet(this);
-            return t.FullPathGet(NicknameUpdater.Value);
+            return t.PathFullGet(NicknameUpdater.Value);
         });
 
         void IListUpdater.RaiseListUpdate() => RaisePropertyChanged("ClonePaths");
@@ -61,7 +61,7 @@ namespace DoubleFile
             {
                 ++_clonePathIndex;
                 RaisePropertyChanged("ClonePaths");
-                RaisePropertyChanged("Folder");
+                RaisePropertyChanged("PathShort");
             });
         }
 

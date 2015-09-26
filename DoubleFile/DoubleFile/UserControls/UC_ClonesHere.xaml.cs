@@ -16,14 +16,14 @@ namespace DoubleFile
         {
             DataContext =
                 _vm =
-                new UC_ClonesHereVM { UseNicknames = _bNicknames, SolitaryIsAllOneVol = _bSolitaryIsAllOneVol }
+                new UC_ClonesHereVM { UseNicknames = _bNicknames, AllOneVolIsSolitary = _bSolitaryIsAllOneVol }
                 .Init();
         }
 
         protected override void LocalNavigatedFrom()
         {
             _bNicknames = _vm.UseNicknames;
-            _bSolitaryIsAllOneVol = _vm.SolitaryIsAllOneVol;
+            _bSolitaryIsAllOneVol = _vm.AllOneVolIsSolitary;
             _vm?.Dispose();
 
             DataContext =

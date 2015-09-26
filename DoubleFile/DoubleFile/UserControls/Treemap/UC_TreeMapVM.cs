@@ -312,7 +312,7 @@ namespace DoubleFile
 
             tuple.fileLine.FirstOrDefault(strFile =>
                 tuple.treeNode.NodeDatum.TreeMapFiles.Nodes
-                .Where(treeNodeA => treeNodeA.Text == strFile)
+                .Where(treeNodeA => treeNodeA.PathShort == strFile)
                 .Where(treeNodeA => treeNodeA is LocalTreeMapFileNode)
                 .FirstOnlyAssert(fileNode =>
             {
@@ -338,14 +338,14 @@ namespace DoubleFile
             _bSelRecAndTooltip = true;
 
             var nodeDatum = treeNodeChild.NodeDatum;
-            var strFolder = treeNodeChild.Text;
+            var strFolder = treeNodeChild.PathShort;
             var nodeTreeSelect = treeNodeChild;
 
             if (bFile)
             {
                 strFolder += " (file)";
                 nodeTreeSelect = treeNodeChild.Parent.Parent;   // Parent is TreeMapFileListNode
-                SelectedFileOnNext(treeNodeChild.Text, nInitiator);
+                SelectedFileOnNext(treeNodeChild.PathShort, nInitiator);
             }
 
             WinTooltip.ShowTooltip(
@@ -564,7 +564,7 @@ namespace DoubleFile
                 }
 
                 if (null != LocalOwner)
-                    LocalOwner.Title = treeNode.Text;
+                    LocalOwner.Title = treeNode.PathShort;
             });
 
             RaisePropertyChanged("TreeMapDrawing");
@@ -728,7 +728,7 @@ namespace DoubleFile
 
                         var nodeDatumFree = new NodeDatum { LengthTotal = rootNodeDatum.VolumeFree };
 
-                        var nodeFree = new LocalTreeMapFileNode(treeNode.Text + " (free space)")
+                        var nodeFree = new LocalTreeMapFileNode(treeNode.PathShort + " (free space)")
                         {
                             NodeDatum = nodeDatumFree,
                             ForeColor = UtilColorcode.TreemapFreespace
@@ -755,7 +755,7 @@ namespace DoubleFile
                             nodeDatumUnread.LengthTotal = 0;
                         }
 
-                        var nodeUnread = new LocalTreeMapFileNode(treeNode.Text + " (unread data)")
+                        var nodeUnread = new LocalTreeMapFileNode(treeNode.PathShort + " (unread data)")
                         {
                             NodeDatum = nodeDatumUnread,
                             ForeColor = UtilColorcode.TreemapUnreadspace
@@ -772,7 +772,7 @@ namespace DoubleFile
                         }
 
                         ieChildren = lsChildren;
-                        parent = new LocalTreeMapFileNode(treeNode.Text + " (volume)");
+                        parent = new LocalTreeMapFileNode(treeNode.PathShort + " (volume)");
 
                         var nodeDatumVolume = new NodeDatum
                         {
@@ -834,7 +834,7 @@ namespace DoubleFile
                 }
                 else if (0 < nodeDatum.LengthHere)
                 {
-                    ieChildren = ieChildren.Concat(new[] { new LocalTreeMapFileNode(parent.Text)
+                    ieChildren = ieChildren.Concat(new[] { new LocalTreeMapFileNode(parent.PathShort)
                     {
                         NodeDatum = new NodeDatum { LengthTotal = nodeDatum.LengthHere },
                         ForeColor = UtilColorcode.TreemapFolder

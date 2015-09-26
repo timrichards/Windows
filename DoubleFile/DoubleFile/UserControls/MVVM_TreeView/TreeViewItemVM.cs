@@ -8,7 +8,7 @@ namespace DoubleFile
 {
     partial class TreeViewItemVM : ObservableObjectBase
     {
-        public string Text => "" + _datum.Text;
+        public string PathShort => "" + _datum.PathShort;
         public Brush Foreground => _isSelected ? Brushes.Transparent : _datum.Foreground;
         public Brush SelectedForeground => _isSelected ? Brushes.Transparent : _datum.Foreground;
         public Brush Background => UtilColorcode.ARGBtoBrush(_datum.BackColor);

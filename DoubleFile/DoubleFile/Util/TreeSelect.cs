@@ -185,7 +185,7 @@ namespace DoubleFile
             if ((null == _dictVolumeInfo) ||
                 (null == strDriveInfo))
             {
-                VolumeDetailUpdatedOnNext(new VolumeDetailUpdated(null, rootNode.Text), nInitiator);
+                VolumeDetailUpdatedOnNext(new VolumeDetailUpdated(null, rootNode.PathShort), nInitiator);
                 return;
             }
 
@@ -241,7 +241,7 @@ namespace DoubleFile
                 lasItems.Add(asItems[ix]);
             }
 
-            VolumeDetailUpdatedOnNext(new VolumeDetailUpdated(lasItems.Where(i => null != i), rootNode.Text), nInitiator);
+            VolumeDetailUpdatedOnNext(new VolumeDetailUpdated(lasItems.Where(i => null != i), rootNode.PathShort), nInitiator);
         }
 
         static IReadOnlyDictionary<string, string>

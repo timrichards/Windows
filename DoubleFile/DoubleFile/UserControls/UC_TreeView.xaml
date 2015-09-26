@@ -15,7 +15,7 @@
         </TreeView.ItemContainerStyle>
         <TreeView.ItemTemplate>
             <HierarchicalDataTemplate ItemsSource="{Binding Items}">
-                <TextBlock Text="{Binding Text}" />
+                <TextBlock Text="{Binding PathShort}" />
             </HierarchicalDataTemplate>
         </TreeView.ItemTemplate>
     </TreeView>

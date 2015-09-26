@@ -47,7 +47,7 @@ namespace DoubleFile
         }
         protected LVitem_FolderListVM _selectedItem = null;
 
-        public string WidthText => SCW;                   // franken all NaN
+        public string WidthPathShort => SCW;                   // franken all NaN
         public string WidthIn => SCW;
         public string WidthParent => SCW;
 

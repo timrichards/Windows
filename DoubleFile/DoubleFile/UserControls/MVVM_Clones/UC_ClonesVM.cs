@@ -37,7 +37,7 @@ namespace DoubleFile
         }
         LVitem_ClonesVM _selectedItem = null;
 
-        public string WidthText => SCW;                   // franken all NaN
+        public string WidthPathShort => SCW;                   // franken all NaN
         public string WidthClones => SCW;
         public string WidthClonePaths => SCW;
 

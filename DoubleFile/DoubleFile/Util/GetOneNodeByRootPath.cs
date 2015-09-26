@@ -37,7 +37,7 @@ namespace DoubleFile
                     ((0 > strPath.IndexOfAny(Path.GetInvalidPathChars())) &&
                     Path.IsPathRooted(strPath))
                     ? "" + rootNodeDatum.LVitemProjectVM.SourcePath.TrimEnd('\\')
-                    : topNode.Text;
+                    : topNode.PathShort;
 
                 if (bIgnoreCase)
                     strNode = strNode.ToLower();
@@ -103,8 +103,8 @@ namespace DoubleFile
             {
                 var strText =
                     bIgnoreCase
-                    ? subNode.Text.ToLower()
-                    : subNode.Text;
+                    ? subNode.PathShort.ToLower()
+                    : subNode.PathShort;
 
                 if (strText != asPath[nLevel])
                     continue;

@@ -53,7 +53,7 @@ namespace DoubleFile
                 ieDetail = ieDetail.Concat(new[]
                 { new LVitem_FolderDetailVM(new[] { nHashVersion + " All files hash", "" + folderDetail.treeNode.NodeDatum.Hash_AllFiles}) });
 #endif
-                Title = folderDetail.treeNode.Text;
+                Title = folderDetail.treeNode.PathShort;
                 Add(ieDetail);
             });
         }

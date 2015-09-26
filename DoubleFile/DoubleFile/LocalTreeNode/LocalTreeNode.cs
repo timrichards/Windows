@@ -8,23 +8,6 @@ namespace DoubleFile
         public IReadOnlyList<LocalTreeNode>
             Nodes { get; protected set; }
 
-        internal virtual string
-            Text
-        {
-            get
-            {
-                var strText = "" + _text;
-                var rootNodeDatum = NodeDatum.As<RootNodeDatum>();
-
-                return
-                    (null != rootNodeDatum)
-                    ? "" + rootNodeDatum.LVitemProjectVM.RootText   // if this is a root treenode return nickname text
-                    : strText;
-            }
-            set { _text = (TabledString<TabledStringType_Folders>)value; }
-        }
-        TabledString<TabledStringType_Folders> _text;
-
         internal LocalTreeNode
             FirstNode => (0 < (Nodes?.Count ?? 0)) ? Nodes[0] : null;
         public virtual LocalTreeNode
@@ -58,13 +41,13 @@ namespace DoubleFile
         internal LocalTreeNode(string strContent)
             : this()
         {
-            Text = strContent;
+            PathShort = strContent;
         }
 
         internal LocalTreeNode(TabledString<TabledStringType_Folders> strContent)
             : this()
         {
-            _text = strContent;
+            _strPathShort = strContent;
         }
 
         internal LocalTreeNode(string strContent, IReadOnlyList<LocalTreeNode> lsNodes)
@@ -86,20 +69,37 @@ namespace DoubleFile
             return this;
         }
 
+        internal virtual string
+            PathShort
+        {
+            get
+            {
+                var strText = "" + _strPathShort;
+                var rootNodeDatum = NodeDatum.As<RootNodeDatum>();
+
+                return
+                    (null != rootNodeDatum)
+                    ? "" + rootNodeDatum.LVitemProjectVM.RootText   // if this is a root treenode return nickname text
+                    : strText;
+            }
+            set { _strPathShort = (TabledString<TabledStringType_Folders>)value; }
+        }
+        TabledString<TabledStringType_Folders> _strPathShort;
+
         internal string
-            FullPath => FullPathGet(true);
+            PathFull => PathFullGet(true);
         internal string
-            FullPathGet(bool UseNickname)
+            PathFullGet(bool UseNickname)
         {
             var sbPath = new StringBuilder();
 
             for (var treeNode = this; ; treeNode = treeNode.Parent)
             {
                 if (null == treeNode.Parent)
-                    return ("" + sbPath.Insert(0, UseNickname ? treeNode.Text : "" + treeNode._text));
+                    return ("" + sbPath.Insert(0, UseNickname ? treeNode.PathShort : "" + treeNode._strPathShort));
 
                 sbPath
-                    .Insert(0, treeNode._text)
+                    .Insert(0, treeNode._strPathShort)
                     .Insert(0, '\\');
             }
         }
@@ -144,7 +144,7 @@ namespace DoubleFile
             return this;
         }
 
-        public override string ToString() => FullPath;      // for debug
+        public override string ToString() => PathFull;      // for debug
 
         internal NodeDatum
             NodeDatum;

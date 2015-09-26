@@ -5,19 +5,19 @@ namespace DoubleFile
 {
     class LocalTreeMapFileListNode : LocalTreeNode
     {
-        internal override string Text { get; set; }
+        internal override string PathShort { get; set; }
 
         internal LocalTreeMapFileListNode(string strContent)
             : base()
         {
-            Text = strContent;
+            PathShort = strContent;
         }
 
         internal LocalTreeMapFileListNode(LocalTreeNode parent, IReadOnlyList<LocalTreeMapFileNode> lsNodes)
-            : this(parent.Text)
+            : this(parent.PathShort)
         {
             Parent = parent;
-            Text = parent.Text;
+            PathShort = parent.PathShort;
             Level = parent.Level + 1;       // just for fun: not used
 
             Nodes = lsNodes;

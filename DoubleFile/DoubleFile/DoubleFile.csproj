@@ -370,7 +370,7 @@
     <Compile Include="Util\MVVM_UC_Progress\LVitem_ProgressVM.cs" />
     <Compile Include="Util\MVVM_UC_Progress\LV_ProgressVM.cs" />
     <Compile Include="UC_Project\MVVM_Project\LV_ProjectVM.cs" />
-    <Compile Include="UC_Project\MVVM_Project\WinProjectVM_Impl.cs" />
+    <Compile Include="UC_Project\MVVM_Project\UC_ProjectVM_Impl.cs" />
     <Compile Include="UC_Project\MVVM_Project\LVitem_ProjectVM.cs" />
     <Compile Include="UC_Project\DriveSerialStatic.cs" />
     <Compile Include="Util\MBoxStatic.cs" />
@@ -379,7 +379,7 @@
     <Compile Include="Util\Util.cs" />
     <Compile Include="UC_Project\Win32FindFileStatic.cs" />
     <Compile Include="Util\ExtensionMethodsStatic.cs" />
-    <Compile Include="UC_Project\MVVM_Project\WinProjectVM.cs">
+    <Compile Include="UC_Project\MVVM_Project\UC_ProjectVM.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="App.xaml.cs">

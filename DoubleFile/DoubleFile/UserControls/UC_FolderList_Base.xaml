@@ -33,7 +33,7 @@
             </DataGrid.Columns>
         </DataGrid>
         <Grid Height="50" Visibility="{Binding ProgressbarVisibility}" VerticalAlignment="Center" HorizontalAlignment="Stretch">
-            <ProgressBar IsIndeterminate="True" VerticalAlignment="Bottom" Height="4" />
+            <ProgressBar IsIndeterminate="True" VerticalAlignment="Bottom"/>
         </Grid>
         <TextBlock Visibility="{Binding NoResultsVisibility}" Grid.Column="0" TextAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">
             <Run Text="{Binding NoResultsFolder, Mode=OneWay}" FontWeight="SemiBold" Foreground="AntiqueWhite"/>

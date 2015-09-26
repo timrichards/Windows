@@ -19,7 +19,7 @@ namespace DoubleFile
                 SelectedItems = () => form_lv.SelectedItems.Cast<LVitem_ProjectVM>()
             };
 
-            var winProjectVM = new WinProjectVM(lvProjectVM);
+            var winProjectVM = new UC_ProjectVM(lvProjectVM);
 
             Observable.FromEventPattern(Application.Current.Dispatcher, "ShutdownStarted")
                 .LocalSubscribe(99851, x => winProjectVM.Dispose());

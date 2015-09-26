@@ -91,8 +91,10 @@ namespace DoubleFile
         }
         static bool _canFlashWindow_ResetsIt = true;
 
-        public Statics(Application app)
+        public Statics()
         {
+            var app = Application.Current;
+
             _namespace = app.GetType().Namespace;
             app.ShutdownMode = ShutdownMode.OnMainWindowClose;
 

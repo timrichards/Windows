@@ -11,7 +11,7 @@ using System.Windows.Input;
 
 namespace DoubleFile
 {
-    partial class WinProjectVM : IOpenListingFiles, IProgressOverlayClosing, IDisposable
+    partial class UC_ProjectVM : IOpenListingFiles, IProgressOverlayClosing, IDisposable
     {
         internal const string
             ListingFilter = "Double File Listing|*." + FileParse.ksFileExt_Listing + _ksAllFilesFilter;
@@ -21,7 +21,7 @@ namespace DoubleFile
         internal const string
             UnsavedWarning = "You are about to lose changes to an unsaved project.";
 
-        internal WinProjectVM()
+        internal UC_ProjectVM()
         {
             ProjectFile.OnSavingProject += Serialize;
             ProjectFile.OnOpenedProject += Deserialize;
@@ -138,18 +138,21 @@ namespace DoubleFile
                     RaisePropertyChanged("SaveProjectProgressVisibility");
                     RaisePropertyChanged("IsEnabled");
 
-                    try
+                    Util.ThreadMake(() =>
                     {
-                        // if it's saved, don't set it to unsaved if SaveProject() bails.
-                        if (ProjectFile.SaveProject(_lvVM, strFilename))
-                            _lvVM.Unsaved = false;
-                    }
-                    finally
-                    {
-                        SaveProjectProgressVisibility = Visibility.Collapsed;
-                        RaisePropertyChanged("SaveProjectProgressVisibility");
-                        RaisePropertyChanged("IsEnabled");
-                    }
+                        try
+                        {
+                                // if it's saved, don't set it to unsaved if SaveProject() bails.
+                                if (ProjectFile.SaveProject(_lvVM, strFilename))
+                                _lvVM.Unsaved = false;
+                        }
+                        finally
+                        {
+                            SaveProjectProgressVisibility = Visibility.Collapsed;
+                            RaisePropertyChanged("SaveProjectProgressVisibility");
+                            RaisePropertyChanged("IsEnabled");
+                        }
+                    });
                 }
 
                 break;

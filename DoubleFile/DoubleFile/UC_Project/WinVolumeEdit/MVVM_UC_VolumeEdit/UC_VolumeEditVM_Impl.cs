@@ -38,7 +38,7 @@ namespace DoubleFile
             var dlg = new Microsoft.Win32.SaveFileDialog
             {
                 FileName = ListingFile_CurrentText(),
-                Filter = WinProjectVM.ListingFilter,
+                Filter = UC_ProjectVM.ListingFilter,
                 OverwritePrompt = false,
                 Title = "Save Listing File"
             };

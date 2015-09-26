@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 namespace DoubleFile
 {
-    partial class WinProjectVM : Observable_OwnerWindowBase
+    partial class UC_ProjectVM : Observable_OwnerWindowBase
     {
         public Visibility SaveProjectProgressVisibility { get; private set; } = Visibility.Collapsed;
         public bool IsEnabled => Visibility.Visible != SaveProjectProgressVisibility;
@@ -21,7 +21,7 @@ namespace DoubleFile
         public ICommand Icmd_ToggleInclude { get; }
         public ICommand Icmd_VolumeGroup { get; }
 
-        internal WinProjectVM(LV_ProjectVM lvVM)
+        internal UC_ProjectVM(LV_ProjectVM lvVM)
             : this()
         {
             _lvVM = lvVM;

@@ -60,34 +60,9 @@ namespace DoubleFile
                 return projectFile.OpenProject_(strProjectFilename, openListingFilesWR, bClearItems);
         }
 
-        public void Dispose()
-        {
-            Util.ThreadMake(() =>
-            {
-                for (int i = 0; i < 5; ++i)
-                {
-                    try
-                    {
-                        if (Directory.Exists(_tempPath))
-                            Directory.Delete(_tempPath, true);
-
-                        break;
-                    }
-                    catch (Exception e)
-                    when ((e is IOException) ||
-                    (e is UnauthorizedAccessException))
-                    {
-                        Util.Block(100);
-                    }
-                }
-            });
-
-            Util.LocalDispose(_lsDisposable);
-        }
-
         ProjectFile()
         {
-            Dispose();
+            Cleanup();
             Directory.CreateDirectory(_tempPath);
 
             _lsDisposable.Add(
@@ -113,6 +88,48 @@ namespace DoubleFile
 
             _lsDisposable.Add(Observable.FromEventPattern<DataReceivedEventArgs>(_process, "ErrorDataReceived")
                 .LocalSubscribe(99724, args => { Util.WriteLine(args.EventArgs.Data); _sbError.AppendLine(args.EventArgs.Data); }));
+        }
+
+        public void Dispose()
+        {
+            Kill();
+            Cleanup();
+        }
+        void Cleanup()
+        {
+            Util.ThreadMake(() =>
+            {
+                for (int i = 0; i < 5; ++i)
+                {
+                    try
+                    {
+                        if (Directory.Exists(_tempPath))
+                            Directory.Delete(_tempPath, true);
+
+                        break;
+                    }
+                    catch (Exception e)
+                    when ((e is IOException) ||
+                    (e is UnauthorizedAccessException))
+                    {
+                        Util.Block(100);
+                    }
+                }
+            });
+
+            Util.LocalDispose(_lsDisposable);
+        }
+        ~ProjectFile()
+        {
+            Kill();
+        }
+        void Kill()
+        {
+            try
+            {
+                _process?.Kill();
+            }
+            catch (InvalidOperationException) { }
         }
 
         bool SaveProject_(LV_ProjectVM lvProjectVM, string strProjectFilename)

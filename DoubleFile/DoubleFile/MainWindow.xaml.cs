@@ -236,7 +236,7 @@ namespace DoubleFile
         {
             if ((Statics.WithLVprojectVM(p => p?.Unsaved ?? false)) &&
                 (MessageBoxResult.Cancel == 
-                MBoxStatic.ShowOverlay(WinProjectVM.UnsavedWarning, "Quit Double File", MessageBoxButton.OKCancel)))
+                MBoxStatic.ShowOverlay(UC_ProjectVM.UnsavedWarning, "Quit Double File", MessageBoxButton.OKCancel)))
             {
                 e.Cancel = true;
             }

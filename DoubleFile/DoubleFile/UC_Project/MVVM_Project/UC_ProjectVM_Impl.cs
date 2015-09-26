@@ -156,14 +156,17 @@ namespace DoubleFile
                             RaisePropertyChanged("SaveProjectProgressVisibility");
                             RaisePropertyChanged("IsEnabled");
 
-                            while (false == (ProgressOverlay.WithProgressOverlay(w => w?.LocalIsClosed) ?? true))
-                                Util.Block(TimeSpan.FromSeconds(1));
+                            if (bRet)
+                            {
+                                while (false == (ProgressOverlay.WithProgressOverlay(w => w?.LocalIsClosed) ?? true))
+                                    Util.Block(TimeSpan.FromSeconds(1));
 
-                            var strKey = Path.GetFileName(strFilename);
+                                var strKey = Path.GetFileName(strFilename);
 
-                            new ProgressOverlay(new[] { "Saving project" }, new[] { strKey },
-                                progress => progress.SetCompleted(strKey))
-                                .ShowOverlay();
+                                new ProgressOverlay(new[] { "Saving project" }, new[] { strKey },
+                                    progress => progress.SetCompleted(strKey))
+                                    .ShowOverlay();
+                            }
                         }
                     });
                 }

@@ -50,6 +50,7 @@ namespace DoubleFile
         public UC_Messagebox()
         {
             InitializeComponent();
+            form_Message.FontSize += 4;
             _OK_ColumnProperty = formBtn_OK.GetValue(Grid.ColumnProperty);
         }
 

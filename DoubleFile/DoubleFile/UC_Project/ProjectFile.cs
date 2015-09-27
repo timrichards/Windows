@@ -25,14 +25,14 @@ namespace DoubleFile
 
         static readonly string _tempPath = Path.GetTempPath() + LocalIsoStore.TempDir.TrimEnd('\\') + "_" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + '\\';
 
-        static internal bool
+        static internal bool                                                    // does not have an internal progress dialog
             SaveProject(LV_ProjectVM lvProjectVM, string strProjectFilename)
         {
             using (var projectFile = new ProjectFile())
                 return projectFile.SaveProject_(lvProjectVM, strProjectFilename);
         }
 
-        static internal bool
+        static internal bool                                                    // has an internal cancelable progress dialog
             OpenProject(string strProjectFilename, WeakReference<IOpenListingFiles> openListingFilesWR, bool bClearItems)
         {
             using (var projectFile = new ProjectFile())
@@ -169,10 +169,9 @@ namespace DoubleFile
             }
 
             var sbSource = new StringBuilder();
-            var strPath = Path.GetDirectoryName(lsSourceFiles[0]) + '\\';
 
-            lsSourceFiles.AddRange(OnSavingProject?
-                .GetInvocationList()
+            lsSourceFiles.AddRange(
+                OnSavingProject?.GetInvocationList()
                 .Select(onSavingProject => "" + onSavingProject.DynamicInvoke()));
 
             if (false == Directory.Exists(_tempPath))

@@ -18,7 +18,7 @@
         </Grid.ColumnDefinitions>
         <Image HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="1" Source="/DoubleFile;component/Assets/ic_error_black_18dp.png" Width="32" Margin="0,0,5,0"/>
         <ScrollViewer HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,0,20,0">
-            <TextBlock Name="form_Message" Style="{StaticResource LocalTextBlock}" TextWrapping="WrapWithOverflow" Foreground="Black"/>
+            <TextBox Name="form_Message" Background="Transparent" BorderThickness="0" IsReadOnly="True" TextWrapping="WrapWithOverflow" Foreground="Black"/>
         </ScrollViewer>
         <Button Name="formBtn_OK" Grid.Column="1" Content="OK" Grid.Row="2" Width="75" Height="Auto" IsDefault="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
         <Button Name="formBtn_Cancel" Grid.Column="2" Content="Cancel" Grid.Row="2" Width="75" Height="Auto" IsCancel="True" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>

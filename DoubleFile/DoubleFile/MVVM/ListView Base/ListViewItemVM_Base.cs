@@ -15,7 +15,8 @@ namespace DoubleFile
         internal virtual string
             ExportLine => string.Join(" ", _subItems);
 
-        internal string this[int i] => _subItems[i];
+        internal string
+            this[int i] => _subItems[i];
 
         internal IList<string> SubItems
         {
@@ -50,7 +51,7 @@ namespace DoubleFile
         ListViewItemVM_Base(ListViewVM_Base lvvm)
         {
             LVVM = lvvm;
-            Icmd_Copy = new RelayCommand(() => Clipboard.SetText(ExportLine));
+            Icmd_Copy = new RelayCommand(() => Clipboard.SetText(ExportLine ?? ""));
         }
 
         // NumCols, and columns, are covariant: while all subclasses have columns; the subclasses vary in the number of columns.
@@ -153,18 +154,12 @@ namespace DoubleFile
             SearchCol => 0;
 
         IReadOnlyList<string>
-            PropNames
-        {
-            get
-            {
-                return
-                    _propNames
-                    ?? (_propNames =
-                        GetType().GetProperties().Where(pi => typeof(string) == pi.PropertyType)
-                        .Select(pi => pi.Name).OrderBy(s => s)
-                        .ToArray());
-            }
-        }
+            PropNames =>
+            _propNames
+            ?? (_propNames =
+            GetType().GetProperties().Where(pi => typeof(string) == pi.PropertyType)
+            .Select(pi => pi.Name).OrderBy(s => s)
+            .ToArray());
         abstract protected IReadOnlyList<string> _propNames { get; set; }
     }
 }

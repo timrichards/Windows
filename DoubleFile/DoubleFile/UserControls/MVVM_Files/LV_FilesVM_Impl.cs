@@ -40,12 +40,23 @@ namespace DoubleFile
             var fileList = initiatorTuple.Item1;
 
             Util.Write("J");
-            if (fileList.treeNode == _treeNode)
-                return;
 
+            if (fileList.treeNode != _treeNode)
+                TreeSelect_FileListUpdated_(initiatorTuple);
+
+            if (null != fileList.strFilename)
+            {
+                this[fileList.strFilename].FirstOnlyAssert(fileVM =>
+                    SelectedItem_Set(fileVM, initiatorTuple.Item2));
+            }
+        }
+
+        void TreeSelect_FileListUpdated_(Tuple<TreeSelect.FileListUpdated, int> initiatorTuple)
+        {
             SelectedItem_Set(null, initiatorTuple.Item2);
             ClearItems();
-            _treeNode = fileList.treeNode;
+
+            var fileList = initiatorTuple.Item1;
 
             if (null == fileList.ieFiles)
                 return;
@@ -88,12 +99,6 @@ namespace DoubleFile
             }
 
             Util.UIthread(99813, () => Add(lsItems));
-
-            if (null != fileList.strFilename)
-            {
-                this[fileList.strFilename].FirstOnlyAssert(fileVM =>
-                    SelectedItem_Set(fileVM, initiatorTuple.Item2));
-            }
         }
 
         void UC_TreeMap_SelectedFile(Tuple<string, int> initiatorTuple)

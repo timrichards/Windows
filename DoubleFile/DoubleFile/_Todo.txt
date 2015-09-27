@@ -1,4 +1,5 @@
-﻿- see what happens when you threadmake the treeselect events
+﻿- can't preserve state when nav away from search for example, to go to file list: nav to any other page requires a kind of reset or window layout prep
+- see what happens when you threadmake the treeselect events
 - This folder has no exact copy: so please itemize in a report what the exact differences are to the nearest copy.
 	- Show the global folder list which is ranked by similar neighbors; select this folder.
 	- Allow a list of important files and directories to watch, with alerts; links; etc.:
@@ -20,7 +21,7 @@
 - treemap doesn't always draw when zoomed into a folder with many files, mismatching proper user selection rect
 - treemap still selects the tooltip when closing extra window.
 - GoTo file only works with file list open
-	- Detail doesn't listen for selected file change
+	- Detail doesn't listen for selected file change because item sel occurs in file list.
 - Click OK on a dialog and Double File disappears behind another app. -fix example: end of save listings it comes to front.
 - Why are some folders white? Why do some folders not say they're duplicated?
 - Add folder name to suffix title Tree List: My Documents; Files in Folder: My Documents; Folders Here: My Documents; etc.

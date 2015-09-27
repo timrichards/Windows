@@ -10,7 +10,7 @@ namespace VolTreeMap
     {
         public App()
         {
-            _statics = new Statics(this);
+            _statics = new Statics();
         }
 
         Statics

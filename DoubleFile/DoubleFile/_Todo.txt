@@ -15,6 +15,7 @@
 - script source instead of text file for clones and solitary at this folder
 	- generate script app for when you get around to plugging in the drive which deletes all the files you want
 	- file management: these generated script apps strategize consolidating and space saving via separate steps
+- select the file in go to from search when folder is already selected
 - nodeParent = new Node(strParent, _nLineNo, 0, 0, null, _rootNode)
 - change drive letter did not change one line and screwed up culling, which is fixed. do a check for [A-Z}:\ when verifying the file.
 - Deserialize: can't seem to add the unsaved listing to the project LV

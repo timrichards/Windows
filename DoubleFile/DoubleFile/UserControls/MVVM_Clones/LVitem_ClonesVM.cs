@@ -18,17 +18,24 @@ namespace DoubleFile
         public Brush Background => WithLocalTreeNode(t => t.Background) ?? Brushes.DarkSlateGray;
         public FontWeight FontWeight => (0 < TreeNodes.Count) ? FontWeights.Normal : FontWeights.Bold;
 
+        internal override string
+            ExportLine => WithLocalTreeNode(t => t.PathFullGet(NicknameUpdater.Value));
+
         public string       // includes the subject node: only note three clones or more
             Clones => (3 <= TreeNodes.Count) ? (TreeNodes.Count - 1).ToString("###,###") : null;
 
         public string
-            ClonePaths => WithLocalTreeNode(t =>
+            ClonePaths => WithLocalTreeNode(folder =>
         {
             if (null == NicknameUpdater)
                 return null;    // marker item
 
             NicknameUpdater.LastGet(this);
-            return t.PathFullGet(NicknameUpdater.Value);
+
+            return
+                ((null != folder.Parent)
+                ? folder.Parent : folder)
+                .PathFullGet(NicknameUpdater.Value);
         });
 
         void IListUpdater.RaiseListUpdate() => RaisePropertyChanged("ClonePaths");

@@ -24,7 +24,7 @@
                 {RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}}"/>
         </i:EventTrigger>
     </local:Triggers>
-    
+
     <Style TargetType="{x:Type DataGrid}" BasedOn="{StaticResource {x:Type DataGrid}}">
         <Setter Property="ItemsSource" Value="{Binding Items}" />
         <Setter Property="IsReadOnly" Value="True" />
@@ -43,6 +43,10 @@
         <Setter Property="local:SupplementaryInteraction.Triggers" Value="{StaticResource dataGridTriggers}"/>
     </Style>
 
+    <ContextMenu x:Key="RowMenu" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+        <MenuItem Header="Copy" CommandParameter="{Binding}" Command="{Binding Icmd_Copy}"/>
+    </ContextMenu>
+
     <Style TargetType="{x:Type DataGridRow}" BasedOn="{StaticResource {x:Type DataGridRow}}">
         <Style.Triggers>
             <Trigger Property="IsSelected" Value="True">
@@ -50,6 +54,7 @@
                 <Setter Property="Background" Value="{DynamicResource DataGridCellBackgroundSelected}" />
             </Trigger>
         </Style.Triggers>
+        <Setter Property="ContextMenu" Value="{StaticResource RowMenu}" />
     </Style>
 
     <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">

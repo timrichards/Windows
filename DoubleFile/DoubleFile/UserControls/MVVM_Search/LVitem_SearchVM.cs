@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Text;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -9,6 +11,12 @@ namespace DoubleFile
 
         internal PathBuilder
             Directory => _datum.As<PathBuilder>();
+        string
+            StrDirectory =>
+            (LVitemProject_Updater.ListUpdater.Value)
+            ? LVitemProject_Updater.InsertNickname("" + Directory)
+            : "" + Directory;
+
         internal readonly TabledString<TabledStringType_Files>
             TabledStringFilename;
 
@@ -22,9 +30,31 @@ namespace DoubleFile
         public int
             Alternate { get; } = 0;
 
-        internal LVitem_SearchVM(LVitemProject_Updater<bool> lvItemProject_Updater, PathBuilder directory)
+        internal override string
+            ExportLine
+        {
+            get
+            {
+                var sbCopyText = new StringBuilder(Folder?.PathFullGet(LVitemProject_Updater.ListUpdater.Value) ?? StrDirectory);
+
+                if (null != TabledStringFilename)
+                {
+                    sbCopyText.Append("\\");
+                    sbCopyText.Append("" + TabledStringFilename);
+                }
+
+                return "" + sbCopyText;
+            }
+        }
+
+        LVitem_SearchVM(LVitemProject_Updater<bool> lvItemProject_Updater)
         {
             LVitemProject_Updater = lvItemProject_Updater;
+        }
+
+        internal LVitem_SearchVM(LVitemProject_Updater<bool> lvItemProject_Updater, PathBuilder directory)
+            : this(lvItemProject_Updater)
+        {
             _datum = directory;
         }
 
@@ -36,10 +66,10 @@ namespace DoubleFile
             Alternate = nAlternate;
         }
 
-        internal LVitem_SearchVM(LVitemProject_Updater<bool> lvItemProject_Updater, LocalTreeNode localTreeNode)
+        internal LVitem_SearchVM(LVitemProject_Updater<bool> lvItemProject_Updater, LocalTreeNode folder)
+            : this(lvItemProject_Updater)
         {
-            LVitemProject_Updater = lvItemProject_Updater;
-            _datum = localTreeNode;
+            _datum = folder;
         }
 
         void 
@@ -72,10 +102,7 @@ namespace DoubleFile
                     if (null != TabledStringFilename)
                         return "" + TabledStringFilename;
 
-                    strRet =
-                        (LVitemProject_Updater.ListUpdater.Value)
-                        ? LVitemProject_Updater.InsertNickname("" + Directory)
-                        : "" + Directory;
+                    strRet = StrDirectory;
                 }
 
                 In = null;
@@ -86,29 +113,12 @@ namespace DoubleFile
         }
 
         public string
-            Parent
-        {
-            get
-            {
-                if (null == In)
-                    return null;
-
-                if (null != Folder)
-                    return Folder.Parent?.PathFullGet(LVitemProject_Updater.ListUpdater.Value);
-
-                var strDirectory =
-                    (LVitemProject_Updater.ListUpdater.Value)
-                    ? LVitemProject_Updater.InsertNickname("" + Directory)
-                    : "" + Directory;
-
-                var nIx = strDirectory.LastIndexOf('\\');
-
-                return
-                    ((null != TabledStringFilename) || (0 > nIx))
-                    ? strDirectory
-                    : strDirectory.Substring(0, nIx);
-            }
-        }
+            Parent =>
+            (null == In)
+            ? null
+            : (null != Folder)
+            ? Folder.Parent?.PathFullGet(LVitemProject_Updater.ListUpdater.Value)
+            : StrDirectory;
 
         internal override int NumCols => NumCols_;
         internal const int NumCols_ = 0;

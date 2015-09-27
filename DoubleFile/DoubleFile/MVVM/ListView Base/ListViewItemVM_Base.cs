@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Input;
 
 namespace DoubleFile
 {
     abstract class ListViewItemVM_Base : ObservableObjectBase
     {
+        public ICommand Icmd_Copy { get; private set; }
+
         internal virtual string
             ExportLine => string.Join(" ", _subItems);
 
@@ -46,6 +50,7 @@ namespace DoubleFile
         ListViewItemVM_Base(ListViewVM_Base lvvm)
         {
             LVVM = lvvm;
+            Icmd_Copy = new RelayCommand(() => Clipboard.SetText(ExportLine));
         }
 
         // NumCols, and columns, are covariant: while all subclasses have columns; the subclasses vary in the number of columns.

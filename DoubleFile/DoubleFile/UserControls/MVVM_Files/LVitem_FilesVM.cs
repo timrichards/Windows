@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 
@@ -19,6 +20,9 @@ namespace DoubleFile
         public string Length => Util.FormatSize(LengthRaw);
         public string Error1 => 5 < FileLine.Count ? FileLine[5] : "";
         public string Error2 => 6 < FileLine.Count ? FileLine[6] : "";
+
+        internal override string
+            ExportLine => string.Join(" ", FileLine.Take(6)).Trim();
 
         public bool
             SameVolume

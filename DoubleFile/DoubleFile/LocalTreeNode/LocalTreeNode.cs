@@ -96,7 +96,14 @@ namespace DoubleFile
             for (var treeNode = this; ; treeNode = treeNode.Parent)
             {
                 if (null == treeNode.Parent)
-                    return ("" + sbPath.Insert(0, UseNickname ? treeNode.PathShort : "" + treeNode._strPathShort));
+                {
+                    var strRet = "" + sbPath.Insert(0, UseNickname ? treeNode.PathShort : "" + treeNode._strPathShort);
+
+                    if (2 == strRet.Length)
+                        strRet += "\\";
+
+                    return strRet;
+                }
 
                 sbPath
                     .Insert(0, treeNode._strPathShort)

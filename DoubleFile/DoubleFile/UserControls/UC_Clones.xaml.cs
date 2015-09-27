@@ -25,17 +25,10 @@ namespace DoubleFile
             InitializeComponent();            
         }
 
-        protected override void LocalNavigatedTo() =>  _bNavigatedTo = true;
-
         protected override void LocalFragmentNavigation(string strFragment)
         {
-            if (false == _bNavigatedTo)
-                _bNicknames = formChk_Nicknames.IsChecked ?? false;
-            
-            _bNavigatedTo = false;
-            
             DataContext =
-                _vm = UC_ClonesVM.FactoryGetHolder(strFragment, _bNicknames);
+                _vm = UC_ClonesVM.FactoryGetHolder(strFragment);
 
             LocalTitle =
                 new CultureInfo("en-US", false).TextInfo            // future proof to title case
@@ -44,7 +37,6 @@ namespace DoubleFile
 
         protected override void LocalNavigatedFrom()
         {
-            _bNicknames = formChk_Nicknames.IsChecked ?? false;
             _vm?.Dispose();
 
             DataContext =
@@ -54,9 +46,5 @@ namespace DoubleFile
 
         UC_ClonesVM
             _vm = null;
-        bool
-            _bNicknames = false;
-        bool
-            _bNavigatedTo = false;
     }
 }

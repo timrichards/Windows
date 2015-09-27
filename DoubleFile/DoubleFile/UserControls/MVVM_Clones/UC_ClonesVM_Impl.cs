@@ -15,7 +15,8 @@ namespace DoubleFile
         {
         }
 
-        internal static UC_ClonesVM FactoryGetHolder(string strFragment, bool bUseNicknames)
+        internal static UC_ClonesVM
+            FactoryGetHolder(string strFragment)
         {
             UC_ClonesVM localLVVM = null;
 
@@ -51,10 +52,10 @@ namespace DoubleFile
 
             return
                 localLVVM
-                .Init(bUseNicknames);
+                .Init();
         }
 
-        UC_ClonesVM Init(bool bUseNicknames)
+        UC_ClonesVM Init()
         {
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99700, TreeSelect_FolderDetailUpdated));
 
@@ -71,7 +72,6 @@ namespace DoubleFile
             {
                 Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateViewport(UseNicknames));
                 _nicknameUpdater.Clear();
-                UseNicknames = bUseNicknames;
                 _nicknameUpdater.UpdateViewport(UseNicknames);
             }
             else
@@ -79,6 +79,7 @@ namespace DoubleFile
                 Util.Assert(99865, 0 == Items.Count, bTraceOnly: true);
             }
 
+            RaisePropertyChanged("UseNicknames");
             return this;
         }
 
@@ -94,15 +95,15 @@ namespace DoubleFile
 
             ItemsCast
                 .Where(lvItem =>
+            {
+                foreach (var treeNode in lvItem.TreeNodes)
                 {
-                    foreach (var treeNode in lvItem.TreeNodes)
-                    {
-                        if (ReferenceEquals(treeNode, folderDetail.treeNode))
-                            return true;
-                    }
+                    if (ReferenceEquals(treeNode, folderDetail.treeNode))
+                        return true;
+                }
 
-                    return false;
-                })
+                return false;
+            })
                 .FirstOnlyAssert(SelectedItem_Set);
         }
 

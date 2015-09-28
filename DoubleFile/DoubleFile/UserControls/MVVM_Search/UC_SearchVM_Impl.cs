@@ -39,7 +39,10 @@ namespace DoubleFile
             RaisePropertyChanged("SearchText");
             RaisePropertyChanged("Regex");
             RaisePropertyChanged("UseNicknames");
-            RaiseItems();
+
+            if (0 < Items.Count)
+                RaiseItems();
+
             RaisePropertyChanged("SelectedItem");
             return this;
         }

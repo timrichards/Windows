@@ -74,7 +74,7 @@ namespace DoubleFile
             if (0 < _items.Count)
                 _items[0].RaiseColumnWidths();
             else
-                Util.Assert(99993, false);
+                Util.Assert(99993, false, bTraceOnly: true);
         }
 
         protected void Export()

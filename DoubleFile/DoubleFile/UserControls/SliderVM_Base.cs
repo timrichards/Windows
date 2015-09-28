@@ -3,7 +3,7 @@
     abstract class SliderVM_Base<T> : ListViewVM_Base<T>
         where T : ListViewItemVM_Base
     {
-        internal abstract void GoTo(LocalTreeNode treeNode);
+        internal abstract object GoTo(LocalTreeNode treeNode);
 
         public double Maximum { get; private set; }
         internal LocalTreeNode DeepNode

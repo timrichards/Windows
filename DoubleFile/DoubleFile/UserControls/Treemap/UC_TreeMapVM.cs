@@ -117,8 +117,8 @@ namespace DoubleFile
 
         internal override int NumCols => 0;
 
-        internal override void
-            GoTo(LocalTreeNode treeNode) => RenderA(treeNode, 99853);
+        internal override object
+            GoTo(LocalTreeNode treeNode) => TreeSelect.DoThreadFactory(treeNode, 99853);
 
         static internal IObservable<Tuple<string, int>>
             SelectedFile => _selectedFile;
@@ -141,19 +141,36 @@ namespace DoubleFile
                 var folderDetail = initiatorTuple.Item1;
 
                 Util.Write("M");
-                RenderD(folderDetail.treeNode, initiatorTuple.Item2);
+                Render(folderDetail.treeNode);
                 _bTreeSelect = false;
             }));
 
             _lsDisposable.Add(LV_TreeListChildrenVM.TreeListChildSelected.LocalSubscribe(99695, LV_TreeListChildrenVM_TreeListChildSelected));
             _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.Observable.LocalSubscribe(99694, LV_FilesVM_SelectedFileChanged));
             Folder.Init();
+
+            var folderDetailA = LocalTV.TreeSelect_FolderDetail;
+
+            if (null != folderDetailA)
+                Render(folderDetailA.treeNode);
         }
 
         public void Dispose()
         {
             Util.LocalDispose(_lsDisposable);
             Util.ThreadMake(WinTooltip.CloseTooltip);
+        }
+
+        internal void Tooltip_Click()
+        {
+            var treeNode = WinTooltip.LocalTreeNode;
+
+            if (treeNode is LocalTreeMapFileNode)
+                return;     // file fake node
+
+            WinTooltip.CloseTooltip();
+            _bTooltipClick = true;
+            GoTo(treeNode);
         }
 
         internal void MouseUp(Point ptLocation)
@@ -377,10 +394,10 @@ namespace DoubleFile
         {
             pt.X /= TreeMapFrame.ScaleFactor;
             pt.Y /= TreeMapFrame.ScaleFactor;
-            return FindMapNode_(treeNode_in, pt);
+            return FindMapNode(treeNode_in, pt, bNextNode: false);
         }
 
-        static LocalTreeNode FindMapNode_(LocalTreeNode treeNode_in, Point pt, bool bNextNode = false)
+        static LocalTreeNode FindMapNode(LocalTreeNode treeNode_in, Point pt, bool bNextNode)
         {
             var treeNode = treeNode_in;
 
@@ -409,7 +426,7 @@ namespace DoubleFile
                 if (0 == (treeNode.Nodes?.Count ?? 0))
                     continue;
 
-                var foundNode = FindMapNode_(treeNode.Nodes[0], pt, bNextNode: true);
+                var foundNode = FindMapNode(treeNode.Nodes[0], pt, bNextNode: true);
 
                 if (null != foundNode)
                     return foundNode;
@@ -499,31 +516,7 @@ namespace DoubleFile
             };
         }
 
-        internal void Tooltip_Click()
-        {
-            var treeNode = WinTooltip.LocalTreeNode;
-
-            if (treeNode is LocalTreeMapFileNode)
-                return;     // file fake node
-
-            WinTooltip.CloseTooltip();
-
-            if ((null == TreeNode.Parent) &&
-                (TreeNode == treeNode))
-            {
-                ((RootNodeDatum)TreeNode.NodeDatum).VolumeView = false;
-            }
-
-            RenderA(treeNode, nInitiator: 0);
-        }
-
-        void RenderA(LocalTreeNode treeNode, int nInitiator)
-        {
-            RenderD(treeNode, nInitiator);
-            _bTreeSelect = TreeSelect.DoThreadFactory(treeNode, nInitiator);
-        }
-
-        void RenderD(LocalTreeNode treeNode, int nInitiator)
+        void Render(LocalTreeNode treeNode)
         {
             if (_bSelRecAndTooltip ||
                 _bTreeSelect)
@@ -531,11 +524,14 @@ namespace DoubleFile
                 return;
             }
 
-            Render(treeNode);
-        }
+            if ((TreeNode == treeNode) &&
+                (null == TreeNode.Parent))
+            {
+                ((RootNodeDatum)TreeNode.NodeDatum).VolumeView = _bTooltipClick;
+            }
 
-        void Render(LocalTreeNode treeNode)
-        {
+            _bTooltipClick = false;
+
             if (false == (DeepNode?.IsChildOf(treeNode) ?? false))
                 DeepNode = treeNode;
 
@@ -600,9 +596,6 @@ namespace DoubleFile
             RaisePropertyChanged("GoofballY");
             SelChildNode = null;
             _prevNode = null;
-
-            if (null == TreeNode.Parent)
-                ((RootNodeDatum)TreeNode.NodeDatum).VolumeView = true;
         }
 
         // treemap.cpp	- Implementation of CColorSpace, CTreemap and CTreemapPreview
@@ -1095,6 +1088,8 @@ namespace DoubleFile
             _bTreeSelect = false;
         bool
             _bSelRecAndTooltip = false;
+        bool
+            _bTooltipClick = false;
 
         // Recurse class
         LocalTreeNode

@@ -7,7 +7,7 @@ namespace DoubleFile
     class LV_TreeListChildrenVM : SliderVM_Base<LVitem_TreeListVM>
     {
         public ICommand Icmd_GoTo { get; }
-        internal override void GoTo(LocalTreeNode treeNode) => treeNode.GoToFile(null);
+        internal override object GoTo(LocalTreeNode treeNode) => treeNode.GoToFile(null);
 
         static internal IObservable<Tuple<LocalTreeNode, int>>
             TreeListChildSelected => _treeListChildSelected;

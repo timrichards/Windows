@@ -169,7 +169,7 @@ namespace DoubleFile
                 return;     // file fake node
 
             WinTooltip.CloseTooltip();
-            _bTooltipClick = true;
+            _bTooltipVolumeView = false;
             GoTo(treeNode);
         }
 
@@ -527,10 +527,10 @@ namespace DoubleFile
             if ((TreeNode == treeNode) &&
                 (null == TreeNode.Parent))
             {
-                ((RootNodeDatum)TreeNode.NodeDatum).VolumeView = _bTooltipClick;
+                ((RootNodeDatum)TreeNode.NodeDatum).VolumeView = _bTooltipVolumeView;
             }
 
-            _bTooltipClick = false;
+            _bTooltipVolumeView = true;
 
             if (false == (DeepNode?.IsChildOf(treeNode) ?? false))
                 DeepNode = treeNode;
@@ -1089,7 +1089,7 @@ namespace DoubleFile
         bool
             _bSelRecAndTooltip = false;
         bool
-            _bTooltipClick = false;
+            _bTooltipVolumeView = true;
 
         // Recurse class
         LocalTreeNode

@@ -24,7 +24,7 @@ namespace DoubleFile
 
             _vmSave = null;
 
-            if (null == vm)
+            if (vm?.IsDisposed ?? true)
             {
                 var strText = formEdit_search.Text;
 

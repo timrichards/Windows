@@ -7,6 +7,9 @@ namespace DoubleFile
 {
     partial class UC_SearchVM : IDisposable, ISearchStatus, IProgressOverlayClosing
     {
+        internal bool
+            IsDisposed { get; private set; } = false;
+
         internal LocalModernWindowBase
             LocalOwner = null;
         internal Func<bool> IsEditBoxNonEmpty = null;
@@ -43,7 +46,7 @@ namespace DoubleFile
 
         public void Dispose()
         {
-            _bDisposed = true;
+            IsDisposed = true;
             TabledString<TabledStringType_Files>.DropRef();
             PathBuilder.DropRef();
         }
@@ -117,7 +120,7 @@ namespace DoubleFile
         {
             _searchType2 = null;
 
-            if (_bDisposed)
+            if (IsDisposed)
             {
                 ProgressOverlay.CloseForced();
                 return;
@@ -143,7 +146,7 @@ namespace DoubleFile
 
                     _lsSearchResults.RemoveAt(0);
 
-                    if (false == _bDisposed)
+                    if (false == IsDisposed)
                         Util.UIthread(99809, () => Add(MakeLVitems(results)));
 
                     if (bClosed)
@@ -158,7 +161,7 @@ namespace DoubleFile
             catch (InvalidOperationException) { }   // user restarted search during Block() in ListViewItemVM_Base.Add(): enumeration can't continue
             catch (Exception e) when ((e is ArgumentNullException) || (e is NullReferenceException))
             {
-                Util.Assert(99878, _bDisposed);
+                Util.Assert(99878, IsDisposed);
             }
             catch (OutOfMemoryException)
             {
@@ -186,7 +189,7 @@ namespace DoubleFile
 
             foreach (var searchResult in searchResults.Results)
             {
-                if (_bDisposed)
+                if (IsDisposed)
                     break;
 
                 // SearchResults.PathBuilder has a \ at the end for folder & file search where folder matches,
@@ -198,7 +201,7 @@ namespace DoubleFile
                 {
                     foreach (var tabledFilename in searchResult.ListFiles.Keys)
                     {
-                        if (_bDisposed)
+                        if (IsDisposed)
                             break;
 
                         yield return
@@ -296,8 +299,6 @@ namespace DoubleFile
             _lsSearchResults = null;
         SearchListings
             _searchType2 = null;
-        bool
-            _bDisposed = false;
         const string
             _ksSearchKey = "Searching";
     }

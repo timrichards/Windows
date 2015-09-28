@@ -1,5 +1,4 @@
 ﻿- fix the tree list slider
-- can't preserve state when nav away from search for example, to go to file list: nav to any other page requires a kind of reset or window layout prep
 - see what happens when you threadmake the treeselect events
 - This folder has no exact copy: so please itemize in a report what the exact differences are to the nearest copy.
 	- Show the global folder list which is ranked by similar neighbors; select this folder.
@@ -8,7 +7,6 @@
 	- Folders and files that are missing; or that are different.
 	- Invert the size matters principle: some of the most important files may go unnoticed: just a drop in the bucket.
 	- Restore the ignore list: nobody cares about the Windows or Program Files directories. Don't make moron reports.
-- either zoom into volume view or frame the folders and describe the empty and unread areas
 - checkbox and button on lists: turn off auto-sync to current treenode, sync now button
 	- Sync To button in tree view
 	- allow two different file windows to point to two different folders: each new folder window should have its own children

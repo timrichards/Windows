@@ -13,8 +13,7 @@ namespace DoubleFile
     class UC_TreeMapVM : SliderVM_Base<ListViewItemVM_Base>, IDisposable
     {
         public ObservableCollection<TreeMapFrame>
-            Frames => _frames;
-        ObservableCollection<TreeMapFrame> _frames = new ObservableCollection<TreeMapFrame>();
+            Frames { get; } = new ObservableCollection<TreeMapFrame>();
         public class TreeMapFrame
         {
             internal const int
@@ -545,7 +544,7 @@ namespace DoubleFile
                     LocalOwner.Title = Util.Localized("Title");
 
                 TreeMapDrawing = null;
-                _frames.Clear();
+                Frames.Clear();
 
                 if (null == ieFills)
                     return;     // from lambda
@@ -563,7 +562,7 @@ namespace DoubleFile
                 if (null != ieFrames)
                 {
                     foreach (var frame in ieFrames.OrderByDescending(r => r.Area).Take(1 << 10))
-                        _frames.Add(frame);
+                        Frames.Add(frame);
                 }
 
                 if (null != LocalOwner)

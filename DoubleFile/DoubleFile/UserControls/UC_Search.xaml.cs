@@ -68,7 +68,7 @@ namespace DoubleFile
 
             // One-shot: no need to dispose
             Observable.Timer(TimeSpan.FromSeconds(10)).Timestamp()
-                .LocalSubscribe(0, x => { _vmSave?.Dispose(); _vmSave = null; });
+                .LocalSubscribe(99615, x => { _vmSave?.Dispose(); _vmSave = null; });
         }
 
         UC_SearchVM

@@ -524,19 +524,16 @@ namespace DoubleFile
                 return;
             }
 
-            if ((TreeNode == treeNode) &&
-                (null == TreeNode.Parent))
-            {
-                ((RootNodeDatum)TreeNode.NodeDatum).VolumeView = _bTooltipVolumeView;
-            }
-
-            _bTooltipVolumeView = true;
-
             if (false == (DeepNode?.IsChildOf(treeNode) ?? false))
                 DeepNode = treeNode;
 
             ClearSelection();
-            TreeNode = treeNode;
+            TreeNode = treeNode;    // Must follow setting DeepNode above
+
+            if (null == TreeNode.Parent)
+                ((RootNodeDatum)TreeNode.NodeDatum).VolumeView = _bTooltipVolumeView;
+
+            _bTooltipVolumeView = true;
 
             var timer = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Timestamp()
                 .LocalSubscribe(0, x => Util.WriteLine(DateTime.Now.Ticks + " " + treeNode + " DrawTreemap"));

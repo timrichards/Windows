@@ -1,5 +1,4 @@
-﻿- form_Message.FontSize += 4: grab a textbox actualsize instead
-- fix the tree list slider
+﻿- fix the tree list slider
 - can't preserve state when nav away from search for example, to go to file list: nav to any other page requires a kind of reset or window layout prep
 - see what happens when you threadmake the treeselect events
 - This folder has no exact copy: so please itemize in a report what the exact differences are to the nearest copy.

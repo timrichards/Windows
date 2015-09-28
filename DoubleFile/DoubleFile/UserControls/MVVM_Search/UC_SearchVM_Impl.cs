@@ -30,6 +30,17 @@ namespace DoubleFile
             return this;
         }
 
+        internal UC_SearchVM Reconnect()
+        {
+            _nicknameUpdater.UpdateViewport(UseNicknames);
+            RaisePropertyChanged("SearchText");
+            RaisePropertyChanged("Regex");
+            RaisePropertyChanged("UseNicknames");
+            RaiseItems();
+            RaisePropertyChanged("SelectedItem");
+            return this;
+        }
+
         public void Dispose()
         {
             _bDisposed = true;

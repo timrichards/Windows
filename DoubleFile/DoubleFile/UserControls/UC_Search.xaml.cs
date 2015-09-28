@@ -12,6 +12,7 @@ namespace DoubleFile
         public UC_Search()
         {
             InitializeComponent();
+            CantDupeThisUsercontrol = true;     // only so _vmSave can be set, so there could be a workaround
 
             if (Statics.Namespace != GetType().Namespace)   // no project so no nicknames in the VolTreeMap assembly
                 formChk_Nicknames.Visibility = Visibility.Collapsed;
@@ -19,20 +20,34 @@ namespace DoubleFile
 
         protected override void LocalNavigatedTo()
         {
-            var strText = formEdit_search.Text;
+            var vm = _vmSave;
 
-            DataContext =
-                _vm =
-                new UC_SearchVM
+            _vmSave = null;
+
+            if (null == vm)
             {
-                IsEditBoxNonEmpty = () => false == string.IsNullOrWhiteSpace(formEdit_search.Text),
-                Regex = _bRegex,
-                UseNicknames = _bNicknames,
-                LocalOwner = LocalOwner
-            }
-                .Init();
+                var strText = formEdit_search.Text;
 
-            _vm.SearchText = strText;      // set this after DataContext
+                DataContext =
+                    _vm =
+                    new UC_SearchVM
+                {
+                    IsEditBoxNonEmpty = () => false == string.IsNullOrWhiteSpace(formEdit_search.Text),
+                    Regex = _bRegex,
+                    UseNicknames = _bNicknames,
+                    LocalOwner = LocalOwner
+                }
+                    .Init();
+
+                _vm.SearchText = strText;      // set this after DataContext
+            }
+            else
+            {
+                 DataContext =
+                    _vm =
+                    vm
+                    .Reconnect();
+            }
 
             // Set search text box focus
             // One-shot: no need to dispose
@@ -48,15 +63,18 @@ namespace DoubleFile
         {
             _bRegex = _vm.Regex;
             _bNicknames = formChk_Nicknames.IsChecked ?? false;
-            _vm?.Dispose();
+            DataContext = null;
+            _vmSave = _vm;
 
-            DataContext =
-                _vm =
-                null;
+            // One-shot: no need to dispose
+            Observable.Timer(TimeSpan.FromSeconds(10)).Timestamp()
+                .LocalSubscribe(0, x => { _vmSave?.Dispose(); _vmSave = null; });
         }
 
         UC_SearchVM
             _vm = null;
+        static UC_SearchVM
+            _vmSave = null;
         bool
             _bRegex = false;
         bool

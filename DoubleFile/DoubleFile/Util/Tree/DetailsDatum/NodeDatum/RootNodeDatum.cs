@@ -2,10 +2,12 @@
 {
     class RootNodeDatum : NodeDatum
     {
-        internal LVitemProject_Explorer LVitemProjectVM { get; }
-        internal readonly bool VolumeView;
+        internal readonly LVitemProject_Explorer LVitemProjectVM;
         internal readonly ulong VolumeFree;
         internal readonly ulong VolumeLength;
+
+        internal bool
+            VolumeView;
 
         internal
             RootNodeDatum(NodeDatum node, string strCulledPath)

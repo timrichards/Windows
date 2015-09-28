@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace DoubleFile
 {
+    [DebuggerDisplay("{_strPathShort} {Nodes?.Count}")]
     class LocalTreeNode : LocalColorItemBase
     {
         public IReadOnlyList<LocalTreeNode>
@@ -150,8 +152,6 @@ namespace DoubleFile
             TreeSelect.DoThreadFactory(this, 0 /* UI Initiator */, strFile);
             return this;
         }
-
-        public override string ToString() => PathFull;      // for debug
 
         internal NodeDatum
             NodeDatum;

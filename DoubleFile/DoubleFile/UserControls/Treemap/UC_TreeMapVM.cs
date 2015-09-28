@@ -500,6 +500,13 @@ namespace DoubleFile
                 return;     // file fake node
 
             WinTooltip.CloseTooltip();
+
+            if ((null == TreeNode.Parent) &&
+                (TreeNode == treeNode))
+            {
+                ((RootNodeDatum)TreeNode.NodeDatum).VolumeView = false;
+            }
+
             RenderA(treeNode, nInitiator: 0);
         }
 
@@ -586,6 +593,9 @@ namespace DoubleFile
             RaisePropertyChanged("GoofballY");
             SelChildNode = null;
             _prevNode = null;
+
+            if (null == TreeNode.Parent)
+                ((RootNodeDatum)TreeNode.NodeDatum).VolumeView = true;
         }
 
         // treemap.cpp	- Implementation of CColorSpace, CTreemap and CTreemapPreview

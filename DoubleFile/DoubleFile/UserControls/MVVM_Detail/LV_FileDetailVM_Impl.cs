@@ -64,7 +64,7 @@ namespace DoubleFile
                 (false == string.IsNullOrWhiteSpace(asFileLine[FileParse.knColLengthLV])))
             {
                 asFileLine[FileParse.knColLengthLV] =
-                    Util.FormatSize(asFileLine[FileParse.knColLengthLV], bBytes: true);
+                    asFileLine[FileParse.knColLengthLV].FormatSize(bytes: true);
             }
 
             Util.UIthread(99814, () =>

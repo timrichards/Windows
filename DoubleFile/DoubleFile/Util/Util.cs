@@ -17,7 +17,7 @@ namespace DoubleFile
             Util.Assert(nLocation, bCondition, strError_in, bTraceOnly);
     }
 
-    class Util : FileParse
+    static class Util
     {
         static internal bool
             Assert(decimal nLocation, bool bCondition, string strError_in = null, bool bTraceOnly = false)
@@ -121,11 +121,11 @@ namespace DoubleFile
         }
 
         static internal string
-            FormatSize(string in_str, bool bBytes = false) =>
-            FormatSize((in_str ?? "0").ToUlong(), bBytes);
+            FormatSize(this string in_str, bool bytes = false) =>
+            FormatSize((in_str ?? "0").ToUlong(), bytes);
 
         static internal string
-            FormatSize(ulong nLength, bool bBytes = false, bool bNoDecimal = false)
+            FormatSize(this ulong nLength, bool bytes = false, bool bNoDecimal = false)
         {
             var nT = nLength / 1024d / 1024 / 1024 / 1024 - .05;
             var nG = nLength / 1024d / 1024 / 1024 - .05;
@@ -144,7 +144,7 @@ namespace DoubleFile
             if (nLength > 0)
             {
                 return strSz + (
-                    bBytes
+                    bytes
                     ? (" (" + nLength.ToString("###,###,###,###,###") + " bytes)")
                     : "");
             }

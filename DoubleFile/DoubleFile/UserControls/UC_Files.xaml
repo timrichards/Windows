@@ -67,11 +67,12 @@
                         </Setter.Value>
                     </Setter>
                 </Style>
+                <local:BindingProxy x:Key="proxy" Value="{Binding}" />
             </DataGrid.Resources>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="File name" Binding="{Binding Filename}" Width="{Binding WidthFilename}"/>
 
-                <DataGridTemplateColumn Header="Duplicates" SortMemberPath="DuplicatesRaw" Width="{Binding WidthDuplicates}">
+                <DataGridTemplateColumn Header="Duplicates" SortMemberPath="DuplicatesRaw" Width="{Binding WidthDuplicates}" Visibility="{Binding Value.DupColVisibility, Source={StaticResource proxy}}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">

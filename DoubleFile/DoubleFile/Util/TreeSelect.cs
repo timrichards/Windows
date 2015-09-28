@@ -6,7 +6,7 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    partial class TreeSelect : Util
+    partial class TreeSelect : FileParse
     {
         internal class FileListUpdated
         {
@@ -79,7 +79,7 @@ namespace DoubleFile
             _dictVolumeInfo = LocalTV.DictVolumeInfo;
             _bCompareMode = bCompareMode;
             _bSecondComparePane = bSecondComparePane;
-            _thread = ThreadMake(() => Go(treeNode, strFile, nInitiator));
+            _thread = Util.ThreadMake(() => Go(treeNode, strFile, nInitiator));
             return true;
         }
 
@@ -98,7 +98,7 @@ namespace DoubleFile
             string strListingFile = null;
 
             var ieFiles =
-                Closure(() =>
+                Util.Closure(() =>
             {
                 var nodeDatum = treeNode.NodeDatum;
                 var rootNode = treeNode.Root;
@@ -150,7 +150,7 @@ namespace DoubleFile
             const string kStrFmt_thous = "###,###,###,##0";
 
             lieDetail.Add(new[] { "# Files Here", nodeDatum.FileCountHere.ToString(kStrFmt_thous) });
-            lieDetail.Add(new[] { "with Size of", FormatSize(nodeDatum.LengthHere, bBytes: true) });
+            lieDetail.Add(new[] { "with Size of", nodeDatum.LengthHere.FormatSize(bytes: true) });
             lieDetail.Add(new[] { "Total # Files", nodeDatum.FileCountTotal.ToString(kStrFmt_thous) });
             lieDetail.Add(new[] { "# Folders Here", (treeNode.Nodes?.Count ?? 0).ToString(kStrFmt_thous) });
 
@@ -172,7 +172,7 @@ namespace DoubleFile
                 lieDetail.Add(new[] { "# Subfolders", strItem });
             }
 
-            lieDetail.Add(new[] { "Total Size", FormatSize(nodeDatum.LengthTotal, bBytes: true) });
+            lieDetail.Add(new[] { "Total Size", nodeDatum.LengthTotal.FormatSize(bytes: true) });
             FolderDetailUpdatedOnNext(new FolderDetailUpdated(lieDetail, treeNode), nInitiator);
         }
 
@@ -211,7 +211,7 @@ namespace DoubleFile
                 {
                     a[0],
                     kabDIsizeType[i]
-                        ? FormatSize(a[1], bBytes: true) 
+                        ? a[1].FormatSize(bytes: true) 
                         : a[1]
                 };
             }

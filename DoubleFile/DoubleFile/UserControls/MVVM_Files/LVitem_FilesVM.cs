@@ -17,7 +17,7 @@ namespace DoubleFile
         public DateTime ModifiedRaw => ("" + Modified).ToDateTime();
         public string Attributes => Util.DecodeAttributes(FileLine[3]);
         public ulong LengthRaw => 4 < FileLine.Count ? ("" + FileLine[4]).ToUlong() : 0;
-        public string Length => Util.FormatSize(LengthRaw);
+        public string Length => LengthRaw.FormatSize();
         public string Error1 => 5 < FileLine.Count ? FileLine[5] : "";
         public string Error2 => 6 < FileLine.Count ? FileLine[6] : "";
 

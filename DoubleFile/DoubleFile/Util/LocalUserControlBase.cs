@@ -186,7 +186,7 @@ namespace DoubleFile
                 }
                 catch (OutOfMemoryException) { }
 
-                Util.WriteLine("Average file length = " + Util.FormatSize((ulong)nAverage, true));
+                Util.WriteLine("Average file length = " + ((ulong)nAverage).FormatSize(bytes: true));
             });
         }
     }

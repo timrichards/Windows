@@ -370,7 +370,7 @@ namespace DoubleFile
             WinTooltip.ShowTooltip(
                 new WinTooltip.ArgsStruct(
                     strFolder,
-                    Util.FormatSize(nodeDatum.LengthTotal, bBytes: true),
+                    nodeDatum.LengthTotal.FormatSize(bytes: true),
                     LocalOwner,
                     Tooltip_Click,
                     () => ClearSelection(bDontCloseTooltip: true)),
@@ -475,7 +475,7 @@ namespace DoubleFile
                     (false == string.IsNullOrWhiteSpace(asFileLine[FileParse.knColLengthLV])))
                 {
                     nLengthDebug += nLength = ("" + asFileLine[FileParse.knColLengthLV]).ToUlong();
-                    asFileLine[FileParse.knColLengthLV] = Util.FormatSize(asFileLine[FileParse.knColLengthLV]);
+                    asFileLine[FileParse.knColLengthLV] = asFileLine[FileParse.knColLengthLV].FormatSize();
                 }
 
                 lsFiles.Add(Tuple.Create(asFileLine[0], nLength));
@@ -730,7 +730,7 @@ namespace DoubleFile
 
                         var nodeDatumFree = new NodeDatum { LengthTotal = rootNodeDatum.VolumeFree };
 
-                        var nodeFree = new LocalTreeMapFileNode(Util.FormatSize(nodeDatumFree.LengthTotal) + " free space")
+                        var nodeFree = new LocalTreeMapFileNode(nodeDatumFree.LengthTotal.FormatSize() + " free space")
                         {
                             NodeDatum = nodeDatumFree,
                             ForeColor = UtilColorcode.TreemapFreespace
@@ -757,7 +757,7 @@ namespace DoubleFile
                             nodeDatumUnread.LengthTotal = 0;
                         }
 
-                        var nodeUnread = new LocalTreeMapFileNode(Util.FormatSize(nodeDatumUnread.LengthTotal) + " unread data (estimate affected by compression and hard links)")
+                        var nodeUnread = new LocalTreeMapFileNode(nodeDatumUnread.LengthTotal.FormatSize() + " unread data (estimate affected by compression and hard links)")
                         {
                             NodeDatum = nodeDatumUnread,
                             ForeColor = UtilColorcode.TreemapUnreadspace

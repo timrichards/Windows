@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 
 namespace DoubleFile
 {
     partial class LV_FilesVM : IDisposable
     {
+        public Visibility DupColVisibility => LVitem_FilesVM.ShowDuplicates ? Visibility.Visible : Visibility.Collapsed;
+
         internal LV_FilesVM()
         {
             _lsDisposable.Add(TreeSelect.FileListUpdated.Observable.LocalSubscribe(99703, TreeSelect_FileListUpdated));

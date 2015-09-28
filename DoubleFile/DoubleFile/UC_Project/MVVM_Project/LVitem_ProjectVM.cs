@@ -18,7 +18,7 @@ namespace DoubleFile
         public string DriveModel { get { return SubItems[6]; } internal set { SetProperty(6, value); } }
         public string DriveSerial { get { return SubItems[7]; } internal set { SetProperty(7, value); } }
 
-        public string ScannedLength { get { return Util.FormatSize(SubItems[8]); } internal set { SetProperty(8, value); } }
+        public string ScannedLength { get { return SubItems[8].FormatSize(); } internal set { SetProperty(8, value); } }
         public ulong ScannedLengthRaw => ("" + SubItems[8]).ToUlong();
 
         internal override int NumCols => NumCols_;

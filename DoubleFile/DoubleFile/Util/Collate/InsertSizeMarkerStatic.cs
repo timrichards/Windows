@@ -10,11 +10,8 @@ namespace DoubleFile
             static internal void Go(IList<LVitem_ClonesVM> listLVitems, int nIx, bool bSolitary, bool bAdd = false)
             {
                 var lvItem = new LVitem_ClonesVM(new[] {
-                    listLVitems[nIx].WithLocalTreeNode(localTreeNode => ((Util.FormatSize(
-                    localTreeNode
-                    .NodeDatum
-                    .LengthTotal,
-                    bNoDecimal: true)))) });
+                    listLVitems[nIx].WithLocalTreeNode(localTreeNode => ((
+                    localTreeNode.NodeDatum.LengthTotal.FormatSize(bNoDecimal: true)))) });
 
                 if (bAdd)
                     listLVitems.Add(lvItem);

@@ -32,11 +32,7 @@ namespace DoubleFile
             internal TreeMapFrame(Rect rc, LocalTreeMapFileNode treeNode = null)
             {
                 _rc = rc.Scale(ScaleFactor);
-
-                if (null == treeNode)
-                    return;
-
-                VolumeViewDescription = treeNode.PathShort;
+                VolumeViewDescription = treeNode?.PathShort;
             }
 
             protected readonly Rect _rc = default(Rect);

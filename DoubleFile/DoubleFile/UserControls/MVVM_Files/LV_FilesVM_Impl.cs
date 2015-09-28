@@ -53,10 +53,11 @@ namespace DoubleFile
 
         void TreeSelect_FileListUpdated_(Tuple<TreeSelect.FileListUpdated, int> initiatorTuple)
         {
+            var fileList = initiatorTuple.Item1;
+
             SelectedItem_Set(null, initiatorTuple.Item2);
             ClearItems();
-
-            var fileList = initiatorTuple.Item1;
+            _treeNode = fileList.treeNode;
 
             if (null == fileList.ieFiles)
                 return;

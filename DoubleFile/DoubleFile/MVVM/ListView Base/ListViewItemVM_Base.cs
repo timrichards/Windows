@@ -51,7 +51,7 @@ namespace DoubleFile
         ListViewItemVM_Base(ListViewVM_Base lvvm)
         {
             LVVM = lvvm;
-            Icmd_Copy = new RelayCommand(() => Clipboard.SetText(ExportLine ?? ""));
+            Icmd_Copy = new RelayCommand(() => Clipboard.SetText("" + ExportLine));
         }
 
         // NumCols, and columns, are covariant: while all subclasses have columns; the subclasses vary in the number of columns.

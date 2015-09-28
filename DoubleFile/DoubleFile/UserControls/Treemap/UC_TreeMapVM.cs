@@ -27,9 +27,16 @@ namespace DoubleFile
             public double Width => _rc.Width;
             public double Height => _rc.Height;
 
-            internal TreeMapFrame(Rect rc)
+            public string VolumeViewDescription { get; } = null;
+
+            internal TreeMapFrame(Rect rc, LocalTreeMapFileNode treeNode = null)
             {
                 _rc = rc.Scale(ScaleFactor);
+
+                if (null == treeNode)
+                    return;
+
+                VolumeViewDescription = treeNode.PathShort;
             }
 
             protected readonly Rect _rc = default(Rect);
@@ -738,7 +745,7 @@ namespace DoubleFile
 
                         var nodeDatumFree = new NodeDatum { LengthTotal = rootNodeDatum.VolumeFree };
 
-                        var nodeFree = new LocalTreeMapFileNode(treeNode.PathShort + " (free space)")
+                        var nodeFree = new LocalTreeMapFileNode(Util.FormatSize(nodeDatumFree.LengthTotal) + " free space")
                         {
                             NodeDatum = nodeDatumFree,
                             ForeColor = UtilColorcode.TreemapFreespace
@@ -765,7 +772,7 @@ namespace DoubleFile
                             nodeDatumUnread.LengthTotal = 0;
                         }
 
-                        var nodeUnread = new LocalTreeMapFileNode(treeNode.PathShort + " (unread data)")
+                        var nodeUnread = new LocalTreeMapFileNode(Util.FormatSize(nodeDatumUnread.LengthTotal) + " unread data (estimate affected by compression and hard links)")
                         {
                             NodeDatum = nodeDatumUnread,
                             ForeColor = UtilColorcode.TreemapUnreadspace
@@ -951,7 +958,7 @@ namespace DoubleFile
                         );
 
                         if (bStart)
-                            _lsFrames.Add(new TreeMapFrame(rcChild));
+                            _lsFrames.Add(new TreeMapFrame(rcChild, child.As<LocalTreeMapFileNode>()));
 
                         if (lastChild)
                         {

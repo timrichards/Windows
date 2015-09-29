@@ -43,7 +43,7 @@
 
         internal string
             InsertNickname(string strFolder) =>
-            (strFolder + "\\").Replace(CulledPath, RootText + '\\').TrimEnd('\\').Replace("\\\\", "\\");
+            (strFolder + "\\").Replace(CulledPath, RootText + '\\').TrimEnd('\\').Replace(@"\\", @"\");
 
         internal LVitemProject_Explorer
             SetCulledPath(string strCulledPath)
@@ -53,7 +53,7 @@
             return this;
         }
         internal string
-            CulledPath => _strCulledPath ?? SourcePath.TrimEnd('\\');
+            CulledPath => _strCulledPath ?? SourcePath;
 
         string
             _strCulledPath;

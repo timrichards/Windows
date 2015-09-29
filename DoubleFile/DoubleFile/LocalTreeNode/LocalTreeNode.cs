@@ -99,10 +99,10 @@ namespace DoubleFile
             {
                 if (null == treeNode.Parent)
                 {
-                    var strRet = "" + sbPath.Insert(0, UseNickname ? treeNode.PathShort : "" + treeNode._strPathShort);
+                    var strRet = "" + sbPath.Insert(0, UseNickname ? treeNode.PathShort : "" + treeNode._strPathShort).Replace(@"\\", @"\");
 
                     if (2 == strRet.Length)
-                        strRet += "\\";
+                        strRet += '\\';
 
                     return strRet;
                 }

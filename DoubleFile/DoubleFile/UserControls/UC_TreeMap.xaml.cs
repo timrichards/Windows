@@ -66,18 +66,6 @@ namespace DoubleFile
                 SetValue(GoofballXProperty, pt.X - form_Goofball.ActualWidth / 2);
                 SetValue(GoofballYProperty, pt.Y - form_Goofball.ActualHeight / 2);
             }));
-
-            var folderDetail = LocalTV.TreeSelect_FolderDetail;
-
-            if (null == folderDetail)
-            {
-                TreeSelect.DoThreadFactory(LocalTV.TopNode, 0);
-            }
-            else
-            {
-                _vm.GoTo(folderDetail.treeNode);
-                _vm.TreeNode = folderDetail.treeNode;
-            }
         }
 
         protected override void LocalNavigatedFrom()

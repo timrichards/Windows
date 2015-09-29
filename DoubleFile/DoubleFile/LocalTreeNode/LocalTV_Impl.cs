@@ -194,6 +194,8 @@ namespace DoubleFile
             ProgressOverlay.WithProgressOverlay(w => w
                 .SetCompleted(_ksFolderTreeKey)
                 .CloseIfNatural());
+
+            TreeSelect.DoThreadFactory(TopNode, 99959);
         }
 
         bool IProgressOverlayClosing.ConfirmClose()

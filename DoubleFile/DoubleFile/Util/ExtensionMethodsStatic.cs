@@ -110,16 +110,11 @@ namespace DoubleFile
                 action(item);
         }
 
-        static internal U
-            LocalSelect<T, U>(this T obj, Predicate<T> condition, Func<T, U> doSomethingWith)
-        {
-            var retVal = default(U);
-
-            if (condition(obj))
-                retVal = doSomethingWith(obj);
-
-            return retVal;
-        }
+        static internal T
+            LocalSelect<T>(this T obj, Predicate<T> condition, Func<T, T> doSomethingWith) =>
+            (condition(obj))
+            ? doSomethingWith(obj)
+            : obj;
 
         static internal TMember
             Get<THolder, TMember>(this WeakReference<THolder> wr, Func<THolder, TMember> getValue) where THolder : class

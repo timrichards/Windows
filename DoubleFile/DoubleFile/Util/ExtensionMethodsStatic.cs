@@ -110,12 +110,6 @@ namespace DoubleFile
                 action(item);
         }
 
-        static internal T
-            When<T>(this T obj, Predicate<T> condition, Func<T, T> doSomethingWith) =>
-            (condition(obj))
-            ? doSomethingWith(obj)
-            : obj;
-
         static internal TMember
             Get<THolder, TMember>(this WeakReference<THolder> wr, Func<THolder, TMember> getValue) where THolder : class
         {
@@ -231,6 +225,12 @@ namespace DoubleFile
 
             return nRet;
         }
+
+        static internal T
+            When<T>(this T obj, Predicate<T> condition, Func<T, T> doSomethingWith) =>
+            (condition(obj))
+            ? doSomethingWith(obj)
+            : obj;
 
         static internal Rect
             Scale(this Rect rc_in, double scale)

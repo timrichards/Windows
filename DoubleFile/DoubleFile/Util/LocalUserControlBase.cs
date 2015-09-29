@@ -136,9 +136,6 @@ namespace DoubleFile
                 }
             }
 
-            if (null != LocalOwner)
-                LocalOwner.Title = Util.Localized("Title");
-
             window.Show();
             e.Cancel = true;
         }

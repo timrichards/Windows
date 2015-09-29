@@ -126,7 +126,8 @@ namespace DoubleFile
         internal Window
             LocalOwner = null;
 
-        public UC_TreeMapVM()
+        internal UC_TreeMapVM
+            Init()
         {
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99696, initiatorTuple =>
             {
@@ -148,12 +149,17 @@ namespace DoubleFile
 
             if (null != folderDetailA)
                 Render(folderDetailA.treeNode);
+
+            return this;
         }
 
         public void Dispose()
         {
             Util.LocalDispose(_lsDisposable);
             Util.ThreadMake(WinTooltip.CloseTooltip);
+
+            if (null != LocalOwner)
+                Util.UIthread(99938, () => LocalOwner.Title = Util.Localized("Title"));
         }
 
         internal void Tooltip_Click()

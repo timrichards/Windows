@@ -33,7 +33,8 @@ namespace DoubleFile
                 new UC_TreeMapVM
             {
                 LocalOwner = LocalOwner
-            };
+            }
+                .Init();
 
             _lsDisposable.Add(_vm);
 

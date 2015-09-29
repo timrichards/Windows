@@ -467,7 +467,7 @@ namespace DoubleFile
         bool
             _bUserCanceled = false;
         readonly IList<IDisposable>
-            _lsDisposable = new List<IDisposable>();
+            _lsDisposable = new List<IDisposable> { };
 
         string
             _status = null;

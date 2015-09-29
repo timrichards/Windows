@@ -106,10 +106,6 @@ namespace DoubleFile
 
                 var treeNode = kvp.Key;
                 var nodeDatum = treeNode.NodeDatum;
-
-                if (null == nodeDatum)
-                    Util.Assert(99900, false);    // This check is new 3/7/15
-
                 var lsTreeNodes = dictNodes.TryGetValue(nodeDatum.Key);
 
                 if (null == lsTreeNodes)
@@ -175,15 +171,7 @@ namespace DoubleFile
                             continue;
                         }
 
-                        var nodeDatum = treeNode_A.NodeDatum;
-
-                        if (null == nodeDatum)      // added 2/13/15
-                        {
-                            Util.Assert(99977, false);
-                            return;
-                        }
-
-                        Util.Assert(1305.6316m, 0 < nodeDatum.LengthTotal);
+                        Util.Assert(99977, 0 < treeNode_A.NodeDatum.LengthTotal);
 
                         if (false == lsNodes.Contains(treeNode_A.Parent))
                             listKeep.Add(treeNode_A);
@@ -192,17 +180,7 @@ namespace DoubleFile
                     if (1 < listKeep.Count)
                     {
                         foreach (var treeNode_A in listKeep)
-                        {
-                            var nodeDatum = treeNode_A.NodeDatum;
-
-                            if (null == nodeDatum)      // added 2/13/15
-                            {
-                                Util.Assert(99976, false);
-                                return;
-                            }
-
-                            nodeDatum.Clones = listKeep;
-                        }
+                            treeNode_A.NodeDatum.Clones = listKeep;
                     }
                     else
                     {
@@ -213,15 +191,8 @@ namespace DoubleFile
                 if (1 == lsNodes.Count)      // "else"
                 {
                     var treeNode = lsNodes[0];
-                    var nodeDatum = treeNode.NodeDatum;
 
-                    if (null == nodeDatum)      // added 2/13/15
-                    {
-                        Util.Assert(99975, false);
-                        return;
-                    }
-
-                    if (0 < nodeDatum.FileCountHere)
+                    if (0 < treeNode.NodeDatum.FileCountHere)
                         dictUnique.Add(kvp.Key, treeNode);
                 }
             }
@@ -289,15 +260,7 @@ namespace DoubleFile
                         return;
                     }
 
-                    var nodeDatum = treeNode.NodeDatum;
-
-                    if (null == nodeDatum)      // added 2/13/15
-                    {
-                        Util.Assert(99974, false);
-                        return;
-                    }
-
-                    nodeDatum.LVitem = lvItem;
+                    treeNode.NodeDatum.LVitem = lvItem;
                 }
 
                 _lsLVdiffVol.Add(lvItem);
@@ -318,14 +281,8 @@ namespace DoubleFile
 
                 var nodeDatum = treeNode.NodeDatum;
 
-                if (null == nodeDatum)      // added 2/13/15
-                {
-                    Util.Assert(99973, false);
-                    return;
-                }
-
                 nodeDatum.LVitem = lvIgnoreItem;
-                Util.Assert(1305.6319m, nodeDatum.LVitem != null);
+                Util.Assert(99976, nodeDatum.LVitem != null);
                 nodeDatum.Clones?.Remove(treeNode);
             }
 
@@ -343,21 +300,17 @@ namespace DoubleFile
                 }
 
                 var treeNode = kvp.Value;
-                var lvItem = new LVitem_ClonesVM(new[] { treeNode }, nicknameUpdater);
                 var nodeDatum = treeNode.NodeDatum;
 
-                if (null == nodeDatum)      // added 2/13/15
-                {
-                    Util.Assert(99972, false);
-                    return;
-                }
-
-                Util.Assert(1305.6322m, 0 < nodeDatum.FileCountHere);
+                Util.Assert(99975, 0 < nodeDatum.FileCountHere);
                 SnowUniqueParents(treeNode);
-                Util.Assert(1305.6323m, UtilColorcode.Transparent == treeNode.ForeColor);
+                Util.Assert(99974, UtilColorcode.Transparent == treeNode.ForeColor);
                 treeNode.ForeColor = UtilColorcode.Solitary;
+
+                var lvItem = new LVitem_ClonesVM(new[] { treeNode }, nicknameUpdater);
+
                 _lsLVsolitary.Add(lvItem);
-                Util.Assert(1305.6324m, null == nodeDatum.LVitem);
+                Util.Assert(99973, null == nodeDatum.LVitem);
                 nodeDatum.LVitem = lvItem;
             }
 
@@ -392,14 +345,8 @@ namespace DoubleFile
 
                 var nodeDatum = treeNode.NodeDatum;
 
-                if (null == nodeDatum)      // added 2/13/15
-                {
-                    Util.Assert(99971, false);
-                    return;
-                }
-
                 if (0 == (nodeDatum.Clones?.Count ?? 0))
-                    Util.Assert(1305.6328m, false);
+                    Util.Assert(99972, false);
 
                 _lsLVsameVol.Add(nodeDatum.LVitem = new LVitem_ClonesVM(nodeDatum.Clones, nicknameUpdater));
             }
@@ -454,13 +401,6 @@ namespace DoubleFile
             // provisional.
 
             var nodeDatum = treeNode.NodeDatum;
-
-            if (null == nodeDatum)
-            {
-                Util.Assert(99913, false);    // This check is new 2/23/15
-                return;
-            }
-
             var listClones = nodeDatum.Clones;
             var nLength = nodeDatum.LengthTotal;
 
@@ -479,8 +419,8 @@ namespace DoubleFile
 
                 if (null != lsTreeNodes)
                 {
-                    Util.Assert(1305.6305m, lsTreeNodes == listClones);
-                    Util.Assert(1305.6307m, lsTreeNodes[0].ForeColor == treeNode.ForeColor);
+                    Util.Assert(99971, lsTreeNodes == listClones);
+                    Util.Assert(99913, lsTreeNodes[0].ForeColor == treeNode.ForeColor);
                 }
                 else
                 {
@@ -535,17 +475,7 @@ namespace DoubleFile
                     }
 
                     foreach (var subNode in listClones)
-                    {
-                        var nodeDatum_A = subNode.NodeDatum;
-
-                        if (null == nodeDatum_A)      // added 2/13/15
-                        {
-                            Util.Assert(99994, false);
-                            return;
-                        }
-
                         subNode.ForeColor = treeNode.ForeColor;
-                    }
                 }
             }
 
@@ -624,11 +554,9 @@ namespace DoubleFile
             {
                 parentNode.BackColor = UtilColorcode.ContainsSolitary;
 
-                var nodeDatum = parentNode.NodeDatum;
-
-                Util.Assert(1305.6313m,
+                Util.Assert(99900,
                     (parentNode.ForeColor == UtilColorcode.Transparent) ==
-                    (null == nodeDatum.LVitem));
+                    (null == parentNode.NodeDatum.LVitem));
 
                 parentNode = parentNode.Parent;
             }

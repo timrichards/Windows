@@ -294,7 +294,7 @@ namespace DoubleFile
         LocalModernWindowBase
             _window = null;
         readonly IList<IDisposable>
-            _lsDisposable = new List<IDisposable>();
+            _lsDisposable = new List<IDisposable> { };
         bool
             _bClosing = false;
         DateTime

@@ -148,6 +148,6 @@ namespace DoubleFile
         static bool
             _bClosingTooltip = false;
         static readonly IList<IDisposable>
-            _lsDisposable = new List<IDisposable>();
+            _lsDisposable = new List<IDisposable> { };
     }
 }

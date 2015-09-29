@@ -159,6 +159,6 @@ namespace DoubleFile
         readonly double
             _knProgMult = 0;
         readonly IList<IDisposable>
-            _lsDisposable = new List<IDisposable>();
+            _lsDisposable = new List<IDisposable> { };
     }
 }

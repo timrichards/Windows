@@ -41,16 +41,8 @@ namespace DoubleFile
                 {
                     _lsAllNodes.Add(treeNode);
 
-                    var nodeDatum = treeNode.NodeDatum;
-
-                    if (null == nodeDatum)
-                    {
-                        Util.Assert(1305.6303m, false);
-                        continue;
-                    }
-
                     if ((treeNode.ForeColor == UtilColorcode.AllOnOneVolume) &&
-                        (treeNode == nodeDatum.Clones[0]))
+                        (treeNode == treeNode.NodeDatum.Clones[0]))
                     {
                         _lsSameVol.Add(treeNode);
                     }

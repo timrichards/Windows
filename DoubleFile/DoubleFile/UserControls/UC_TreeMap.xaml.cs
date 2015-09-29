@@ -102,6 +102,6 @@ namespace DoubleFile
         UC_TreeMapVM
             _vm = null;
         readonly IList<IDisposable>
-            _lsDisposable = new List<IDisposable>();
+            _lsDisposable = new List<IDisposable> { };
     }
 }

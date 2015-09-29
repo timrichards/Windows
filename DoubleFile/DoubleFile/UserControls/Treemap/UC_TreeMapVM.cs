@@ -218,13 +218,6 @@ namespace DoubleFile
             {
                 {
                     var nodeDatum = TreeNode.NodeDatum;
-
-                    if (null == nodeDatum)      // added 2/13/15
-                    {
-                        Util.Assert(99967, false);
-                        return;     // from lambda
-                    }
-
                     var rootNodeDatum = nodeDatum.As<RootNodeDatum>();
 
                     bVolumeView = rootNodeDatum?.VolumeView ?? false;
@@ -268,15 +261,7 @@ namespace DoubleFile
                 if (bVolumeView)
                     return;         // from lambda
 
-                var nodeDatum_A = nodeRet.NodeDatum;
-
-                if (null == nodeDatum_A)      // added 2/13/15
-                {
-                    Util.Assert(99923, false);
-                    return;
-                }
-
-                var nodeRet_A = FindMapNode(nodeDatum_A.TreeMapFiles, pt);
+                var nodeRet_A = FindMapNode(nodeRet.NodeDatum.TreeMapFiles, pt);
 
                 if (null != nodeRet_A)
                 {
@@ -401,15 +386,7 @@ namespace DoubleFile
 
             do
             {
-                var nodeDatum = treeNode.NodeDatum;
-
-                if (null == nodeDatum)      // added 2/13/15
-                {
-                    Util.Assert(99966, false);
-                    return null;
-                }
-
-                if (false == nodeDatum.TreeMapRect.Contains(pt))
+                if (false == treeNode.NodeDatum.TreeMapRect.Contains(pt))
                     continue;
 
                 if (bNextNode ||
@@ -457,7 +434,7 @@ namespace DoubleFile
 
             ulong nLengthDebug = 0;
             var strListingFile = rootNodeDatum.LVitemProjectVM.ListingFile;
-            var lsFiles = new List<Tuple<string, ulong>>();
+            var lsFiles = new List<Tuple<string, ulong>> { };
 
             foreach (var asFileLine
                 in strListingFile.ReadLinesWait(99650)
@@ -484,7 +461,7 @@ namespace DoubleFile
             Util.Assert(1301.2313m, nLengthDebug == nodeDatum.LengthHere);
 
             ulong nTotalLength = 0;
-            var lsNodes = new List<LocalTreeMapFileNode>();
+            var lsNodes = new List<LocalTreeMapFileNode> { };
 
             foreach (var tuple in lsFiles)
             {
@@ -619,18 +596,10 @@ namespace DoubleFile
             _deepNodeDrawn = null;
             ieFrames = null;
 
-            var nodeDatum = TreeNode.NodeDatum;
-
-            if (null == nodeDatum)      // added 2/13/15
-            {
-                Util.Assert(99963, false);
-                return null;
-            }
-
             var rc = new Rect(0, 0, BitmapSize, BitmapSize).Scale(1d / TreeMapFrame.ScaleFactor);
 
             return
-                (0 < nodeDatum.LengthTotal)
+                (0 < TreeNode.NodeDatum.LengthTotal)
                 ? new Recurse().Render(TreeNode, rc, DeepNode, out _deepNodeDrawn, out ieFrames)
                 : new[] { new Folder(rc, Colors.Wheat.ToArgb()) };
         }
@@ -642,8 +611,8 @@ namespace DoubleFile
                 Render(LocalTreeNode treeNode, Rect rc, LocalTreeNode deepNode,
                 out LocalTreeNode deepNodeDrawn_out, out IEnumerable<TreeMapFrame> ieFrames)
             {
-                _lsFills = new ConcurrentBag<Folder> { };
-                _lsFrames = new ConcurrentBag<TreeMapFrame> { };
+                _lsFills = new ConcurrentBag<Folder>();
+                _lsFrames = new ConcurrentBag<TreeMapFrame>();
                 _deepNode = deepNode;
                 RecurseDrawGraph(treeNode, rc, true);
 
@@ -672,12 +641,6 @@ namespace DoubleFile
                 RecurseDrawGraph(LocalTreeNode treeNode, Rect rc, bool bStart = false)
             {
                 var nodeDatum = treeNode.NodeDatum;
-
-                if (null == nodeDatum)      // added 2/13/15
-                {
-                    Util.Assert(99962, false);
-                    return;
-                }
 
                 nodeDatum.TreeMapRect = rc;
 
@@ -975,19 +938,11 @@ namespace DoubleFile
                 const double kdMinProportion = 0.4;
                 var nCount = listChildren.Count;
 
-                Util.Assert(1302.3308m, 1 > kdMinProportion);
-                Util.Assert(1302.3309m, nextChild < nCount);
-                Util.Assert(1302.33101m, 1 <= width);
+                Util.Assert(99967, 1 > kdMinProportion);
+                Util.Assert(99966, nextChild < nCount);
+                Util.Assert(99963, 1 <= width);
 
-                var nodeDatum = parent.NodeDatum;
-
-                if (null == nodeDatum)      // added 2/13/15
-                {
-                    Util.Assert(99961, false);
-                    return 0;
-                }
-
-                double mySize = nodeDatum.LengthTotal;
+                double mySize = parent.NodeDatum.LengthTotal;
                 ulong sizeUsed = 0;
                 double rowHeight = 0;
                 var i = 0;
@@ -1000,8 +955,8 @@ namespace DoubleFile
 
                     var virtualRowHeight = sizeUsed / mySize;
 
-                    Util.Assert(1302.3311m, virtualRowHeight > 0);
-                    Util.Assert(1302.3312m, virtualRowHeight <= 1);
+                    Util.Assert(99962, virtualRowHeight > 0);
+                    Util.Assert(99961, virtualRowHeight <= 1);
 
                     // Rect(mySize)    = width * 1d
                     // Rect(childSize) = childWidth * virtualRowHeight
@@ -1013,7 +968,7 @@ namespace DoubleFile
 
                     if (kdMinProportion > childWidth / virtualRowHeight)
                     {
-                        Util.Assert(1302.3313m, i > nextChild); // because width >= 1 and _minProportion < 1.
+                        Util.Assert(99923, i > nextChild); // because width >= 1 and _minProportion < 1.
                         // For the first child we have:
                         // childWidth / rowHeight
                         // = childSize / mySize * width / rowHeight / rowHeight
@@ -1039,18 +994,10 @@ namespace DoubleFile
                 {
                     // Rect(1d * 1d) = mySize
                     var rowSize = mySize * rowHeight;
-                    var nodeDatum_A = listChildren[nextChild + i].NodeDatum;
-
-                    if (null == nodeDatum_A)      // added 2/13/15
-                    {
-                        Util.Assert(99960, false);
-                        return 0;
-                    }
-
-                    var childSize = (double)nodeDatum_A.LengthTotal;
+                    var childSize = (double)listChildren[nextChild + i].NodeDatum.LengthTotal;
                     var cw = childSize / rowSize;
 
-                    Util.Assert(1302.3315m, 0 <= cw);
+                    Util.Assert(99960, 0 <= cw);
                     anChildWidth[nextChild + i] = cw;
                 }
 
@@ -1095,6 +1042,6 @@ namespace DoubleFile
             _prevNode = null;
 
         readonly IList<IDisposable>
-            _lsDisposable = new List<IDisposable>();
+            _lsDisposable = new List<IDisposable> { };
     }
 }

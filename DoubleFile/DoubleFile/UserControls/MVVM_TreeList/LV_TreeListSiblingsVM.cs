@@ -148,6 +148,6 @@ namespace DoubleFile
         readonly LV_TreeListChildrenVM
             _lvChildrenVM = null;
         readonly IList<IDisposable>
-            _lsDisposable = new List<IDisposable>();
+            _lsDisposable = new List<IDisposable> { };
     }
 }

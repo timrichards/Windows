@@ -140,6 +140,6 @@ namespace DoubleFile
         LocalDispatcherFrame
             _dispatcherFrame = new LocalDispatcherFrame(99786);
         readonly IList<IDisposable>
-            _lsDisposable = new List<IDisposable>();
+            _lsDisposable = new List<IDisposable> { };
     }
 }

@@ -13,19 +13,19 @@ namespace DoubleFile
     public class UtilPublic
     {
         static public bool
-            Assert(decimal nLocation, bool bCondition, string strError_in = null, bool bTraceOnly = false) =>
-            Util.Assert(nLocation, bCondition, strError_in, bTraceOnly);
+            Assert(decimal nLocation, bool bCondition, string strError = null, bool bTraceOnly = false) =>
+            Util.Assert(nLocation, bCondition, strError, bTraceOnly);
     }
 
     static class Util
     {
         static internal bool
-            Assert(decimal nLocation, bool bCondition, string strError_in = null, bool bTraceOnly = false)
+            Assert(decimal nLocation, bool bCondition, string strError = null, bool bTraceOnly = false)
         {
             if (bCondition)
                 return true;
 
-            MBoxStatic.Fail(nLocation, strError_in, bTraceOnly);
+            MBoxStatic.Fail(nLocation, strError, bTraceOnly);
             return false;
         }
 

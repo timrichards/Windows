@@ -115,6 +115,6 @@ namespace DoubleFile
         protected readonly ListUpdater<bool>
             _nicknameUpdater = new ListUpdater<bool>(99667);
         protected readonly IList<IDisposable>
-            _lsDisposable = new List<IDisposable>();
+            _lsDisposable = new List<IDisposable> { };
     }
 }

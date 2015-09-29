@@ -111,7 +111,7 @@ namespace DoubleFile
         }
 
         static internal T
-            LocalSelect<T>(this T obj, Predicate<T> condition, Func<T, T> doSomethingWith) =>
+            When<T>(this T obj, Predicate<T> condition, Func<T, T> doSomethingWith) =>
             (condition(obj))
             ? doSomethingWith(obj)
             : obj;

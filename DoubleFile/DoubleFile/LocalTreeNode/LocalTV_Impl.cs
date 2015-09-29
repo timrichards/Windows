@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
-using System.Linq;
 using System.Diagnostics;
 
 namespace DoubleFile
@@ -44,13 +43,14 @@ namespace DoubleFile
             Statics.DupeFileDictionary.ResetAbortFlag();
 
             var lsProgressItems = new List<string> { _ksFolderTreeKey };
+            var bBuildDupes = Statics.DupeFileDictionary.IsEmpty && (Statics.Namespace == GetType().Namespace);     // VolTreeMap assembly: skip it
 
-            if (Statics.DupeFileDictionary.IsEmpty)
+            if (bBuildDupes)
                 lsProgressItems.Insert(0, _ksDupeFileDictKey);
 
             (new ProgressOverlay(new string[lsProgressItems.Count], lsProgressItems, x =>
             {
-                if (Statics.DupeFileDictionary.IsEmpty)
+                if (bBuildDupes)
                     Statics.DupeFileDictionary.DoThreadFactory(_lvProjectVM, new WeakReference<ICreateDupeFileDictStatus>(this));
 
                 TabledString<TabledStringType_Folders>.GenerationStarting();

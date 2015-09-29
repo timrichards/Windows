@@ -46,20 +46,8 @@ namespace DoubleFile
                 if (null != _allListingsHashV2)
                     return _allListingsHashV2.Value;
 
-                // 7/1/15 DoThreadFactory() is now synchronous so TreeRootNodeBuilder can use folder scorer
-                //Util.Assert(99906, false);        9/18/15
-
                 if (null == _LVprojectVM)
-                {
-                    Util.Assert(99959, false);
-                    Util.Block(1 << 10);
-
-                    if (null == _LVprojectVM)
-                    {
-                        Util.Assert(99938, false);
-                        return false;
-                    }
-                }
+                    return false;
 
                 _allListingsHashV2 =
                     _LVprojectVM.ItemsCast
@@ -107,16 +95,13 @@ namespace DoubleFile
             _callbackWR = callbackWR;
             _dictDuplicateFiles = null;
             IsAborted = false;
-            _blockingFrame = new LocalDispatcherFrame(99881);
-            _thread = Util.ThreadMake(() => { Go(); _blockingFrame.Continue = false; });
-        //    _blockingFrame.PushFrameTrue();        9/18/15
+            _thread = Util.ThreadMake(Go);
             return this;
         }
 
         internal void
             Abort()
         {
-            _blockingFrame.Continue = false;
             IsAborted = true;
             _thread?.Abort();
         }
@@ -322,10 +307,6 @@ namespace DoubleFile
             _callbackWR = null;
         Thread
             _thread = null;
-
-        // 7/1/15 Make this synchronous so NodeDatum can use folder scorer
-        LocalDispatcherFrame 
-            _blockingFrame = null;
 
         LV_ProjectVM
             _LVprojectVM = null;

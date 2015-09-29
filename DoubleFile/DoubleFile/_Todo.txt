@@ -1,4 +1,4 @@
-﻿- fix the tree list slider
+﻿- SelectedItem could probably go in ListViewVM_Base<>
 - see what happens when you threadmake the treeselect events
 - This folder has no exact copy: so please itemize in a report what the exact differences are to the nearest copy.
 	- Show the global folder list which is ranked by similar neighbors; select this folder.

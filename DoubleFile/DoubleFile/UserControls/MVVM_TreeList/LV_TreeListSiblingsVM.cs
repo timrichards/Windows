@@ -84,7 +84,7 @@ namespace DoubleFile
                     : folderDetail.treeNode.Parent;
 
                 ItemsCast
-                    .Where(lvItem => lvItem.LocalTreeNode == siblingFolder)
+                    .Where(lvItem => ReferenceEquals(lvItem.LocalTreeNode, siblingFolder))
                     .FirstOnlyAssert(SelectedItem_Set);
             }
 
@@ -120,7 +120,7 @@ namespace DoubleFile
             Util.Write("K");
 
             var treeNodes = _treeNode?.Nodes ?? LocalTV.RootNodes;
-            var lsLVitems = new List<LVitem_TreeListVM>();
+            var lsLVitems = new List<LVitem_TreeListVM> { };
             LVitem_TreeListVM selectedItem = null;
 
             foreach (var treeNode in treeNodes)

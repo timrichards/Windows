@@ -514,7 +514,7 @@ namespace DoubleFile
             _bTooltipVolumeView = true;
 
             var timer = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Timestamp()
-                .LocalSubscribe(0, x => Util.WriteLine(DateTime.Now.Ticks + " " + treeNode + " DrawTreemap"));
+                .LocalSubscribe(99906, x => Util.WriteLine(DateTime.Now.Ticks + " " + treeNode + " DrawTreemap"));
 
             IEnumerable<TreeMapFrame> ieFrames = null;
             var ieFills = DrawTreemap(out ieFrames);
@@ -623,7 +623,7 @@ namespace DoubleFile
                 RecurseDrawGraph(treeNode, rc, true);
 
                 using (Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Timestamp()
-                    .LocalSubscribe(0, x => Util.WriteLine(_nWorkerCount + " " + treeNode + " DrawTreemap")))
+                    .LocalSubscribe(99881, x => Util.WriteLine(_nWorkerCount + " " + treeNode + " DrawTreemap")))
                 using (Observable.Timer(TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(100)).Timestamp()
                     .LocalSubscribe(99825, x =>
                 {

@@ -1,4 +1,6 @@
-﻿- SelectedItem could probably go in ListViewVM_Base<>
+﻿- treemap folder color is the same as the one that represents files: it can drill down while the files one selects the outer folder
+- go about reducing code metrics: class coupling; cyclometric complexity.
+- SelectedItem could probably go in ListViewVM_Base<>
 - see what happens when you threadmake the treeselect events
 - This folder has no exact copy: so please itemize in a report what the exact differences are to the nearest copy.
 	- Show the global folder list which is ranked by similar neighbors; select this folder.
@@ -190,15 +192,12 @@ Specific code areas:
 - Fast long-path large fetch native directory listings
 - Fast 1 MB sample faux checksum per file on your drive (512K from head; 512K from tail)
 - 2nd assembly, view of Double File: simplified view for current drive, without checksum
-- Began without a System.Windows.Controls refernce: now it does not reference System.Windows.Forms
+- Began without a System.Windows.Controls reference: now it does not reference System.Windows.Forms
 
 	On the surface, Double File may look like WinDirStat (from which it borrows code) or similar graphical drive utilization utilities: e.g. the second assembly 'Volume Treemap'. However, Double File is project-based: it saves file checksums in directory listings you store locally. It facilitates planning and transitioning between computers and operating systems: snapshot your drive and safely archive it.
 	Listings can be searched when volumes are off site. Can read any volume mounted in Windows Explorer, including Linux and Mac volumes. Supports long path names.
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
-
-99906
-99881
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
 99614 next low assert

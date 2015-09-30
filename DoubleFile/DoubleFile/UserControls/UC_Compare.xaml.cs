@@ -3,9 +3,9 @@
     /// <summary>
     /// Interaction logic for UC_SolitaryHere.xaml
     /// </summary>
-    public partial class UC_ClonesHere
+    public partial class UC_Compare
     {
-        public UC_ClonesHere()
+        public UC_Compare()
         {
             InitializeComponent();
         }
@@ -14,26 +14,17 @@
         {
             DataContext =
                 _vm =
-                new UC_ClonesHereVM { UseNicknames = _bNicknames, AllOneVolIsSolitary = _bAllOneVolIsSolitary }
-                .Init();
+                new UC_CompareVM();
         }
 
         protected override void LocalNavigatedFrom()
         {
-            _bNicknames = _vm.UseNicknames;
-            _bAllOneVolIsSolitary = _vm.AllOneVolIsSolitary;
-            _vm?.Dispose();
-
             DataContext =
                 _vm =
                 null;
         }
 
-        UC_ClonesHereVM
+        UC_CompareVM
             _vm = null;
-        bool
-            _bNicknames = false;
-        bool
-            _bAllOneVolIsSolitary = false;
     }
 }

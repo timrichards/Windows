@@ -8,7 +8,7 @@ namespace DoubleFile
 {
     class LVitem_FilesVM : ListViewItemVM_Base
     {
-        static internal bool ShowDuplicates = true;     // use-case: VolTreeMap project
+        static internal bool ShowDuplicates = true;     // use-case: VolTreemap project
 
         public string Filename => FileLine[0];
         public string Created => FileLine[1];

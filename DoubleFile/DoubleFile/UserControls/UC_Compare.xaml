@@ -6,5 +6,6 @@
     <Grid>
         <CheckBox Content="{Binding Folder1}" Command="{Binding Icmd_Pick1}"/>
         <CheckBox Content="{Binding Folder2}" Command="{Binding Icmd_Pick2}"/>
+        <TextBlock Text="{Binding Results}"/>
     </Grid>
 </local:LocalUserControlBase>

@@ -1,4 +1,4 @@
-﻿<local:LocalUserControlBase x:Class="DoubleFile.UC_TreeMap"
+﻿<local:LocalUserControlBase x:Class="DoubleFile.UC_Treemap"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
@@ -25,10 +25,10 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Viewbox Grid.Column="0" Stretch="Fill">
-            <Grid Width="{x:Static local:UC_TreeMapVM.BitmapSize}" Height="{x:Static local:UC_TreeMapVM.BitmapSize}">
+            <Grid Width="{x:Static local:UC_TreemapVM.BitmapSize}" Height="{x:Static local:UC_TreemapVM.BitmapSize}">
                 <Image>
                     <Image.Source>
-                        <DrawingImage Drawing="{Binding TreeMapDrawing}"/>
+                        <DrawingImage Drawing="{Binding TreemapDrawing}"/>
                     </Image.Source>
                 </Image>
                 <ItemsControl ItemsSource="{Binding Frames}">

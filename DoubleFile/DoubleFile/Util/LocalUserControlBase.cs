@@ -55,7 +55,7 @@ namespace DoubleFile
             if ("/UC_Project/UC_Project.xaml" == strSource)
                 return;
 
-            // use-case: VolTreeMap project shares assembly
+            // use-case: VolTreemap project shares assembly
             if (null != MainWindow.WithMainWindow(w => w))
             {
                 var bSaveListings = false;

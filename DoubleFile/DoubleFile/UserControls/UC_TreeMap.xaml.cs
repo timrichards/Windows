@@ -7,17 +7,17 @@ using System.Windows.Input;
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinTreeMap.xaml
+    /// Interaction logic for WinTreemap.xaml
     /// </summary>
-    public partial class UC_TreeMap
+    public partial class UC_Treemap
     {
         public static readonly DependencyProperty GoofballXProperty =
-            DependencyProperty.Register("GoofballX", typeof(double), typeof(UC_TreeMap));
+            DependencyProperty.Register("GoofballX", typeof(double), typeof(UC_Treemap));
 
         public static readonly DependencyProperty GoofballYProperty =
-            DependencyProperty.Register("GoofballY", typeof(double), typeof(UC_TreeMap));
+            DependencyProperty.Register("GoofballY", typeof(double), typeof(UC_Treemap));
 
-        public UC_TreeMap()
+        public UC_Treemap()
         {
             InitializeComponent();
             CantDupeThisUsercontrol = true;
@@ -30,7 +30,7 @@ namespace DoubleFile
 
             DataContext =
                 _vm =
-                new UC_TreeMapVM
+                new UC_TreemapVM
             {
                 LocalOwner = LocalOwner
             }
@@ -88,7 +88,7 @@ namespace DoubleFile
             }
         }
 
-        UC_TreeMapVM
+        UC_TreemapVM
             _vm = null;
         readonly IList<IDisposable>
             _lsDisposable = new List<IDisposable> { };

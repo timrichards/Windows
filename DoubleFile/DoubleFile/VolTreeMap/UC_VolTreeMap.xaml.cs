@@ -5,11 +5,11 @@ using System.Windows;
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinTreeMap.xaml
+    /// Interaction logic for WinTreemap.xaml
     /// </summary>
-    public partial class UC_VolTreeMap
+    public partial class UC_VolTreemap
     {
-        public UC_VolTreeMap()
+        public UC_VolTreemap()
         {
             InitializeComponent();
         }
@@ -49,7 +49,7 @@ namespace DoubleFile
             }
 
             Statics.LVprojectVM = lvProjectVM;
-            new BBCodeBlock().LinkNavigator.Navigate(new Uri("/DoubleFile;component/UserControls/UC_TreeMap.xaml", UriKind.Relative), this);
+            new BBCodeBlock().LinkNavigator.Navigate(new Uri("/DoubleFile;component/UserControls/UC_Treemap.xaml", UriKind.Relative), this);
             LVitem_FilesVM.ShowDuplicates = false;
         }
     }

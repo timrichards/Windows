@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using DoubleFile;
 
-namespace VolTreeMap
+namespace VolTreemap
 {
     /// <summary>
     /// Interaction logic for App.xaml

@@ -18,7 +18,7 @@ namespace DoubleFile
 {
     partial class SaveDirListings
     {
-        static internal bool Hash = true;   // use-case: VolTreeMap project
+        static internal bool Hash = true;   // use-case: VolTreemap project
 
         class SaveDirListing : TraverseTreeBase
         {

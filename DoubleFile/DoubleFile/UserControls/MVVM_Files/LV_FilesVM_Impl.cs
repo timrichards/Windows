@@ -12,7 +12,7 @@ namespace DoubleFile
         internal LV_FilesVM()
         {
             _lsDisposable.Add(TreeSelect.FileListUpdated.Observable.LocalSubscribe(99703, TreeSelect_FileListUpdated));
-            _lsDisposable.Add(UC_TreeMapVM.SelectedFile.LocalSubscribe(99702, UC_TreeMap_SelectedFile));
+            _lsDisposable.Add(UC_TreemapVM.SelectedFile.LocalSubscribe(99702, UC_Treemap_SelectedFile));
 
             var fileList = LocalTV.TreeSelect_FileList;
 
@@ -105,7 +105,7 @@ namespace DoubleFile
             Util.UIthread(99813, () => Add(lsItems));
         }
 
-        void UC_TreeMap_SelectedFile(Tuple<string, int> initiatorTuple)
+        void UC_Treemap_SelectedFile(Tuple<string, int> initiatorTuple)
         {
             Util.Write("B");
 

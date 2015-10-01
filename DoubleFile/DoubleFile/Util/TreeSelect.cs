@@ -73,7 +73,7 @@ namespace DoubleFile
             if (_thread?.IsAlive ?? false)
                 return false;
 
-            if (treeNode is LocalTreeMapFileNode)     // does not support file fake nodes
+            if (treeNode is LocalTreemapFileNode)     // does not support file fake nodes
                 return false;
 
             _dictVolumeInfo = LocalTV.DictVolumeInfo;

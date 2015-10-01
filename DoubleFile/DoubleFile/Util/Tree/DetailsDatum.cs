@@ -35,7 +35,7 @@ namespace DoubleFile
             DirsWithFiles;                          // Found 15 bits
 
         internal Rect
-            TreeMapRect;
+            TreemapRect;
 
         internal DetailsDatum() { }
         internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, int nAllFilesHash, IReadOnlyList<int> lsFilesHereHashes)

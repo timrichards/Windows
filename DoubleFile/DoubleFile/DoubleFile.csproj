@@ -225,9 +225,9 @@
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MVVM\ListView Base\ListViewItemVM_Base.cs" />
-    <Compile Include="MVVM\ListView Base\ListViewVM_Base.cs" />
-    <Compile Include="MVVM\ListView Base\ListViewVM_Base Generic.cs" />
+    <Compile Include="MVVM\ListView_Base\ListViewItemVM_Base.cs" />
+    <Compile Include="MVVM\ListView_Base\ListViewVM_Base.cs" />
+    <Compile Include="MVVM\ListView_Base\ListViewVM_Base Generic.cs" />
     <Compile Include="MVVM\RelayCommand.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -259,8 +259,8 @@
     <Compile Include="Util\UC_Messagebox.xaml.cs">
       <DependentUpon>UC_Messagebox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VolTreeMap\UC_VolTreeMap.xaml.cs">
-      <DependentUpon>UC_VolTreeMap.xaml</DependentUpon>
+    <Compile Include="VolTreemap\UC_VolTreemap.xaml.cs">
+      <DependentUpon>UC_VolTreemap.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\LVitemProject_Updater.cs" />
     <Compile Include="UserControls\MVVM_Clones\UC_ClonesVM_Impl.cs" />
@@ -280,8 +280,8 @@
     <Compile Include="UserControls\MVVM_TreeList\LV_TreeListChildrenVM.cs" />
     <Compile Include="Util\GetOneNodeByRootPath.cs" />
     <Compile Include="UserControls\SliderVM_Base.cs" />
-    <Compile Include="UserControls\UC_TreeMap.xaml.cs">
-      <DependentUpon>UC_TreeMap.xaml</DependentUpon>
+    <Compile Include="UserControls\UC_Treemap.xaml.cs">
+      <DependentUpon>UC_Treemap.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\UC_Detail.xaml.cs">
       <DependentUpon>UC_Detail.xaml</DependentUpon>
@@ -556,7 +556,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="VolTreeMap\UC_VolTreeMap.xaml">
+    <Page Include="VolTreemap\UC_VolTreemap.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -564,7 +564,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="UserControls\UC_TreeMap.xaml">
+    <Page Include="UserControls\UC_Treemap.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

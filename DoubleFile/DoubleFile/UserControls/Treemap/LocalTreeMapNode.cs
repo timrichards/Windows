@@ -3,17 +3,17 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    class LocalTreeMapFileListNode : LocalTreeNode
+    class LocalTreemapFileListNode : LocalTreeNode
     {
         internal override string PathShort { get; set; }
 
-        internal LocalTreeMapFileListNode(string strContent)
+        internal LocalTreemapFileListNode(string strContent)
             : base()
         {
             PathShort = strContent;
         }
 
-        internal LocalTreeMapFileListNode(LocalTreeNode parent, IReadOnlyList<LocalTreeMapFileNode> lsNodes)
+        internal LocalTreemapFileListNode(LocalTreeNode parent, IReadOnlyList<LocalTreemapFileNode> lsNodes)
             : this(parent.PathShort)
         {
             Parent = parent;
@@ -22,7 +22,7 @@ namespace DoubleFile
 
             Nodes = lsNodes;
 
-            LocalTreeMapFileNode nextNode = null;
+            LocalTreemapFileNode nextNode = null;
 
             foreach (var treeNode in lsNodes.Reverse())
             {
@@ -34,9 +34,9 @@ namespace DoubleFile
         }
     }
 
-    class LocalTreeMapFileNode : LocalTreeMapFileListNode
+    class LocalTreemapFileNode : LocalTreemapFileListNode
     {
-        internal LocalTreeMapFileNode(string strContent)
+        internal LocalTreemapFileNode(string strContent)
             : base(strContent) { }
     }
 }

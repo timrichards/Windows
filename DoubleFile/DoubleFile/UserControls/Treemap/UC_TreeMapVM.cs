@@ -10,11 +10,11 @@ using System.Collections.ObjectModel;
 
 namespace DoubleFile
 {
-    class UC_TreeMapVM : SliderVM_Base<ListViewItemVM_Base>, IDisposable
+    class UC_TreemapVM : SliderVM_Base<ListViewItemVM_Base>, IDisposable
     {
-        public ObservableCollection<TreeMapFrame>
-            Frames { get; } = new ObservableCollection<TreeMapFrame>();
-        public class TreeMapFrame
+        public ObservableCollection<TreemapFrame>
+            Frames { get; } = new ObservableCollection<TreemapFrame>();
+        public class TreemapFrame
         {
             internal const int
                 ScaleFactor = 1 << 2;
@@ -28,7 +28,7 @@ namespace DoubleFile
 
             public string VolumeViewDescription { get; } = null;
 
-            internal TreeMapFrame(Rect rc, LocalTreeMapFileNode treeNode = null)
+            internal TreemapFrame(Rect rc, LocalTreemapFileNode treeNode = null)
             {
                 _rc = rc.Scale(ScaleFactor);
                 VolumeViewDescription = treeNode?.PathShort;
@@ -37,7 +37,7 @@ namespace DoubleFile
             protected readonly Rect _rc = default(Rect);
         }
 
-        class Folder : TreeMapFrame
+        class Folder : TreemapFrame
         {
             internal GeometryDrawing
                 GeometryDrawing => new GeometryDrawing(Fill, new Pen(), new RectangleGeometry(_rc));
@@ -75,11 +75,11 @@ namespace DoubleFile
         }
 
         public Visibility GoofballVisibility => (Rect.Empty != _rectDeepnode) ? Visibility.Visible : Visibility.Collapsed;
-        public double GoofballX => _rectDeepnode.Scale(TreeMapFrame.ScaleFactor).CenterX();
-        public double GoofballY => _rectDeepnode.Scale(TreeMapFrame.ScaleFactor).CenterY();
+        public double GoofballX => _rectDeepnode.Scale(TreemapFrame.ScaleFactor).CenterX();
+        public double GoofballY => _rectDeepnode.Scale(TreemapFrame.ScaleFactor).CenterY();
 
         public Drawing
-            TreeMapDrawing { get; private set; }
+            TreemapDrawing { get; private set; }
         public const double
             BitmapSize = 1 << 11;
 
@@ -94,7 +94,7 @@ namespace DoubleFile
             set
             {
                 var rect =
-                    value?.NodeDatum.TreeMapRect.Scale(TreeMapFrame.ScaleFactor)
+                    value?.NodeDatum.TreemapRect.Scale(TreemapFrame.ScaleFactor)
                     ?? default(Rect);
 
                 SelectionLeft = rect.Left;
@@ -126,7 +126,7 @@ namespace DoubleFile
         internal Window
             LocalOwner = null;
 
-        internal UC_TreeMapVM
+        internal UC_TreemapVM
             Init()
         {
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99696, initiatorTuple =>
@@ -166,7 +166,7 @@ namespace DoubleFile
         {
             var treeNode = WinTooltip.LocalTreeNode;
 
-            if (treeNode is LocalTreeMapFileNode)
+            if (treeNode is LocalTreemapFileNode)
                 return;     // file fake node
 
             WinTooltip.CloseTooltip();
@@ -230,7 +230,7 @@ namespace DoubleFile
 
                     if ((false == bVolumeView) &&
                         (null !=
-                        (nodeRet = FindMapNode(nodeDatum.TreeMapFiles, pt))))
+                        (nodeRet = FindMapNode(nodeDatum.TreemapFiles, pt))))
                     {
                         bFilesHere = true;
                         return;     // from lambda
@@ -267,7 +267,7 @@ namespace DoubleFile
                 if (bVolumeView)
                     return;         // from lambda
 
-                var nodeRet_A = FindMapNode(nodeRet.NodeDatum.TreeMapFiles, pt);
+                var nodeRet_A = FindMapNode(nodeRet.NodeDatum.TreemapFiles, pt);
 
                 if (null != nodeRet_A)
                 {
@@ -315,15 +315,15 @@ namespace DoubleFile
                 return;
             }
 
-            if (null == tuple.treeNode.NodeDatum.TreeMapFiles)     // TODO: Why would this be null?
+            if (null == tuple.treeNode.NodeDatum.TreemapFiles)     // TODO: Why would this be null?
                 return;
 
             bool bCloseTooltip = true;
 
             tuple.fileLine.FirstOrDefault(strFile =>
-                tuple.treeNode.NodeDatum.TreeMapFiles.Nodes
+                tuple.treeNode.NodeDatum.TreemapFiles.Nodes
                 .Where(treeNodeA => treeNodeA.PathShort == strFile)
-                .Where(treeNodeA => treeNodeA is LocalTreeMapFileNode)
+                .Where(treeNodeA => treeNodeA is LocalTreemapFileNode)
                 .FirstOnlyAssert(fileNode =>
             {
                 SelRectAndTooltip(fileNode, initiatorTuple.Item2, bFile: true);
@@ -354,7 +354,7 @@ namespace DoubleFile
             if (bFile)
             {
                 strFolder += " (file)";
-                nodeTreeSelect = treeNodeChild.Parent.Parent;   // Parent is TreeMapFileListNode
+                nodeTreeSelect = treeNodeChild.Parent.Parent;   // Parent is TreemapFileListNode
                 SelectedFileOnNext(treeNodeChild.PathShort, nInitiator);
             }
 
@@ -378,8 +378,8 @@ namespace DoubleFile
 
         static LocalTreeNode FindMapNode(LocalTreeNode treeNode_in, Point pt)
         {
-            pt.X /= TreeMapFrame.ScaleFactor;
-            pt.Y /= TreeMapFrame.ScaleFactor;
+            pt.X /= TreemapFrame.ScaleFactor;
+            pt.Y /= TreemapFrame.ScaleFactor;
             return FindMapNode(treeNode_in, pt, bNextNode: false);
         }
 
@@ -392,7 +392,7 @@ namespace DoubleFile
 
             do
             {
-                if (false == treeNode.NodeDatum.TreeMapRect.Contains(pt))
+                if (false == treeNode.NodeDatum.TreemapRect.Contains(pt))
                     continue;
 
                 if (bNextNode ||
@@ -467,7 +467,7 @@ namespace DoubleFile
             Util.Assert(1301.2313m, nLengthDebug == nodeDatum.LengthHere);
 
             ulong nTotalLength = 0;
-            var lsNodes = new List<LocalTreeMapFileNode> { };
+            var lsNodes = new List<LocalTreemapFileNode> { };
 
             foreach (var tuple in lsFiles)
             {
@@ -476,7 +476,7 @@ namespace DoubleFile
 
                 nTotalLength += tuple.Item2;
 
-                lsNodes.Add(new LocalTreeMapFileNode(tuple.Item1)
+                lsNodes.Add(new LocalTreemapFileNode(tuple.Item1)
                 {
                     NodeDatum = new NodeDatum { LengthTotal = tuple.Item2 },
                     ForeColor = UtilColorcode.TreemapFile
@@ -488,9 +488,9 @@ namespace DoubleFile
 
             Util.Assert(1302.3301m, nTotalLength == parent.NodeDatum.LengthHere);
 
-            return new LocalTreeMapFileListNode(parent, lsNodes)
+            return new LocalTreemapFileListNode(parent, lsNodes)
             {
-                NodeDatum = new NodeDatum { LengthTotal = nTotalLength, TreeMapRect = parent.NodeDatum.TreeMapRect }
+                NodeDatum = new NodeDatum { LengthTotal = nTotalLength, TreemapRect = parent.NodeDatum.TreemapRect }
             };
         }
 
@@ -516,7 +516,7 @@ namespace DoubleFile
             var timer = Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Timestamp()
                 .LocalSubscribe(99906, x => Util.WriteLine(DateTime.Now.Ticks + " " + treeNode + " DrawTreemap"));
 
-            IEnumerable<TreeMapFrame> ieFrames = null;
+            IEnumerable<TreemapFrame> ieFrames = null;
             var ieFills = DrawTreemap(out ieFrames);
 
             timer.Dispose();
@@ -526,7 +526,7 @@ namespace DoubleFile
                 if (null != LocalOwner)
                     LocalOwner.Title = Util.Localized("Title");
 
-                TreeMapDrawing = null;
+                TreemapDrawing = null;
                 Frames.Clear();
 
                 if (null == ieFills)
@@ -540,7 +540,7 @@ namespace DoubleFile
                     drawingGroup.Children.Add(render.GeometryDrawing);
 
                 drawingGroup.Freeze();
-                TreeMapDrawing = drawingGroup;
+                TreemapDrawing = drawingGroup;
 
                 if (null != ieFrames)
                 {
@@ -552,7 +552,7 @@ namespace DoubleFile
                     LocalOwner.Title = treeNode.PathShort;
             });
 
-            RaisePropertyChanged("TreeMapDrawing");
+            RaisePropertyChanged("TreemapDrawing");
             RaisePropertyChanged("Frames");
 
             if ((null == _deepNodeDrawn) ||
@@ -563,7 +563,7 @@ namespace DoubleFile
             else
             {
                 _rectDeepnode =
-                    _deepNodeDrawn.NodeDatum.TreeMapRect;
+                    _deepNodeDrawn.NodeDatum.TreemapRect;
             }
 
             RaisePropertyChanged("GoofballVisibility");
@@ -597,12 +597,12 @@ namespace DoubleFile
         // Last modified: $Date: 2004/11/05 16:53:08 $
         
         IEnumerable<Folder>
-            DrawTreemap(out IEnumerable<TreeMapFrame> ieFrames)
+            DrawTreemap(out IEnumerable<TreemapFrame> ieFrames)
         {
             _deepNodeDrawn = null;
             ieFrames = null;
 
-            var rc = new Rect(0, 0, BitmapSize, BitmapSize).Scale(1d / TreeMapFrame.ScaleFactor);
+            var rc = new Rect(0, 0, BitmapSize, BitmapSize).Scale(1d / TreemapFrame.ScaleFactor);
 
             return
                 (0 < TreeNode.NodeDatum.LengthTotal)
@@ -615,10 +615,10 @@ namespace DoubleFile
         {
             internal IEnumerable<Folder>
                 Render(LocalTreeNode treeNode, Rect rc, LocalTreeNode deepNode,
-                out LocalTreeNode deepNodeDrawn_out, out IEnumerable<TreeMapFrame> ieFrames)
+                out LocalTreeNode deepNodeDrawn_out, out IEnumerable<TreemapFrame> ieFrames)
             {
                 _lsFills = new ConcurrentBag<Folder>();
-                _lsFrames = new ConcurrentBag<TreeMapFrame>();
+                _lsFrames = new ConcurrentBag<TreemapFrame>();
                 _deepNode = deepNode;
                 RecurseDrawGraph(treeNode, rc, true);
 
@@ -648,7 +648,7 @@ namespace DoubleFile
             {
                 var nodeDatum = treeNode.NodeDatum;
 
-                nodeDatum.TreeMapRect = rc;
+                nodeDatum.TreemapRect = rc;
 
                 if ((1 > rc.Width) ||
                     (1 > rc.Height))
@@ -671,14 +671,14 @@ namespace DoubleFile
                 }
 
                 if (bStart &&
-                    (null == nodeDatum.TreeMapFiles) &&
-                    (false == treeNode is LocalTreeMapFileNode))
+                    (null == nodeDatum.TreemapFiles) &&
+                    (false == treeNode is LocalTreemapFileNode))
                 {
-                    nodeDatum.TreeMapFiles = GetFileList(treeNode);
+                    nodeDatum.TreemapFiles = GetFileList(treeNode);
                 }
 
                 if ((0 < (treeNode.Nodes?.Count ?? 0)) ||
-                    (bStart && (null != nodeDatum.TreeMapFiles)))
+                    (bStart && (null != nodeDatum.TreemapFiles)))
                 {
                     IEnumerable<LocalTreeNode> ieChildren = null;
                     LocalTreeNode parent = null;
@@ -699,7 +699,7 @@ namespace DoubleFile
 
                         var nodeDatumFree = new NodeDatum { LengthTotal = rootNodeDatum.VolumeFree };
 
-                        var nodeFree = new LocalTreeMapFileNode(nodeDatumFree.LengthTotal.FormatSize() + " free space")
+                        var nodeFree = new LocalTreemapFileNode(nodeDatumFree.LengthTotal.FormatSize() + " free space")
                         {
                             NodeDatum = nodeDatumFree,
                             ForeColor = UtilColorcode.TreemapFreespace
@@ -726,7 +726,7 @@ namespace DoubleFile
                             nodeDatumUnread.LengthTotal = 0;
                         }
 
-                        var nodeUnread = new LocalTreeMapFileNode(nodeDatumUnread.LengthTotal.FormatSize() + " unread data (estimate affected by compression and hard links)")
+                        var nodeUnread = new LocalTreemapFileNode(nodeDatumUnread.LengthTotal.FormatSize() + " unread data (estimate affected by compression and hard links)")
                         {
                             NodeDatum = nodeDatumUnread,
                             ForeColor = UtilColorcode.TreemapUnreadspace
@@ -743,12 +743,12 @@ namespace DoubleFile
                         }
 
                         ieChildren = lsChildren;
-                        parent = new LocalTreeMapFileNode(treeNode.PathShort + " (volume)");
+                        parent = new LocalTreemapFileNode(treeNode.PathShort + " (volume)");
 
                         var nodeDatumVolume = new NodeDatum
                         {
                             LengthTotal = nVolumeLength,
-                            TreeMapRect = rootNodeDatum.TreeMapRect
+                            TreemapRect = rootNodeDatum.TreemapRect
                         };
 
                         parent.NodeDatum = nodeDatumVolume;
@@ -766,7 +766,7 @@ namespace DoubleFile
                     }
 
                     if ((null == ieChildren) &&
-                        (null != nodeDatum.TreeMapFiles))
+                        (null != nodeDatum.TreemapFiles))
                     {
                         parent = treeNode;
                         ieChildren = new List<LocalTreeNode> { };
@@ -799,13 +799,13 @@ namespace DoubleFile
                 var nodeDatum = parent.NodeDatum;
 
                 if (bStart &&
-                    (null != nodeDatum.TreeMapFiles))
+                    (null != nodeDatum.TreemapFiles))
                 {
-                    ieChildren = ieChildren.Concat(new[] { nodeDatum.TreeMapFiles });
+                    ieChildren = ieChildren.Concat(new[] { nodeDatum.TreemapFiles });
                 }
                 else if (0 < nodeDatum.LengthHere)
                 {
-                    ieChildren = ieChildren.Concat(new[] { new LocalTreeMapFileNode(parent.PathShort)
+                    ieChildren = ieChildren.Concat(new[] { new LocalTreemapFileNode(parent.PathShort)
                     {
                         NodeDatum = new NodeDatum { LengthTotal = nodeDatum.LengthHere },
                         ForeColor = UtilColorcode.TreemapFolder
@@ -831,7 +831,7 @@ namespace DoubleFile
                 var anChildWidth = // Widths of the children (fraction of row width).
                     new double[nCount];
 
-                var rc = nodeDatum.TreeMapRect;
+                var rc = nodeDatum.TreemapRect;
                 var horizontalRows = (rc.Width >= rc.Height);
                 double width_A = 1;
 
@@ -912,7 +912,7 @@ namespace DoubleFile
                         );
 
                         if (bStart)
-                            _lsFrames.Add(new TreeMapFrame(rcChild, child.As<LocalTreeMapFileNode>()));
+                            _lsFrames.Add(new TreemapFrame(rcChild, child.As<LocalTreemapFileNode>()));
 
                         if (lastChild)
                         {
@@ -920,7 +920,7 @@ namespace DoubleFile
                             c++;
 
                             if (i < row.ChildrenPerRow)
-                                lsChildren[c].NodeDatum.TreeMapRect = new Rect(-1, -1, -1, -1);
+                                lsChildren[c].NodeDatum.TreemapRect = new Rect(-1, -1, -1, -1);
 
                             c += row.ChildrenPerRow - i;
                             break;
@@ -1012,7 +1012,7 @@ namespace DoubleFile
 
             ConcurrentBag<Folder>
                 _lsFills = null;
-            ConcurrentBag<TreeMapFrame>
+            ConcurrentBag<TreemapFrame>
                 _lsFrames = null;
             LocalTreeNode
                 _deepNode = null;

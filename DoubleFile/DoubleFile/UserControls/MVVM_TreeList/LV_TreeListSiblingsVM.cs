@@ -67,7 +67,7 @@ namespace DoubleFile
             }
 
             var folderDetail = initiatorTuple.Item1;
-            var bSiblingFolder = (UC_TreeMapVM.kSelRectAndTooltip != initiatorTuple.Item2);
+            var bSiblingFolder = (UC_TreemapVM.kSelRectAndTooltip != initiatorTuple.Item2);
 
             Util.Write("L");
 

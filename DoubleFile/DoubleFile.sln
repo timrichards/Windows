@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DoubleFile", "DoubleFile\DoubleFile.csproj", "{CB92B8A5-9545-45D2-B5AF-8EA926A991E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VolTreeMap", "VolTreeMap\VolTreeMap.csproj", "{66301E65-DBA9-4E1A-805D-5030C2FDD40D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VolTreemap", "VolTreeMap\VolTreemap.csproj", "{66301E65-DBA9-4E1A-805D-5030C2FDD40D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

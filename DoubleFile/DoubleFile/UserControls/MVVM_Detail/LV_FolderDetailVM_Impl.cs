@@ -33,7 +33,7 @@ namespace DoubleFile
                     folderDetail.ieDetail
                     .Select(ieLine => new LVitem_FolderDetailVM(ieLine.ToList()));
 
-                if (Statics.Namespace == GetType().Namespace)     // VolTreeMap assembly: skip it
+                if (Statics.Namespace == GetType().Namespace)     // VolTreemap assembly: skip it
                 {
                     var strFG_Description = UtilColorcode.Descriptions[folderDetail.treeNode.ForeColor];
                     var strBG_Description = UtilColorcode.Descriptions[folderDetail.treeNode.BackColor];

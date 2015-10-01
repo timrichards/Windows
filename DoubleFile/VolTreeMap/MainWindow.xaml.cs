@@ -3,7 +3,7 @@ using FirstFloor.ModernUI.Presentation;
 using System;
 using System.Windows;
 
-namespace VolTreeMap
+namespace VolTreemap
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -35,7 +35,7 @@ namespace VolTreeMap
 
             MenuLinkGroups.Add(new LinkGroup { DisplayName="Trees", Links =
             {
-                new MyLink("Tree map", W + "/UC_TreeMap.xaml"),
+                new MyLink("Tree map", W + "/UC_Treemap.xaml"),
                 new MyLink("Tree view", W + "/UC_TreeView.xaml"),
                 new MyLink("Tree list", W + "/UC_TreeList.xaml")
             }});

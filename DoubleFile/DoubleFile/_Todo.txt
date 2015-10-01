@@ -78,7 +78,7 @@
 - Smells:
 	- ISaveDirListingsStatus.Status ignores WinProgress.WithWinProgress lambda 
 	- WinProject doesn't test its weak reference which is understandable
-- if (null == tuple.Item3.NodeDatum.TreeMapFiles)     // TODO: Why would this be null?
+- if (null == tuple.Item3.NodeDatum.TreemapFiles)     // TODO: Why would this be null?
 - same volume / solitary red forecolors are too similar
 - object.MemberwiseClone()
 - check and remove Linq/enumeration for arrays - prob OK: tests for ICollection

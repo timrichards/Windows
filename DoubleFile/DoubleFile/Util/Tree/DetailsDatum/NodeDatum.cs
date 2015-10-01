@@ -14,7 +14,7 @@ namespace DoubleFile
         internal LVitem_ClonesVM
             LVitem;
         internal LocalTreeNode
-            TreeMapFiles;
+            TreemapFiles;
 
         internal NodeDatum() { }
         internal NodeDatum(DetailsDatum datum)

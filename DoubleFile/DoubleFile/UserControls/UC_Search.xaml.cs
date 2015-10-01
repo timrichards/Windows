@@ -14,7 +14,7 @@ namespace DoubleFile
             InitializeComponent();
             CantDupeThisUsercontrol = true;     // only so _vmSave can be set, so there could be a workaround
 
-            if (Statics.Namespace != GetType().Namespace)   // no project so no nicknames in the VolTreeMap assembly
+            if (Statics.Namespace != GetType().Namespace)   // no project so no nicknames in the VolTreemap assembly
                 formChk_Nicknames.Visibility = Visibility.Collapsed;
         }
 

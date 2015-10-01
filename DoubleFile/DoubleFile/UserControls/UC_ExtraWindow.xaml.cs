@@ -3,7 +3,7 @@
 namespace DoubleFile
 {
     /// <summary>
-    /// Interaction logic for WinTreeMap.xaml
+    /// Interaction logic for WinTreemap.xaml
     /// </summary>
     public partial class UC_ExtraWindow
     {

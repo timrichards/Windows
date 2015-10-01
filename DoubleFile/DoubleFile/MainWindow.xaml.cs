@@ -43,7 +43,7 @@ namespace DoubleFile
         internal const string SaveListingsFakeKey = "/SaveListings.xaml";
         static readonly Link _saveListingsLink = new MyLink("Save listings", SaveListingsFakeKey);
 
-        // use-case for public: VolTreeMap project
+        // use-case for public: VolTreemap project
         internal const string ExtraWindowFakeKey = "/ExtraWindow.xaml";
         public static readonly Link _extraWindowLink = new MyLink("Extra window", ExtraWindowFakeKey);
 
@@ -247,7 +247,7 @@ namespace DoubleFile
         {
             new LinkGroup { DisplayName="Trees", Links =
             {
-                new MyLink("Tree map", "/UserControls/UC_TreeMap.xaml"),
+                new MyLink("Tree map", "/UserControls/UC_Treemap.xaml"),
                 new MyLink("Tree view", "/UserControls/UC_TreeView.xaml"),
                 new MyLink("Tree list", "/UserControls/UC_TreeList.xaml")
             }},

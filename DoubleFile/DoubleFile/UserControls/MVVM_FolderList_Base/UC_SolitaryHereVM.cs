@@ -76,7 +76,7 @@ namespace DoubleFile
                     Interlocked.Add(ref _nLengthTotal, (long)nodeDatum.LengthTotal);
 
                 if (null != folder.Nodes)
-                    FindAllSolitary(folder, bStart: false);
+                    FindAllSolitary(folder, bStart: false);                 // recurse
             });
         }
 

@@ -192,6 +192,7 @@
       <DependentUpon>Introduction.xaml</DependentUpon>
     </Compile>
     <Compile Include="LocalTreeNode\LocalColorItemBase.cs" />
+    <Compile Include="LocalTreeNode\LocalTV_FileHashes.cs" />
     <Compile Include="LocalTreeNode\LVitemProject_Explorer.cs" />
     <Compile Include="Statics.cs" />
     <Compile Include="UserControls\BindingProxy.cs" />

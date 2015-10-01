@@ -60,7 +60,7 @@ namespace DoubleFile
                 if (nodeDatum.IsSolitary)
                 {
                     if (null != folder.Nodes)
-                        FindAllClones(folder);
+                        FindAllClones(folder);                 // recurse
 
                     return;     // from lambda
                 }

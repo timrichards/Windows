@@ -174,13 +174,8 @@ namespace DoubleFile
             GoTo(treeNode);
         }
 
-        internal void MouseUp(Point ptLocation)
-        {
-            var treeNode = ShowTooltip(new Point(ptLocation.X * BitmapSize, ptLocation.Y * BitmapSize));
-
-            if (null != treeNode)
-                LocalTV.SelectedNode = treeNode;
-        }
+        internal void MouseUp(Point ptLocation) =>
+            ShowTooltip(new Point(ptLocation.X * BitmapSize, ptLocation.Y * BitmapSize));
 
         internal void ClearSelection(bool bDontCloseTooltip = false)
         {

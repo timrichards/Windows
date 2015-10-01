@@ -4,8 +4,19 @@
         xmlns:local="clr-namespace:DoubleFile"
         LocalTitle="Compare">
     <Grid>
-        <CheckBox Content="{Binding Folder1}" Command="{Binding Icmd_Pick1}"/>
-        <CheckBox Content="{Binding Folder2}" Command="{Binding Icmd_Pick2}"/>
-        <TextBlock Text="{Binding Results}"/>
+        <StackPanel>
+            <TextBlock Text="{Binding Folder1}"/>
+            <Button Command="{Binding Icmd_Pick}" Content="Pick"/>
+            <TextBlock Text="{Binding Folder2}"/>
+            <TextBlock Text="{Binding Results}"/>
+        </StackPanel>
+        <Grid Height="50" Visibility="{Binding ProgressbarVisibility}" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+            <ProgressBar IsIndeterminate="True" VerticalAlignment="Bottom"/>
+        </Grid>
+        <TextBlock Visibility="{Binding NoResultsVisibility}" TextAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">
+            <Run Text="{Binding NoResultsFolder, Mode=OneWay}" FontWeight="SemiBold" Foreground="AntiqueWhite"/>
+            <LineBreak/>
+            <Run>No results</Run>
+        </TextBlock>
     </Grid>
 </local:LocalUserControlBase>

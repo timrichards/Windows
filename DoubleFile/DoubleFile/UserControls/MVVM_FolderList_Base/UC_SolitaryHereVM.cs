@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -42,11 +43,13 @@ namespace DoubleFile
             FillList(LocalTreeNode searchFolder)
         {
             _lsFolders = new ConcurrentBag<LVitem_FolderListVM>();
+            _nLengthTotal = 0;
             FindAllSolitary(searchFolder);
+            SetFoldersHeader(Util.FormatSize((ulong)_nLengthTotal));
             return _lsFolders.OrderByDescending(lvItem => lvItem.Folder.NodeDatum.LengthTotal);
         }
 
-        void FindAllSolitary(LocalTreeNode searchFolder)
+        void FindAllSolitary(LocalTreeNode searchFolder, bool bStart = true)
         {
             if (_cts.IsCancellationRequested)
                 return;
@@ -54,22 +57,33 @@ namespace DoubleFile
             Util.ParallelForEach(99912, searchFolder.Nodes, new ParallelOptions { CancellationToken = _cts.Token },
                 folder =>
             {
-                if ((false == folder.NodeDatum.IsSolitary)
-                    && (false == (AllOneVolIsSolitary && folder.NodeDatum.IsAllOnOneVolume)))
+                var nodeDatum = folder.NodeDatum;
+
+                if ((false == nodeDatum.IsSolitary)
+                    && (false == (AllOneVolIsSolitary && nodeDatum.IsAllOnOneVolume)))
                 {
                     return;     // from lambda
                 }
 
-                if (0 < folder.NodeDatum.LengthHere)
-                    _lsFolders.Add(new LVitem_FolderListVM(folder, _nicknameUpdater) { Alternate = folder.NodeDatum.IsAllOnOneVolume });
+                // Can't descend all copies. Take just element 0, count that one as solitary
+                if (false == ReferenceEquals(folder, (nodeDatum.Clones?[0] ?? folder)))
+                    return;     // from lambda
+
+                if (0 < nodeDatum.LengthHere)
+                    _lsFolders.Add(new LVitem_FolderListVM(folder, _nicknameUpdater) { Alternate = nodeDatum.IsAllOnOneVolume });
+
+                if (bStart)
+                    Interlocked.Add(ref _nLengthTotal, (long)nodeDatum.LengthTotal);
 
                 if (null != folder.Nodes)
-                    FindAllSolitary(folder);
+                    FindAllSolitary(folder, bStart: false);
             });
         }
 
         protected override void Clear() => _lsFolders = null;
 
+        long
+            _nLengthTotal = 0;
         ConcurrentBag<LVitem_FolderListVM>
             _lsFolders = null;
     }

@@ -10,10 +10,8 @@ namespace DoubleFile
         internal static void
             AllFileHashes_AddRef(CancellationTokenSource cts = null)
         {
-            if (0 < _nAllFileHashes_refCount)
+            if (0 < _nAllFileHashes_refCount++)
                 return;
-
-            ++_nAllFileHashes_refCount;
 
             var stopwatch = Stopwatch.StartNew();
 
@@ -30,7 +28,9 @@ namespace DoubleFile
             AllFileHashes_DropRef()
         {
             Util.Assert(99614, 0 < _nAllFileHashes_refCount);
-            --_nAllFileHashes_refCount;
+
+            if (0 < --_nAllFileHashes_refCount)
+                return;
 
             Cleanup_AllFileHashes_Scratch(RootNodes);
         }

@@ -414,14 +414,9 @@ namespace DoubleFile
         static LocalTreeNode GetFileList(LocalTreeNode parent)
         {
             var nodeDatum = parent.NodeDatum;
-            var rootNodeDatum = parent.Root.NodeDatum.As<RootNodeDatum>();
 
-            if ((null == nodeDatum) ||
-                (0 == nodeDatum.LineNo) ||
-                (null == rootNodeDatum))
-            {
+            if (0 == nodeDatum.LineNo)
                 return null;
-            }
 
             var nPrevDir = (int)nodeDatum.PrevLineNo;
 
@@ -434,11 +429,10 @@ namespace DoubleFile
                 return null;
 
             ulong nLengthDebug = 0;
-            var strListingFile = rootNodeDatum.LVitemProjectVM.ListingFile;
             var lsFiles = new List<Tuple<string, ulong>> { };
 
             foreach (var asFileLine
-                in strListingFile.ReadLinesWait(99650)
+                in parent.RootNodeDatum.LVitemProjectVM.ListingFile.ReadLinesWait(99650)
                 .Skip(nPrevDir)
                 .Take((nLineNo - nPrevDir - 1))
                 .Select(s =>

@@ -11,14 +11,12 @@ namespace DoubleFile
         internal class FileListUpdated
         {
             internal readonly IEnumerable<string> ieFiles;
-            internal readonly string strListingFile;
             internal readonly LocalTreeNode treeNode;
             internal readonly string strFilename;
 
-            internal FileListUpdated(IEnumerable<string> ieFiles_, string strListingFile_, LocalTreeNode treeNode_, string strFilename_)
+            internal FileListUpdated(IEnumerable<string> ieFiles_, LocalTreeNode treeNode_, string strFilename_)
             {
                 ieFiles = ieFiles_;
-                strListingFile = strListingFile_;
                 treeNode = treeNode_;
                 strFilename = strFilename_;
             }
@@ -86,52 +84,10 @@ namespace DoubleFile
         static void
             Go(LocalTreeNode treeNode, string strFile, decimal nInitiator)
         {
-            GetFileList(treeNode, strFile, nInitiator);
+            FileListUpdatedOnNext(new FileListUpdated(treeNode.GetFileList(), treeNode, strFile), nInitiator);
             GetFolderDetail(treeNode, nInitiator);
             GetVolumeDetail(treeNode, nInitiator);
             _thread = null;
-        }
-
-        static void
-            GetFileList(LocalTreeNode treeNode, string strFile, decimal nInitiator)
-        {
-            string strListingFile = null;
-
-            var ieFiles =
-                Util.Closure(() =>
-            {
-                var nodeDatum = treeNode.NodeDatum;
-                var rootNode = treeNode.Root;
-                var rootNodeDatum = rootNode.NodeDatum.As<RootNodeDatum>();
-
-                if ((0 == (nodeDatum?.LineNo ?? 0)) ||
-                    (null == rootNodeDatum))
-                {
-                    Util.Assert(99779, false);
-                    return null;     // from lambda
-                }
-
-                strListingFile = rootNodeDatum.LVitemProjectVM.ListingFile;
-
-                var nPrevDir = (int)nodeDatum.PrevLineNo;
-                var nLineNo = (int)nodeDatum.LineNo;
-
-                if (0 == nPrevDir)
-                    return null;     // from lambda
-
-                if (1 >= (nLineNo - nPrevDir))  // dir has no files
-                    return null;     // from lambda
-
-                return
-                    strListingFile
-                    .ReadLines(99643)
-                    .Skip(nPrevDir)
-                    .Take((nLineNo - nPrevDir - 1))
-                    .ToArray()
-                    .AsEnumerable();
-            });
-
-            FileListUpdatedOnNext(new FileListUpdated(ieFiles, strListingFile, treeNode, strFile), nInitiator);
         }
 
         static void

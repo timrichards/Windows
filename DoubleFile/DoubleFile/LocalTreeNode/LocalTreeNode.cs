@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 namespace DoubleFile
@@ -7,6 +8,11 @@ namespace DoubleFile
     [DebuggerDisplay("{_strPathShort} {Nodes?.Count}")]
     class LocalTreeNode : LocalColorItemBase
     {
+        internal NodeDatum
+            NodeDatum;
+        internal RootNodeDatum
+            RootNodeDatum => (RootNodeDatum)Root.NodeDatum;
+
         public IReadOnlyList<LocalTreeNode>
             Nodes { get; protected set; }
 
@@ -153,7 +159,24 @@ namespace DoubleFile
             return this;
         }
 
-        internal NodeDatum
-            NodeDatum;
+        internal IEnumerable<string> GetFileList()
+        {
+            var nPrevDir = (int)NodeDatum.PrevLineNo;
+            var nLineNo = (int)NodeDatum.LineNo;
+
+            if (0 == nPrevDir)
+                return null;     // from lambda
+
+            if (1 >= (nLineNo - nPrevDir))  // dir has no files
+                return null;     // from lambda
+
+            return
+                ((RootNodeDatum)Root.NodeDatum).LVitemProjectVM.ListingFile
+                .ReadLines(99643)
+                .Skip(nPrevDir)
+                .Take((nLineNo - nPrevDir - 1))
+                .ToArray()
+                .AsEnumerable();
+        }
     }
 }

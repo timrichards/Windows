@@ -94,7 +94,8 @@ namespace DoubleFile
             var lsFolder1 = _folder1.NodeDatum.Hashes_FilesHere.Union(_folder1.NodeDatum.Hashes_SubnodeFiles_Scratch).ToList();
             var lsFolder2 = folder2.NodeDatum.Hashes_FilesHere.Union(folder2.NodeDatum.Hashes_SubnodeFiles_Scratch).ToList();
             var lsIntersect = lsFolder1.Intersect(lsFolder2).ToList();
-            var lsDiff = lsFolder1.Union(lsFolder2).Except(lsIntersect).ToList();
+            var lsDiff1 = lsFolder1.Except(lsIntersect).ToList();
+            var lsDiff2 = lsFolder2.Except(lsIntersect).ToList();
 
             Results = "These folders have ";
 
@@ -105,8 +106,15 @@ namespace DoubleFile
                 return this;
             }
 
-            Results += lsIntersect.Count + " files in common. " + lsDiff.Count + " files are unique.";
+            Results += lsIntersect.Count + " files in common. " + lsDiff1.Count + " and " + lsDiff2.Count + " files are unique in each.";
             RaisePropertyChanged("Results");
+            LV_Both.ClearItems();
+            LV_First.ClearItems();
+            LV_Second.ClearItems();
+
+            //foreach (var treeNode in lsIntersect)
+            //    LV_Both.Add(new LVitem_FilesVM { 
+
             NoResultsVisibility = Visibility.Collapsed;
             RaisePropertyChanged("NoResultsVisibility");
             return this;

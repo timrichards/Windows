@@ -72,7 +72,7 @@ namespace DoubleFile
             if (null != treeNode)
             {
                 Util.UIthread(99862, () =>
-                    Add(new LVitem_SearchVM(new LVitemProject_Updater<bool>(treeNode.Root.NodeDatum.As<RootNodeDatum>().LVitemProjectVM, _nicknameUpdater), treeNode)));
+                    Add(new LVitem_SearchVM(new LVitemProject_Updater<bool>(treeNode.RootNodeDatum.LVitemProjectVM, _nicknameUpdater), treeNode)));
 
                 return true;
             }
@@ -92,9 +92,7 @@ namespace DoubleFile
                 result.ListFiles.Add((TabledString<TabledStringType_Files>)strPath.Substring(nLastBackSlashIx + 1), false);
             }
 
-            var lvItemProjectVM = treeNode.Root.NodeDatum.As<RootNodeDatum>().LVitemProjectVM;
-
-            _lsSearchResults = new List<SearchResults> { new SearchResults(strPath, lvItemProjectVM, new[] { result }) };
+            _lsSearchResults = new List<SearchResults> { new SearchResults(strPath, treeNode.RootNodeDatum.LVitemProjectVM, new[] { result }) };
             ((ISearchStatus)this).Done();
             return true;
         }
@@ -247,7 +245,7 @@ namespace DoubleFile
                     ieLVitems =
                         lsTreeNodes
                         .GroupBy(treeNode => treeNode.Root)
-                        .Select(g => new { lvItemProjectVM = new LVitemProject_Updater<bool>(g.Key.NodeDatum.As<RootNodeDatum>().LVitemProjectVM, _nicknameUpdater), g = g })
+                        .Select(g => new { lvItemProjectVM = new LVitemProject_Updater<bool>(g.Key.RootNodeDatum.LVitemProjectVM, _nicknameUpdater), g = g })
                         .SelectMany(g => g.g, (g, treeNode) => new LVitem_SearchVM(g.lvItemProjectVM, treeNode))
                         .OrderBy(lvItem => lvItem.Folder.PathFullGet(_nicknameUpdater.Value))
                         .ToList();

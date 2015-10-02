@@ -429,15 +429,9 @@ namespace DoubleFile
                     // Test to see if clones are on separate volumes.
 
                     var rootNode = treeNode.Root;
-                    var rootNodeDatum = rootNode.NodeDatum.As<RootNodeDatum>();
+                    var rootNodeDatum = rootNode.RootNodeDatum;
 
-                    if (null == rootNodeDatum)      // added 2/13/15, got hit on 5/4/15
-                    {
-                        Util.Assert(99970, false);
-                        return;
-                    }
-
-                    Util.Assert(1305.6308m, UtilColorcode.Transparent == treeNode.ForeColor);
+                    Util.Assert(99970, UtilColorcode.Transparent == treeNode.ForeColor);
                     treeNode.ForeColor = UtilColorcode.AllOnOneVolume;
 
                     foreach (var subnode in listClones)
@@ -448,20 +442,14 @@ namespace DoubleFile
                             return;
                         }
 
-                        Util.Assert(1305.6309m, subnode.NodeDatum.Key.Equals(nodeDatum.Key));
+                        Util.Assert(99999, subnode.NodeDatum.Key.Equals(nodeDatum.Key));
 
                         var rootNodeA = subnode.Root;
 
                         if (rootNode == rootNodeA)
                             continue;
 
-                        var rootNodeDatumA = rootNodeA.NodeDatum.As<RootNodeDatum>();
-
-                        if (null == rootNodeDatumA)      // added 2/13/15, got hit on 5/4/15
-                        {
-                            Util.Assert(99999, false);
-                            return;
-                        }
+                        var rootNodeDatumA = rootNodeA.RootNodeDatum;
 
                         if (false == string.IsNullOrWhiteSpace(rootNodeDatum.LVitemProjectVM.VolumeGroup) &&
                             (rootNodeDatum.LVitemProjectVM.VolumeGroup == rootNodeDatumA.LVitemProjectVM.VolumeGroup))

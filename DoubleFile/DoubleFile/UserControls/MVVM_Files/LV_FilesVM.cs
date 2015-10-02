@@ -47,6 +47,7 @@ namespace DoubleFile
                 return;
 
             var lsItems = new List<LVitem_FilesVM>();
+            var strListingFile = fileList.treeNode.RootNodeDatum.LVitemProjectVM.ListingFile;
 
             foreach (var strFileLine in fileList.ieFiles)
             {
@@ -71,7 +72,7 @@ namespace DoubleFile
                     lvItem.LSduplicates =
                         lsDuplicates
                         .Where(dupe =>
-                            (dupe.LVitemProjectVM.ListingFile != fileList.strListingFile) ||    // exactly once every query
+                            (dupe.LVitemProjectVM.ListingFile != strListingFile) ||    // exactly once every query
                             (dupe.LineNumber != nLine));
 
                     lvItem.SameVolume =

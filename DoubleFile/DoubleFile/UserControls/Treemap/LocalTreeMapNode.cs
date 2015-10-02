@@ -7,6 +7,9 @@ namespace DoubleFile
     {
         internal override string PathShort { get; set; }
 
+        internal new int
+            Level { get { return Datum8bits; } private set { Datum8bits = value; } }
+
         internal LocalTreemapFileListNode(string strContent)
             : base()
         {

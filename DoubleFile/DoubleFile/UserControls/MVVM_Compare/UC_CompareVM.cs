@@ -23,7 +23,7 @@ namespace DoubleFile
 
         internal UC_CompareVM()
         {
-            Icmd_Pick = new RelayCommand(() => _folder1 = LocalTV.TreeSelect_FolderDetail.treeNode);
+            Icmd_Pick = new RelayCommand(() => { _folder1 = LocalTV.TreeSelect_FolderDetail.treeNode; Connect(); });
 
             Util.ThreadMake(() =>
             {
@@ -63,30 +63,43 @@ namespace DoubleFile
                 return this;
             }
 
+            Folder1 = _folder1.PathFull;
+            RaisePropertyChanged("Folder1");
             Results = null;
             RaisePropertyChanged("Results");
             NoResultsVisibility = Visibility.Visible;
             RaisePropertyChanged("NoResultsVisibility");
 
+            if (_folder1.IsChildOf(folder2))
+                return this;
+
             if (folder2.IsChildOf(_folder1))
                 return this;
 
-            if (_folder1.IsChildOf(folder2))
+            if (ReferenceEquals(_folder1, folder2))
                 return this;
 
             Folder2 = folder2.PathFull;
             RaisePropertyChanged("Folder2");
 
-            var lsIntersect =
-                _folder1.NodeDatum.Hashes_FilesHere.Concat(_folder1.NodeDatum.Hashes_SubnodeFiles_Scratch)
-                .Intersect(folder2.NodeDatum.Hashes_FilesHere.Concat(folder2.NodeDatum.Hashes_SubnodeFiles_Scratch))
-                .ToList();
+            var lsFolder1 = _folder1.NodeDatum.Hashes_FilesHere.Concat(_folder1.NodeDatum.Hashes_SubnodeFiles_Scratch).ToList();
+            var lsFolder2 = folder2.NodeDatum.Hashes_FilesHere.Concat(folder2.NodeDatum.Hashes_SubnodeFiles_Scratch).ToList();
+            var lsIntersect = lsFolder1.Intersect(lsFolder2).ToList();
+            var lsDiff = lsFolder1.Union(lsFolder2).Except(lsIntersect).ToList();
+
+            Results = "These folders have ";
 
             if (0 == lsIntersect.Count)
+            {
+                Results += "nothing in common.";
+                RaisePropertyChanged("Results");
                 return this;
+            }
 
-            Results = string.Join(" ", lsIntersect);
+            Results += lsIntersect.Count + " files in common. " + lsDiff.Count + " files are unique.";
             RaisePropertyChanged("Results");
+
+       //     Results = string.Join(" ", lsIntersect);
             NoResultsVisibility = Visibility.Collapsed;
             RaisePropertyChanged("NoResultsVisibility");
             return this;

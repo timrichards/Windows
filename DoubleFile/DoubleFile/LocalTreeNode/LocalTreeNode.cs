@@ -18,7 +18,7 @@ namespace DoubleFile
             Parent { get; protected set; }
 
         internal int
-            Level { get { return Datum8bits; } set { Datum8bits = value; } }
+            Level { get { return Datum8bits; } private set { Datum8bits = value; } }
         //internal int
         //    SelectedImageIndex { get { return Datum16bits; } set { Datum16bits = value; } }
 

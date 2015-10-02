@@ -1,85 +1,102 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DoubleFile
 {
-    partial class LV_FilesVM : ListViewVM_Base<LVitem_FilesVM>
+    partial class LV_FilesVM : LV_FilesVM_Base, IDisposable
     {
-        internal class SelectedFileChanged
+        internal LV_FilesVM()
         {
-            internal readonly IReadOnlyList<Tuple<LVitemProject_Updater<bool>, IReadOnlyList<string>>> lsDupDirFileLines;
-            internal readonly IReadOnlyList<string> fileLine;
-            internal readonly LocalTreeNode treeNode;
+            _lsDisposable.Add(TreeSelect.FileListUpdated.Observable.LocalSubscribe(99703, TreeSelect_FileListUpdated));
+            _lsDisposable.Add(UC_TreemapVM.SelectedFile.LocalSubscribe(99702, UC_Treemap_SelectedFile));
 
-            internal SelectedFileChanged(IReadOnlyList<Tuple<LVitemProject_Updater<bool>, IReadOnlyList<string>>> lsDupDirFileLines_, IReadOnlyList<string> fileLine_, LocalTreeNode treeNode_)
+            var fileList = LocalTV.TreeSelect_FileList;
+
+            if (null != fileList)
+                TreeSelect_FileListUpdated(Tuple.Create(fileList, /* UI initiator */ 0));
+        }
+
+        public void Dispose() => Util.LocalDispose(_lsDisposable);
+
+        void TreeSelect_FileListUpdated(Tuple<TreeSelect.FileListUpdated, int> initiatorTuple)
+        {
+            var fileList = initiatorTuple.Item1;
+
+            Util.Write("J");
+
+            if (fileList.treeNode != _treeNode)
+                TreeSelect_FileListUpdated_(initiatorTuple);
+
+            if (null != fileList.strFilename)
             {
-                lsDupDirFileLines = lsDupDirFileLines_;
-                fileLine = fileLine_;
-                treeNode = treeNode_;
-            }
-
-            static internal readonly IObservable<Tuple<SelectedFileChanged, int>>
-                Observable = new LocalSubject<SelectedFileChanged>();
-        }
-        static void
-            SelectedFileChangedOnNext(SelectedFileChanged value, int nInitiator)
-        {
-            ((LocalSubject<SelectedFileChanged>)SelectedFileChanged.Observable).LocalOnNext(value, 99852, nInitiator);
-            LastSelectedFile = value;
-        }
-        static internal SelectedFileChanged
-            LastSelectedFile
-        {
-            get { return _wr.Get(lv => lv._lastSelectedFile); }
-            private set { _wr.Get(lv => lv._lastSelectedFile = value); }
-        }
-        SelectedFileChanged _lastSelectedFile = null;
-
-        public LVitem_FilesVM SelectedItem
-        {
-            get { return _selectedItem; }
-            set
-            {
-                if (value == _selectedItem)
-                    return;
-
-                _selectedItem = value;
-
-                if (null != _selectedItem)
-                    SelectedItem_AllTriggers(0);
+                this[fileList.strFilename].FirstOnlyAssert(fileVM =>
+                    SelectedItem_Set(fileVM, initiatorTuple.Item2));
             }
         }
-        internal void SelectedItem_Set(LVitem_FilesVM value, int nInitiator)
+
+        void TreeSelect_FileListUpdated_(Tuple<TreeSelect.FileListUpdated, int> initiatorTuple)
         {
-            if (value == _selectedItem)
+            var fileList = initiatorTuple.Item1;
+
+            SelectedItem_Set(null, initiatorTuple.Item2);
+            ClearItems();
+            _treeNode = fileList.treeNode;
+
+            if (null == fileList.ieFiles)
                 return;
 
-            _selectedItem = value;
-            RaisePropertyChanged("SelectedItem");
-            SelectedItem_AllTriggers(nInitiator);
+            var lsItems = new List<LVitem_FilesVM>();
+
+            foreach (var strFileLine in fileList.ieFiles)
+            {
+                var asFileLine =
+                    strFileLine
+                    .Split('\t')
+                    .ToArray();
+
+                var nLine = ("" + asFileLine[1]).ToInt();
+                var lsDuplicates = Statics.DupeFileDictionary.GetDuplicates(asFileLine);
+
+                asFileLine =
+                    asFileLine
+                    .Skip(3)                            // makes this an LV line: knColLengthLV
+                    .ToArray();
+
+                var nDuplicates = (null != lsDuplicates) ? lsDuplicates.Count - 1 : 0;
+                var lvItem = new LVitem_FilesVM { DuplicatesRaw = nDuplicates, FileLine = asFileLine };
+
+                if (0 < nDuplicates)
+                {
+                    lvItem.LSduplicates =
+                        lsDuplicates
+                        .Where(dupe =>
+                            (dupe.LVitemProjectVM.ListingFile != fileList.strListingFile) ||    // exactly once every query
+                            (dupe.LineNumber != nLine));
+
+                    lvItem.SameVolume =
+                        lsDuplicates
+                        .GroupBy(duplicate => duplicate.LVitemProjectVM.Volume)
+                        .HasExactly(1);
+                }
+
+                lsItems.Add(lvItem);
+            }
+
+            Util.UIthread(99813, () => Add(lsItems));
         }
-        void SelectedItem_AllTriggers(int nInitiator)
+
+        void UC_Treemap_SelectedFile(Tuple<string, int> initiatorTuple)
         {
-            if (null != _selectedItem)
-                ShowDuplicates_SelectedFileChangedOnNext(nInitiator);
-            else
-                SelectedFileChangedOnNext(null, nInitiator);
+            Util.Write("B");
+
+            this[initiatorTuple.Item1].FirstOnlyAssert(fileVM =>
+                SelectedItem_Set(fileVM, initiatorTuple.Item2));
         }
-        LVitem_FilesVM _selectedItem = null;
 
-        public string WidthFilename => SCW;                     // franken all NaN
-        public string WidthDuplicates => SCW;
-        public string WidthCreated => SCW;
-        public string WidthModified => SCW;
-        public string WidthAttributes => SCW;
-        public string WidthLength => SCW;
-        public string WidthError1 => SCW;
-        public string WidthError2 => SCW;
-
-        public string WidthDuplicate => SCW;
-        public string WidthIn => SCW;
-        public string WidthParent => SCW;
-
-        internal override int NumCols => LVitem_FilesVM.NumCols_;
+        LocalTreeNode
+            _treeNode = null;
+        readonly IList<IDisposable>
+            _lsDisposable = new List<IDisposable> { };
     }
 }

@@ -97,15 +97,22 @@ namespace DoubleFile
             if (Showing)
                 return MessageBox.Show(strMessage + "\nUC_Messagebox: there is a message already up", strTitle, buttons ?? MessageBoxButton.OK);
 
-            Showing = true;
-            form_Message.Text = strMessage;
-            LocalShow(loc);
-            _shown = this;
-            _dispatcherFrame.PushFrameTrue();
-            _shown = null;
-            LocalHide(loc);
-            Util.LocalDispose(_lsDisposable);
-            Showing = false;
+            try
+            {
+                Showing = true;
+                form_Message.Text = strMessage;
+                LocalShow(loc);
+                _shown = this;
+                _dispatcherFrame.PushFrameTrue();
+            }
+            finally
+            {
+                _shown = null;
+                LocalHide(loc);
+                Util.LocalDispose(_lsDisposable);
+                Showing = false;
+            }
+
             return _Result;
         }
         static UC_Messagebox _shown = null;

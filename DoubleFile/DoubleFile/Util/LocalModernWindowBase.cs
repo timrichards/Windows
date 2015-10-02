@@ -19,17 +19,37 @@ namespace DoubleFile
         {
             var ucMessagebox = DarkenCtl.MessageboxCtl;
             var retVal = MessageBoxResult.None;
+            var locMessagebox = 99692;
+            Exception e = null;
 
-            Util.UIthread(99789, () =>
+            try
             {
-                var locMessagebox = 99692;
+                Util.UIthread(99789, () =>
+                {
+                    Darken(locMessagebox);
+                    ucMessagebox.LocalShow(locMessagebox);
+                    retVal = ucMessagebox.ShowMessagebox(strMessage, strTitle, buttons);
+                });
+            }
+            catch (Exception e_)
+            {
+                e = e_;
+            }
+            finally
+            {
+                Util.UIthread(99609, () =>
+                {
+                    Undarken(locMessagebox);
+                    ucMessagebox.LocalHide(locMessagebox);
+                });
 
-                Darken(locMessagebox);
-                ucMessagebox.LocalShow(locMessagebox);
-                retVal = ucMessagebox.ShowMessagebox(strMessage, strTitle, buttons);
-                Undarken(locMessagebox);
-                ucMessagebox.LocalHide(locMessagebox);
-            });
+                if (null != e)
+                {
+                    LocalDispatcherFrame.ClearFrames();
+                    strMessage = strMessage.Insert(0, "LocalModernWindowBase: exception occurred showing MessageboxCtl.\n" + e.GetBaseException().Message + "\n\nOriginal message:\n");
+                    MessageBox.Show(this, strMessage + "\n(LocalModernWindowBase: failed to show MessageboxCtl.)", strTitle, buttons ?? MessageBoxButton.OK);
+                }
+            }
 
             return retVal;
         }
@@ -63,13 +83,13 @@ namespace DoubleFile
             return this;
         }
         internal LocalModernWindowBase
-            Undarken(decimal loc)
+            Undarken(decimal loc, bool bForce = false)
         {
             Util.UIthread(99726, () =>
             {
                 Application.Current.Windows.OfType<LocalModernWindowBase>()
                     .Where(w => w.IsLoaded)
-                    .ForEach(w => w.DarkenCtl.LocalHide(loc));
+                    .ForEach(w => w.DarkenCtl.LocalHide(loc, bForce));
             });
 
             return this;

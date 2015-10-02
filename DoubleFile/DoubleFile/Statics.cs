@@ -245,6 +245,13 @@ namespace DoubleFile
                 if (TimeSpan.FromMilliseconds(250) > (DateTime.Now - _dtLastEsc))
                 {
                     LocalDispatcherFrame.ClearFrames();
+
+                    var mainWindow = (LocalModernWindowBase)Application.Current?.MainWindow;
+
+                    if (mainWindow?.LocalIsClosed ?? true)
+                        return;
+
+                    mainWindow.Undarken(-1, bForce: true);
                 }
                 else
                 {

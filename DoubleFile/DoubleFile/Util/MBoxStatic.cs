@@ -6,16 +6,24 @@ namespace DoubleFile
 {
     static class MBoxStatic
     {
-        static internal bool FailUp { get; private set; }
+        static internal decimal? FailUp { get; private set; }
 
         static internal bool
             Fail(decimal nLocation, string strError_in, bool bTraceOnly)
         {
+            var owner = (LocalModernWindowBase)Application.Current?.MainWindow;
+
             if ((_nLastAssertLoc == nLocation) &&
                 (1 > (DateTime.Now - _dtLastAssert).Seconds))
             {
+                if ((null != owner) && (FailUp == nLocation))           // bombarded
+                    Win32Screen.FlashWindow(owner);
+
                 return false;
             }
+
+            if ((null != owner) && (FailUp == nLocation))               // hit again while up
+                return false;
 
             var strError = "Assertion failed at location " + nLocation + ".";
 
@@ -37,21 +45,19 @@ namespace DoubleFile
             _nLastAssertLoc = nLocation;
             _dtLastAssert = DateTime.Now;
 
-            if (FailUp ||
+            if ((null != FailUp) ||
                 UC_Messagebox.Showing)
             {
-                var owner = (LocalModernWindowBase)Application.Current?.MainWindow;
-
                 if (owner?.LocalIsClosing ?? true)
-                    owner = null;
-
-                MessageBox.Show(owner, strErrorOut + "\n(MBoxStatic: there is a local assert box already up.)");
+                    MessageBox.Show(strErrorOut + "\n(MBoxStatic: there is a local assert box already up.)");
+                else
+                    MessageBox.Show(owner, strErrorOut + "\n(MBoxStatic: there is a local assert box already up.)");
             }
             else
             {
-                FailUp = true;
+                FailUp = nLocation;
                 ShowOverlay(strErrorOut, "DoubleFile Assert", MessageBoxButton.OK);
-                FailUp = false;
+                FailUp = null;
             }
 #if (DEBUG && LOCALMBOX)
             if (Debugger.IsAttached)

@@ -47,10 +47,10 @@ namespace DoubleFile
                 (0 < ("" + FileLine[FileParse.knColLengthLV]).ToUlong()));
 
         public string
-            Duplicates => ((ShowDuplicates && (0 != DuplicatesRaw)) ? "" + DuplicatesRaw : "") + (_SameVolume ? " all on the same volume." : "");
+            Duplicates => ((ShowDuplicates && (0 < DuplicatesRaw)) ? "" + DuplicatesRaw : "") + (_SameVolume ? " all on the same volume." : "");
         public int DuplicatesRaw { get; internal set; }
 
-        public Visibility VisibilityOnDuplicates => (ShowDuplicates && (0 != DuplicatesRaw)) ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility VisibilityOnDuplicates => (ShowDuplicates && (0 < DuplicatesRaw)) ? Visibility.Visible : Visibility.Collapsed;
 
         public ICommand Icmd_NextDuplicate { get; }
 
@@ -59,13 +59,8 @@ namespace DoubleFile
         public string
             In { get; private set; } = " in ";    // interned
 
-        public string Parent
-        {
-            get
-            {
-                return LSdupDirFileLines?[DupIndex % LSdupDirFileLines.Count].Item2[0];
-            }
-        }
+        public string
+            Parent => LSdupDirFileLines?[DupIndex % LSdupDirFileLines.Count].Item2[0];
 
         internal override int NumCols => NumCols_;
         internal const int NumCols_ = 0;

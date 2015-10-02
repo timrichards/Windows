@@ -196,6 +196,7 @@
     <Compile Include="LocalTreeNode\LVitemProject_Explorer.cs" />
     <Compile Include="Statics.cs" />
     <Compile Include="UserControls\BindingProxy.cs" />
+    <Compile Include="UserControls\MVVM_Compare\LV_FilesVM_Compare.cs" />
     <Compile Include="UserControls\MVVM_Compare\UC_CompareVM.cs" />
     <Compile Include="UserControls\MVVM_FolderList_Base\UC_FolderListVM_Impl.cs" />
     <Compile Include="UserControls\MVVM_FolderList_Base\UC_ClonesHereVM.cs" />
@@ -343,8 +344,8 @@
     <Compile Include="Util\FileKeyTuple.cs" />
     <Compile Include="Util\HashTuple.cs" />
     <Compile Include="UserControls\MVVM_Files\LVitem_FilesVM.cs" />
+    <Compile Include="UserControls\LV_FilesVM_Base.cs" />
     <Compile Include="UserControls\MVVM_Files\LV_FilesVM.cs" />
-    <Compile Include="UserControls\MVVM_Files\LV_FilesVM_Impl.cs" />
     <Compile Include="LocalTreeNode\LocalTreeNode.cs" />
     <Compile Include="UserControls\MVVM_TreeView\TreeViewItemVM.cs" />
     <Compile Include="LocalTreeNode\LocalTV.cs" />

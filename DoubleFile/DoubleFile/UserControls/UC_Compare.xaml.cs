@@ -25,7 +25,7 @@ namespace DoubleFile
                 ? new UC_CompareVM()
                 : vm;
 
-            _vm.Connect();
+            _vm.Update();
         }
 
         protected override void LocalNavigatedFrom()

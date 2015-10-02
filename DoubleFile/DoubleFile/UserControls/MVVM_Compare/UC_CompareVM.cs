@@ -15,22 +15,31 @@ namespace DoubleFile
         public string Folder2 { get; private set; }
         public string Results { get; private set; }
 
-        public ICommand Icmd_Pick { get; private set; }
+        public ICommand Icmd_Pick { get; }
 
         public Visibility ProgressbarVisibility { get; protected set; } = Visibility.Visible;
         public Visibility NoResultsVisibility { get; protected set; } = Visibility.Visible;
         public string NoResultsFolder { get; protected set; } = "setting up Compare view";
 
+        public LV_FilesVM_Compare LV_Both { get; }
+        public LV_FilesVM_Compare LV_First { get; }
+        public LV_FilesVM_Compare LV_Second { get; }
+
         internal UC_CompareVM()
         {
-            Icmd_Pick = new RelayCommand(() => { _folder1 = LocalTV.TreeSelect_FolderDetail.treeNode; Connect(); });
+            Icmd_Pick = new RelayCommand(() => { _folder1 = LocalTV.TreeSelect_FolderDetail.treeNode; Update(); });
+            LV_Both = new LV_FilesVM_Compare();
+            LV_First = new LV_FilesVM_Compare();
+            LV_Second = new LV_FilesVM_Compare();
+
+            LV_Both.Add(new LVitem_FilesVM { FileLine = new[] { "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", } });
 
             Util.ThreadMake(() =>
             {
                 LocalTV.AllFileHashes_AddRef();
 
                 _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable
-                    .LocalSubscribe(99613, tuple => Connect(tuple.Item1.treeNode)));
+                    .LocalSubscribe(99613, tuple => Update(tuple.Item1.treeNode)));
 
                 NoResultsFolder = null;
                 RaisePropertyChanged("NoResultsFolder");
@@ -51,7 +60,7 @@ namespace DoubleFile
         }
 
         internal UC_CompareVM
-            Connect(LocalTreeNode folder2 = null)
+            Update(LocalTreeNode folder2 = null)
         {
             if (null == folder2)
                 folder2 = LocalTV.TreeSelect_FolderDetail.treeNode;
@@ -82,8 +91,8 @@ namespace DoubleFile
             Folder2 = folder2.PathFull;
             RaisePropertyChanged("Folder2");
 
-            var lsFolder1 = _folder1.NodeDatum.Hashes_FilesHere.Concat(_folder1.NodeDatum.Hashes_SubnodeFiles_Scratch).ToList();
-            var lsFolder2 = folder2.NodeDatum.Hashes_FilesHere.Concat(folder2.NodeDatum.Hashes_SubnodeFiles_Scratch).ToList();
+            var lsFolder1 = _folder1.NodeDatum.Hashes_FilesHere.Union(_folder1.NodeDatum.Hashes_SubnodeFiles_Scratch).ToList();
+            var lsFolder2 = folder2.NodeDatum.Hashes_FilesHere.Union(folder2.NodeDatum.Hashes_SubnodeFiles_Scratch).ToList();
             var lsIntersect = lsFolder1.Intersect(lsFolder2).ToList();
             var lsDiff = lsFolder1.Union(lsFolder2).Except(lsIntersect).ToList();
 
@@ -98,8 +107,6 @@ namespace DoubleFile
 
             Results += lsIntersect.Count + " files in common. " + lsDiff.Count + " files are unique.";
             RaisePropertyChanged("Results");
-
-       //     Results = string.Join(" ", lsIntersect);
             NoResultsVisibility = Visibility.Collapsed;
             RaisePropertyChanged("NoResultsVisibility");
             return this;

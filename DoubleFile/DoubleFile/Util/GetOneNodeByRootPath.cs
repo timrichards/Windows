@@ -31,7 +31,7 @@ namespace DoubleFile
 
             foreach (var topNode in treeNodeCollection)
             {
-                var rootNodeDatum = ((RootNodeDatum)topNode.NodeDatum);
+                var rootNodeDatum = topNode.RootNodeDatum;
 
                 var strNode =
                     ((0 > strPath.IndexOfAny(Path.GetInvalidPathChars())) &&

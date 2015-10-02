@@ -306,7 +306,7 @@ namespace DoubleFile
 
                 if (rootTreeNode != null)
                 {
-                    nTotalLength = ((RootNodeDatum)rootTreeNode.NodeDatum).LengthTotal;
+                    nTotalLength = rootTreeNode.RootNodeDatum.LengthTotal;
                 }
 
                 if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)

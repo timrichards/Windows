@@ -136,7 +136,7 @@ namespace DoubleFile
             GetVolumeDetail(LocalTreeNode treeNode, decimal nInitiator)
         {
             var rootNode = treeNode.Root;
-            var strDriveInfo = _dictVolumeInfo.TryGetValue(((RootNodeDatum)rootNode.NodeDatum).LVitemProjectVM.ListingFile);
+            var strDriveInfo = _dictVolumeInfo.TryGetValue(rootNode.RootNodeDatum.LVitemProjectVM.ListingFile);
 
             if ((null == _dictVolumeInfo) ||
                 (null == strDriveInfo))

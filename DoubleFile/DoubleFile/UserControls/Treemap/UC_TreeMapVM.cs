@@ -498,7 +498,7 @@ namespace DoubleFile
             TreeNode = treeNode;    // Must follow setting DeepNode above
 
             if (null == TreeNode.Parent)
-                ((RootNodeDatum)TreeNode.NodeDatum).VolumeView = _bTooltipVolumeView;
+                TreeNode.RootNodeDatum.VolumeView = _bTooltipVolumeView;
 
             _bTooltipVolumeView = true;
 

@@ -171,12 +171,11 @@ namespace DoubleFile
                 return null;     // from lambda
 
             return
-                ((RootNodeDatum)Root.NodeDatum).LVitemProjectVM.ListingFile
+                RootNodeDatum.LVitemProjectVM.ListingFile
                 .ReadLines(99643)
                 .Skip(nPrevDir)
                 .Take((nLineNo - nPrevDir - 1))
-                .ToArray()
-                .AsEnumerable();
+                .ToArray();
         }
     }
 }

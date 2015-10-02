@@ -115,10 +115,10 @@ namespace DoubleFile
         internal override object
             GoTo(LocalTreeNode treeNode) => TreeSelect.DoThreadFactory(treeNode, 99853);
 
-        static internal IObservable<Tuple<string, int>>
+        static internal IObservable<Tuple<string, decimal>>
             SelectedFile => _selectedFile;
         static readonly LocalSubject<string> _selectedFile = new LocalSubject<string>();
-        static void SelectedFileOnNext(string value, int nInitiator) => _selectedFile.LocalOnNext(value, 99841, nInitiator);
+        static void SelectedFileOnNext(string value, decimal nInitiator) => _selectedFile.LocalOnNext(value, 99841, nInitiator);
 
         internal const int
             kSelRectAndTooltip = 99983;
@@ -142,7 +142,7 @@ namespace DoubleFile
             }));
 
             _lsDisposable.Add(LV_TreeListChildrenVM.TreeListChildSelected.LocalSubscribe(99695, LV_TreeListChildrenVM_TreeListChildSelected));
-            _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.Observable.LocalSubscribe(99694, LV_FilesVM_SelectedFileChanged));
+            _lsDisposable.Add(LV_FilesVM_Base.SelectedFileChanged.Observable.LocalSubscribe(99694, LV_FilesVM_SelectedFileChanged));
             Folder.Init();
 
             var folderDetailA = LocalTV.TreeSelect_FolderDetail;
@@ -277,11 +277,11 @@ namespace DoubleFile
                 bFilesHere = false;
             }
 
-            SelRectAndTooltip(nodeRet, kSelRectAndTooltip /* UI Initiator */, bFilesHere);
+            SelRectAndTooltip(nodeRet, /* UI Initiator */ kSelRectAndTooltip, bFilesHere);
             return null;
         }
 
-        void LV_TreeListChildrenVM_TreeListChildSelected(Tuple<LocalTreeNode, int> initiatorTuple)
+        void LV_TreeListChildrenVM_TreeListChildSelected(Tuple<LocalTreeNode, decimal> initiatorTuple)
         {
             var treeNodeChild = initiatorTuple.Item1;
 
@@ -298,7 +298,7 @@ namespace DoubleFile
             SelRectAndTooltip(treeNodeChild, initiatorTuple.Item2, bFile: false);
         }
 
-        void LV_FilesVM_SelectedFileChanged(Tuple<LV_FilesVM.SelectedFileChanged, int> initiatorTuple)
+        void LV_FilesVM_SelectedFileChanged(Tuple<LV_FilesVM_Base.SelectedFileChanged, decimal> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
 
@@ -329,7 +329,7 @@ namespace DoubleFile
                 WinTooltip.CloseTooltip();
         }
 
-        void SelRectAndTooltip(LocalTreeNode treeNodeChild, int nInitiator, bool bFile)
+        void SelRectAndTooltip(LocalTreeNode treeNodeChild, decimal nInitiator, bool bFile)
         {
             if (_bTreeSelect ||
                 _bSelRecAndTooltip)

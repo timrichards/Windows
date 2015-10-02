@@ -53,12 +53,12 @@ namespace DoubleFile
             var folderDetail = LocalTV.TreeSelect_FolderDetail;
 
             if (null != folderDetail)
-                TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, 0));
+                TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, /* UI initiator */ 0m));
         }
 
         public void Dispose() => Util.LocalDispose(_lsDisposable);
 
-        void TreeSelect_FolderDetailUpdated(Tuple<TreeSelect.FolderDetailUpdated, int> initiatorTuple)
+        void TreeSelect_FolderDetailUpdated(Tuple<TreeSelect.FolderDetailUpdated, decimal> initiatorTuple)
         {
             if (new[] { _kTreeSelect, LV_TreeListChildrenVM.kChildSelectedOnNext }
                 .Contains(initiatorTuple.Item2))

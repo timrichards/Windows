@@ -14,12 +14,12 @@ namespace DoubleFile
             var fileList = LocalTV.TreeSelect_FileList;
 
             if (null != fileList)
-                TreeSelect_FileListUpdated(Tuple.Create(fileList, /* UI initiator */ 0));
+                TreeSelect_FileListUpdated(Tuple.Create(fileList, /* UI initiator */ 0m));
         }
 
         public void Dispose() => Util.LocalDispose(_lsDisposable);
 
-        void TreeSelect_FileListUpdated(Tuple<TreeSelect.FileListUpdated, int> initiatorTuple)
+        void TreeSelect_FileListUpdated(Tuple<TreeSelect.FileListUpdated, decimal> initiatorTuple)
         {
             var fileList = initiatorTuple.Item1;
 
@@ -35,7 +35,7 @@ namespace DoubleFile
             }
         }
 
-        void TreeSelect_FileListUpdated_(Tuple<TreeSelect.FileListUpdated, int> initiatorTuple)
+        void TreeSelect_FileListUpdated_(Tuple<TreeSelect.FileListUpdated, decimal> initiatorTuple)
         {
             var fileList = initiatorTuple.Item1;
 
@@ -86,7 +86,7 @@ namespace DoubleFile
             Util.UIthread(99813, () => Add(lsItems));
         }
 
-        void UC_Treemap_SelectedFile(Tuple<string, int> initiatorTuple)
+        void UC_Treemap_SelectedFile(Tuple<string, decimal> initiatorTuple)
         {
             Util.Write("B");
 

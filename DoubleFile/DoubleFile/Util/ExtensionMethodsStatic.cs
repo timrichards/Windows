@@ -29,7 +29,7 @@ namespace DoubleFile
         }
 
         static public void
-            LocalOnNext<T>(this LocalSubject<T> subject, T value, int nOnNextAssertLoc, int nInitiator = 0)
+            LocalOnNext<T>(this LocalSubject<T> subject, T value, decimal nOnNextAssertLoc, decimal nInitiator = 0)
         {
             Util.Assert(nOnNextAssertLoc, 0 <= nInitiator);
 
@@ -53,8 +53,8 @@ namespace DoubleFile
             }
         }
 
-        static readonly IDictionary<int, Tuple<DateTime, WeakReference>>
-            _lsSubjects = new ConcurrentDictionary<int, Tuple<DateTime, WeakReference>>();
+        static readonly IDictionary<decimal, Tuple<DateTime, WeakReference>>
+            _lsSubjects = new ConcurrentDictionary<decimal, Tuple<DateTime, WeakReference>>();
     }
 
     static partial class ExtensionMethodsStatic

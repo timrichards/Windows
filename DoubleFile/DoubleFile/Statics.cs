@@ -11,7 +11,7 @@ namespace DoubleFile
 {
     public class Statics
     {
-        static internal IObservable<Tuple<bool, int>>
+        static internal IObservable<Tuple<bool, decimal>>
             EscKey => _escKey;
         static readonly LocalSubject<bool> _escKey = new LocalSubject<bool>();      // bool is a no-op: generic placeholder
         static void EscKeyOnNext() => _escKey.LocalOnNext(false, 99624);
@@ -73,7 +73,7 @@ namespace DoubleFile
 
         FileStream _lockTempIsoDir = null;
 
-        static internal IObservable<Tuple<bool, int>>   // bool is a no-op: generic placeholder
+        static internal IObservable<Tuple<bool, decimal>>   // bool is a no-op: generic placeholder
             DeactivateDidOccur => _deactivateDidOccur;
         static readonly LocalSubject<bool> _deactivateDidOccur = new LocalSubject<bool>();
         static void DeactivateDidOccurOnNext() => _deactivateDidOccur.LocalOnNext(false, 99839);

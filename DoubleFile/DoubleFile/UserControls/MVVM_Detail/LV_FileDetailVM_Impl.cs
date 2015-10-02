@@ -11,7 +11,7 @@ namespace DoubleFile
         {
             Icmd_Copy = new RelayCommand(Copy, () => false == string.IsNullOrWhiteSpace(LocalPath));
             _lsDisposable.Add(UC_DuplicatesVM.UpdateFileDetail.LocalSubscribe(99709, WinDuplicatesVM_UpdateFileDetail));
-            _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.Observable.LocalSubscribe(99708, LV_FilesVM_SelectedFileChanged));
+            _lsDisposable.Add(LV_FilesVM_Base.SelectedFileChanged.Observable.LocalSubscribe(99708, LV_FilesVM_SelectedFileChanged));
 
             _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99707, initiatorTuple =>
             {
@@ -28,21 +28,21 @@ namespace DoubleFile
             var lastSelectedFile = LV_FilesVM.LastSelectedFile;
 
             if (null != lastSelectedFile)
-                LV_FilesVM_SelectedFileChanged(Tuple.Create(lastSelectedFile, 0));
+                LV_FilesVM_SelectedFileChanged(Tuple.Create(lastSelectedFile, /* UI initiator */ 0m));
         }
 
         public void Dispose() => Util.LocalDispose(_lsDisposable);
 
         void Copy() => Clipboard.SetText(LocalPath);
 
-        void LV_FilesVM_SelectedFileChanged(Tuple<LV_FilesVM.SelectedFileChanged, int> initiatorTuple)
+        void LV_FilesVM_SelectedFileChanged(Tuple<LV_FilesVM_Base.SelectedFileChanged, decimal> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
 
             WinDuplicatesVM_UpdateFileDetail(Tuple.Create(Tuple.Create(tuple?.fileLine, tuple?.treeNode), initiatorTuple.Item2));
         }
 
-        void WinDuplicatesVM_UpdateFileDetail(Tuple<Tuple<IReadOnlyList<string>, LocalTreeNode>, int> initiatorTuple)
+        void WinDuplicatesVM_UpdateFileDetail(Tuple<Tuple<IReadOnlyList<string>, LocalTreeNode>, decimal> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
 

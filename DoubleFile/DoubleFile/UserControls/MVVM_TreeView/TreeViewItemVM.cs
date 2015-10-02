@@ -74,7 +74,7 @@ namespace DoubleFile
                 SelectedItem_AllTriggers(0);
             }
         }
-        internal void SelectedItem_Set(bool value, int nInitiator)
+        internal void SelectedItem_Set(bool value, decimal nInitiator)
         {
             if (value == _isSelected)
                 return;
@@ -130,7 +130,7 @@ namespace DoubleFile
             RaisePropertyChanged("IsSelected");
             SelectedItem_AllTriggers(nInitiator);
         }
-        void SelectedItem_AllTriggers(int nInitiator)
+        void SelectedItem_AllTriggers(decimal nInitiator)
         {
             if (_isSelected)
                 _TVVM.SelectedItem = this;

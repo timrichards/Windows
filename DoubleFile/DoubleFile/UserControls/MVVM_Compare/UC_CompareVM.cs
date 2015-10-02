@@ -17,9 +17,9 @@ namespace DoubleFile
 
         public ICommand Icmd_Pick { get; }
 
-        public Visibility ProgressbarVisibility { get; protected set; } = Visibility.Visible;
-        public Visibility NoResultsVisibility { get; protected set; } = Visibility.Visible;
-        public string NoResultsFolder { get; protected set; } = "setting up Compare view";
+        public Visibility ProgressbarVisibility { get; private set; } = Visibility.Visible;
+        public Visibility NoResultsVisibility { get; private set; } = Visibility.Visible;
+        public string NoResultsFolder { get; private set; } = "setting up Compare view";
 
         public LV_FilesVM_Compare LV_Both { get; }
         public LV_FilesVM_Compare LV_First { get; }

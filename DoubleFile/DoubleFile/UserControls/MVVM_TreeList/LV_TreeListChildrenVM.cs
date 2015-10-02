@@ -9,11 +9,11 @@ namespace DoubleFile
         public ICommand Icmd_GoTo { get; }
         internal override object GoTo(LocalTreeNode treeNode) => treeNode.GoToFile(null);
 
-        static internal IObservable<Tuple<LocalTreeNode, int>>
+        static internal IObservable<Tuple<LocalTreeNode, decimal>>
             TreeListChildSelected => _treeListChildSelected;
         static readonly LocalSubject<LocalTreeNode> _treeListChildSelected = new LocalSubject<LocalTreeNode>();
         static void TreeListChildSelectedOnNext(LocalTreeNode value) => _treeListChildSelected.LocalOnNext(value, kChildSelectedOnNext);
-        internal const int kChildSelectedOnNext = 99854;
+        internal const decimal kChildSelectedOnNext = 99854;
 
         internal LV_TreeListChildrenVM()
         {

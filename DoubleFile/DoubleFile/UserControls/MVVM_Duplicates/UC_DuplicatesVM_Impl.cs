@@ -7,15 +7,15 @@ namespace DoubleFile
 {
     partial class UC_DuplicatesVM : IDisposable
     {
-        static internal IObservable<Tuple<Tuple<LVitem_ProjectVM, string, string>, int>>
+        static internal IObservable<Tuple<Tuple<LVitem_ProjectVM, string, string>, decimal>>
             GoToFile => _goToFile;
         static readonly LocalSubject<Tuple<LVitem_ProjectVM, string, string>> _goToFile = new LocalSubject<Tuple<LVitem_ProjectVM, string, string>>();
         static void GoToFileOnNext(Tuple<LVitem_ProjectVM, string, string> value) => _goToFile.LocalOnNext(value, 99848);
 
-        static internal IObservable<Tuple<Tuple<IReadOnlyList<string>, LocalTreeNode>, int>>
+        static internal IObservable<Tuple<Tuple<IReadOnlyList<string>, LocalTreeNode>, decimal>>
             UpdateFileDetail => _updateFileDetail;
         static readonly LocalSubject<Tuple<IReadOnlyList<string>, LocalTreeNode>> _updateFileDetail = new LocalSubject<Tuple<IReadOnlyList<string>, LocalTreeNode>>();
-        static void UpdateFileDetailOnNext(Tuple<IReadOnlyList<string>, LocalTreeNode> value, int nInitiator) => _updateFileDetail.LocalOnNext(value, 99847, nInitiator);
+        static void UpdateFileDetailOnNext(Tuple<IReadOnlyList<string>, LocalTreeNode> value, decimal nInitiator) => _updateFileDetail.LocalOnNext(value, 99847, nInitiator);
 
         internal UC_DuplicatesVM
             Init()
@@ -23,12 +23,12 @@ namespace DoubleFile
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
             Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateViewport(UseNicknames));
             _nicknameUpdater.UpdateViewport(UseNicknames);
-            _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.Observable.LocalSubscribe(99704, LV_FilesVM_SelectedFileChanged));
+            _lsDisposable.Add(LV_FilesVM_Base.SelectedFileChanged.Observable.LocalSubscribe(99704, LV_FilesVM_SelectedFileChanged));
 
-            var lastSelectedFile = LV_FilesVM.LastSelectedFile;
+            var lastSelectedFile = LV_FilesVM_Base.LastSelectedFile;
 
             if (null != lastSelectedFile)
-                LV_FilesVM_SelectedFileChanged(Tuple.Create(lastSelectedFile, 0));
+                LV_FilesVM_SelectedFileChanged(Tuple.Create(lastSelectedFile, /* UI initiator */ 0m));
 
             return this;
         }
@@ -39,7 +39,7 @@ namespace DoubleFile
             _nicknameUpdater.Clear();
         }
 
-        void LV_FilesVM_SelectedFileChanged(Tuple<LV_FilesVM.SelectedFileChanged, int> initiatorTuple)
+        void LV_FilesVM_SelectedFileChanged(Tuple<LV_FilesVM_Base.SelectedFileChanged, decimal> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
 

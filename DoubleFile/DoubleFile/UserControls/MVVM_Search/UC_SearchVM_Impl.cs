@@ -15,7 +15,7 @@ namespace DoubleFile
         internal Func<bool> IsEditBoxNonEmpty = null;
         bool IsSearchEnabled() => IsEditBoxNonEmpty() && (null == _searchType2);
 
-        static internal IObservable<Tuple<Tuple<LVitem_ProjectVM, string, string>, int>>
+        static internal IObservable<Tuple<Tuple<LVitem_ProjectVM, string, string>, decimal>>
             GoToFile => _goToFile;
         static readonly LocalSubject<Tuple<LVitem_ProjectVM, string, string>> _goToFile = new LocalSubject<Tuple<LVitem_ProjectVM, string, string>>();
         static void GoToFileOnNext(Tuple<LVitem_ProjectVM, string, string> value) => _goToFile.LocalOnNext(value, 99982);

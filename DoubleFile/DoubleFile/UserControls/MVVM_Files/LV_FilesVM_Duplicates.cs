@@ -8,9 +8,9 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    partial class LV_FilesVM : IDisposable
+    partial class LV_FilesVM
     {
-        void ShowDuplicates_SelectedFileChangedOnNext(int nInitiator)
+        protected override void ShowDuplicates_SelectedFileChangedOnNext(decimal nInitiator)
         {
             Util.Write("I");
             _cts.Cancel();

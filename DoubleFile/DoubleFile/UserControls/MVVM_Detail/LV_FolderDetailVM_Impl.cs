@@ -13,10 +13,10 @@ namespace DoubleFile
             var folderDetail = LocalTV.TreeSelect_FolderDetail;
 
             if (null != folderDetail)
-                TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, 0));
+                TreeSelect_FolderDetailUpdated(Tuple.Create(folderDetail, /* UI initiator */ 0m));
         }
 
-        void TreeSelect_FolderDetailUpdated(Tuple<TreeSelect.FolderDetailUpdated, int> initiatorTuple)
+        void TreeSelect_FolderDetailUpdated(Tuple<TreeSelect.FolderDetailUpdated, decimal> initiatorTuple)
         {
             var folderDetail = initiatorTuple.Item1;
 

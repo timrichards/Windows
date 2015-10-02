@@ -133,15 +133,17 @@ namespace DoubleFile
         }
 
         void
-            WinDuplicatesVM_GoToFile(Tuple<Tuple<LVitem_ProjectVM, string, string>, int> initiatorTuple)
+            WinDuplicatesVM_GoToFile(Tuple<Tuple<LVitem_ProjectVM, string, string>, decimal> initiatorTuple)
         {
-            Util.Write("C"); GoToFile(initiatorTuple.Item1);
+            Util.Write("C");
+            GoToFile(initiatorTuple.Item1);
         }
 
         void
-            WinSearchVM_GoToFile(Tuple<Tuple<LVitem_ProjectVM, string, string>, int> initiatorTuple)
+            WinSearchVM_GoToFile(Tuple<Tuple<LVitem_ProjectVM, string, string>, decimal> initiatorTuple)
         {
-            Util.Write("D"); GoToFile(initiatorTuple.Item1);
+            Util.Write("D");
+            GoToFile(initiatorTuple.Item1);
         }
 
         void

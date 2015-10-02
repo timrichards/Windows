@@ -9,7 +9,7 @@ namespace DoubleFile
 {
     partial class LV_ProjectVM
     {
-        static internal IObservable<Tuple<bool, int>>   // bool is a no-op: generic placeholder
+        static internal IObservable<Tuple<bool, decimal>>   // bool is a no-op: generic placeholder
             Modified => _modified;
         static readonly LocalSubject<bool> _modified = new LocalSubject<bool>();
         internal void

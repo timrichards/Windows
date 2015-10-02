@@ -27,11 +27,11 @@ namespace DoubleFile
                 treeNode = treeNode_;
             }
 
-            static internal readonly IObservable<Tuple<SelectedFileChanged, int>>
+            static internal readonly IObservable<Tuple<SelectedFileChanged, decimal>>
                 Observable = new LocalSubject<SelectedFileChanged>();
         }
         static protected void
-            SelectedFileChangedOnNext(SelectedFileChanged value, int nInitiator)
+            SelectedFileChangedOnNext(SelectedFileChanged value, decimal nInitiator)
         {
             ((LocalSubject<SelectedFileChanged>)SelectedFileChanged.Observable).LocalOnNext(value, 99852, nInitiator);
             LastSelectedFile = value;
@@ -58,7 +58,7 @@ namespace DoubleFile
                     SelectedItem_AllTriggers(0);
             }
         }
-        internal void SelectedItem_Set(LVitem_FilesVM value, int nInitiator)
+        internal void SelectedItem_Set(LVitem_FilesVM value, decimal nInitiator)
         {
             if (value == _selectedItem)
                 return;
@@ -67,7 +67,7 @@ namespace DoubleFile
             RaisePropertyChanged("SelectedItem");
             SelectedItem_AllTriggers(nInitiator);
         }
-        void SelectedItem_AllTriggers(int nInitiator)
+        void SelectedItem_AllTriggers(decimal nInitiator)
         {
             if (null != _selectedItem)
                 ShowDuplicates_SelectedFileChangedOnNext(nInitiator);

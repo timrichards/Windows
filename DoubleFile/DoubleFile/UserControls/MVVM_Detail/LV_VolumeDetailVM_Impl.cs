@@ -13,10 +13,10 @@ namespace DoubleFile
             var volumeDetail = LocalTV.TreeSelect_VolumeDetail;
 
             if (null != volumeDetail)
-                VolumeDetailUpdated(Tuple.Create(volumeDetail, 0));
+                VolumeDetailUpdated(Tuple.Create(volumeDetail, /* UI initiator */ 0m));
         }
 
-        void VolumeDetailUpdated(Tuple<TreeSelect.VolumeDetailUpdated, int> initiatorTuple)
+        void VolumeDetailUpdated(Tuple<TreeSelect.VolumeDetailUpdated, decimal> initiatorTuple)
         {
             var volumeDetail = initiatorTuple.Item1;
 

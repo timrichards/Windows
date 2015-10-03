@@ -32,8 +32,6 @@ namespace DoubleFile
             LV_First = new LV_FilesVM_Compare();
             LV_Second = new LV_FilesVM_Compare();
 
-            LV_Both.Add(new LVitem_FilesVM { FileLine = new[] { "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", } });
-
             Util.ThreadMake(() =>
             {
                 LocalTV.AllFileHashes_AddRef();

@@ -191,7 +191,7 @@ namespace DoubleFile
                 using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                     .LocalSubscribe(99721, x => StatusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator)))
                 {
-                    var lsFileHandles = new ConcurrentBag<Tuple<string, ulong, SafeFileHandle, string>> { };
+                    var lsFileHandles = new ConcurrentBag<Tuple<string, ulong, SafeFileHandle, string>>();
                     var cts = new CancellationTokenSource();
 
                     Util.ThreadMake(() =>

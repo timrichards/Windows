@@ -11,7 +11,9 @@ namespace DoubleFile
         static internal bool
             Fail(decimal nLocation, string strError_in, bool bTraceOnly)
         {
-            var owner = (LocalModernWindowBase)Application.Current?.MainWindow;
+            LocalModernWindowBase owner = null;
+
+            Util.UIthread(99607, () => owner = (LocalModernWindowBase)Application.Current?.MainWindow);
 
             if ((_nLastAssertLoc == nLocation) &&
                 (1 > (DateTime.Now - _dtLastAssert).Seconds))

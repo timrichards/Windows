@@ -63,7 +63,8 @@ namespace DoubleFile
 
                     Add(new LVitem_FileDuplicatesVM(new[] { asFileLine.Item2[0] })
                     {
-                        FileLine = asFileLine.Item2
+                        FileLine =
+                            asFileLine.Item2
                             .Skip(1)                    // makes this an LV line: knColLengthLV
                             .ToArray(),
 

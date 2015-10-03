@@ -159,7 +159,7 @@ namespace DoubleFile
             return this;
         }
 
-        internal IEnumerable<string> GetFileList()
+        internal IEnumerable<string> GetFileList(bool bReadAllLines = false)
         {
             var nPrevDir = (int)NodeDatum.PrevLineNo;
             var nLineNo = (int)NodeDatum.LineNo;
@@ -170,12 +170,29 @@ namespace DoubleFile
             if (1 >= (nLineNo - nPrevDir))  // dir has no files
                 return null;     // from lambda
 
+            if (bReadAllLines)
+            {
+                if (null == _allFileLines)
+                {
+                    _allFileLines =
+                        RootNodeDatum.LVitemProjectVM.ListingFile
+                        .ReadLines(99643)
+                        .ToArray();
+                }
+            }
+
             return
-                RootNodeDatum.LVitemProjectVM.ListingFile
-                .ReadLines(99643)
+                ((null != _allFileLines)
+                ? _allFileLines
+                : RootNodeDatum.LVitemProjectVM.ListingFile
+                .ReadLines(99643))
                 .Skip(nPrevDir)
                 .Take((nLineNo - nPrevDir - 1))
                 .ToArray();
         }
+        internal static void
+            GetFileList_Done() => _allFileLines = null;
+        static IReadOnlyList<string>
+            _allFileLines = null;
     }
 }

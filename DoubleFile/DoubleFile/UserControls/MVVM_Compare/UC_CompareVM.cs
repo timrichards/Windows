@@ -125,9 +125,15 @@ namespace DoubleFile
                 LV_Both.ClearItems();
                 LV_First.ClearItems();
                 LV_Second.ClearItems();
-                LV_Both.Add(lsIntersect.Select(asLine => new LVitem_FilesVM { FileLine = asLine }));
-                LV_First.Add(lsDiff1.Select(asLine => new LVitem_FilesVM { FileLine = asLine }));
-                LV_Second.Add(lsDiff2.Select(asLine => new LVitem_FilesVM { FileLine = asLine }));
+
+                if (0 < lsIntersect.Count)
+                    LV_Both.Add(lsIntersect.Select(asLine => new LVitem_FilesVM { FileLine = asLine }));
+
+                if (0 < lsDiff1.Count)
+                    LV_First.Add(lsDiff1.Select(asLine => new LVitem_FilesVM { FileLine = asLine }));
+
+                if (0 < lsDiff2.Count)
+                    LV_Second.Add(lsDiff2.Select(asLine => new LVitem_FilesVM { FileLine = asLine }));
             });
 
             NoResultsVisibility = Visibility.Collapsed;

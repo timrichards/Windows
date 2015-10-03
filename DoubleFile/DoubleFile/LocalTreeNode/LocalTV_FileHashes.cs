@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -15,7 +16,7 @@ namespace DoubleFile
 
             var stopwatch = Stopwatch.StartNew();
 
-            _dictClones = new Dictionary<int, IReadOnlyList<int>>();
+            _dictClones = new ConcurrentDictionary<int, IReadOnlyList<int>>();
             _cts = cts ?? new CancellationTokenSource();
             Setup_AllFileHashes_Scratch(RootNodes);
             _dictClones = null;
@@ -53,17 +54,9 @@ namespace DoubleFile
                 if (null != treeNode.Nodes)
                     lsAllFileHashes_childNodes.AddRange(Setup_AllFileHashes_Scratch(treeNode.Nodes, bStart: false));    // recurse
 
-                IReadOnlyList<int> lsClone = null;
-
-                if (_dictClones.TryGetValue(treeNode.NodeDatum.Hash_AllFiles, out lsClone))
-                {
-                    treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch = lsClone;
-                }
-                else
-                {
-                    treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch = lsAllFileHashes_childNodes.OrderBy(n => n).Distinct().ToList();
-                    _dictClones.Add(treeNode.NodeDatum.Hash_AllFiles, treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch);
-                }
+                treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch =
+                    _dictClones.GetOrAdd(treeNode.NodeDatum.Hash_AllFiles, x =>
+                    lsAllFileHashes_childNodes.OrderBy(n => n).Distinct().ToList());
 
                 if (false == bStart)
                 {
@@ -88,7 +81,7 @@ namespace DoubleFile
             }
         }
 
-        static Dictionary<int, IReadOnlyList<int>>
+        static ConcurrentDictionary<int, IReadOnlyList<int>>
             _dictClones = null;
         static CancellationTokenSource
             _cts = null;

@@ -113,12 +113,12 @@ namespace DoubleFile
                 return this;
             }
 
-            Results += lsIntersect_.Count + " files in common. " + lsDiff1_.Count + " and " + lsDiff2_.Count + " files are unique in each.";
-            RaisePropertyChanged("Results");
-
             var lsIntersect = GetFileLines(_folder1, lsIntersect_).OrderBy(asLine => asLine[0]).ToList();
             var lsDiff1 = GetFileLines(_folder1, lsDiff1_).OrderBy(asLine => asLine[0]).ToList();
             var lsDiff2 = GetFileLines(folder2, lsDiff2_).OrderBy(asLine => asLine[0]).ToList();
+
+            Results += lsIntersect_.Count + " files in common. " + lsDiff1_.Count + " and " + lsDiff2_.Count + " files are unique in each.";
+            RaisePropertyChanged("Results");
 
             Util.UIthread(99606, () =>
             {

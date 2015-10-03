@@ -1,4 +1,6 @@
-﻿- compare doesn't always dropref
+﻿- does file hashes quit when opening new window?
+- no results has appeared behind Nearest list
+- compare doesn't always dropref
 - Clones col can sort: turn that off until sorting removes size labels and 3-mode sorting is enabled
 - treemap folder color is the same as the one that represents files: it can drill down while the files one selects the outer folder
 - go about reducing code metrics: class coupling; cyclometric complexity.

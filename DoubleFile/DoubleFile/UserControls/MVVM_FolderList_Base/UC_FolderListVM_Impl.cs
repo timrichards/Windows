@@ -49,14 +49,6 @@ namespace DoubleFile
             if (null == searchFolder)
                 return;
 
-            _prevSearchFolder = searchFolder;
-            ClearItems();
-            SetFoldersHeader();
-            NoResultsVisibility = Visibility.Collapsed;
-            RaisePropertyChanged("NoResultsVisibility");
-            ProgressbarVisibility = Visibility.Visible;
-            RaisePropertyChanged("ProgressbarVisibility");
-
             Util.ThreadMake(() =>
             {
                 _cts.Cancel();
@@ -64,14 +56,21 @@ namespace DoubleFile
                 while (_bSearching)
                     Util.Block(20);
 
+                _bSearching = true;
+                _cts = new CancellationTokenSource();
+                _prevSearchFolder = searchFolder;
+                ClearItems();
+                SetFoldersHeader();
+                NoResultsVisibility = Visibility.Collapsed;
+                RaisePropertyChanged("NoResultsVisibility");
+                ProgressbarVisibility = Visibility.Visible;
+                RaisePropertyChanged("ProgressbarVisibility");
+
                 if (_bDisposed)
                     return;     // from lambda
 
                 if (null != searchFolder.Nodes)
                 {
-                    _cts = new CancellationTokenSource();
-                    _bSearching = true;
-
                     var ieLVitems = FillList(searchFolder);
 
                     if (ieLVitems?.Any() ?? false)
@@ -85,9 +84,9 @@ namespace DoubleFile
                     NoResultsFolder = searchFolder.PathShort;
                     RaisePropertyChanged("NoResultsFolder");
                     NoResultsVisibility = Visibility.Visible;
-                    RaisePropertyChanged("NoResultsVisibility");
                 }
 
+                RaisePropertyChanged("NoResultsVisibility");
                 HideProgressbar();
                 _bSearching = false;
             });

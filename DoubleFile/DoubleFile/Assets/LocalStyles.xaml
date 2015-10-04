@@ -96,4 +96,8 @@
     <Style x:Key="LocalTextBlock" TargetType="TextBlock" BasedOn="{StaticResource Heading2}">
         <Setter Property="FontWeight" Value="Normal" />
     </Style>
+
+    <Style TargetType="Expander">
+        <Setter Property="Foreground" Value="{StaticResource WindowText}"/>
+    </Style>
 </ResourceDictionary>

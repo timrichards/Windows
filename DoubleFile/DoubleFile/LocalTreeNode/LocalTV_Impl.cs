@@ -234,8 +234,8 @@ namespace DoubleFile
             return true;
         }
 
-        const string _ksDupeFileDictKey = "Creating duplicate file dictionary";
-        const string _ksFolderTreeKey = "Creating directory tree browser";
+        const string _ksDupeFileDictKey = "Matching duplicate files";
+        const string _ksFolderTreeKey = "Setting up the directory tree";
 
         Tree
             _tree = null;

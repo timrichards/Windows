@@ -196,8 +196,8 @@
     <Compile Include="LocalTreeNode\LVitemProject_Explorer.cs" />
     <Compile Include="Statics.cs" />
     <Compile Include="UserControls\BindingProxy.cs" />
-    <Compile Include="UserControls\MVVM_Compare\LV_FilesVM_Compare.cs" />
-    <Compile Include="UserControls\MVVM_Compare\UC_CompareVM.cs" />
+    <Compile Include="UserControls\MVVM_Files_Base\LV_FilesVM_Compare.cs" />
+    <Compile Include="UserControls\MVVM_Files_Base\UC_CompareVM.cs" />
     <Compile Include="UserControls\MVVM_FolderList_Base\UC_FolderListVM_Impl.cs" />
     <Compile Include="UserControls\MVVM_FolderList_Base\UC_ClonesHereVM.cs" />
     <Compile Include="UserControls\MVVM_FolderList_Base\UC_SolitaryHereVM.cs" />
@@ -267,7 +267,7 @@
     <Compile Include="UserControls\LVitemProject_Updater.cs" />
     <Compile Include="UserControls\MVVM_Clones\UC_ClonesVM_Impl.cs" />
     <Compile Include="UserControls\MVVM_Clones\UC_ClonesVM.cs" />
-    <Compile Include="UserControls\MVVM_Files\LV_FilesVM_Duplicates.cs" />
+    <Compile Include="UserControls\MVVM_Files_Base\LV_FilesVM_Duplicates.cs" />
     <Compile Include="UserControls\MVVM_FolderList_Base\LVitem_FolderListVM.cs" />
     <Compile Include="UserControls\MVVM_FolderList_Base\UC_FolderListVM_Base.cs" />
     <Compile Include="UserControls\MVVM_FolderList_Base\UC_NearestVM.cs" />
@@ -343,9 +343,9 @@
     <Compile Include="Util\DupeFileDictionary\DuplicateStruct.cs" />
     <Compile Include="Util\FileKeyTuple.cs" />
     <Compile Include="Util\HashTuple.cs" />
-    <Compile Include="UserControls\MVVM_Files\LVitem_FilesVM.cs" />
-    <Compile Include="UserControls\LV_FilesVM_Base.cs" />
-    <Compile Include="UserControls\MVVM_Files\LV_FilesVM.cs" />
+    <Compile Include="UserControls\MVVM_Files_Base\LVitem_FilesVM.cs" />
+    <Compile Include="UserControls\MVVM_Files_Base\LV_FilesVM_Base.cs" />
+    <Compile Include="UserControls\MVVM_Files_Base\LV_FilesVM.cs" />
     <Compile Include="LocalTreeNode\LocalTreeNode.cs" />
     <Compile Include="UserControls\MVVM_TreeView\TreeViewItemVM.cs" />
     <Compile Include="LocalTreeNode\LocalTV.cs" />

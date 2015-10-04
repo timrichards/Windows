@@ -67,6 +67,10 @@ namespace DoubleFile
         UC_CompareVM
             Update_(LocalTreeNode folder2)
         {
+            LV_Both.ClearItems();
+            LV_First.ClearItems();
+            LV_Second.ClearItems();
+
             if (null == folder2)
                 folder2 = LocalTV.TreeSelect_FolderDetail.treeNode;
 
@@ -99,8 +103,8 @@ namespace DoubleFile
             var lsFolder1 = _folder1.NodeDatum.Hashes_FilesHere.Union(_folder1.NodeDatum.Hashes_SubnodeFiles_Scratch).Distinct().ToList();
             var lsFolder2 = folder2.NodeDatum.Hashes_FilesHere.Union(folder2.NodeDatum.Hashes_SubnodeFiles_Scratch).Distinct().ToList();
             var lsIntersect_ = lsFolder1.Intersect(lsFolder2).Distinct().ToList();
-            var lsDiff1_ = lsFolder1.Except(lsIntersect_).ToList();
-            var lsDiff2_ = lsFolder2.Except(lsIntersect_).ToList();
+            var lsDiff1_ = lsFolder1.Except(lsIntersect_).Take(1 << 7).ToList();
+            var lsDiff2_ = lsFolder2.Except(lsIntersect_).Take(1 << 7).ToList();
 
             lsFolder1 = null;
             lsFolder2 = null;
@@ -122,10 +126,6 @@ namespace DoubleFile
 
             Util.UIthread(99606, () =>
             {
-                LV_Both.ClearItems();
-                LV_First.ClearItems();
-                LV_Second.ClearItems();
-
                 if (0 < lsIntersect.Count)
                     LV_Both.Add(lsIntersect.Select(asLine => new LVitem_FilesVM { FileLine = asLine }));
 
@@ -142,48 +142,18 @@ namespace DoubleFile
         }
 
         IEnumerable<IReadOnlyList<string>>
-            GetFileLines(LocalTreeNode treeNode, List<int> lsHashes)
+            GetFileLines(LocalTreeNode treeNode, IEnumerable<int> ieHashes)
         {
-            var retVal = GetFileLines_(treeNode, lsHashes);
+            var hashSet = new HashSet<int>(ieHashes);
 
-            LocalTreeNode.GetFileList_Done();
-            Util.Assert(99608, 0 == lsHashes.Count);
-            return retVal;
-        }
+            var lsHashesGrouped =
+                GetHashesHere(treeNode, hashSet)
+                .OrderBy(tuple => tuple.Item1.NodeDatum.LineNo)
+                .ToList();
 
-        IEnumerable<IReadOnlyList<string>>
-            GetFileLines_(LocalTreeNode treeNode, List<int> lsHashes)
-        {
-            IEnumerable<IReadOnlyList<string>> ieFiles =  new string[][] { };
+            IEnumerable<IReadOnlyList<string>> ieFiles = new string[][] { };
 
-            if (0 == lsHashes.Count)
-                return ieFiles;
-
-            if (null != treeNode.Nodes)
-            {
-                foreach (var subNode in treeNode.Nodes)
-                {
-                    ieFiles = ieFiles.Concat(GetFileLines_(subNode, lsHashes));
-
-                    if (0 == lsHashes.Count)
-                        return ieFiles;
-                }
-            }
-
-            var lsHashesHere = new List<int> { };
-
-            foreach (var nHash in treeNode.NodeDatum.Hashes_FilesHere)
-            {
-                var nIx = lsHashes.IndexOf(nHash);
-
-                if (0 > nIx)
-                    continue;
-
-                lsHashesHere.Add(nHash);
-                lsHashes.RemoveAt(nIx);
-            }
-
-            if (0 == lsHashesHere.Count)
+            if (0 == lsHashesGrouped.Count)
                 return ieFiles;
 
             var nHashColumn =
@@ -191,14 +161,61 @@ namespace DoubleFile
                 ? 11
                 : 10;
 
-            return
-                ieFiles.Concat(
-                treeNode.GetFileList(bReadAllLines: true)
-                .Select(strLine => strLine.Split('\t'))                                 // makes this an LV line: knColLengthLV -------v
-                .Where(asLine => nHashColumn < asLine.Length)
-                .Select(asLine => new { a = HashTuple.HashcodeFromString(asLine[nHashColumn]), b = (IReadOnlyList<string>) asLine.Skip(3).ToArray() })
-                .Where(sel => lsHashesHere.Contains(sel.a))
-                .Select(sel => sel.b));
+            foreach (var tuple in lsHashesGrouped)
+            {
+                ieFiles =
+                    ieFiles.Concat(
+                    tuple.Item1.GetFileList(bReadAllLines: true)
+                    .Select(strLine => strLine.Split('\t'))
+                    .Where(asLine => nHashColumn < asLine.Length)                          // makes this an LV line: knColLengthLV -------v
+                    .Select(asLine => new { a = HashTuple.HashcodeFromString(asLine[nHashColumn]), b = (IReadOnlyList<string>)asLine.Skip(3).ToArray() })
+                    .Where(sel => tuple.Item2.Contains(sel.a))
+                    .Select(sel => sel.b));
+            }
+
+            LocalTreeNode.GetFileList_Done();
+            Util.Assert(99608, 0 == hashSet.Count);
+            return ieFiles;
+        }
+
+        IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>>
+            GetHashesHere(LocalTreeNode treeNode, HashSet<int> lsHashes)
+        {
+            if (0 == lsHashes.Count)
+                return new Tuple<LocalTreeNode, IReadOnlyList<int>>[] { };
+
+            var lsHashesHere = new List<int> { };
+
+            foreach (var nHash in treeNode.NodeDatum.Hashes_FilesHere)
+            {
+                if (false == lsHashes.Contains(nHash))
+                    continue;
+
+                lsHashesHere.Add(nHash);
+                lsHashes.Remove(nHash);
+            }
+
+            IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>>
+                ieFiles =
+                (0 < lsHashesHere.Count)
+                ? new[] { Tuple.Create(treeNode, (IReadOnlyList<int>)lsHashesHere) }
+                : new Tuple<LocalTreeNode, IReadOnlyList<int>>[] { };
+
+            if ((0 == lsHashes.Count) ||
+                (null == treeNode.Nodes))
+            {
+                return ieFiles;
+            }
+
+            foreach (var subNode in treeNode.Nodes)
+            {
+                ieFiles = ieFiles.Concat(GetHashesHere(subNode, lsHashes));
+
+                if (0 == lsHashes.Count)
+                    return ieFiles;
+            }
+
+            return ieFiles;
         }
 
         LocalTreeNode

@@ -9,17 +9,15 @@
             <Button Command="{Binding Icmd_Pick}" Content="Pick"/>
             <TextBlock Text="{Binding Folder2}"/>
             <TextBlock Text="{Binding Results}"/>
-            <TabControl Background="Transparent">
-                <TabItem Header="Files that are in both">
-                    <local:UC_Files DataContext="{Binding LV_Both}"/>
-                </TabItem>
-                <TabItem Header="Files that are in the first directory tree">
-                    <local:UC_Files DataContext="{Binding LV_First}"/>
-                </TabItem>
-                <TabItem Header="Files that are in the second directory tree">
-                    <local:UC_Files DataContext="{Binding LV_Second}"/>
-                </TabItem>
-            </TabControl>
+            <Expander Header="Files that are in both">
+                <local:UC_Files DataContext="{Binding LV_Both}"/>
+            </Expander>
+            <Expander Header="Files that are in the first directory tree">
+                <local:UC_Files DataContext="{Binding LV_First}"/>
+            </Expander>
+            <Expander Header="Files that are in the second directory tree">
+                <local:UC_Files DataContext="{Binding LV_Second}"/>
+            </Expander>
         </StackPanel>
         <Grid Height="50" Visibility="{Binding ProgressbarVisibility}" VerticalAlignment="Center" HorizontalAlignment="Stretch">
             <ProgressBar IsIndeterminate="True" VerticalAlignment="Bottom"/>

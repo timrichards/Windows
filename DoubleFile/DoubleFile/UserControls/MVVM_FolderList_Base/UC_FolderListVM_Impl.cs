@@ -84,9 +84,9 @@ namespace DoubleFile
                     NoResultsFolder = searchFolder.PathShort;
                     RaisePropertyChanged("NoResultsFolder");
                     NoResultsVisibility = Visibility.Visible;
+                    RaisePropertyChanged("NoResultsVisibility");
                 }
 
-                RaisePropertyChanged("NoResultsVisibility");
                 HideProgressbar();
                 _bSearching = false;
             });

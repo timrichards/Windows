@@ -12,7 +12,12 @@ namespace DoubleFile
             AllFileHashes_AddRef(CancellationTokenSource cts = null)
         {
             if (0 < _nAllFileHashes_refCount++)
+            {
+                while (null != _cts)    // hold the caller while building so as not to signal built
+                    Util.Block(50);
+
                 return;
+            }
 
             var stopwatch = Stopwatch.StartNew();
 

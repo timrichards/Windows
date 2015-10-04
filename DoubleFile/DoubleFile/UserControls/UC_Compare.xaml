@@ -13,10 +13,10 @@
                 <TabItem Header="Files that are in both">
                     <local:UC_Files DataContext="{Binding LV_Both}"/>
                 </TabItem>
-                <TabItem Header="Files that are in the first folder tree">
+                <TabItem Header="Files that are in the first directory tree">
                     <local:UC_Files DataContext="{Binding LV_First}"/>
                 </TabItem>
-                <TabItem Header="Files that are in the second folder tree">
+                <TabItem Header="Files that are in the second directory tree">
                     <local:UC_Files DataContext="{Binding LV_Second}"/>
                 </TabItem>
             </TabControl>

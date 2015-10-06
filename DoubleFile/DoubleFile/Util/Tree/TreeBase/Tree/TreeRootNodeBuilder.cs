@@ -253,12 +253,15 @@ namespace DoubleFile
                         {
                             var hashcode = HashTuple.HashcodeFromString(asLine[nHashColumn]);
 
-                            nAllFilesHash += hashcode;
+                            nAllFilesHash += (hashcode * 37);
                             lsFilesHereHashes.Add(hashcode);
                         }
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {
+                        //nAllFilesHash += lsFilesHereHashes.Count;
+                        //nAllFilesHash *= 37;
+
                         rootNode.AddToTree(
                             asLine[2],
                             (uint)("" + asLine[1]).ToInt(),

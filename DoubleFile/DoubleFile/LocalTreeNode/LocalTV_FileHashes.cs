@@ -21,13 +21,19 @@ namespace DoubleFile
 
             var stopwatch = Stopwatch.StartNew();
 
-            _dictClones = new ConcurrentDictionary<int, IReadOnlyList<int>>();
             _cts = cts ?? new CancellationTokenSource();
             Setup_AllFileHashes_Scratch(RootNodes);
-            _dictClones = null;
-            _cts = null;
             stopwatch.Stop();
             Util.WriteLine("Setup_AllFileHashes_Scratch " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
+#if (false)
+            stopwatch.Reset();
+            _dictClones = new ConcurrentDictionary<int, IReadOnlyList<int>>();
+            Check_AllFileHashes_Scratch(RootNodes);
+            _dictClones = null;
+            stopwatch.Stop();
+            Util.WriteLine("Check_AllFileHashes_Scratch " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
+#endif
+            _cts = null;
         }
 
         internal static void
@@ -44,9 +50,6 @@ namespace DoubleFile
         static IReadOnlyList<int>
             Setup_AllFileHashes_Scratch(IReadOnlyList<LocalTreeNode> nodes, bool bStart = true)
         {
-            if (null == nodes)
-                return new int[0];
-
             var lsAllFilesHashes = new List<int> { };
 
             foreach (var treeNode in nodes)
@@ -54,24 +57,89 @@ namespace DoubleFile
                 if (_cts.IsCancellationRequested)
                     return new int[0];
 
-                var lsAllFileHashes_childNodes = new List<int> { };
+                if (false == bStart)
+                    lsAllFilesHashes.AddRange(treeNode.NodeDatum.Hashes_FilesHere);
 
-                if (null != treeNode.Nodes)
-                    lsAllFileHashes_childNodes.AddRange(Setup_AllFileHashes_Scratch(treeNode.Nodes, bStart: false));    // recurse
+                if (0 == (treeNode.Nodes?.Count ?? 0))
+                {
+                    treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch = new int[0];
+                    continue;
+                }
 
                 treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch =
-                    _dictClones.GetOrAdd(treeNode.NodeDatum.Hash_AllFiles, x =>
-                    lsAllFileHashes_childNodes.OrderBy(n => n).Distinct().ToList());
+                    Setup_AllFileHashes_Scratch(treeNode.Nodes, bStart: false)              // recurse
+                    .OrderBy(n => n)
+                    .Distinct()
+                    .ToList();
 
                 if (false == bStart)
-                {
-                    lsAllFilesHashes.AddRange(treeNode.NodeDatum.Hashes_FilesHere);
-                    lsAllFilesHashes.AddRange(lsAllFileHashes_childNodes);
-                }
+                    lsAllFilesHashes.AddRange(treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch);
             }
 
             return lsAllFilesHashes;
         }
+
+        //static IReadOnlyList<int>
+        //    Setup_AllFileHashes_Scratch(IReadOnlyList<LocalTreeNode> nodes, bool bStart = true)
+        //{
+        //    var lsAllFilesHashes = new List<int> { };
+
+        //    foreach (var treeNode in nodes)
+        //    {
+        //        if (_cts.IsCancellationRequested)
+        //            return new int[0];
+
+        //        if (false == bStart)
+        //            lsAllFilesHashes.AddRange(treeNode.NodeDatum.Hashes_FilesHere);
+
+        //        if (0 == (treeNode.Nodes?.Count ?? 0))
+        //        {
+        //            treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch = new int[0];
+        //            continue;
+        //        }
+
+        //            Setup_AllFileHashes_Scratch(treeNode.Nodes, bStart: false)              // recurse
+        //            .OrderBy(n => n)
+        //            .Distinct()
+        //            .ToList();
+
+        //        if (false == bStart)
+        //            lsAllFilesHashes.AddRange(treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch);
+        //    }
+
+        //    return lsAllFilesHashes;
+        //}
+
+        //static IReadOnlyList<int>
+        //    Check_AllFileHashes_Scratch(IReadOnlyList<LocalTreeNode> nodes, bool bStart = true)
+        //{
+        //    if (null == nodes)
+        //        return new int[0];
+
+        //    var lsAllFilesHashes = new List<int> { };
+
+        //    foreach (var treeNode in nodes)
+        //    {
+        //        if (_cts.IsCancellationRequested)
+        //            return new int[0];
+
+        //        var lsAllFileHashes_childNodes = new List<int> { };
+
+        //        if (null != treeNode.Nodes)
+        //            lsAllFileHashes_childNodes.AddRange(Check_AllFileHashes_Scratch(treeNode.Nodes, bStart: false));    // recurse
+
+        //        var lsCheck = _dictClones.GetOrAdd(treeNode.NodeDatum.Hash_AllFiles, x =>
+        //            lsAllFileHashes_childNodes.OrderBy(n => n).Distinct().ToList());
+
+        //        if (false == bStart)
+        //        {
+        //            lsAllFilesHashes.AddRange(treeNode.NodeDatum.Hashes_FilesHere);
+        //            lsAllFilesHashes.AddRange(lsAllFileHashes_childNodes);
+        //        }
+        //    }
+
+        //    return lsAllFilesHashes;
+        //}
 
         static void
             Cleanup_AllFileHashes_Scratch(IReadOnlyList<LocalTreeNode> nodes)
@@ -86,8 +154,8 @@ namespace DoubleFile
             }
         }
 
-        static ConcurrentDictionary<int, IReadOnlyList<int>>
-            _dictClones = null;
+        //static ConcurrentDictionary<int, IReadOnlyList<int>>
+        //    _dictClones = null;
         static CancellationTokenSource
             _cts = null;
         static int

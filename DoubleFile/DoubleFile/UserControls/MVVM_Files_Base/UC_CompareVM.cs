@@ -180,7 +180,7 @@ namespace DoubleFile
         }
 
         IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>>
-            GetHashesHere(LocalTreeNode treeNode, ref HashSet<int> searchSet, bool bExpectNone = false)
+            GetHashesHere(LocalTreeNode treeNode, ref HashSet<int> searchSet, List<int> lsExpectNone = null)
         {
             if (false == searchSet.Any())
                 return new Tuple<LocalTreeNode, IReadOnlyList<int>>[] { };
@@ -188,14 +188,10 @@ namespace DoubleFile
             var foundSet = new HashSet<int>(searchSet.Intersect(treeNode.NodeDatum.Hashes_FilesHere));
             var newSearchSet = searchSet.Except(foundSet);
 #if (DEBUG)
-            if (bExpectNone)
-            {
-                var shouldbeNone = searchSet.Except(newSearchSet);
-
-                Util.Assert(0, false == shouldbeNone.Any());
-            }
+            if (null != lsExpectNone)
+                lsExpectNone.AddRange(searchSet.Except(newSearchSet));
 #endif
-            searchSet = new HashSet<int>();
+            searchSet = new HashSet<int>(newSearchSet);
 
             IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>>
                 ieFiles =
@@ -210,12 +206,15 @@ namespace DoubleFile
             }
 #if (DEBUG)
             if (false == searchSet.Intersect(treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch).Any())
-                bExpectNone = true;
+                lsExpectNone = new List<int> { };
 #endif
             foreach (var subNode in treeNode.Nodes)
             {
-                ieFiles = ieFiles.Concat(GetHashesHere(subNode, ref searchSet, bExpectNone));
-
+                ieFiles = ieFiles.Concat(GetHashesHere(subNode, ref searchSet, lsExpectNone));
+#if (DEBUG)
+                if (0 < lsExpectNone?.Count)
+                    Util.Assert(99604, false);
+#endif
                 if (false == searchSet.Any())
                     return ieFiles;
             }

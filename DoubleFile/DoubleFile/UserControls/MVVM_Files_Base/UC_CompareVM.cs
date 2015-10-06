@@ -144,12 +144,14 @@ namespace DoubleFile
         IEnumerable<IReadOnlyList<string>>
             GetFileLines(LocalTreeNode treeNode, IEnumerable<int> ieHashes)
         {
-            var hashSet = new HashSet<int>(ieHashes);
+            var searchSet = new HashSet<int>(ieHashes);
 
             var lsHashesGrouped =
-                GetHashesHere(treeNode, hashSet)
+                GetHashesHere(treeNode, ref searchSet)
                 .OrderBy(tuple => tuple.Item1.NodeDatum.LineNo)
                 .ToList();
+
+            Util.Assert(99608, false == searchSet.Any());
 
             IEnumerable<IReadOnlyList<string>> ieFiles = new string[][] { };
 
@@ -174,44 +176,47 @@ namespace DoubleFile
             }
 
             LocalTreeNode.GetFileList_Done();
-            Util.Assert(99608, 0 == hashSet.Count);
             return ieFiles;
         }
 
         IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>>
-            GetHashesHere(LocalTreeNode treeNode, HashSet<int> lsHashes)
+            GetHashesHere(LocalTreeNode treeNode, ref HashSet<int> searchSet, bool bExpectNone = false)
         {
-            if (0 == lsHashes.Count)
+            if (false == searchSet.Any())
                 return new Tuple<LocalTreeNode, IReadOnlyList<int>>[] { };
 
-            var lsHashesHere = new List<int> { };
-
-            foreach (var nHash in treeNode.NodeDatum.Hashes_FilesHere)
+            var foundSet = new HashSet<int>(searchSet.Intersect(treeNode.NodeDatum.Hashes_FilesHere));
+            var newSearchSet = searchSet.Except(foundSet);
+#if (DEBUG)
+            if (bExpectNone)
             {
-                if (false == lsHashes.Contains(nHash))
-                    continue;
+                var shouldbeNone = searchSet.Except(newSearchSet);
 
-                lsHashesHere.Add(nHash);
-                lsHashes.Remove(nHash);
+                Util.Assert(0, false == shouldbeNone.Any());
             }
+#endif
+            searchSet = new HashSet<int>();
 
             IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>>
                 ieFiles =
-                (0 < lsHashesHere.Count)
-                ? new[] { Tuple.Create(treeNode, (IReadOnlyList<int>)lsHashesHere) }
+                (0 < foundSet.Count)
+                ? new[] { Tuple.Create(treeNode, (IReadOnlyList<int>)foundSet.ToArray()) }
                 : new Tuple<LocalTreeNode, IReadOnlyList<int>>[] { };
 
-            if ((0 == lsHashes.Count) ||
+            if ((false == searchSet.Any()) ||
                 (null == treeNode.Nodes))
             {
                 return ieFiles;
             }
-
+#if (DEBUG)
+            if (false == searchSet.Intersect(treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch).Any())
+                bExpectNone = true;
+#endif
             foreach (var subNode in treeNode.Nodes)
             {
-                ieFiles = ieFiles.Concat(GetHashesHere(subNode, lsHashes));
+                ieFiles = ieFiles.Concat(GetHashesHere(subNode, ref searchSet, bExpectNone));
 
-                if (0 == lsHashes.Count)
+                if (false == searchSet.Any())
                     return ieFiles;
             }
 

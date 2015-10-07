@@ -3,28 +3,51 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
         LocalTitle="Compare">
-    <Grid>
+    <ScrollViewer>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <TextBlock Text="Current folder:" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Margin="0,10,10,10" TextAlignment="Center"/>
-            <TextBlock Text="{Binding FolderSel}" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center"/>
-            <Button Command="{Binding Icmd_Pick1}" Content="Choose Folder 1" Grid.Column="0" Grid.Row="1" Margin="0,5,10,5"/>
-            <TextBlock Text="{Binding Folder1}" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center"/>
-            <Button Command="{Binding Icmd_Pick2}" Content="Choose Folder 2" Grid.Column="0" Grid.Row="2" Margin="0,5,10,5"/>
-            <TextBlock Text="{Binding Folder2}" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center"/>
-            <TextBlock Text="Result summary:" Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" Margin="0,10,10,10" TextAlignment="Center"/>
-            <TextBlock Text="{Binding Results}" Grid.Column="1" Grid.Row="3" Margin="0,10"/>
-            <StackPanel Grid.Row="4" Grid.ColumnSpan="999">
+            <StackPanel Grid.Column="0">
+                <Grid>
+                    <Grid.Resources>
+                        <Style TargetType="TextBox">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="IsReadOnly" Value="True"/>
+                            <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
+                            <Setter Property="Foreground" Value="{StaticResource WindowText}"/>
+                        </Style>
+                    </Grid.Resources>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    
+                    <TextBlock Text="Current folder:" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Margin="0,10,10,10" TextAlignment="Center"/>
+                    <TextBox Text="{Binding FolderSel, Mode=OneWay}" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center"/>
+                    
+                    <Border Grid.Row="1" Grid.ColumnSpan="999" Margin="2,2" Background="Transparent" BorderBrush="Black" BorderThickness="1"/>
+                    <Button Command="{Binding Icmd_Pick1}" Content="Choose Folder 1" Grid.Column="0" Grid.Row="1" Margin="0,5,10,5"/>
+                    <TextBox Text="{Binding Folder1, Mode=OneWay}" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center"/>
+                    <Button Command="{Binding Icmd_GoTo1}" Content="Go To" Grid.Column="2" Grid.Row="1" Margin="0,5"/>
+
+                    <Border Grid.Row="2" Grid.ColumnSpan="999" Margin="2,2" Background="Transparent" BorderBrush="Black" BorderThickness="1"/>
+                    <Button Command="{Binding Icmd_Pick2}" Content="Choose Folder 2" Grid.Column="0" Grid.Row="2" Margin="0,5,10,5"/>
+                    <TextBox Text="{Binding Folder2, Mode=OneWay}" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center"/>
+                    <Button Command="{Binding Icmd_GoTo2}" Content="Go To" Grid.Column="2" Grid.Row="2" Margin="0,5"/>
+
+                    <TextBlock Text="Result summary:" Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" Margin="0,10,10,10" TextAlignment="Center"/>
+                    <TextBox Text="{Binding Results, Mode=OneWay}" Grid.Column="1" Grid.Row="3" Margin="0,10"/>
+                </Grid>
                 <Expander Header="Files that are in both">
                     <local:UC_Files DataContext="{Binding LV_Both}" Visibility="{Binding VisibilityOnItems}"/>
                 </Expander>
@@ -35,14 +58,24 @@
                     <local:UC_Files DataContext="{Binding LV_Second}" Visibility="{Binding VisibilityOnItems}"/>
                 </Expander>
             </StackPanel>
+            <Grid Height="50" Visibility="{Binding ProgressbarVisibility}" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                <ProgressBar IsIndeterminate="True" VerticalAlignment="Bottom"/>
+            </Grid>
+            <TextBlock Visibility="{Binding NoResultsVisibility}" Grid.Column="0" TextAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">
+                <Run Text="{Binding NoResultsText, Mode=OneWay}" FontWeight="SemiBold" Foreground="AntiqueWhite"/>
+                <LineBreak/>
+                <Run>No results</Run>
+            </TextBlock>
+            <CheckBox Name="formChk_Nicknames" IsChecked="{Binding UseNicknames}" Command="{Binding Icmd_Nicknames}" Content="Nicknames" Grid.Column="1" Margin="5,0,0,0">
+                <CheckBox.LayoutTransform>
+                    <RotateTransform Angle="90" />
+                </CheckBox.LayoutTransform>
+            </CheckBox>
+            <Button Command="{Binding Icmd_GoTo}" Content="Go To" Grid.Column="1" Margin="5,0,0,0" VerticalAlignment="Bottom">
+                <Button.LayoutTransform>
+                    <RotateTransform Angle="90" />
+                </Button.LayoutTransform>
+            </Button>
         </Grid>
-        <Grid Height="50" Visibility="{Binding ProgressbarVisibility}" VerticalAlignment="Center" HorizontalAlignment="Stretch">
-            <ProgressBar IsIndeterminate="True" VerticalAlignment="Bottom"/>
-        </Grid>
-        <TextBlock Visibility="{Binding NoResultsVisibility}" TextAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">
-            <Run Text="{Binding NoResultsFolder, Mode=OneWay}" FontWeight="SemiBold" Foreground="AntiqueWhite"/>
-            <LineBreak/>
-            <Run>No results</Run>
-        </TextBlock>
-    </Grid>
+    </ScrollViewer>
 </local:LocalUserControlBase>

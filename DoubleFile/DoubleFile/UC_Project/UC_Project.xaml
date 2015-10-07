@@ -3,60 +3,64 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile">
     <Grid>
-        <StackPanel HorizontalAlignment="Left">
-            <StackPanel Orientation="Horizontal">
-                <StackPanel.Resources>
-                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-                        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-                        <Setter Property="FontFamily" Value="Segoe UI Light" />
-                        <Setter Property="FontSize" Value="23"/>
-                        <Setter Property="VerticalAlignment" Value="Center" />
-                        <Setter Property="TextOptions.TextFormattingMode" Value="Ideal" />
-                        <Setter Property="Margin" Value="0,0,12,4" />
-                        <Setter Property="Foreground" Value="{DynamicResource MenuText}" />
-                    </Style>
-                    <ControlTemplate x:Key="templateFlatButton" TargetType="{x:Type Button}">
-                        <Border Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" TextElement.Foreground="{TemplateBinding Foreground}" TextElement.FontFamily="{TemplateBinding FontFamily}" TextElement.FontSize="{TemplateBinding FontSize}" TextElement.FontStretch="{TemplateBinding FontStretch}" TextElement.FontWeight="{TemplateBinding FontWeight}" />
-                        </Border>
-                    </ControlTemplate>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <StackPanel.Resources>
+                <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                    <Setter Property="FontFamily" Value="Segoe UI Light" />
+                    <Setter Property="FontSize" Value="23"/>
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="TextOptions.TextFormattingMode" Value="Ideal" />
+                    <Setter Property="Margin" Value="0,0,12,4" />
+                    <Setter Property="Foreground" Value="{DynamicResource MenuText}" />
+                </Style>
+                <ControlTemplate x:Key="templateFlatButton" TargetType="{x:Type Button}">
+                    <Border Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" TextElement.Foreground="{TemplateBinding Foreground}" TextElement.FontFamily="{TemplateBinding FontFamily}" TextElement.FontSize="{TemplateBinding FontSize}" TextElement.FontStretch="{TemplateBinding FontStretch}" TextElement.FontWeight="{TemplateBinding FontWeight}" />
+                    </Border>
+                </ControlTemplate>
 
-                    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
-                        <Setter Property="Background" Value="Transparent" />
-                        <Setter Property="BorderBrush" Value="Transparent" />
-                        <Setter Property="BorderThickness" Value="0" />
-                        <Setter Property="Template" Value="{StaticResource templateFlatButton}" />
-                        <Setter Property="ContentTemplate">
-                            <Setter.Value>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" Margin="0,0,12,0">
-                                        <Image Width="18" Source="{Binding Tag, RelativeSource={RelativeSource FindAncestor, AncestorType='Button'}}"/>
-                                        <TextBlock FontFamily="Segoe UI" FontSize="11" VerticalAlignment="Bottom"
+                <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="BorderBrush" Value="Transparent" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Template" Value="{StaticResource templateFlatButton}" />
+                    <Setter Property="ContentTemplate">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,12,0">
+                                    <Image Width="18" Source="{Binding Tag, RelativeSource={RelativeSource FindAncestor, AncestorType='Button'}}"/>
+                                    <TextBlock FontFamily="Segoe UI" FontSize="11" VerticalAlignment="Bottom"
                                             Foreground="{DynamicResource SubMenuText}"
                                             Text="{Binding Content, RelativeSource={RelativeSource FindAncestor, AncestorType='Button'}}"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </StackPanel.Resources>
-                <StackPanel Orientation="Horizontal" IsEnabled="{Binding IsEnabled}">
-                    <TextBlock>project</TextBlock>
-                    <Button Content="  OPEN" Command="{Binding Icmd_OpenProject}" ToolTip="Open project. Use shift key to append project" Tag="/DoubleFile;component/Assets/ic_folder_open_white_18dp.png" />
-                    <Grid>
-                        <ProgressBar Visibility="{Binding SaveProjectProgressVisibility}" IsIndeterminate="True" VerticalAlignment="Top"/>
-                        <Button Content="  SAVE" Command="{Binding Icmd_SaveProject}" ToolTip="Save project" Tag="/DoubleFile;component/Assets/ic_save_white_18dp.png" />
-                        <ProgressBar Visibility="{Binding SaveProjectProgressVisibility}" IsIndeterminate="True" VerticalAlignment="Bottom"/>
-                    </Grid>
-                    <TextBlock>volume</TextBlock>
-                    <Button Content="  NEW" Command="{Binding Icmd_NewListingFile}" ToolTip="New listing file" Tag="/DoubleFile;component/Assets/ic_add_circle_white_18dp.png" />
-                    <Button Content="  OPEN" Command="{Binding Icmd_OpenListingFile}" ToolTip="Open listing file(s)" Tag="/DoubleFile;component/Assets/ic_folder_open_white_18dp.png" />
-                    <Button Content="  EDIT" Command="{Binding Icmd_EditListingFile}" ToolTip="Edit listing file" Tag="/DoubleFile;component/Assets/ic_create_white_18dp.png" />
-                    <Button Content="  GROUP" Command="{Binding Icmd_VolumeGroup}" ToolTip="Edit volume group" Tag="/DoubleFile;component/Assets/ic_content_copy_white_18dp.png" />
-                    <Button Content="  TOGGLE INCLUDE" Command="{Binding Icmd_ToggleInclude}" ToolTip="Include in explorer" Tag="/DoubleFile;component/Assets/ic_assistant_photo_white_18dp.png" />
-                    <Button Content="  REMOVE" Command="{Binding Icmd_RemoveListingFile}" ToolTip="Remove listing file(s)" Tag="/DoubleFile;component/Assets/ic_remove_circle_white_18dp.png" />
-                </StackPanel>
+                                </StackPanel>
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </StackPanel.Resources>
+            <StackPanel Orientation="Horizontal" IsEnabled="{Binding IsEnabled}">
+                <TextBlock>project</TextBlock>
+                <Button Content="  OPEN" Command="{Binding Icmd_OpenProject}" ToolTip="Open project. Use shift key to append project" Tag="/DoubleFile;component/Assets/ic_folder_open_white_18dp.png" />
+                <Grid>
+                    <ProgressBar Visibility="{Binding SaveProjectProgressVisibility}" IsIndeterminate="True" VerticalAlignment="Top"/>
+                    <Button Content="  SAVE" Command="{Binding Icmd_SaveProject}" ToolTip="Save project" Tag="/DoubleFile;component/Assets/ic_save_white_18dp.png" />
+                    <ProgressBar Visibility="{Binding SaveProjectProgressVisibility}" IsIndeterminate="True" VerticalAlignment="Bottom"/>
+                </Grid>
+                <TextBlock>volume</TextBlock>
+                <Button Content="  NEW" Command="{Binding Icmd_NewListingFile}" ToolTip="New listing file" Tag="/DoubleFile;component/Assets/ic_add_circle_white_18dp.png" />
+                <Button Content="  OPEN" Command="{Binding Icmd_OpenListingFile}" ToolTip="Open listing file(s)" Tag="/DoubleFile;component/Assets/ic_folder_open_white_18dp.png" />
+                <Button Content="  EDIT" Command="{Binding Icmd_EditListingFile}" ToolTip="Edit listing file" Tag="/DoubleFile;component/Assets/ic_create_white_18dp.png" />
+                <Button Content="  GROUP" Command="{Binding Icmd_VolumeGroup}" ToolTip="Edit volume group" Tag="/DoubleFile;component/Assets/ic_content_copy_white_18dp.png" />
+                <Button Content="  TOGGLE INCLUDE" Command="{Binding Icmd_ToggleInclude}" ToolTip="Include in explorer" Tag="/DoubleFile;component/Assets/ic_assistant_photo_white_18dp.png" />
+                <Button Content="  REMOVE" Command="{Binding Icmd_RemoveListingFile}" ToolTip="Remove listing file(s)" Tag="/DoubleFile;component/Assets/ic_remove_circle_white_18dp.png" />
             </StackPanel>
+        </StackPanel>
+        <ScrollViewer Grid.Row="1">
             <DataGrid Name="form_lv" Visibility="{Binding Visibility}" SelectionMode="Extended">
                 <DataGrid.Resources>
                     <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
@@ -90,6 +94,6 @@
                     <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="{Binding WidthStatus}"/>
                 </DataGrid.Columns>
             </DataGrid>
-        </StackPanel>
+        </ScrollViewer>
     </Grid>
 </local:LocalUserControlBase>

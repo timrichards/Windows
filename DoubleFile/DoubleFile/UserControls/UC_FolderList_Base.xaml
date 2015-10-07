@@ -36,7 +36,7 @@
             <ProgressBar IsIndeterminate="True" VerticalAlignment="Bottom"/>
         </Grid>
         <TextBlock Visibility="{Binding NoResultsVisibility}" Grid.Column="0" TextAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">
-            <Run Text="{Binding NoResultsFolder, Mode=OneWay}" FontWeight="SemiBold" Foreground="AntiqueWhite"/>
+            <Run Text="{Binding NoResultsText, Mode=OneWay}" FontWeight="SemiBold" Foreground="AntiqueWhite"/>
             <LineBreak/>
             <Run>No results</Run>
         </TextBlock>

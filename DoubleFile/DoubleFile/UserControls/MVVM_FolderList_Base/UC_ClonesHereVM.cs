@@ -21,8 +21,8 @@ namespace DoubleFile
 
             Util.ThreadMake(() =>
             {
-                NoResultsFolder = null;
-                RaisePropertyChanged("NoResultsFolder");
+                NoResultsText = null;
+                RaisePropertyChanged("NoResultsText");
                 HideProgressbar();
                 StartSearch(LocalTV.TreeSelect_FolderDetail);
             });

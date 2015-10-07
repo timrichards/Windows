@@ -18,8 +18,8 @@ namespace DoubleFile
             Util.ThreadMake(() =>
             {
                 LocalTV.AllFileHashes_AddRef();
-                NoResultsFolder = null;
-                RaisePropertyChanged("NoResultsFolder");
+                NoResultsText = null;
+                RaisePropertyChanged("NoResultsText");
                 HideProgressbar();
                 StartSearch(LocalTV.TreeSelect_FolderDetail);
             });

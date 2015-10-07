@@ -42,23 +42,16 @@ namespace DoubleFile
                 for (var i = 0; i < 32; i += 2)
                     abHash[15 - (i >> 1)] = Convert.ToByte(strHash.Substring(i, 2), 16);
 
-                if (null != abHash)
+                if (null == abHash)
+                    return 0;
+
+                unsafe
                 {
-                    var nRet = 0;
-
-                    unsafe
-                    {
-                        fixed (byte* n12 = &abHash[12])
-                        fixed (byte* n8 = &abHash[8])
-                        fixed (byte* n4 = &abHash[4])
-                        fixed (byte* n0 = &abHash[0])
-                            nRet = *((int*)n12) + *((int*)n8) + *((int*)n4) + *((int*)n0);
-                    }
-
-                    // could add length for <2% decrease in collision: length string adds slop unless formatted
-                    // might check with dictionary: there are variations in return counts between sessions
-                    // there are absolutely no found collisions between this sum method and an incremented file ID which requires > 300MB
-                    return nRet;
+                    fixed (byte* n12 = &abHash[12])
+                    fixed (byte* n8 = &abHash[8])
+                    fixed (byte* n4 = &abHash[4])
+                    fixed (byte* n0 = &abHash[0])
+                        return *((int*)n12) + *((int*)n8) + *((int*)n4) + *((int*)n0);
                 }
             }
             catch (ArgumentException)

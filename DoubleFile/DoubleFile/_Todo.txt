@@ -1,5 +1,4 @@
 ﻿- no results for search
-- compare file has index with the old way for collisions 
 - replace FileKeyTuple with HashTuple
 - compare doesn't always dropref
 - Clones col can sort: turn that off until sorting removes size labels and 3-mode sorting is enabled
@@ -122,7 +121,10 @@
 	- check properties that are only supposed to be set once to true: make them Set methods
 - Application.Current.MainWindow is only accessible on the main UI thread
 - slider is skipping desired location
-- found 1.5M unique files
+- HashTuple: found 1.5M unique files
+	- file length yields <2%: imperceptible decrease in collision: length string may add slop unless formatted
+	- might check with dictionary: there are variations in return counts between sessions
+	- found absolutely no collision difference between sum method and an incremented file ID which requires > 300MB
 
 - PresentationCore.dll: FormatException; InvalidCastException; ArgumentException (see output window)
 - New Listing File dialog flashes when system choose folder dialog is shown

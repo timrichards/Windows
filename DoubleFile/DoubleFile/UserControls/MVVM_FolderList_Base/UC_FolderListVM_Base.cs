@@ -15,7 +15,7 @@ namespace DoubleFile
 
         public Visibility ProgressbarVisibility { get; protected set; } = Visibility.Visible;
         public Visibility NoResultsVisibility { get; protected set; } = Visibility.Visible;
-        public string NoResultsFolder { get; protected set; } = "setting up Nearest view";
+        public string NoResultsText { get; protected set; } = "setting up Nearest view";
 
         public bool UseNicknames { internal get; set; }
 

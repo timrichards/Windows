@@ -81,8 +81,8 @@ namespace DoubleFile
 
                 if (false == Items.Any())
                 {
-                    NoResultsFolder = searchFolder.PathShort;
-                    RaisePropertyChanged("NoResultsFolder");
+                    NoResultsText = searchFolder.PathShort;
+                    RaisePropertyChanged("NoResultsText");
                     NoResultsVisibility = Visibility.Visible;
                     RaisePropertyChanged("NoResultsVisibility");
                 }

@@ -109,6 +109,7 @@ namespace DoubleFile
                 _process?.Kill();
             }
             catch (InvalidOperationException) { }
+            catch (Win32Exception) { }
         }
 
         bool SaveProject_(LV_ProjectVM lvProjectVM, string strProjectFilename)

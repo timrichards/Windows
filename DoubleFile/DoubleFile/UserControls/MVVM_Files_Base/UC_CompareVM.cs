@@ -21,7 +21,7 @@ namespace DoubleFile
 
         public Visibility ProgressbarVisibility { get; private set; } = Visibility.Visible;
         public Visibility NoResultsVisibility { get; private set; } = Visibility.Visible;
-        public string NoResultsFolder { get; private set; } = "setting up Compare view";
+        public string NoResultsText { get; private set; } = "setting up Compare view";
 
         public LV_FilesVM_Compare LV_Both { get; }
         public LV_FilesVM_Compare LV_First { get; }
@@ -42,8 +42,8 @@ namespace DoubleFile
                 _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable
                     .LocalSubscribe(99613, tuple => { FolderSel = tuple.Item1.treeNode.PathFull; RaisePropertyChanged("FolderSel"); }));
 
-                NoResultsFolder = null;
-                RaisePropertyChanged("NoResultsFolder");
+                NoResultsText = null;
+                RaisePropertyChanged("NoResultsText");
                 ProgressbarVisibility = Visibility.Collapsed;
                 RaisePropertyChanged("ProgressbarVisibility");
             });

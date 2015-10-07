@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Windows;
 
 namespace DoubleFile
 {
@@ -64,6 +65,8 @@ namespace DoubleFile
 
             _nicknameUpdater.Clear();
             ClearItems();
+            NoResultsVisibility = Visibility.Collapsed;
+            RaisePropertyChanged("NoResultsVisibility");
             TabledString<TabledStringType_Files>.GenerationStarting();
 
             var result = new SearchResultsDir();
@@ -171,6 +174,8 @@ namespace DoubleFile
 
             if (false == bClosed)
                 ProgressOverlay.CloseForced();
+
+            ShowIfNoResults();
         }
 
         bool IProgressOverlayClosing.ConfirmClose()
@@ -178,7 +183,16 @@ namespace DoubleFile
             _searchType2?.Abort();
             _searchType2 = null;
             _lsSearchResults.Clear();
+            ShowIfNoResults();
             return true;
+        }
+
+        void ShowIfNoResults()
+        {
+            NoResultsVisibility = Items.Any() ? Visibility.Collapsed : Visibility.Visible;
+            NoResultsText = SearchText;
+            RaisePropertyChanged("NoResultsText");
+            RaisePropertyChanged("NoResultsVisibility");
         }
 
         IEnumerable<LVitem_SearchVM>

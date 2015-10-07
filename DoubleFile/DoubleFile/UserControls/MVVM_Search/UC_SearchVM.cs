@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Windows;
+using System.Windows.Input;
 
 namespace DoubleFile
 {
@@ -13,6 +14,9 @@ namespace DoubleFile
         public string SearchText { get; set; }
         public bool Regex { get; set; }
         public bool UseNicknames { get; set; }
+
+        public Visibility NoResultsVisibility { get; private set; } = Visibility.Visible;
+        public string NoResultsText { get; private set; } = null;
 
         public LVitem_SearchVM SelectedItem
         {

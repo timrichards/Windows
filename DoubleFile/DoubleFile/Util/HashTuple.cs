@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace DoubleFile
@@ -19,30 +20,20 @@ namespace DoubleFile
             foreach (var b in abHash_in)
                 abHash[--nIx] = b;
 
-            return Create(abHash);
-        }
-
-        static internal HashTuple
-            FactoryCreate(string strHash) =>                // only called by DupeFileDictionary
-            Create(ConvertToByte(strHash));
-
-        static internal int
-            HashcodeFromString(string strHash)              // only called by TreeRootNodeBuilder
-        {
-            var abHash = ConvertToByte(strHash);
-
             if (null == abHash)
-                return 0;
+                return null;
 
             unsafe
             {
-                fixed (byte* n12 = &abHash[12])
                 fixed (byte* n8 = &abHash[8])
-                fixed (byte* n4 = &abHash[4])
                 fixed (byte* n0 = &abHash[0])
-                    return *((int*)n12) + *((int*)n8) + *((int*)n4) + *((int*)n0);
+                    return new HashTuple(*((ulong*)n8), *((ulong*)n0));
             }
         }
+
+        static internal int
+            HashcodeFromString(string strHash) =>           // called by TreeRootNodeBuilder; FileKeyTuple; and UC_CompareVM
+            _dictFileHashID.GetOrAdd(strHash, x => ++_nFileHashID);
 
         static byte[]
             ConvertToByte(string strHash)
@@ -68,21 +59,12 @@ namespace DoubleFile
             return null;
         }
 
-        static HashTuple
-            Create(byte[] abHash)
-        {
-            if (null == abHash)
-                return null;
-
-            unsafe
-            {
-                fixed (byte* n8 = &abHash[8])
-                fixed (byte* n0 = &abHash[0])
-                    return new HashTuple(*((ulong*)n8), *((ulong*)n0));
-            }
-        }
-
         public override string ToString() =>
             Item1.ToString("X8").PadLeft(16, '0') + Item2.ToString("X8").PadLeft(16, '0');
+
+        static ConcurrentDictionary<string, int>
+            _dictFileHashID = new ConcurrentDictionary<string, int>();
+        static int
+            _nFileHashID = -1;
     }
 }

@@ -61,9 +61,9 @@ namespace DoubleFile
         }
 
         internal UC_CompareVM
-            Update(LocalTreeNode folder2 = null)
+            Update(LocalTreeNode folderSel = null)
         {
-            Util.ThreadMake(() => Update_(folder2));
+            Util.ThreadMake(() => Update_(folderSel));
             return this;
         }
 
@@ -94,13 +94,13 @@ namespace DoubleFile
             if (null == _folder2)
                 return this;
 
+            if (ReferenceEquals(_folder1, _folder2))
+                return this;
+
             if (_folder1.IsChildOf(_folder2))
                 return this;
 
             if (_folder2.IsChildOf(_folder1))
-                return this;
-
-            if (ReferenceEquals(_folder1, _folder2))
                 return this;
 
             var lsFolder1 = _folder1.NodeDatum.Hashes_FilesHere.Union(_folder1.NodeDatum.Hashes_SubnodeFiles_Scratch).Distinct().ToList();

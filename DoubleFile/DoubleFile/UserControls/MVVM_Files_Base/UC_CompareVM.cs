@@ -172,8 +172,12 @@ namespace DoubleFile
                     ieFiles.Concat(
                     tuple.Item1.GetFileList(bReadAllLines: true)
                     .Select(strLine => strLine.Split('\t'))
-                    .Where(asLine => nHashColumn < asLine.Length)                          // makes this an LV line: knColLengthLV -------v
-                    .Select(asLine => new { a = HashTuple.FileIndexedIDFromString(asLine[nHashColumn]), b = (IReadOnlyList<string>)asLine.Skip(3).ToArray() })
+                    .Where(asLine => nHashColumn < asLine.Length)
+                    .Select(asLine => new
+                    {
+                        a = HashTuple.FileIndexedIDFromString(asLine[nHashColumn]),
+                        b = (IReadOnlyList<string>)asLine.Skip(3).ToArray()     // makes this an LV line: knColLengthLV
+                    })
                     .Where(sel => tuple.Item2.Contains(sel.a))
                     .Select(sel => sel.b));
             }

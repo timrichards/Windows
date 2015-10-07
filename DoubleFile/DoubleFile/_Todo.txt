@@ -1,4 +1,4 @@
-﻿- HashcodeFromString: at least in the program, guarantee unique ID from the source hash by incrementing a dictionary lookup
+﻿- replace FileKeyTuple with HashTuple
 - compare doesn't always dropref
 - Clones col can sort: turn that off until sorting removes size labels and 3-mode sorting is enabled
 - treemap folder color is the same as the one that represents files: it can drill down while the files one selects the outer folder
@@ -120,6 +120,7 @@
 	- check properties that are only supposed to be set once to true: make them Set methods
 - Application.Current.MainWindow is only accessible on the main UI thread
 - slider is skipping desired location
+- found 1.5M unique files
 
 - PresentationCore.dll: FormatException; InvalidCastException; ArgumentException (see output window)
 - New Listing File dialog flashes when system choose folder dialog is shown
@@ -204,4 +205,4 @@ Specific code areas:
 - Source repository: http://github.com/timrichards/Windows
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
-99603 next low assert
+99602 next low assert

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace DoubleFile
 {
@@ -9,7 +10,7 @@ namespace DoubleFile
         static HashTuple()
         {
             LV_ProjectVM.Modified
-                .LocalSubscribe(99612, x =>
+                .LocalSubscribe(99603, x =>
             {
                 _dictFileHashID = new ConcurrentDictionary<string, int>();
                 _nFileHashID = -1;
@@ -44,7 +45,8 @@ namespace DoubleFile
             ToString() => Item1.ToString("X8").PadLeft(16, '0') + Item2.ToString("X8").PadLeft(16, '0');
 
         static internal int
-            FileIndexedIDFromString(string strHash) => _dictFileHashID.GetOrAdd(strHash, x => ++_nFileHashID);
+            FileIndexedIDFromString(string strHash) =>      // could add length for <2% decrease in collision: length string adds slop unless formatted
+            _dictFileHashID.GetOrAdd(strHash, x => Interlocked.Increment(ref _nFileHashID));
         static ConcurrentDictionary<string, int>
             _dictFileHashID = new ConcurrentDictionary<string, int>();
         static int

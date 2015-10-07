@@ -60,12 +60,12 @@ namespace DoubleFile
             return new ReadLinesIterator(reader);
         }
 
-        internal static ReadLinesIterator CreateIterator(string strFile)
+        static internal ReadLinesIterator CreateIterator(string strFile)
         {
             return CreateIterator(new StreamReader(strFile.OpenFile(FileMode.Open)));
         }
 
-        internal static ReadLinesIterator CreateIterator_(string strFile)
+        static internal ReadLinesIterator CreateIterator_(string strFile)
         {
             ReadLinesIterator holder = null;
 

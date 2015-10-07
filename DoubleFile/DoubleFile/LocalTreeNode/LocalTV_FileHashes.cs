@@ -8,7 +8,7 @@ namespace DoubleFile
 {
     partial class LocalTV
     {
-        internal static void
+        static internal void
             AllFileHashes_AddRef(CancellationTokenSource cts = null)
         {
             if (0 < _nAllFileHashes_refCount++)
@@ -36,7 +36,7 @@ namespace DoubleFile
             _cts = null;
         }
 
-        internal static void
+        static internal void
             AllFileHashes_DropRef()
         {
             Util.Assert(99614, 0 < _nAllFileHashes_refCount);

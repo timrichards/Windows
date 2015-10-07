@@ -14,7 +14,7 @@ namespace DoubleFile
             if (0 == nLength)
                 return null;
 
-            return new FileKeyTuple(HashTuple.HashcodeFromString(strHash), nLength);
+            return new FileKeyTuple(HashTuple.FileIndexedIDFromString(strHash), nLength);
         }
     }
  }

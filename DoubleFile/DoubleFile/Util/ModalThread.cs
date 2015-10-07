@@ -19,7 +19,7 @@ namespace DoubleFile
             DarkWindow : LocalWindowBase, IDarkWindow
         {
             internal Rect Rect;
-            internal static bool ShowDarkWindows = false;
+            static internal bool ShowDarkWindows = false;
 
             internal DarkWindow(Window owner)
             {
@@ -114,7 +114,7 @@ namespace DoubleFile
             static IDisposable _lockupTimer = null;
         }
 
-        internal static T
+        static internal T
             Go<T>(Func<IDarkWindow, T> showDialog)
         {
             if (_bNappingDontDebounce)

@@ -251,22 +251,19 @@ namespace DoubleFile
 
                         if (0 < nFileLength)
                         {
-                            var hashcode = HashTuple.HashcodeFromString(asLine[nHashColumn]);
+                            var fileID = HashTuple.FileIndexedIDFromString(asLine[nHashColumn]);
 
-                            nAllFilesHash += (hashcode * 37);
-                            lsFilesHereHashes.Add(hashcode);
+                            nAllFilesHash += fileID * 37;
+                            lsFilesHereHashes.Add(fileID);
                         }
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {
-                        //nAllFilesHash += lsFilesHereHashes.Count;
-                        //nAllFilesHash *= 37;
-
                         rootNode.AddToTree(
                             asLine[2],
                             (uint)("" + asLine[1]).ToInt(),
                             ("" + asLine[knColLength]).ToUlong(),
-                            nAllFilesHash, lsFilesHereHashes);
+                            nAllFilesHash * 37, lsFilesHereHashes);
 
                         lsFilesHereHashes = new List<int> { };
                         nAllFilesHash = 0;

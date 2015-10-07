@@ -8,7 +8,7 @@ namespace DoubleFile
 {
     public partial class UC_Messagebox : UC_ContentPresenter
     {
-        internal static bool Showing = false;
+        static internal bool Showing = false;
 
         MessageBoxButton Buttons
         {
@@ -117,7 +117,7 @@ namespace DoubleFile
         }
         static UC_Messagebox _shown = null;
         void Kill_() => _dispatcherFrame.Continue = false;
-        internal static void
+        static internal void
             Kill() => _shown?.Kill_();
 
         void BtnOK_Click()

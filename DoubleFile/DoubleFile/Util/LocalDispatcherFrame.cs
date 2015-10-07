@@ -20,7 +20,7 @@ namespace DoubleFile
             _dispatcherFrames.TryRemove(this, out noop);
         }
 
-        internal static string ClearFrames()
+        static internal string ClearFrames()
         {
             var strRet = "";
             var dispatcherFrames = _dispatcherFrames.Keys.ToList();

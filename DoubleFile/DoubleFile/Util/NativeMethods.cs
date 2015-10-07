@@ -216,7 +216,7 @@ namespace DoubleFile
         static internal NativeWindow
             GetWindow(NativeWindow w, uint wCmd) => GetWindow((IntPtr)w, wCmd);
 
-        internal static IList<NativeWindow>
+        static internal IList<NativeWindow>
             GetAllSystemDialogs()
         {
             var searchData = new SearchData { };

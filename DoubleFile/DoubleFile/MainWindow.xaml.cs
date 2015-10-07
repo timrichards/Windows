@@ -77,7 +77,7 @@ namespace DoubleFile
             }});
         }
 
-        internal static void UpdateTitleLinks(bool? bListingsToSave = null)
+        static internal void UpdateTitleLinks(bool? bListingsToSave = null)
         {
             if (null != bListingsToSave)
             {
@@ -88,7 +88,7 @@ namespace DoubleFile
             UpdateTitleLinks();
         }
 
-        internal static void UpdateTitleLinks()
+        static internal void UpdateTitleLinks()
         {
             var mainWindow = (LocalModernWindowBase)Application.Current.MainWindow;
 

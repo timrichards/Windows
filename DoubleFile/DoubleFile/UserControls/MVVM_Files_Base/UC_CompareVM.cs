@@ -173,7 +173,7 @@ namespace DoubleFile
                     tuple.Item1.GetFileList(bReadAllLines: true)
                     .Select(strLine => strLine.Split('\t'))
                     .Where(asLine => nHashColumn < asLine.Length)                          // makes this an LV line: knColLengthLV -------v
-                    .Select(asLine => new { a = HashTuple.HashcodeFromString(asLine[nHashColumn]), b = (IReadOnlyList<string>)asLine.Skip(3).ToArray() })
+                    .Select(asLine => new { a = HashTuple.FileIndexedIDFromString(asLine[nHashColumn]), b = (IReadOnlyList<string>)asLine.Skip(3).ToArray() })
                     .Where(sel => tuple.Item2.Contains(sel.a))
                     .Select(sel => sel.b));
             }

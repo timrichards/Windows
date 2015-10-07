@@ -15,7 +15,7 @@ namespace DoubleFile
         {
         }
 
-        internal static UC_ClonesVM
+        static internal UC_ClonesVM
             FactoryGetHolder(string strFragment)
         {
             UC_ClonesVM localLVVM = null;

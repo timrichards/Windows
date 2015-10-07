@@ -28,13 +28,6 @@ namespace DoubleFile
             // ProjectFile.OnOpenedProject -= Deserialize;
         }
 
-        internal void
-            Clear()
-        {
-            _dictDuplicateFiles = null;
-            _bAnyListingFilesHashV1pt0 = false;
-        }
-
         internal bool
             IsEmpty => null == _dictDuplicateFiles;
 

@@ -7,10 +7,10 @@ namespace DoubleFile
 {
     static class LocalIsoStore
     {
-        internal static readonly string
+        static internal readonly string
             TempDir = Path.GetFileNameWithoutExtension(Path.GetRandomFileName()) + "\\";
 
-        internal static void
+        static internal void
             InitFromStatics(IsolatedStorageFile isoStore)
         {
             Util.Assert(99883, null == _isoStore);

@@ -6,6 +6,16 @@ namespace DoubleFile
 {
     class HashTuple : Tuple<ulong, ulong>
     {
+        static HashTuple()
+        {
+            LV_ProjectVM.Modified
+                .LocalSubscribe(99612, x =>
+            {
+                _dictFileHashID = new ConcurrentDictionary<string, int>();
+                _nFileHashID = -1;
+            });
+        }
+
         HashTuple(ulong nHash0, ulong nHash1)
             : base(nHash0, nHash1)
         {
@@ -30,38 +40,11 @@ namespace DoubleFile
                     return new HashTuple(*((ulong*)n8), *((ulong*)n0));
             }
         }
+        public override string
+            ToString() => Item1.ToString("X8").PadLeft(16, '0') + Item2.ToString("X8").PadLeft(16, '0');
 
         static internal int
-            HashcodeFromString(string strHash) =>           // called by TreeRootNodeBuilder; FileKeyTuple; and UC_CompareVM
-            _dictFileHashID.GetOrAdd(strHash, x => ++_nFileHashID);
-
-        static byte[]
-            ConvertToByte(string strHash)
-        {
-            try
-            {
-                var abHash = new byte[16];
-
-                for (var i = 0; i < 32; i += 2)
-                    abHash[15 - (i >> 1)] = Convert.ToByte(strHash.Substring(i, 2), 16);
-
-                return abHash;
-            }
-            catch (ArgumentException)
-            {
-                Util.Assert(99935, false);
-            }
-            catch (FormatException)
-            {
-                Util.Assert(99935, false);
-            }
-
-            return null;
-        }
-
-        public override string ToString() =>
-            Item1.ToString("X8").PadLeft(16, '0') + Item2.ToString("X8").PadLeft(16, '0');
-
+            FileIndexedIDFromString(string strHash) => _dictFileHashID.GetOrAdd(strHash, x => ++_nFileHashID);
         static ConcurrentDictionary<string, int>
             _dictFileHashID = new ConcurrentDictionary<string, int>();
         static int

@@ -190,7 +190,7 @@ namespace DoubleFile
                 .Take((nLineNo - nPrevDir - 1))
                 .ToArray();
         }
-        internal static void
+        static internal void
             GetFileList_Done() => _allFileLines = null;
         static IReadOnlyList<string>
             _allFileLines = null;

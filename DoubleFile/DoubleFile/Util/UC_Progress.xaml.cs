@@ -40,7 +40,7 @@ namespace DoubleFile
         void GoModeless() { _bWentModeless = true; _dispatcherFrame.Continue = false; }
         bool _bWentModeless = false;
 
-        internal static T
+        static internal T
             WithProgressOverlay<T>(Func<ProgressOverlay, T> doSomethingWith) => _wr.Get(o => doSomethingWith(o));
         static readonly WeakReference<ProgressOverlay> _wr = new WeakReference<ProgressOverlay>(null);
 
@@ -119,7 +119,7 @@ namespace DoubleFile
             return this;
         }
 
-        internal static ProgressOverlay
+        static internal ProgressOverlay
             CloseForced() => WithProgressOverlay(w =>
         {
             return

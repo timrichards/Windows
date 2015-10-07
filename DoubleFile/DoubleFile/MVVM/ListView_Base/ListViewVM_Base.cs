@@ -18,7 +18,7 @@ namespace DoubleFile
         public ObservableCollection<ListViewItemVM_Base>
             Items => _items;
         ObservableCollection<ListViewItemVM_Base> _items = new ObservableCollection<ListViewItemVM_Base>();
-        internal void
+        internal virtual void
             ClearItems() { Util.UIthread(99867, () => _items.Clear()); RaisePropertyChanged("Items"); }
 
         internal abstract int
@@ -37,7 +37,7 @@ namespace DoubleFile
                 RaiseItems();
         }
 
-        internal void Add<T>(IEnumerable<T> ieItems, bool bQuiet = false)
+        internal virtual void Add<T>(IEnumerable<T> ieItems, bool bQuiet = false)
             where T : ListViewItemVM_Base
         {
             var stopwatch = Stopwatch.StartNew();

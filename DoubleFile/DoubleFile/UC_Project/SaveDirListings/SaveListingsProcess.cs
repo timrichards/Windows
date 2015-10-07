@@ -33,14 +33,14 @@ namespace DoubleFile
                 Statics.SaveDirListings.EndThread();
             }
 
-            (new ProgressOverlay(listNicknames, listSourcePaths, x =>
+            new ProgressOverlay(listNicknames, listSourcePaths, x =>
                 Statics.SaveDirListings =
                     new SaveDirListings(lvProjectVM, this)
                     .DoThreadFactory())
             {
                 Title = "Saving Directory Listings",
                 WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this),
-            })
+            }
                 .AllowSubsequentProcess()
                 .ShowOverlay();
         }

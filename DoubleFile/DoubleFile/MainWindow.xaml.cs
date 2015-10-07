@@ -257,7 +257,7 @@ namespace DoubleFile
                 new ClonesLink(UC_Clones.FolderListFragments.ElementAt(1)),
                 new ClonesLink(UC_Clones.FolderListFragments.ElementAt(2))
             }},
-#if (DEBUG)
+#if (true) //DEBUG)
             new LinkGroup { DisplayName="Compare", Links =
             {
                 new MyLink("Compare", "/UserControls/UC_Compare.xaml")

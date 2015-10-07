@@ -4,21 +4,38 @@
         xmlns:local="clr-namespace:DoubleFile"
         LocalTitle="Compare">
     <Grid>
-        <StackPanel>
-            <TextBlock Text="{Binding Folder1}"/>
-            <Button Command="{Binding Icmd_Pick}" Content="Pick"/>
-            <TextBlock Text="{Binding Folder2}"/>
-            <TextBlock Text="{Binding Results}"/>
-            <Expander Header="Files that are in both">
-                <local:UC_Files DataContext="{Binding LV_Both}"/>
-            </Expander>
-            <Expander Header="Files that are in the first directory tree">
-                <local:UC_Files DataContext="{Binding LV_First}"/>
-            </Expander>
-            <Expander Header="Files that are in the second directory tree">
-                <local:UC_Files DataContext="{Binding LV_Second}"/>
-            </Expander>
-        </StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="Current folder:" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Margin="0,10,10,10" TextAlignment="Center"/>
+            <TextBlock Text="{Binding FolderSel}" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center"/>
+            <Button Command="{Binding Icmd_Pick1}" Content="Choose Folder 1" Grid.Column="0" Grid.Row="1" Margin="0,5,10,5"/>
+            <TextBlock Text="{Binding Folder1}" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center"/>
+            <Button Command="{Binding Icmd_Pick2}" Content="Choose Folder 2" Grid.Column="0" Grid.Row="2" Margin="0,5,10,5"/>
+            <TextBlock Text="{Binding Folder2}" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center"/>
+            <TextBlock Text="Result summary:" Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" Margin="0,10,10,10" TextAlignment="Center"/>
+            <TextBlock Text="{Binding Results}" Grid.Column="1" Grid.Row="3" Margin="0,10"/>
+            <StackPanel Grid.Row="4" Grid.ColumnSpan="999">
+                <Expander Header="Files that are in both">
+                    <local:UC_Files DataContext="{Binding LV_Both}" Visibility="{Binding VisibilityOnItems}"/>
+                </Expander>
+                <Expander Header="Files that are in the first directory tree">
+                    <local:UC_Files DataContext="{Binding LV_First}" Visibility="{Binding VisibilityOnItems}"/>
+                </Expander>
+                <Expander Header="Files that are in the second directory tree">
+                    <local:UC_Files DataContext="{Binding LV_Second}" Visibility="{Binding VisibilityOnItems}"/>
+                </Expander>
+            </StackPanel>
+        </Grid>
         <Grid Height="50" Visibility="{Binding ProgressbarVisibility}" VerticalAlignment="Center" HorizontalAlignment="Stretch">
             <ProgressBar IsIndeterminate="True" VerticalAlignment="Bottom"/>
         </Grid>

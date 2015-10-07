@@ -32,10 +32,8 @@ namespace DoubleFile
                     _vm =
                     new UC_SearchVM
                 {
-                    IsEditBoxNonEmpty = () => false == string.IsNullOrWhiteSpace(formEdit_search.Text),
                     Regex = _bRegex,
                     UseNicknames = _bNicknames,
-                    LocalOwner = LocalOwner
                 }
                     .Init();
 
@@ -43,11 +41,14 @@ namespace DoubleFile
             }
             else
             {
-                 DataContext =
+                DataContext =
                     _vm =
                     vm
                     .Reconnect();
             }
+
+            _vm.IsEditBoxNonEmpty = IsEditBoxNonEmpty;
+            _vm.LocalOwner = LocalOwner;
 
             // Set search text box focus
             // One-shot: no need to dispose
@@ -79,6 +80,8 @@ namespace DoubleFile
             _vmSave?.Dispose();
             _vmSave = null;
         }
+
+        bool IsEditBoxNonEmpty() => false == string.IsNullOrWhiteSpace(formEdit_search.Text);
 
         UC_SearchVM
             _vm = null;

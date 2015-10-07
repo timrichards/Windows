@@ -227,7 +227,7 @@ namespace DoubleFile
                 }
 
                 var nAllFilesHash = 0;
-                var lsFilesHereIndexIDs = new List<int> { };
+                var lsFilesHereIndexedIDs = new List<int> { };
 
                 var nHashColumn =
                     Statics.DupeFileDictionary.AllListingsHashV2
@@ -251,24 +251,24 @@ namespace DoubleFile
 
                         if (0 < nFileLength)
                         {
-                            var fileID = HashTuple.FileIndexedIDFromString(asLine[nHashColumn]);
+                            var fileID = HashTuple.HashCodeFromString(asLine[nHashColumn]);
 
                             nAllFilesHash += fileID * 37;
-                            lsFilesHereIndexIDs.Add(fileID);
+                            lsFilesHereIndexedIDs.Add(fileID);
                         }
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {
-                        nAllFilesHash += lsFilesHereIndexIDs.Count;
+                        nAllFilesHash += lsFilesHereIndexedIDs.Count;
                         nAllFilesHash *= 37;
 
                         rootNode.AddToTree(
                             asLine[2],
                             (uint)("" + asLine[1]).ToInt(),
                             ("" + asLine[knColLength]).ToUlong(),
-                            nAllFilesHash, lsFilesHereIndexIDs);
+                            nAllFilesHash, lsFilesHereIndexedIDs);
 
-                        lsFilesHereIndexIDs = new List<int> { };
+                        lsFilesHereIndexedIDs = new List<int> { };
                         nAllFilesHash = 0;
                     }
                 }

@@ -175,7 +175,7 @@ namespace DoubleFile
                     .Where(asLine => nHashColumn < asLine.Length)
                     .Select(asLine => new
                     {
-                        a = HashTuple.FileIndexedIDFromString(asLine[nHashColumn]),
+                        a = HashTuple.HashCodeFromString(asLine[nHashColumn]),
                         b = (IReadOnlyList<string>)asLine.Skip(3).ToArray()     // makes this an LV line: knColLengthLV
                     })
                     .Where(sel => tuple.Item2.Contains(sel.a))

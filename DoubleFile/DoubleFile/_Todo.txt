@@ -1,5 +1,4 @@
 ﻿- no results for search
-- search doesn't undim the buttons in extra window, and search progress is on main window
 - compare file has index with the old way for collisions 
 - replace FileKeyTuple with HashTuple
 - compare doesn't always dropref

@@ -1,22 +1,10 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace DoubleFile
 {
     class HashTuple : Tuple<ulong, ulong>
     {
-        static HashTuple()
-        {
-            LV_ProjectVM.Modified
-                .LocalSubscribe(99603, x =>
-            {
-                _dictFileHashID = new ConcurrentDictionary<string, int>();
-                _nFileHashID = -1;
-            });
-        }
-
         HashTuple(ulong nHash0, ulong nHash1)
             : base(nHash0, nHash1)
         {
@@ -45,11 +33,44 @@ namespace DoubleFile
             ToString() => Item1.ToString("X8").PadLeft(16, '0') + Item2.ToString("X8").PadLeft(16, '0');
 
         static internal int
-            FileIndexedIDFromString(string strHash) =>      // could add length for <2% decrease in collision: length string adds slop unless formatted
-            _dictFileHashID.GetOrAdd(strHash, x => Interlocked.Increment(ref _nFileHashID));
-        static ConcurrentDictionary<string, int>
-            _dictFileHashID = new ConcurrentDictionary<string, int>();
-        static int
-            _nFileHashID = -1;
+            HashCodeFromString(string strHash)
+        {
+            try
+            {
+                var abHash = new byte[16];
+
+                for (var i = 0; i < 32; i += 2)
+                    abHash[15 - (i >> 1)] = Convert.ToByte(strHash.Substring(i, 2), 16);
+
+                if (null != abHash)
+                {
+                    var nRet = 0;
+
+                    unsafe
+                    {
+                        fixed (byte* n12 = &abHash[12])
+                        fixed (byte* n8 = &abHash[8])
+                        fixed (byte* n4 = &abHash[4])
+                        fixed (byte* n0 = &abHash[0])
+                            nRet = *((int*)n12) + *((int*)n8) + *((int*)n4) + *((int*)n0);
+                    }
+
+                    // could add length for <2% decrease in collision: length string adds slop unless formatted
+                    // might check with dictionary: there are variations in return counts between sessions
+                    // there are absolutely no found collisions between this sum method and an incremented file ID which requires > 300MB
+                    return nRet;
+                }
+            }
+            catch (ArgumentException)
+            {
+                Util.Assert(99935, false);
+            }
+            catch (FormatException)
+            {
+                Util.Assert(99935, false);
+            }
+
+            return 0;
+        }
     }
 }

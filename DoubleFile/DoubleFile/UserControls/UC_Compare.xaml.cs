@@ -25,11 +25,13 @@ namespace DoubleFile
                 ? new UC_CompareVM()
                 : vm;
 
+            _vm.UseNicknames = _bNicknames;
             _vm.Update();
         }
 
         protected override void LocalNavigatedFrom()
         {
+            _bNicknames = formChk_Nicknames.IsChecked ?? false;
             DataContext = null;
             _vmSave = _vm;
 
@@ -51,5 +53,7 @@ namespace DoubleFile
             _vm = null;
         static UC_CompareVM
             _vmSave = null;
+        bool
+            _bNicknames = false;
     }
 }

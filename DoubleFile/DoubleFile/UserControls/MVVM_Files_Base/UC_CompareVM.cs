@@ -11,18 +11,25 @@ namespace DoubleFile
         internal bool
             IsDisposed { get; private set; } = false;
 
-        public string FolderSel { get; private set; }
-        public string Folder1 { get; private set; }
-        public string Folder2 { get; private set; }
+        public string FolderSel => _folderSel?.PathFullGet(UseNicknames);
+        LocalTreeNode _folderSel = null;
+
+        public string Folder1 => _folder1?.PathFullGet(UseNicknames);
+        LocalTreeNode _folder1 = null;
+
+        public string Folder2 => _folder2?.PathFullGet(UseNicknames);
+        LocalTreeNode _folder2 = null;
+
         public string Results { get; private set; }
 
         public ICommand Icmd_Pick1 { get; }
         public ICommand Icmd_Pick2 { get; }
         public ICommand Icmd_GoTo1 { get; }
         public ICommand Icmd_GoTo2 { get; }
+        public ICommand Icmd_GoTo { get; }
 
         public ICommand Icmd_Nicknames { get; }
-        public ICommand Icmd_GoTo { get; }
+        public bool UseNicknames { get; set; }
 
         public Visibility ProgressbarVisibility { get; private set; } = Visibility.Visible;
         public Visibility NoResultsVisibility { get; private set; } = Visibility.Visible;
@@ -38,18 +45,18 @@ namespace DoubleFile
             Icmd_Pick2 = new RelayCommand(() => { _folder2 = LocalTV.TreeSelect_FolderDetail.treeNode; Update(); });
             Icmd_GoTo1 = new RelayCommand(() => _folder1?.GoToFile(null), () => null != _folder1);
             Icmd_GoTo2 = new RelayCommand(() => _folder2?.GoToFile(null), () => null != _folder2);
-            //      Icmd_Nicknames = new RelayCommand(() => 
             Icmd_GoTo = new RelayCommand(() => _selectedItem.TreeNode.GoToFile(_selectedItem.Filename), () => null != _selectedItem);
             LV_Both = new LV_FilesVM_Compare { SelectedItemChanged = v => { _selectedItem = v; LV_First.ClearSelection(); LV_Second.ClearSelection(); } };
             LV_First = new LV_FilesVM_Compare { SelectedItemChanged = v => { _selectedItem = v; LV_Both.ClearSelection(); LV_Second.ClearSelection(); } };
             LV_Second = new LV_FilesVM_Compare { SelectedItemChanged = v => { _selectedItem = v; LV_First.ClearSelection(); LV_Both.ClearSelection(); } };
+            Icmd_Nicknames = new RelayCommand(RaisePathFull);
 
             Util.ThreadMake(() =>
             {
                 LocalTV.AllFileHashes_AddRef();
 
                 _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable
-                    .LocalSubscribe(99613, tuple => { FolderSel = tuple.Item1.treeNode.PathFull; RaisePropertyChanged("FolderSel"); }));
+                    .LocalSubscribe(99613, tuple => { _folderSel = tuple.Item1.treeNode; RaisePropertyChanged("FolderSel"); }));
 
                 NoResultsText = null;
                 RaisePropertyChanged("NoResultsText");
@@ -69,6 +76,13 @@ namespace DoubleFile
             });
         }
 
+        void RaisePathFull()
+        {
+            RaisePropertyChanged("FolderSel");
+            RaisePropertyChanged("Folder1");
+            RaisePropertyChanged("Folder2");
+        }
+
         internal UC_CompareVM
             Update(LocalTreeNode folderSel = null)
         {
@@ -86,12 +100,7 @@ namespace DoubleFile
             if (null == folderSel)
                 folderSel = LocalTV.TreeSelect_FolderDetail.treeNode;
 
-            FolderSel = folderSel.PathFull;
-            RaisePropertyChanged("FolderSel");
-            Folder1 = _folder1?.PathFull;
-            RaisePropertyChanged("Folder1");
-            Folder2 = _folder2?.PathFull;
-            RaisePropertyChanged("Folder2");
+            RaisePathFull();
             Results = "Same, nested, or no folder selected";
             RaisePropertyChanged("Results");
             NoResultsVisibility = Visibility.Visible;
@@ -112,11 +121,14 @@ namespace DoubleFile
             if (_folder2.IsChildOf(_folder1))
                 return this;
 
+            const int kMax = 1 << 7;
             var lsFolder1 = _folder1.NodeDatum.Hashes_FilesHere.Union(_folder1.NodeDatum.Hashes_SubnodeFiles_Scratch).Distinct().ToList();
             var lsFolder2 = _folder2.NodeDatum.Hashes_FilesHere.Union(_folder2.NodeDatum.Hashes_SubnodeFiles_Scratch).Distinct().ToList();
             var lsIntersect_ = lsFolder1.Intersect(lsFolder2).Distinct().ToList();
-            var lsDiff1_ = lsFolder1.Except(lsIntersect_).Take(1 << 7).ToList();
-            var lsDiff2_ = lsFolder2.Except(lsIntersect_).Take(1 << 7).ToList();
+            var lsDiff1_ = lsFolder1.Except(lsIntersect_).Take(kMax).ToList();
+            var lsDiff2_ = lsFolder2.Except(lsIntersect_).Take(kMax).ToList();
+
+            lsIntersect_ = lsIntersect_.Take(kMax).ToList();
 
             lsFolder1 = null;
             lsFolder2 = null;
@@ -129,11 +141,18 @@ namespace DoubleFile
                 return this;
             }
 
+            Results = null;
+            RaisePropertyChanged("Results");
+            ProgressbarVisibility = Visibility.Visible;
+            RaisePropertyChanged("ProgressbarVisibility");
+
             var lsIntersect = GetFileLines(_folder1, lsIntersect_).OrderBy(tuple => tuple.Item2[0]).ToList();
             var lsDiff1 = GetFileLines(_folder1, lsDiff1_).OrderBy(tuple => tuple.Item2[0]).ToList();
             var lsDiff2 = GetFileLines(_folder2, lsDiff2_).OrderBy(tuple => tuple.Item2[0]).ToList();
 
-            Results += lsIntersect_.Count + " files in common. " + lsDiff1_.Count + " and " + lsDiff2_.Count + " files are unique in each.";
+            Func<int, string> f = n => n < kMax ? "" + n : "at least " + n;
+
+            Results += f(lsIntersect_.Count) + " files in common. " + f(lsDiff1_.Count) + " and " + f(lsDiff2_.Count) + " files are unique respectively.";
             RaisePropertyChanged("Results");
 
             Util.UIthread(99606, () =>
@@ -148,6 +167,8 @@ namespace DoubleFile
                     LV_Second.Add(lsDiff2.Select(asLine => new LVitem_CompareVM { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
             });
 
+            ProgressbarVisibility = Visibility.Collapsed;
+            RaisePropertyChanged("ProgressbarVisibility");
             NoResultsVisibility = Visibility.Collapsed;
             RaisePropertyChanged("NoResultsVisibility");
             return this;
@@ -238,10 +259,6 @@ namespace DoubleFile
             return ieFiles;
         }
 
-        LocalTreeNode
-            _folder1;
-        LocalTreeNode
-            _folder2;
         LVitem_CompareVM
             _selectedItem;
         readonly List<IDisposable>

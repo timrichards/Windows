@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
+using System.Windows.Input;
 
 namespace DoubleFile
 {
     partial class UC_SearchVM : IDisposable, ISearchStatus, IProgressOverlayClosing
     {
+        public ICommand Icmd_Nicknames { get; private set; }
+        public bool UseNicknames { get; set; }
+
         internal bool
             IsDisposed { get; private set; } = false;
 

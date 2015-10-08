@@ -7,7 +7,7 @@ namespace DoubleFile
 {
     class LV_FilesVM_Base : ListViewVM_Base<LVitem_FilesVM>
     {
-        public virtual Visibility DupColVisibility => LVitem_FilesVM.ShowDuplicates ? Visibility.Visible : Visibility.Collapsed;
+        public virtual Visibility DupColVisibility => LVitem_FilesVM.ShowDuplicatesA ? Visibility.Visible : Visibility.Collapsed;
 
         public LVitem_FilesVM SelectedItem
         {

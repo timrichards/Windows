@@ -39,7 +39,7 @@ namespace DoubleFile
             Icmd_GoTo1 = new RelayCommand(() => _folder1?.GoToFile(null), () => null != _folder1);
             Icmd_GoTo2 = new RelayCommand(() => _folder2?.GoToFile(null), () => null != _folder2);
             //      Icmd_Nicknames = new RelayCommand(() => 
-      //      Icmd_GoTo2 = new RelayCommand(() => _selectedItem?.Parent GoToFile(null), () => null != _selectedItem);
+            Icmd_GoTo = new RelayCommand(() => _selectedItem.TreeNode.GoToFile(_selectedItem.Filename), () => null != _selectedItem);
             LV_Both = new LV_FilesVM_Compare { SelectedItemChanged = v => { _selectedItem = v; LV_First.ClearSelection(); LV_Second.ClearSelection(); } };
             LV_First = new LV_FilesVM_Compare { SelectedItemChanged = v => { _selectedItem = v; LV_Both.ClearSelection(); LV_Second.ClearSelection(); } };
             LV_Second = new LV_FilesVM_Compare { SelectedItemChanged = v => { _selectedItem = v; LV_First.ClearSelection(); LV_Both.ClearSelection(); } };
@@ -129,9 +129,9 @@ namespace DoubleFile
                 return this;
             }
 
-            var lsIntersect = GetFileLines(_folder1, lsIntersect_).OrderBy(asLine => asLine[0]).ToList();
-            var lsDiff1 = GetFileLines(_folder1, lsDiff1_).OrderBy(asLine => asLine[0]).ToList();
-            var lsDiff2 = GetFileLines(_folder2, lsDiff2_).OrderBy(asLine => asLine[0]).ToList();
+            var lsIntersect = GetFileLines(_folder1, lsIntersect_).OrderBy(tuple => tuple.Item2[0]).ToList();
+            var lsDiff1 = GetFileLines(_folder1, lsDiff1_).OrderBy(tuple => tuple.Item2[0]).ToList();
+            var lsDiff2 = GetFileLines(_folder2, lsDiff2_).OrderBy(tuple => tuple.Item2[0]).ToList();
 
             Results += lsIntersect_.Count + " files in common. " + lsDiff1_.Count + " and " + lsDiff2_.Count + " files are unique in each.";
             RaisePropertyChanged("Results");
@@ -139,13 +139,13 @@ namespace DoubleFile
             Util.UIthread(99606, () =>
             {
                 if (0 < lsIntersect.Count)
-                    LV_Both.Add(lsIntersect.Select(asLine => new LVitem_FilesVM { FileLine = asLine }));
+                    LV_Both.Add(lsIntersect.Select(asLine => new LVitem_CompareVM { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
 
                 if (0 < lsDiff1.Count)
-                    LV_First.Add(lsDiff1.Select(asLine => new LVitem_FilesVM { FileLine = asLine }));
+                    LV_First.Add(lsDiff1.Select(asLine => new LVitem_CompareVM { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
 
                 if (0 < lsDiff2.Count)
-                    LV_Second.Add(lsDiff2.Select(asLine => new LVitem_FilesVM { FileLine = asLine }));
+                    LV_Second.Add(lsDiff2.Select(asLine => new LVitem_CompareVM { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
             });
 
             NoResultsVisibility = Visibility.Collapsed;
@@ -153,7 +153,7 @@ namespace DoubleFile
             return this;
         }
 
-        IEnumerable<IReadOnlyList<string>>
+        IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<string>>>
             GetFileLines(LocalTreeNode treeNode, IEnumerable<int> ieHashes)
         {
             var searchSet = new HashSet<int>(ieHashes);
@@ -165,7 +165,7 @@ namespace DoubleFile
 
             Util.Assert(99608, false == searchSet.Any());
 
-            IEnumerable<IReadOnlyList<string>> ieFiles = new string[][] { };
+            IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<string>>> ieFiles = new Tuple<LocalTreeNode, IReadOnlyList<string>>[] { };
 
             if (0 == lsHashesGrouped.Count)
                 return ieFiles;
@@ -182,14 +182,10 @@ namespace DoubleFile
                     tuple.Item1.GetFileList(bReadAllLines: true)
                     .Select(strLine => strLine.Split('\t'))
                     .Where(asLine => nHashColumn < asLine.Length)
-                    .Select(asLine => new
-                    {
-                        a = HashTuple.HashCodeFromString(asLine[nHashColumn]),
-                        b = (IReadOnlyList<string>)asLine.Skip(3).ToArray()     // makes this an LV line: knColLengthLV
-                    })
+                    .Select(asLine => new { a = HashTuple.HashCodeFromString(asLine[nHashColumn]), b = asLine })
                     .Where(sel => tuple.Item2.Contains(sel.a))
-                    .Select(sel => sel.b));
-            }
+                    .Select(sel => Tuple.Create(tuple.Item1, (IReadOnlyList<string>)sel.b.Skip(3).ToArray())));
+            }                                       // makes this an LV line: knColLengthLV----^
 
             LocalTreeNode.GetFileList_Done();
             return ieFiles;
@@ -246,7 +242,7 @@ namespace DoubleFile
             _folder1;
         LocalTreeNode
             _folder2;
-        LVitem_FilesVM
+        LVitem_CompareVM
             _selectedItem;
         readonly List<IDisposable>
             _lsDisposable = new List<IDisposable> { };

@@ -50,7 +50,7 @@ namespace DoubleFile
 
             Statics.LVprojectVM = lvProjectVM;
             new BBCodeBlock().LinkNavigator.Navigate(new Uri("/DoubleFile;component/UserControls/UC_Treemap.xaml", UriKind.Relative), this);
-            LVitem_FilesVM.ShowDuplicates = false;
+            LVitem_FilesVM.ShowDuplicatesA = false;
         }
     }
 }

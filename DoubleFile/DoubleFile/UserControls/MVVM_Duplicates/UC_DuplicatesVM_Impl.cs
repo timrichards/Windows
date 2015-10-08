@@ -23,9 +23,9 @@ namespace DoubleFile
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
             Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateViewport(UseNicknames));
             _nicknameUpdater.UpdateViewport(UseNicknames);
-            _lsDisposable.Add(LV_FilesVM_Base.SelectedFileChanged.Observable.LocalSubscribe(99704, LV_FilesVM_SelectedFileChanged));
+            _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.Observable.LocalSubscribe(99704, LV_FilesVM_SelectedFileChanged));
 
-            var lastSelectedFile = LV_FilesVM_Base.LastSelectedFile;
+            var lastSelectedFile = LV_FilesVM.LastSelectedFile;
 
             if (null != lastSelectedFile)
                 LV_FilesVM_SelectedFileChanged(Tuple.Create(lastSelectedFile, /* UI initiator */ 0m));
@@ -39,7 +39,7 @@ namespace DoubleFile
             _nicknameUpdater.Clear();
         }
 
-        void LV_FilesVM_SelectedFileChanged(Tuple<LV_FilesVM_Base.SelectedFileChanged, decimal> initiatorTuple)
+        void LV_FilesVM_SelectedFileChanged(Tuple<LV_FilesVM.SelectedFileChanged, decimal> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
 

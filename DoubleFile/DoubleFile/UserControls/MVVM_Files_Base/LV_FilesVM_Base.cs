@@ -9,41 +9,6 @@ namespace DoubleFile
     {
         public virtual Visibility DupColVisibility => LVitem_FilesVM.ShowDuplicates ? Visibility.Visible : Visibility.Collapsed;
 
-        internal LV_FilesVM_Base()
-        {
-            _wr.SetTarget(this);
-        }
-
-        internal class SelectedFileChanged
-        {
-            internal readonly IReadOnlyList<Tuple<LVitemProject_Updater<bool>, IReadOnlyList<string>>> lsDupDirFileLines;
-            internal readonly IReadOnlyList<string> fileLine;
-            internal readonly LocalTreeNode treeNode;
-
-            internal SelectedFileChanged(IReadOnlyList<Tuple<LVitemProject_Updater<bool>, IReadOnlyList<string>>> lsDupDirFileLines_, IReadOnlyList<string> fileLine_, LocalTreeNode treeNode_)
-            {
-                lsDupDirFileLines = lsDupDirFileLines_;
-                fileLine = fileLine_;
-                treeNode = treeNode_;
-            }
-
-            static internal readonly IObservable<Tuple<SelectedFileChanged, decimal>>
-                Observable = new LocalSubject<SelectedFileChanged>();
-        }
-        static protected void
-            SelectedFileChangedOnNext(SelectedFileChanged value, decimal nInitiator)
-        {
-            ((LocalSubject<SelectedFileChanged>)SelectedFileChanged.Observable).LocalOnNext(value, 99852, nInitiator);
-            LastSelectedFile = value;
-        }
-        static internal SelectedFileChanged
-            LastSelectedFile
-        {
-            get { return _wr.Get(lv => lv._lastSelectedFile); }
-            private set { _wr.Get(lv => lv._lastSelectedFile = value); }
-        }
-        protected SelectedFileChanged _lastSelectedFile = null;
-
         public LVitem_FilesVM SelectedItem
         {
             get { return _selectedItem; }
@@ -67,14 +32,10 @@ namespace DoubleFile
             RaisePropertyChanged("SelectedItem");
             SelectedItem_AllTriggers(nInitiator);
         }
-        void SelectedItem_AllTriggers(decimal nInitiator)
+        protected virtual void SelectedItem_AllTriggers(decimal nInitiator)
         {
-            if (null != _selectedItem)
-                ShowDuplicates_SelectedFileChangedOnNext(nInitiator);
-            else
-                SelectedFileChangedOnNext(null, nInitiator);
         }
-        protected virtual void ShowDuplicates_SelectedFileChangedOnNext(decimal nInitiator) { }
+
         protected LVitem_FilesVM _selectedItem = null;
 
         internal override IEnumerable<LVitem_FilesVM>
@@ -105,8 +66,5 @@ namespace DoubleFile
         public string WidthParent => SCW;
 
         internal override int NumCols => LVitem_FilesVM.NumCols_;
-
-        static readonly WeakReference<LV_FilesVM_Base>
-            _wr = new WeakReference<LV_FilesVM_Base>(null);
     }
 }

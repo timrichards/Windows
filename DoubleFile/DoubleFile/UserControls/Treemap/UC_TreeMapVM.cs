@@ -142,7 +142,7 @@ namespace DoubleFile
             }));
 
             _lsDisposable.Add(LV_TreeListChildrenVM.TreeListChildSelected.LocalSubscribe(99695, LV_TreeListChildrenVM_TreeListChildSelected));
-            _lsDisposable.Add(LV_FilesVM_Base.SelectedFileChanged.Observable.LocalSubscribe(99694, LV_FilesVM_SelectedFileChanged));
+            _lsDisposable.Add(LV_FilesVM.SelectedFileChanged.Observable.LocalSubscribe(99694, LV_FilesVM_SelectedFileChanged));
             Folder.Init();
 
             var folderDetailA = LocalTV.TreeSelect_FolderDetail;
@@ -298,7 +298,7 @@ namespace DoubleFile
             SelRectAndTooltip(treeNodeChild, initiatorTuple.Item2, bFile: false);
         }
 
-        void LV_FilesVM_SelectedFileChanged(Tuple<LV_FilesVM_Base.SelectedFileChanged, decimal> initiatorTuple)
+        void LV_FilesVM_SelectedFileChanged(Tuple<LV_FilesVM.SelectedFileChanged, decimal> initiatorTuple)
         {
             var tuple = initiatorTuple.Item1;
 

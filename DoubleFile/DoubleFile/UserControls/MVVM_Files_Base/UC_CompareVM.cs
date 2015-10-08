@@ -18,6 +18,11 @@ namespace DoubleFile
 
         public ICommand Icmd_Pick1 { get; }
         public ICommand Icmd_Pick2 { get; }
+        public ICommand Icmd_GoTo1 { get; }
+        public ICommand Icmd_GoTo2 { get; }
+
+        public ICommand Icmd_Nicknames { get; }
+        public ICommand Icmd_GoTo { get; }
 
         public Visibility ProgressbarVisibility { get; private set; } = Visibility.Visible;
         public Visibility NoResultsVisibility { get; private set; } = Visibility.Visible;
@@ -31,9 +36,13 @@ namespace DoubleFile
         {
             Icmd_Pick1 = new RelayCommand(() => { _folder1 = LocalTV.TreeSelect_FolderDetail.treeNode; Update(); });
             Icmd_Pick2 = new RelayCommand(() => { _folder2 = LocalTV.TreeSelect_FolderDetail.treeNode; Update(); });
-            LV_Both = new LV_FilesVM_Compare();
-            LV_First = new LV_FilesVM_Compare();
-            LV_Second = new LV_FilesVM_Compare();
+            Icmd_GoTo1 = new RelayCommand(() => _folder1?.GoToFile(null), () => null != _folder1);
+            Icmd_GoTo2 = new RelayCommand(() => _folder2?.GoToFile(null), () => null != _folder2);
+            //      Icmd_Nicknames = new RelayCommand(() => 
+      //      Icmd_GoTo2 = new RelayCommand(() => _selectedItem?.Parent GoToFile(null), () => null != _selectedItem);
+            LV_Both = new LV_FilesVM_Compare { SelectedItemChanged = v => { _selectedItem = v; LV_First.ClearSelection(); LV_Second.ClearSelection(); } };
+            LV_First = new LV_FilesVM_Compare { SelectedItemChanged = v => { _selectedItem = v; LV_Both.ClearSelection(); LV_Second.ClearSelection(); } };
+            LV_Second = new LV_FilesVM_Compare { SelectedItemChanged = v => { _selectedItem = v; LV_First.ClearSelection(); LV_Both.ClearSelection(); } };
 
             Util.ThreadMake(() =>
             {
@@ -237,6 +246,8 @@ namespace DoubleFile
             _folder1;
         LocalTreeNode
             _folder2;
+        LVitem_FilesVM
+            _selectedItem;
         readonly List<IDisposable>
             _lsDisposable = new List<IDisposable> { };
     }

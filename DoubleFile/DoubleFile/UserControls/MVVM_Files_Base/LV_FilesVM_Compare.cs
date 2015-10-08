@@ -12,6 +12,11 @@ namespace DoubleFile
         public Visibility
             VisibilityOnItems => Items.Any() ? Visibility.Visible : Visibility.Collapsed;
 
+        internal Action<LVitem_FilesVM>
+            SelectedItemChanged = null;
+        internal void
+            ClearSelection() => SelectedItem_Set(null, /* UI initiator */ 0);
+
         internal override void Add<T>(IEnumerable<T> ieItems, bool bQuiet = false)
         {
             base.Add(ieItems, bQuiet);
@@ -24,6 +29,14 @@ namespace DoubleFile
         {
             base.ClearItems();
             RaisePropertyChanged("VisibilityOnItems");
+        }
+
+        protected override void SelectedItem_AllTriggers(decimal nInitiator)
+        {
+            base.SelectedItem_AllTriggers(nInitiator);
+
+            if (null != _selectedItem)
+                SelectedItemChanged?.Invoke(_selectedItem);
         }
     }
 }

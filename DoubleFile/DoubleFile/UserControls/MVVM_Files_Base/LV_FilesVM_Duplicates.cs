@@ -10,8 +10,46 @@ namespace DoubleFile
 {
     partial class LV_FilesVM
     {
-        protected override void ShowDuplicates_SelectedFileChangedOnNext(decimal nInitiator)
+        internal class SelectedFileChanged
         {
+            internal readonly IReadOnlyList<Tuple<LVitemProject_Updater<bool>, IReadOnlyList<string>>> lsDupDirFileLines;
+            internal readonly IReadOnlyList<string> fileLine;
+            internal readonly LocalTreeNode treeNode;
+
+            internal SelectedFileChanged(IReadOnlyList<Tuple<LVitemProject_Updater<bool>, IReadOnlyList<string>>> lsDupDirFileLines_, IReadOnlyList<string> fileLine_, LocalTreeNode treeNode_)
+            {
+                lsDupDirFileLines = lsDupDirFileLines_;
+                fileLine = fileLine_;
+                treeNode = treeNode_;
+            }
+
+            static internal readonly IObservable<Tuple<SelectedFileChanged, decimal>>
+                Observable = new LocalSubject<SelectedFileChanged>();
+        }
+        static protected void
+            SelectedFileChangedOnNext(SelectedFileChanged value, decimal nInitiator)
+        {
+            ((LocalSubject<SelectedFileChanged>)SelectedFileChanged.Observable).LocalOnNext(value, 99852, nInitiator);
+            LastSelectedFile = value;
+        }
+        static internal SelectedFileChanged
+            LastSelectedFile
+        {
+            get { return _wr.Get(lv => lv._lastSelectedFile); }
+            private set { _wr.Get(lv => lv._lastSelectedFile = value); }
+        }
+        protected SelectedFileChanged _lastSelectedFile = null;
+
+        protected override void SelectedItem_AllTriggers(decimal nInitiator)
+        {
+            base.SelectedItem_AllTriggers(nInitiator);
+
+            if (null == _selectedItem)
+            {
+                SelectedFileChangedOnNext(null, nInitiator);
+                return;
+            }
+
             Util.Write("I");
             _cts.Cancel();
 
@@ -123,5 +161,7 @@ namespace DoubleFile
 
         CancellationTokenSource
             _cts = new CancellationTokenSource();
+        static readonly WeakReference<LV_FilesVM>
+            _wr = new WeakReference<LV_FilesVM>(null);
     }
 }

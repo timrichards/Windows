@@ -3,79 +3,110 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
         LocalTitle="Compare">
-    <ScrollViewer>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <StackPanel Grid.Column="0">
-                <Grid>
-                    <Grid.Resources>
-                        <Style TargetType="TextBox">
-                            <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="BorderThickness" Value="0"/>
-                            <Setter Property="IsReadOnly" Value="True"/>
-                            <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
-                            <Setter Property="Foreground" Value="{StaticResource WindowText}"/>
-                        </Style>
-                    </Grid.Resources>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    
-                    <TextBlock Text="Current folder:" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Margin="0,10,10,10" TextAlignment="Center"/>
-                    <TextBox Text="{Binding FolderSel, Mode=OneWay}" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center"/>
-                    
-                    <Border Grid.Row="1" Grid.ColumnSpan="999" Margin="2,2" Background="Transparent" BorderBrush="Black" BorderThickness="1"/>
-                    <Button Command="{Binding Icmd_Pick1}" Content="Choose Folder 1" Grid.Column="0" Grid.Row="1" Margin="0,5,10,5"/>
-                    <TextBox Text="{Binding Folder1, Mode=OneWay}" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center"/>
-                    <Button Command="{Binding Icmd_GoTo1}" Content="Go To" Grid.Column="2" Grid.Row="1" Margin="0,5"/>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <ScrollViewer Grid.Column="0">
+            <Grid>
+                <Grid.Resources>
+                    <Style TargetType="Expander" BasedOn="{StaticResource {x:Type Expander}}">
+                        <Setter Property="Margin" Value="0,10,0,0"/>
+                    </Style>
+                </Grid.Resources>
+                <StackPanel>
+                    <Grid>
+                        <Grid.Resources>
+                            <Style TargetType="TextBox">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="IsReadOnly" Value="True"/>
+                                <Setter Property="TextWrapping" Value="WrapWithOverflow"/>
+                                <Setter Property="Foreground" Value="{StaticResource WindowText}"/>
+                                <Setter Property="Grid.Column" Value="1"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Grid.ColumnSpan" Value="999"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource DataGridGridLines}"/>
+                                <Setter Property="BorderThickness" Value="0,1,0,0"/>
+                            </Style>
+                            <Style TargetType="Button" x:Key="Pick" BasedOn="{StaticResource {x:Type Button}}">
+                                <Setter Property="Grid.Column" Value="0"/>
+                                <Setter Property="Margin" Value="0,5,10,5"/>
+                            </Style>
+                            <Style TargetType="Button" x:Key="GoTo" BasedOn="{StaticResource {x:Type Button}}">
+                                <Setter Property="Content" Value="Go To"/>
+                                <Setter Property="Grid.Column" Value="2"/>
+                                <Setter Property="Margin" Value="0,5"/>
+                            </Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Grid.Column" Value="0"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Margin" Value="0,10,10,10"/>
+                                <Setter Property="TextAlignment" Value="Center"/>
+                            </Style>
+                        </Grid.Resources>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                    <Border Grid.Row="2" Grid.ColumnSpan="999" Margin="2,2" Background="Transparent" BorderBrush="Black" BorderThickness="1"/>
-                    <Button Command="{Binding Icmd_Pick2}" Content="Choose Folder 2" Grid.Column="0" Grid.Row="2" Margin="0,5,10,5"/>
-                    <TextBox Text="{Binding Folder2, Mode=OneWay}" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center"/>
-                    <Button Command="{Binding Icmd_GoTo2}" Content="Go To" Grid.Column="2" Grid.Row="2" Margin="0,5"/>
+                        <TextBlock Text="Current folder:" Grid.Row="0"/>
+                        <TextBox Text="{Binding FolderSel, Mode=OneWay}" Grid.Row="0"/>
 
-                    <TextBlock Text="Result summary:" Grid.Column="0" Grid.Row="3" VerticalAlignment="Center" Margin="0,10,10,10" TextAlignment="Center"/>
-                    <TextBox Text="{Binding Results, Mode=OneWay}" Grid.Column="1" Grid.Row="3" Margin="0,10"/>
+                        <Border Grid.Row="1"/>
+                        <Button Command="{Binding Icmd_Pick1}" Content="Set Folder 1" Grid.Row="1" Style="{StaticResource Pick}"/>
+                        <TextBox Text="{Binding Folder1, Mode=OneWay}" Grid.Row="1"/>
+                        <Button Command="{Binding Icmd_GoTo1}" Grid.Row="1" Style="{StaticResource GoTo}"/>
+
+                        <Border Grid.Row="2"/>
+                        <Button Command="{Binding Icmd_Pick2}" Content="Set Folder 2" Grid.Row="2" Style="{StaticResource Pick}"/>
+                        <TextBox Text="{Binding Folder2, Mode=OneWay}" Grid.Row="2"/>
+                        <Button Command="{Binding Icmd_GoTo2}" Grid.Row="2" Style="{StaticResource GoTo}"/>
+
+                        <Border Grid.Row="3" BorderThickness="0,1"/>
+                        <TextBlock Text="Result summary:" Grid.Row="3"/>
+                        <TextBox Text="{Binding Results, Mode=OneWay}" Grid.Row="3" Margin="0,10"/>
+                    </Grid>
+                    <Expander Header="Files that are in both">
+                        <local:UC_Files DataContext="{Binding LV_Both}" Visibility="{Binding VisibilityOnItems}"/>
+                    </Expander>
+                    <Expander Header="Files that are in the first directory tree">
+                        <local:UC_Files DataContext="{Binding LV_First}" Visibility="{Binding VisibilityOnItems}"/>
+                    </Expander>
+                    <Expander Header="Files that are in the second directory tree">
+                        <local:UC_Files DataContext="{Binding LV_Second}" Visibility="{Binding VisibilityOnItems}"/>
+                    </Expander>
+                </StackPanel>
+                <Grid Height="50" Visibility="{Binding ProgressbarVisibility}" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                    <ProgressBar IsIndeterminate="True" VerticalAlignment="Bottom"/>
                 </Grid>
-                <Expander Header="Files that are in both">
-                    <local:UC_Files DataContext="{Binding LV_Both}" Visibility="{Binding VisibilityOnItems}"/>
-                </Expander>
-                <Expander Header="Files that are in the first directory tree">
-                    <local:UC_Files DataContext="{Binding LV_First}" Visibility="{Binding VisibilityOnItems}"/>
-                </Expander>
-                <Expander Header="Files that are in the second directory tree">
-                    <local:UC_Files DataContext="{Binding LV_Second}" Visibility="{Binding VisibilityOnItems}"/>
-                </Expander>
-            </StackPanel>
-            <Grid Height="50" Visibility="{Binding ProgressbarVisibility}" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch">
-                <ProgressBar IsIndeterminate="True" VerticalAlignment="Bottom"/>
-            </Grid>
-            <TextBlock Visibility="{Binding NoResultsVisibility}" Grid.Column="0" TextAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">
+                <TextBlock Visibility="{Binding NoResultsVisibility}" TextAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">
                 <Run Text="{Binding NoResultsText, Mode=OneWay}" FontWeight="SemiBold" Foreground="AntiqueWhite"/>
                 <LineBreak/>
                 <Run>No results</Run>
-            </TextBlock>
-            <CheckBox Name="formChk_Nicknames" IsChecked="{Binding UseNicknames}" Command="{Binding Icmd_Nicknames}" Content="Nicknames" Grid.Column="1" Margin="5,0,0,0">
-                <CheckBox.LayoutTransform>
-                    <RotateTransform Angle="90" />
-                </CheckBox.LayoutTransform>
-            </CheckBox>
-            <Button Command="{Binding Icmd_GoTo}" Content="Go To" Grid.Column="1" Margin="5,0,0,0" VerticalAlignment="Bottom">
-                <Button.LayoutTransform>
-                    <RotateTransform Angle="90" />
-                </Button.LayoutTransform>
-            </Button>
-        </Grid>
-    </ScrollViewer>
+                </TextBlock>
+            </Grid>
+        </ScrollViewer>
+        <CheckBox Name="formChk_Nicknames" IsChecked="{Binding UseNicknames}" Command="{Binding Icmd_Nicknames}" Content="Nicknames" Grid.Column="1" Margin="5,0,0,0">
+            <CheckBox.LayoutTransform>
+                <RotateTransform Angle="90" />
+            </CheckBox.LayoutTransform>
+        </CheckBox>
+        <Button Command="{Binding Icmd_GoTo}" Content="Go To" Grid.Column="1" Margin="5,0,0,0" VerticalAlignment="Bottom">
+            <Button.LayoutTransform>
+                <RotateTransform Angle="90" />
+            </Button.LayoutTransform>
+        </Button>
+    </Grid>
 </local:LocalUserControlBase>

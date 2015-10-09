@@ -1,4 +1,4 @@
-﻿- no results for search
+﻿- stack overflow still happens in compare view - only in debug mode
 - replace FileKeyTuple with HashTuple
 - compare doesn't always dropref
 - Clones col can sort: turn that off until sorting removes size labels and 3-mode sorting is enabled

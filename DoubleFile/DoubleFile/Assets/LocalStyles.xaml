@@ -93,8 +93,8 @@
         </Setter>
     </Style>
 
-    <!--fixes TextBox background when IsEnabled=false-->
-    <Style TargetType="{x:Type TextBox}">
+    <!--fixes non M:UI TextBox background when IsEnabled=false-->
+    <Style TargetType="{x:Type TextBox}" x:Key="StandardTextBox">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TextBox}">

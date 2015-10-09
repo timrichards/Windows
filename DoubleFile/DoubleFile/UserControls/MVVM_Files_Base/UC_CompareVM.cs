@@ -63,6 +63,8 @@ namespace DoubleFile
                 ProgressbarVisibility = Visibility.Collapsed;
                 RaisePropertyChanged("ProgressbarVisibility");
             });
+
+            _folderSel = LocalTV.TreeSelect_FolderDetail?.treeNode;
         }
 
         public void Dispose()
@@ -121,6 +123,11 @@ namespace DoubleFile
             if (_folder2.IsChildOf(_folder1))
                 return this;
 
+            NoResultsVisibility = Visibility.Collapsed;
+            RaisePropertyChanged("NoResultsVisibility");
+            ProgressbarVisibility = Visibility.Visible;
+            RaisePropertyChanged("ProgressbarVisibility");
+
             const int kMax = 1 << 7;
             var lsFolder1 = _folder1.NodeDatum.Hashes_FilesHere.Union(_folder1.NodeDatum.Hashes_SubnodeFiles_Scratch).Distinct().ToList();
             var lsFolder2 = _folder2.NodeDatum.Hashes_FilesHere.Union(_folder2.NodeDatum.Hashes_SubnodeFiles_Scratch).Distinct().ToList();
@@ -128,49 +135,52 @@ namespace DoubleFile
             var lsDiff1_ = lsFolder1.Except(lsIntersect_).Take(kMax).ToList();
             var lsDiff2_ = lsFolder2.Except(lsIntersect_).Take(kMax).ToList();
 
+            Util.WriteLine("" + lsIntersect_.Count);
             lsIntersect_ = lsIntersect_.Take(kMax).ToList();
 
             lsFolder1 = null;
             lsFolder2 = null;
             Results = "These folders have ";
 
-            if (0 == lsIntersect_.Count)
+            Util.Closure(() =>
             {
-                Results += "nothing in common.";
+                if (0 == lsIntersect_.Count)
+                {
+                    Results += "nothing in common.";
+                    RaisePropertyChanged("Results");
+                    return;     // from lambda
+                }
+
+                Results = null;
                 RaisePropertyChanged("Results");
-                return this;
-            }
 
-            Results = null;
-            RaisePropertyChanged("Results");
-            ProgressbarVisibility = Visibility.Visible;
-            RaisePropertyChanged("ProgressbarVisibility");
+                var lsIntersect = GetFileLines(_folder1, lsIntersect_).OrderBy(tuple => tuple.Item2[0]).ToList();
+                var lsDiff1 = GetFileLines(_folder1, lsDiff1_).OrderBy(tuple => tuple.Item2[0]).ToList();
+                var lsDiff2 = GetFileLines(_folder2, lsDiff2_).OrderBy(tuple => tuple.Item2[0]).ToList();
 
-            var lsIntersect = GetFileLines(_folder1, lsIntersect_).OrderBy(tuple => tuple.Item2[0]).ToList();
-            var lsDiff1 = GetFileLines(_folder1, lsDiff1_).OrderBy(tuple => tuple.Item2[0]).ToList();
-            var lsDiff2 = GetFileLines(_folder2, lsDiff2_).OrderBy(tuple => tuple.Item2[0]).ToList();
+                Func<int, string> f = n => ((n < kMax) ? "" + n : "at least " + n) + " file" + ((n > 1) ? "s" : "");
 
-            Func<int, string> f = n => n < kMax ? "" + n : "at least " + n;
+                Results += f(lsIntersect_.Count) + " in common; " + f(lsDiff1_.Count) + " and " + f(lsDiff2_.Count) + " unique respectively.";
+                RaisePropertyChanged("Results");
 
-            Results += f(lsIntersect_.Count) + " files in common. " + f(lsDiff1_.Count) + " and " + f(lsDiff2_.Count) + " files are unique respectively.";
-            RaisePropertyChanged("Results");
+                Util.UIthread(99606, () =>
+                {
+                    if (0 < lsIntersect.Count)
+                        LV_Both.Add(lsIntersect.Select(asLine => new LVitem_CompareVM { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
 
-            Util.UIthread(99606, () =>
-            {
-                if (0 < lsIntersect.Count)
-                    LV_Both.Add(lsIntersect.Select(asLine => new LVitem_CompareVM { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
+                    if (0 < lsDiff1.Count)
+                        LV_First.Add(lsDiff1.Select(asLine => new LVitem_CompareVM { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
 
-                if (0 < lsDiff1.Count)
-                    LV_First.Add(lsDiff1.Select(asLine => new LVitem_CompareVM { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
+                    if (0 < lsDiff2.Count)
+                        LV_Second.Add(lsDiff2.Select(asLine => new LVitem_CompareVM { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
+                });
 
-                if (0 < lsDiff2.Count)
-                    LV_Second.Add(lsDiff2.Select(asLine => new LVitem_CompareVM { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
+                NoResultsVisibility = Visibility.Collapsed;
+                RaisePropertyChanged("NoResultsVisibility");
             });
 
             ProgressbarVisibility = Visibility.Collapsed;
             RaisePropertyChanged("ProgressbarVisibility");
-            NoResultsVisibility = Visibility.Collapsed;
-            RaisePropertyChanged("NoResultsVisibility");
             return this;
         }
 
@@ -178,9 +188,10 @@ namespace DoubleFile
             GetFileLines(LocalTreeNode treeNode, IEnumerable<int> ieHashes)
         {
             var searchSet = new HashSet<int>(ieHashes);
+            var hashesHere = GetHashesHere(treeNode, ref searchSet);
 
             var lsHashesGrouped =
-                GetHashesHere(treeNode, ref searchSet)
+                hashesHere
                 .OrderBy(tuple => tuple.Item1.NodeDatum.LineNo)
                 .ToList();
 
@@ -198,9 +209,11 @@ namespace DoubleFile
 
             foreach (var tuple in lsHashesGrouped)
             {
+                var fileList = tuple.Item1.GetFileList(bReadAllLines: true);
+
                 ieFiles =
                     ieFiles.Concat(
-                    tuple.Item1.GetFileList(bReadAllLines: true)
+                    fileList
                     .Select(strLine => strLine.Split('\t'))
                     .Where(asLine => nHashColumn < asLine.Length)
                     .Select(asLine => new { a = HashTuple.HashCodeFromString(asLine[nHashColumn]), b = asLine })

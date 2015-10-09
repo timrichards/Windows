@@ -158,7 +158,7 @@ namespace DoubleFile
                 var lsDiff1 = GetFileLines(_folder1, lsDiff1_).OrderBy(tuple => tuple.Item2[0]).ToList();
                 var lsDiff2 = GetFileLines(_folder2, lsDiff2_).OrderBy(tuple => tuple.Item2[0]).ToList();
 
-                Func<int, string> f = n => ((n < kMax) ? "" + n : "at least " + n) + " file" + ((n > 1) ? "s" : "");
+                Func<int, string> f = n => ((n < kMax) ? "" + n : "at least " + n) + " file" + ((1 < n) ? "s" : "");
 
                 Results += f(lsIntersect_.Count) + " in common; " + f(lsDiff1_.Count) + " and " + f(lsDiff2_.Count) + " unique respectively.";
                 RaisePropertyChanged("Results");
@@ -187,7 +187,12 @@ namespace DoubleFile
         IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<string>>>
             GetFileLines(LocalTreeNode treeNode, IEnumerable<int> ieHashes)
         {
+            IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<string>>> ieFiles = new Tuple<LocalTreeNode, IReadOnlyList<string>>[] { };
             var searchSet = new HashSet<int>(ieHashes);
+
+            if (false == searchSet.Any())
+                return ieFiles;
+
             var hashesHere = GetHashesHere(treeNode, ref searchSet);
 
             var lsHashesGrouped =
@@ -196,8 +201,6 @@ namespace DoubleFile
                 .ToList();
 
             Util.Assert(99608, false == searchSet.Any());
-
-            IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<string>>> ieFiles = new Tuple<LocalTreeNode, IReadOnlyList<string>>[] { };
 
             if (0 == lsHashesGrouped.Count)
                 return ieFiles;
@@ -228,9 +231,6 @@ namespace DoubleFile
         IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>>
             GetHashesHere(LocalTreeNode treeNode, ref HashSet<int> searchSet, List<int> lsExpectNone = null)
         {
-            if (false == searchSet.Any())
-                return new Tuple<LocalTreeNode, IReadOnlyList<int>>[] { };
-
             var foundSet = new HashSet<int>(searchSet.Intersect(treeNode.NodeDatum.Hashes_FilesHere));
             var newSearchSet = searchSet.Except(foundSet);
 #if (DEBUG)
@@ -260,13 +260,14 @@ namespace DoubleFile
 
             foreach (var subNode in treeNode.Nodes)
             {
+                if (false == searchSet.Any())
+                    return ieFiles;
+
                 ieFiles = ieFiles.Concat(GetHashesHere(subNode, ref searchSet, lsExpectNone));
 #if (DEBUG)
                 if (0 < lsExpectNone?.Count)
                     Util.Assert(99604, false);
 #endif
-                if (false == searchSet.Any())
-                    return ieFiles;
             }
 
             return ieFiles;

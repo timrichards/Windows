@@ -194,6 +194,7 @@
     <Compile Include="LocalTreeNode\LocalColorItemBase.cs" />
     <Compile Include="LocalTreeNode\LocalTV_FileHashes.cs" />
     <Compile Include="LocalTreeNode\LVitemProject_Explorer.cs" />
+    <Compile Include="MoreLinq\MoreEnumerable.DistinctBy.cs" />
     <Compile Include="Statics.cs" />
     <Compile Include="UserControls\BindingProxy.cs" />
     <Compile Include="UserControls\MVVM_Files_Base\LVitem_CompareVM.cs" />

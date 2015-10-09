@@ -33,7 +33,10 @@ namespace DoubleFile
             ToString() => Item1.ToString("X8").PadLeft(16, '0') + Item2.ToString("X8").PadLeft(16, '0');
 
         static internal int
-            HashCodeFromString(string strHash)
+            HashCodeFromString(string strHash, string strFileLength) =>
+            HashCodeFromString(strHash, ("" + strFileLength).ToUlong());
+        static internal int
+            HashCodeFromString(string strHash, ulong nFileLength)
         {
             try
             {
@@ -51,7 +54,7 @@ namespace DoubleFile
                     fixed (byte* n8 = &abHash[8])
                     fixed (byte* n4 = &abHash[4])
                     fixed (byte* n0 = &abHash[0])
-                        return *((int*)n12) + *((int*)n8) + *((int*)n4) + *((int*)n0);
+                        return *((int*)n12) + *((int*)n8) + *((int*)n4) + *((int*)n0) + (int)nFileLength * 37;
                 }
             }
             catch (ArgumentException)

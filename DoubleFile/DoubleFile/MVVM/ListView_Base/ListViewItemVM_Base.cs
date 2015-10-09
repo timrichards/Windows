@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -8,6 +9,7 @@ using System.Windows.Input;
 
 namespace DoubleFile
 {
+    [DebuggerDisplay("{string.Join(\" \", SubItems)}")]
     abstract class ListViewItemVM_Base : ObservableObjectBase
     {
         public ICommand Icmd_Copy { get; private set; }

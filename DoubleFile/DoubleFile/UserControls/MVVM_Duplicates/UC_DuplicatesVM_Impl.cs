@@ -59,7 +59,7 @@ namespace DoubleFile
                     if (null == lvItemProject_Updater.ListUpdater)
                         lvItemProject_Updater.ListUpdater = _nicknameUpdater;
                     else    // LV_FilesVM shouldn't be using this ListUpdater
-                        Util.Assert(99785, lvItemProject_Updater.ListUpdater == _nicknameUpdater);
+                        Util.Assert(99785, lvItemProject_Updater.ListUpdater.AssertLoc == _nicknameUpdater.AssertLoc);
 
                     Add(new LVitem_FileDuplicatesVM(new[] { asFileLine.Item2[0] })
                     {

@@ -12,11 +12,14 @@ namespace DoubleFile
     // can't be struct because of pass-by-reference
     class ListUpdater<T>                                    // One for each list
     {
-        internal T Value { get; private set; }
+        internal T
+            Value { get; private set; }
+        internal readonly decimal
+            AssertLoc = -1;
 
         internal ListUpdater(decimal nAssertLoc)
         {
-            _nAssertLoc = nAssertLoc;
+            AssertLoc = nAssertLoc;
         }
 
         internal void LastGet(IListUpdater lastGet)
@@ -44,7 +47,5 @@ namespace DoubleFile
             _lastGets = new List<IListUpdater>();
         bool
             _bUpdating = false;
-        decimal
-            _nAssertLoc = -1;
     }
 }

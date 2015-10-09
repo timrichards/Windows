@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MoreLinq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -102,6 +103,7 @@ namespace DoubleFile
             if (null == folderSel)
                 folderSel = LocalTV.TreeSelect_FolderDetail.treeNode;
 
+            _selectedItem = null;
             RaisePathFull();
             Results = "Same, nested, or no folder selected";
             RaisePropertyChanged("Results");
@@ -135,18 +137,15 @@ namespace DoubleFile
             var lsDiff1_ = lsFolder1.Except(lsIntersect_).Take(kMax).ToList();
             var lsDiff2_ = lsFolder2.Except(lsIntersect_).Take(kMax).ToList();
 
-            Util.WriteLine("" + lsIntersect_.Count);
             lsIntersect_ = lsIntersect_.Take(kMax).ToList();
-
             lsFolder1 = null;
             lsFolder2 = null;
-            Results = "These folders have ";
 
             Util.Closure(() =>
             {
                 if (0 == lsIntersect_.Count)
                 {
-                    Results += "nothing in common.";
+                    Results = "These folders have nothing in common.";
                     RaisePropertyChanged("Results");
                     return;     // from lambda
                 }
@@ -157,10 +156,12 @@ namespace DoubleFile
                 var lsIntersect = GetFileLines(_folder1, lsIntersect_).OrderBy(tuple => tuple.Item2[0]).ToList();
                 var lsDiff1 = GetFileLines(_folder1, lsDiff1_).OrderBy(tuple => tuple.Item2[0]).ToList();
                 var lsDiff2 = GetFileLines(_folder2, lsDiff2_).OrderBy(tuple => tuple.Item2[0]).ToList();
+                Func<int, string> f = n => ((n < kMax) ? "" + n : "at least " + n) + " file" + ((1 != n) ? "s" : "");
 
-                Func<int, string> f = n => ((n < kMax) ? "" + n : "at least " + n) + " file" + ((1 < n) ? "s" : "");
-
-                Results += f(lsIntersect_.Count) + " in common; " + f(lsDiff1_.Count) + " and " + f(lsDiff2_.Count) + " unique respectively.";
+                Util.Assert(99602, lsIntersect.Count == lsIntersect_.Count);
+                Util.Assert(99601, lsDiff1.Count == lsDiff1_.Count);
+                Util.Assert(99600, lsDiff2.Count == lsDiff2_.Count);
+                Results = f(lsIntersect_.Count) + " in common; " + f(lsDiff1_.Count) + " and " + f(lsDiff2_.Count) + " unique respectively.";
                 RaisePropertyChanged("Results");
 
                 Util.UIthread(99606, () =>
@@ -219,7 +220,8 @@ namespace DoubleFile
                     fileList
                     .Select(strLine => strLine.Split('\t'))
                     .Where(asLine => nHashColumn < asLine.Length)
-                    .Select(asLine => new { a = HashTuple.HashCodeFromString(asLine[nHashColumn]), b = asLine })
+                    .DistinctBy(asLine => asLine[nHashColumn])
+                    .Select(asLine => new { a = HashTuple.HashCodeFromString(asLine[nHashColumn], asLine[FileParse.knColLength]), b = asLine })
                     .Where(sel => tuple.Item2.Contains(sel.a))
                     .Select(sel => Tuple.Create(tuple.Item1, (IReadOnlyList<string>)sel.b.Skip(3).ToArray())));
             }                                       // makes this an LV line: knColLengthLV----^

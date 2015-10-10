@@ -171,7 +171,7 @@ namespace DoubleFile
 
             if (bReadAllLines)
             {
-                if (null == _currentIterator)
+                if (1 != _currentIterator?.state)
                 {
                     _currentIterator =
                         (ReadLinesIterator)
@@ -181,15 +181,13 @@ namespace DoubleFile
                     _currentPos = 0;
                 }
 
-                var asRet =
+                var ieRet =
                     _currentIterator
                     .Skip(nPrevDir - _currentPos)
-                    .Take(NodeDatum.FileCountHere)
-                    .ToArray();
+                    .Take(NodeDatum.FileCountHere);
 
-                Util.Assert(99595, NodeDatum.FileCountHere == asRet.Length);
                 _currentPos = nPrevDir + NodeDatum.FileCountHere;
-                return asRet;
+                return ieRet;
             }
 
             return
@@ -199,9 +197,8 @@ namespace DoubleFile
                 .Take(NodeDatum.FileCountHere)
                 .ToArray();
         }
-        static internal void
-            GetFileList_Done() { _currentIterator.Dispose(); _currentIterator = null;}
-        static Iterator<string>
+
+        static ReadLinesIterator
             _currentIterator;
         static int
             _currentPos;

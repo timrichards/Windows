@@ -40,12 +40,14 @@ namespace DoubleFile
         public LV_FilesVM_Compare LV_First { get; }
         public LV_FilesVM_Compare LV_Second { get; }
 
+        bool CanPick() => ProgressbarVisibility != Visibility.Visible;
+
         internal UC_CompareVM()
         {
-            Icmd_Pick1 = new RelayCommand(() => { _folder1 = LocalTV.TreeSelect_FolderDetail.treeNode; Update(); });
-            Icmd_Pick2 = new RelayCommand(() => { _folder2 = LocalTV.TreeSelect_FolderDetail.treeNode; Update(); });
-            Icmd_GoTo1 = new RelayCommand(() => _folder1?.GoToFile(null), () => null != _folder1);
-            Icmd_GoTo2 = new RelayCommand(() => _folder2?.GoToFile(null), () => null != _folder2);
+            Icmd_Pick1 = new RelayCommand(() => { _folder1 = LocalTV.TreeSelect_FolderDetail.treeNode; Update(); }, CanPick);
+            Icmd_Pick2 = new RelayCommand(() => { _folder2 = LocalTV.TreeSelect_FolderDetail.treeNode; Update(); }, CanPick);
+            Icmd_GoTo1 = new RelayCommand(() => _folder1?.GoToFile(null), () => CanPick() && (null != _folder1));
+            Icmd_GoTo2 = new RelayCommand(() => _folder2?.GoToFile(null), () => CanPick() && (null != _folder2));
             Icmd_GoTo = new RelayCommand(() => _selectedItem.TreeNode.GoToFile(_selectedItem.Filename), () => null != _selectedItem);
             LV_Both = new LV_FilesVM_Compare { SelectedItemChanged = v => { _selectedItem = v; LV_First.ClearSelection(); LV_Second.ClearSelection(); } };
             LV_First = new LV_FilesVM_Compare { SelectedItemChanged = v => { _selectedItem = v; LV_Both.ClearSelection(); LV_Second.ClearSelection(); } };
@@ -222,10 +224,7 @@ namespace DoubleFile
                     .Select(sel => Tuple.Create(tuple.Item1, (IReadOnlyList<string>)sel.b.Skip(3).ToArray())));
             }                                       // makes this an LV line: knColLengthLV----^
 
-            var lsRet = ieFiles.OrderBy(tuple => tuple.Item2[0]).ToList();
-
-            LocalTreeNode.GetFileList_Done();
-            return lsRet;
+            return ieFiles.OrderBy(tuple => tuple.Item2[0]).ToList();   // reads all lines exactly once and closes the enumerable
         }
 
         IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>>
@@ -233,7 +232,7 @@ namespace DoubleFile
         {
             var foundSet = new HashSet<int>(searchSet.Intersect(treeNode.NodeDatum.Hashes_FilesHere));
             var newSearchSet = searchSet.Except(foundSet);
-#if (DEBUG)
+#if (DEBUG && FOOBAR)
             if (null != lsExpectNone)
                 lsExpectNone.AddRange(searchSet.Except(newSearchSet));
 #endif
@@ -252,7 +251,7 @@ namespace DoubleFile
             }
 
             if (false == searchSet.Intersect(treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch).Any())
-#if (DEBUG)
+#if (DEBUG && FOOBAR)
                 lsExpectNone = new List<int> { };
 #else
                 return ieFiles;
@@ -264,7 +263,7 @@ namespace DoubleFile
                     return ieFiles;
 
                 ieFiles = ieFiles.Concat(GetHashesHere(subNode, ref searchSet, lsExpectNone));
-#if (DEBUG)
+#if (DEBUG && FOOBAR)
                 if (0 < lsExpectNone?.Count)
                     Util.Assert(99604, false);
 #endif

@@ -86,7 +86,7 @@ namespace DoubleFile
         LocalTV(LV_ProjectVM lvProjectVM)
         {
             _lvProjectVM = lvProjectVM;
-            _knProgMult = 2 / (3d * _lvProjectVM?.CanLoadCount ?? 0);
+            _knProgMult = 1 / (2d * _lvProjectVM?.CanLoadCount ?? 0);
 
             if (0 < (lvProjectVM?.CanLoadCount ?? 0))
                 TabledString<TabledStringType_Folders>.AddRef();

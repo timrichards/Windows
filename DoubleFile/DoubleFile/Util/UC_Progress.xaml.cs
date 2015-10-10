@@ -95,6 +95,7 @@ namespace DoubleFile
                 return this;
 
             Util.LocalDispose(_lsDisposable);
+            _wr.SetTarget(null);
             _vm = null;
 
             Util.UIthread(99622, () =>

@@ -132,16 +132,22 @@ namespace DoubleFile
             return false;
         }
 
-        static internal void SetLevel(IEnumerable<LocalTreeNode> nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
+        static internal int SetLevel(IEnumerable<LocalTreeNode> nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
         {
+            var nCount = 0;
+
             foreach (var treeNode in nodes)
             {
                 treeNode.Parent = nodeParent;
                 treeNode.Level = nLevel;
 
                 if (null != treeNode.Nodes)
-                    SetLevel(treeNode.Nodes, treeNode, nLevel + 1);
+                    nCount += SetLevel(treeNode.Nodes, treeNode, nLevel + 1);
+
+                ++nCount;
             }
+
+            return nCount;
         }
 
         internal LocalTreeNode GoToFile(string strFile)
@@ -165,20 +171,22 @@ namespace DoubleFile
                 if (1 != _currentIterator?.state)
                 {
                     _currentIterator =
-                        (ReadLinesIterator)
                         RootNodeDatum.LVitemProjectVM.ListingFile
-                        .ReadLines(99596);
+                        .ReadLines(99596).As<ReadLinesIterator>();
 
                     _currentPos = 0;
                 }
 
-                var ieRet =
-                    _currentIterator
-                    .Skip(nPrevDir - _currentPos)
-                    .Take(NodeDatum.FileCountHere);
+                if (null != _currentIterator)   // null if not isolated storage file
+                {
+                    var ieRet =
+                        _currentIterator
+                        .Skip(nPrevDir - _currentPos)
+                        .Take(NodeDatum.FileCountHere);
 
-                _currentPos = nPrevDir + NodeDatum.FileCountHere;
-                return ieRet;
+                    _currentPos = nPrevDir + NodeDatum.FileCountHere;
+                    return ieRet;
+                }
             }
 
             _currentIterator = null;    // jic

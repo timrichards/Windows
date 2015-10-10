@@ -40,19 +40,21 @@ namespace DoubleFile
         public LV_FilesVM_Compare LV_First { get; }
         public LV_FilesVM_Compare LV_Second { get; }
 
-        bool CanPick;
+        bool CanPick { set { _bCanPick = value; Util.UIthread(99777, () => CommandManager.InvalidateRequerySuggested()); } }
+        bool _bCanPick;
 
         internal UC_CompareVM()
         {
-            Icmd_Pick1 = new RelayCommand(() => { _folder1 = LocalTV.TreeSelect_FolderDetail.treeNode; Update(); }, () => CanPick);
-            Icmd_Pick2 = new RelayCommand(() => { _folder2 = LocalTV.TreeSelect_FolderDetail.treeNode; Update(); }, () => CanPick);
-            Icmd_GoTo1 = new RelayCommand(() => _folder1?.GoToFile(null), () => CanPick && (null != _folder1));
-            Icmd_GoTo2 = new RelayCommand(() => _folder2?.GoToFile(null), () => CanPick && (null != _folder2));
+            Icmd_Pick1 = new RelayCommand(() => { _folder1 = LocalTV.TreeSelect_FolderDetail.treeNode; Update(); }, () => _bCanPick);
+            Icmd_Pick2 = new RelayCommand(() => { _folder2 = LocalTV.TreeSelect_FolderDetail.treeNode; Update(); }, () => _bCanPick);
+            Icmd_GoTo1 = new RelayCommand(() => _folder1?.GoToFile(null), () => _bCanPick && (null != _folder1));
+            Icmd_GoTo2 = new RelayCommand(() => _folder2?.GoToFile(null), () => _bCanPick && (null != _folder2));
             Icmd_GoTo = new RelayCommand(() => _selectedItem.TreeNode.GoToFile(_selectedItem.Filename), () => null != _selectedItem);
             LV_Both = new LV_FilesVM_Compare { SelectedItemChanged = v => { _selectedItem = v; LV_First.ClearSelection(); LV_Second.ClearSelection(); } };
             LV_First = new LV_FilesVM_Compare { SelectedItemChanged = v => { _selectedItem = v; LV_Both.ClearSelection(); LV_Second.ClearSelection(); } };
             LV_Second = new LV_FilesVM_Compare { SelectedItemChanged = v => { _selectedItem = v; LV_First.ClearSelection(); LV_Both.ClearSelection(); } };
             Icmd_Nicknames = new RelayCommand(RaisePathFull);
+            _folderSel = LocalTV.TreeSelect_FolderDetail?.treeNode;
 
             Util.ThreadMake(() =>
             {
@@ -65,9 +67,8 @@ namespace DoubleFile
                 RaisePropertyChanged("NoResultsText");
                 ProgressbarVisibility = Visibility.Collapsed;
                 RaisePropertyChanged("ProgressbarVisibility");
+                CanPick = true;
             });
-
-            _folderSel = LocalTV.TreeSelect_FolderDetail?.treeNode;
         }
 
         public void Dispose()
@@ -91,9 +92,7 @@ namespace DoubleFile
         internal UC_CompareVM
             Update(LocalTreeNode folderSel = null)
         {
-            CanPick = false;
             Util.ThreadMake(() => Update_(folderSel));
-            CanPick = true;
             return this;
         }
 
@@ -133,6 +132,7 @@ namespace DoubleFile
             RaisePropertyChanged("NoResultsVisibility");
             ProgressbarVisibility = Visibility.Visible;
             RaisePropertyChanged("ProgressbarVisibility");
+            CanPick = false;
 
             var lsFolder1 = _folder1.NodeDatum.Hashes_FilesHere.Union(_folder1.NodeDatum.Hashes_SubnodeFiles_Scratch).Distinct().ToList();
             var lsFolder2 = _folder2.NodeDatum.Hashes_FilesHere.Union(_folder2.NodeDatum.Hashes_SubnodeFiles_Scratch).Distinct().ToList();
@@ -186,6 +186,7 @@ namespace DoubleFile
 
             ProgressbarVisibility = Visibility.Collapsed;
             RaisePropertyChanged("ProgressbarVisibility");
+            CanPick = true;
             return this;
         }
 

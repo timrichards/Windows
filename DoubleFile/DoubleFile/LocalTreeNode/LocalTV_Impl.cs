@@ -141,20 +141,27 @@ namespace DoubleFile
             TabledString<TabledStringType_Folders>.GenerationEnded();
             _rootNodes.Sort((x, y) => x.PathShort.LocalCompare(y.PathShort));
             _topNode = _rootNodes[0];
-            LocalTreeNode.SetLevel(_rootNodes);
+            var nCount = LocalTreeNode.SetLevel(_rootNodes);
             _tree = null;
 
             var lsLocalLVignore = new List<LVitem_ClonesVM> { };  // when implementing, replace the Forms ListViewItem.Tag in LocalLVItem
             double nProgress = 0;
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
-                .LocalSubscribe(99761, x => ProgressOverlay.WithProgressOverlay(w => w.SetProgress(_ksFolderTreeKey, (2 + nProgress) / 3))))
+                .LocalSubscribe(99761, x => ProgressOverlay.WithProgressOverlay(w => w.SetProgress(_ksFolderTreeKey, (1 + nProgress) / 2))))
             {
                 while (false == _bFileDictDone)      // the only reason _bFileDictDone is to SetAllFilesHashes() 
                     Util.Block(200);
 
-                AllFileHashes_AddRef();
-                SetAllFilesHashes(RootNodes);
+                _progress = 0;
+                double nProgressDenominator = 2 * nCount;
+
+                using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
+                    .LocalSubscribe(99614, x => nProgress = _progress * 4 / nProgressDenominator / 5.1))
+                {
+                    AllFileHashes_AddRef();             //  _progress
+                    SetAllFilesHashes(RootNodes);       //  _progress
+                }
 
                 IDictionary<int, List<LocalTreeNode>> dictNodes = new Dictionary<int, List<LocalTreeNode>>();
 
@@ -198,7 +205,7 @@ namespace DoubleFile
 
                 var stopwatch = Stopwatch.StartNew();
 
-                collate.Step1(d => nProgress = d / 1.1);
+                collate.Step1(d => nProgress = (4 + d)/ 5.1);
                 stopwatch.Stop();
                 Util.WriteLine("collate.Step1 " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
                 stopwatch.Reset();
@@ -271,6 +278,8 @@ namespace DoubleFile
         {
             foreach (var treeNode in treeNodes)
             {
+                ++_progress;
+
                 var ieHashes =
                     treeNode.NodeDatum.Hashes_FilesHere
                     .Union(treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch)

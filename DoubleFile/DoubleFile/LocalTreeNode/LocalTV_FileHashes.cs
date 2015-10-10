@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading;
 
 namespace DoubleFile
@@ -44,8 +45,6 @@ namespace DoubleFile
         static internal void
             AllFileHashes_DropRef()
         {
-            Util.Assert(99614, 0 < _nAllFileHashes_refCount);
-
             if (0 < --_nAllFileHashes_refCount)
                 return;
 
@@ -59,6 +58,8 @@ namespace DoubleFile
 
             foreach (var treeNode in nodes)
             {
+                ++_progress;
+
                 if (_cts.IsCancellationRequested)
                     return new int[0];
 
@@ -178,5 +179,7 @@ namespace DoubleFile
             _cts = null;
         static int
             _nAllFileHashes_refCount = 0;
+        static int
+            _progress = 0;
     }
 }

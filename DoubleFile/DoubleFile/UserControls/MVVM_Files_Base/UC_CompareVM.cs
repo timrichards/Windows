@@ -158,9 +158,9 @@ namespace DoubleFile
                 var lsDiff2 = GetFileLines(_folder2, lsDiff2_).OrderBy(tuple => tuple.Item2[0]).ToList();
                 Func<int, string> f = n => ((n < kMax) ? "" + n : "at least " + n) + " file" + ((1 != n) ? "s" : "");
 
-                Util.Assert(99602, lsIntersect.Count == lsIntersect_.Count);
-                Util.Assert(99601, lsDiff1.Count == lsDiff1_.Count);
-                Util.Assert(99600, lsDiff2.Count == lsDiff2_.Count);
+                Util.Assert(99602, lsIntersect.Count == lsIntersect_.Count, bTraceOnly: true);
+                Util.Assert(99601, lsDiff1.Count == lsDiff1_.Count, bTraceOnly: true);
+                Util.Assert(99600, lsDiff2.Count == lsDiff2_.Count, bTraceOnly: true);
                 Results = f(lsIntersect_.Count) + " in common; " + f(lsDiff1_.Count) + " and " + f(lsDiff2_.Count) + " unique respectively.";
                 RaisePropertyChanged("Results");
 
@@ -221,7 +221,7 @@ namespace DoubleFile
                     .Select(strLine => strLine.Split('\t'))
                     .Where(asLine => nHashColumn < asLine.Length)
                     .DistinctBy(asLine => asLine[nHashColumn])
-                    .Select(asLine => new { a = HashTuple.HashCodeFromString(asLine[nHashColumn], asLine[FileParse.knColLength]), b = asLine })
+                    .Select(asLine => new { a = HashTuple.FileIndexedIDfromString(asLine[nHashColumn], asLine[FileParse.knColLength]), b = asLine })
                     .Where(sel => tuple.Item2.Contains(sel.a))
                     .Select(sel => Tuple.Create(tuple.Item1, (IReadOnlyList<string>)sel.b.Skip(3).ToArray())));
             }                                       // makes this an LV line: knColLengthLV----^

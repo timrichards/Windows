@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
-using System.Diagnostics;
 using System.Reactive.Linq;
 
 namespace DoubleFile
@@ -33,7 +32,6 @@ namespace DoubleFile
             {
                 base.Dispose();                 // sets _cts.IsCancellationRequested
                 LocalTV.AllFileHashes_DropRef();
-                GC.Collect();
             });
         }
 

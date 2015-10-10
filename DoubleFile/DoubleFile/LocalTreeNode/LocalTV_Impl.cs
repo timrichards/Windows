@@ -4,6 +4,7 @@ using System.Windows;
 using System.Collections.Concurrent;
 using System.Reactive.Linq;
 using System.Diagnostics;
+using System.Linq;
 
 namespace DoubleFile
 {
@@ -16,7 +17,6 @@ namespace DoubleFile
             if (0 < _allNodes.Count)
                 _dictVolumeInfo.Clear();
 
-            _dictNodes = null;           // m_dictNodes is tested to recreate tree.
             _allNodes = new List<LocalTreeNode> { };
             _rootNodes = new List<LocalTreeNode> { };
         }
@@ -58,13 +58,10 @@ namespace DoubleFile
                 if (Statics.DupeFileDictionary.IsAborted)
                     return;     // from lambda
 
-                if (null == _dictNodes)
-                    _dictNodes = new ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>();
-
                 _tree =
                     new Tree(
-                        _lvProjectVM,
-                        new TreeBase(_dictNodes, _dictVolumeInfo, new WeakReference<ITreeStatus>(this)))
+                    _lvProjectVM,
+                    new TreeBase(_dictVolumeInfo, new WeakReference<ITreeStatus>(this)))
                     .DoThreadFactory();
             })
             {
@@ -152,12 +149,50 @@ namespace DoubleFile
             double nProgress = 0;
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
-                .LocalSubscribe(99761, x => ProgressOverlay.WithProgressOverlay(w => w.SetProgress(_ksFolderTreeKey, (3 + nProgress) / 4))))
+                .LocalSubscribe(99761, x => ProgressOverlay.WithProgressOverlay(w => w.SetProgress(_ksFolderTreeKey, (2 + nProgress) / 3))))
             {
+                while (false == _bFileDictDone)      // the only reason _bFileDictDone is to SetAllFilesHashes() 
+                    Util.Block(200);
+
+                AllFileHashes_AddRef();
+                SetAllFilesHashes(RootNodes);
+
+                IDictionary<int, List<LocalTreeNode>> dictNodes = new Dictionary<int, List<LocalTreeNode>>();
+
+                {
+                    var dictNodes_ = new Dictionary<int, List<LocalTreeNode>>();
+
+                    SetDictNodes(dictNodes_, RootNodes);
+
+                    var dictLength = new Dictionary<int, ulong>();
+
+                    foreach (var kvp in dictNodes_)
+                    {
+                        var hashes = kvp.Value.First().NodeDatum.Hashes_SubnodeFiles_Scratch;
+
+                        Util.Assert(99598, kvp.Value.All(treeNode => treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch.SequenceEqual(hashes)));
+                        dictLength[kvp.Key] = kvp.Value.Max(treeNode => treeNode.NodeDatum.LengthTotal);
+                    }
+
+                    var nFolderIndexedID = 1;   // first folder ID is 1: zero is not valid: no unchecked/overflow/wraparound (<<1.5M is reasonable)
+
+                    foreach (var kvp in dictLength.OrderBy(kvp => kvp.Value))               // sort by total length
+                    {
+                        var lsTreeNodes = dictNodes_[kvp.Key];
+
+                        foreach (var treeNode in lsTreeNodes)
+                            treeNode.NodeDatum.Hash_AllFiles = nFolderIndexedID;
+
+                        dictNodes[nFolderIndexedID] = lsTreeNodes;
+                        ++nFolderIndexedID;
+                    }
+                }
+
+                AllFileHashes_DropRef();
                 _allNodes = new List<LocalTreeNode> { };
 
                 var collate = new Collate(
-                    _dictNodes,
+                    dictNodes,
                     _clones, _sameVol, _solitary,
                     _rootNodes, _allNodes,
                     lsLVignore: lsLocalLVignore, bLoose: true);
@@ -188,7 +223,6 @@ namespace DoubleFile
                 Util.WriteLine("GC.Collect " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
             }
 
-            _dictNodes = null;      // saving memory here.
             _bTreeDone = true;      // should precede closing status dialog: returns true to the caller
 
             ProgressOverlay.WithProgressOverlay(w => w
@@ -234,14 +268,95 @@ namespace DoubleFile
             return true;
         }
 
+        void SetAllFilesHashes(IEnumerable<LocalTreeNode> treeNodes)
+        {
+            foreach (var treeNode in treeNodes)
+            {
+                var ieHashes =
+                    treeNode.NodeDatum.Hashes_FilesHere
+                    .Union(treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch)
+                    .OrderBy(n => n)
+                    .Distinct();
+
+                var nCount = 0;
+
+                Util.Assert(99599, 0 == treeNode.NodeDatum.Hash_AllFiles);
+                treeNode.NodeDatum.Hash_AllFiles = 0;
+
+                foreach (var nFileIndexedID in ieHashes)
+                {
+                    unchecked
+                    {
+                        treeNode.NodeDatum.Hash_AllFiles += nFileIndexedID;
+                        treeNode.NodeDatum.Hash_AllFiles *= 37;
+                    }
+
+                    ++nCount;
+                }
+
+                unchecked
+                {
+                    treeNode.NodeDatum.Hash_AllFiles += nCount;
+                    treeNode.NodeDatum.Hash_AllFiles *= 37;
+                }
+
+                if (null != treeNode.Nodes)
+                    SetAllFilesHashes(treeNode.Nodes);      // recurse
+            }
+        }
+
+        void SetDictNodes(IDictionary<int, List<LocalTreeNode>> dictNodes, IEnumerable<LocalTreeNode> treeNodes)
+        {
+            foreach (var treeNode in treeNodes)
+            {
+                var nodeDatum = treeNode.NodeDatum;
+
+                if (0 == nodeDatum.Hash_AllFiles)
+                    continue;
+
+                for (;;)
+                {
+                    var lsTreeNodes = dictNodes.TryGetValue(nodeDatum.Hash_AllFiles);
+
+                    if (null != lsTreeNodes)
+                    {
+                        if (lsTreeNodes[0].NodeDatum.Hashes_SubnodeFiles_Scratch.SequenceEqual(nodeDatum.Hashes_SubnodeFiles_Scratch))
+                        {
+                            lsTreeNodes.Add(treeNode);
+                        }
+                        else
+                        {
+                            // collision: adjust. All its clones will pachenko into the same slot.
+
+                            unchecked
+                            {
+                                ++nodeDatum.Hash_AllFiles;
+                            }
+
+                            if (0 == nodeDatum.Hash_AllFiles)
+                                ++nodeDatum.Hash_AllFiles;
+
+                            continue;
+                        }
+                    }
+                    else if (0 < nodeDatum.LengthTotal)
+                    {
+                        dictNodes[nodeDatum.Hash_AllFiles] = new List<LocalTreeNode> { treeNode };
+                    }
+
+                    break;
+                }
+
+                if (null != treeNode.Nodes)
+                    SetDictNodes(dictNodes, treeNode.Nodes);      // recurse
+            }
+        }
+
         const string _ksDupeFileDictKey = "Matching duplicate files";
         const string _ksFolderTreeKey = "Setting up the directory tree";
 
         Tree
             _tree = null;
-        ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>
-            _dictNodes = null;
-
         bool
             _bFileDictDone = false;
         bool

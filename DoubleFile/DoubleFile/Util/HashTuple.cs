@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace DoubleFile
 {
@@ -19,9 +21,6 @@ namespace DoubleFile
             foreach (var b in abHash_in)
                 abHash[--nIx] = b;
 
-            if (null == abHash)
-                return null;
-
             unsafe
             {
                 fixed (byte* n8 = &abHash[8])
@@ -33,28 +32,29 @@ namespace DoubleFile
             ToString() => Item1.ToString("X8").PadLeft(16, '0') + Item2.ToString("X8").PadLeft(16, '0');
 
         static internal int
-            HashCodeFromString(string strHash, string strFileLength) =>
-            HashCodeFromString(strHash, ("" + strFileLength).ToUlong());
+            FileIndexedIDfromString(string strHash, string strFileLength) =>
+            FileIndexedIDfromString(strHash, ("" + strFileLength).ToUlong());
         static internal int
-            HashCodeFromString(string strHash, ulong nFileLength)
+            FileIndexedIDfromString(string strHash, ulong nFileLength)
         {
             try
             {
-                var abHash = new byte[16];
+                var abHash_in = new byte[16];
 
                 for (var i = 0; i < 32; i += 2)
-                    abHash[15 - (i >> 1)] = Convert.ToByte(strHash.Substring(i, 2), 16);
+                    abHash_in[15 - (i >> 1)] = Convert.ToByte(strHash.Substring(i, 2), 16);
 
-                if (null == abHash)
-                    return 0;
+                var nIx = 16;
+                var abHash = new byte[nIx];
+
+                foreach (var b in abHash_in)
+                    abHash[--nIx] = b;
 
                 unsafe
                 {
-                    fixed (byte* n12 = &abHash[12])
                     fixed (byte* n8 = &abHash[8])
-                    fixed (byte* n4 = &abHash[4])
                     fixed (byte* n0 = &abHash[0])
-                        return *((int*)n12) + *((int*)n8) + *((int*)n4) + *((int*)n0) + (int)nFileLength * 37;
+                        return _dictLookup.GetOrAdd(Tuple.Create(*((ulong*)n8), *((ulong*)n0), nFileLength), Interlocked.Increment(ref _nFileIndexedID));
                 }
             }
             catch (ArgumentException)
@@ -68,5 +68,10 @@ namespace DoubleFile
 
             return 0;
         }
+
+        static ConcurrentDictionary<Tuple<ulong, ulong, ulong>, int>
+            _dictLookup = new ConcurrentDictionary<Tuple<ulong, ulong, ulong>, int>();
+        static int
+            _nFileIndexedID = 0;        // first file ID is 1: zero is not valid: no unchecked/overflow/wraparound (1.5M is reasonable)
     }
 }

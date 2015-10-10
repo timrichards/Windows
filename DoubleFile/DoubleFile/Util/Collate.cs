@@ -15,7 +15,7 @@ namespace DoubleFile
         bool _bAborted = false;
 
         internal Collate(
-            ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>> dictNodes,
+            IDictionary<int, List<LocalTreeNode>> dictNodes,
             UC_ClonesVM lvClones,
             UC_ClonesVM lvSameVol,
             UC_ClonesVM lvSolitary,
@@ -90,7 +90,7 @@ namespace DoubleFile
             }
 
             var dictIgnoreMark = new Dictionary<LocalTreeNode, LVitem_ClonesVM>();
-            var dictNodes = new SortedDictionary<FolderKeyTuple, List<LocalTreeNode>>();
+            var dictNodes = new SortedDictionary<int, List<LocalTreeNode>>();
 
             foreach (var kvp in _dictNodes)                     // clone to remove ignored
             {                                                   // m_ vs local check is via List vs UList
@@ -106,7 +106,7 @@ namespace DoubleFile
 
                 var treeNode = kvp.Key;
                 var nodeDatum = treeNode.NodeDatum;
-                var lsTreeNodes = dictNodes.TryGetValue(nodeDatum.Key);
+                var lsTreeNodes = dictNodes.TryGetValue(nodeDatum.Hash_AllFiles);
 
                 if (null == lsTreeNodes)
                     continue;
@@ -116,7 +116,7 @@ namespace DoubleFile
                     foreach (var treeNode_A in lsTreeNodes)
                         dictIgnoreMark.Add(treeNode_A, kvp.Value);
 
-                    dictNodes.Remove(nodeDatum.Key);
+                    dictNodes.Remove(nodeDatum.Hash_AllFiles);
                 }
                 else if (lsTreeNodes.Contains(treeNode))
                 {
@@ -124,11 +124,11 @@ namespace DoubleFile
                     lsTreeNodes.Remove(treeNode);
 
                     if (0 == lsTreeNodes.Count)
-                        dictNodes.Remove(nodeDatum.Key);
+                        dictNodes.Remove(nodeDatum.Hash_AllFiles);
                 }
             }
 
-            var dictUnique = new SortedDictionary<FolderKeyTuple, LocalTreeNode>();
+            var dictUnique = new SortedDictionary<int, LocalTreeNode>();
 
             nProgressDenominator += dictNodes.Count;
             ++nProgressItem;
@@ -197,7 +197,7 @@ namespace DoubleFile
                 }
             }
 
-            var dictClones = new SortedDictionary<FolderKeyTuple, List<LocalTreeNode>>();
+            var dictClones = new SortedDictionary<int, List<LocalTreeNode>>();
 
             nProgressDenominator += _lsRootNodes.Count;
             ++nProgressItem;
@@ -393,7 +393,7 @@ namespace DoubleFile
         // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
         // Breadth-first.
         void DifferentVolsQuery(
-            IDictionary<FolderKeyTuple, List<LocalTreeNode>> dictClones,
+            IDictionary<int, List<LocalTreeNode>> dictClones,
             LocalTreeNode treeNode,
             LocalTreeNode rootClone = null)
         {
@@ -415,7 +415,7 @@ namespace DoubleFile
             {
                 rootClone = treeNode;
 
-                var lsTreeNodes = dictClones.TryGetValue(nodeDatum.Key);
+                var lsTreeNodes = dictClones.TryGetValue(nodeDatum.Hash_AllFiles);
 
                 if (null != lsTreeNodes)
                 {
@@ -424,7 +424,7 @@ namespace DoubleFile
                 }
                 else
                 {
-                    dictClones.Add(nodeDatum.Key, listClones);
+                    dictClones.Add(nodeDatum.Hash_AllFiles, listClones);
 
                     // Test to see if clones are on separate volumes.
 
@@ -442,7 +442,7 @@ namespace DoubleFile
                             return;
                         }
 
-                        Util.Assert(99999, subnode.NodeDatum.Key.Equals(nodeDatum.Key));
+                        Util.Assert(99999, subnode.NodeDatum.Hash_AllFiles.Equals(nodeDatum.Hash_AllFiles));
 
                         var rootNodeA = subnode.Root;
 
@@ -551,7 +551,7 @@ namespace DoubleFile
         }
 
         // the following are form vars referenced internally, thus keeping their form_ and m_ prefixes
-        readonly ConcurrentDictionary<FolderKeyTuple, List<LocalTreeNode>>
+        readonly IDictionary<int, List<LocalTreeNode>>
             _dictNodes = null;
         readonly UC_ClonesVM _lvClones = null;
         readonly UC_ClonesVM _lvSameVol = null;

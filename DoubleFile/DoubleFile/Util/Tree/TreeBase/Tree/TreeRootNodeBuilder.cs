@@ -57,25 +57,11 @@ namespace DoubleFile
                 nodeDatum.FileCountHere = nodeDatum.LineNo - nodeDatum.PrevLineNo - 1;
                 nodeDatum.FileCountTotal = (datum.FileCountTotal += nodeDatum.FileCountHere);
                 nodeDatum.SubDirs = (datum.SubDirs += (uint)(treeNode.Nodes?.Count ?? 0));
-                nodeDatum.Hash_AllFiles = (datum.Hash_AllFiles += nodeDatum.Hash_AllFiles);
 
                 if (0 < nodeDatum.FileCountHere)
                     ++datum.DirsWithFiles;
 
                 nodeDatum.DirsWithFiles = datum.DirsWithFiles;
-
-                var lsTreeNodes = _dictNodes.TryGetValue(nodeDatum.Key);
-
-                if (null != lsTreeNodes)
-                {
-                    lock (lsTreeNodes)
-                        lsTreeNodes.Add(treeNode);
-                }
-                else if (0 < nodeDatum.LengthTotal)
-                {
-                    _dictNodes[nodeDatum.Key] = new List<LocalTreeNode> { treeNode };
-                }
-
                 return datum;
             }
 
@@ -226,8 +212,7 @@ namespace DoubleFile
                     rootNode = new RootNode(nFirstLineNo, driveLetter);
                 }
 
-                var nAllFilesHash = 0;
-                var lsFilesHereHashes = new List<int> { };
+                var lsFilesHereIndexedIDs = new List<int> { };
 
                 var nHashColumn =
                     Statics.DupeFileDictionary.AllListingsHashV2
@@ -250,26 +235,17 @@ namespace DoubleFile
                         var nFileLength = ("" + asLine[knColLength]).ToUlong();
 
                         if (0 < nFileLength)
-                        {
-                            var hash = HashTuple.HashCodeFromString(asLine[nHashColumn], nFileLength);
-
-                            nAllFilesHash += hash * 37;
-                            lsFilesHereHashes.Add(hash);
-                        }
+                            lsFilesHereIndexedIDs.Add(HashTuple.FileIndexedIDfromString(asLine[nHashColumn], nFileLength));
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {
-                        nAllFilesHash += lsFilesHereHashes.Count;
-                        nAllFilesHash *= 37;
-
                         rootNode.AddToTree(
                             asLine[2],
                             (uint)("" + asLine[1]).ToInt(),
                             ("" + asLine[knColLength]).ToUlong(),
-                            nAllFilesHash, lsFilesHereHashes);
+                            lsFilesHereIndexedIDs);
 
-                        lsFilesHereHashes = new List<int> { };
-                        nAllFilesHash = 0;
+                        lsFilesHereIndexedIDs = new List<int> { };
                     }
                 }
 

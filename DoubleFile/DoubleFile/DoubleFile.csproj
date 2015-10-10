@@ -337,13 +337,11 @@
     <Compile Include="Util\Tree\TreeBase\Tree\TreeRootNodeBuilder.cs" />
     <Compile Include="Util\Tree\TreeBase\Tree\TreeRootNodeBuilder\Node.cs" />
     <Compile Include="Util\TreeSelect.cs" />
-    <Compile Include="Util\FolderKeyTuple.cs" />
     <Compile Include="Util\Tree\LVitemFileTag.cs" />
     <Compile Include="UserControls\Treemap\UC_TreeMapVM.cs" />
     <Compile Include="Util\UtilColorcode.cs" />
     <Compile Include="Util\DupeFileDictionary.cs" />
     <Compile Include="Util\DupeFileDictionary\DuplicateStruct.cs" />
-    <Compile Include="Util\FileKeyTuple.cs" />
     <Compile Include="Util\HashTuple.cs" />
     <Compile Include="UserControls\MVVM_Files_Base\LVitem_FilesVM.cs" />
     <Compile Include="UserControls\MVVM_Files_Base\LV_FilesVM_Base.cs" />

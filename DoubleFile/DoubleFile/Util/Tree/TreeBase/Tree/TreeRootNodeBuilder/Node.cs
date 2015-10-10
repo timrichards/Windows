@@ -12,7 +12,7 @@ namespace DoubleFile
             class Node
             {
                 internal
-                    Node(string strPath, uint nLineNo, ulong nLength, int nAllFilesHash, IReadOnlyList<int> lsFilesHereHashes, RootNode rootNode)
+                    Node(string strPath, uint nLineNo, ulong nLength, IReadOnlyList<int> lsFilesHereHashes, RootNode rootNode)
                 {
                     if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                         return;
@@ -23,7 +23,6 @@ namespace DoubleFile
 
                     _nLineNo = nLineNo;
                     _nLength = nLength;
-                    _nAllFilesHash = nAllFilesHash;
                     _lsFilesHereHashes = lsFilesHereHashes ?? new int[0];
 
                     // Path.GetDirectoryName() does not preserve filesystem root
@@ -48,7 +47,7 @@ namespace DoubleFile
 
                     if (null == nodeParent)
                     {
-                        nodeParent = new Node(strParent, _nLineNo, 0, 0, null, _rootNode);
+                        nodeParent = new Node(strParent, _nLineNo, 0, null, _rootNode);
                         _rootNode.Nodes.Add(strParent, nodeParent);
                     }
 
@@ -81,7 +80,7 @@ namespace DoubleFile
                                 // pass the culled path back to TreeRootNodeBuilder; ultimately to LVitem_ProjectExplorer
                                 treeNode.NodeDatum =
                                     new RootNodeDatum(new NodeDatum(new DetailsDatum(
-                                    subNode._nPrevLineNo, subNode._nLineNo, subNode._nLength, subNode._nAllFilesHash, subNode._lsFilesHereHashes)),
+                                    subNode._nPrevLineNo, subNode._nLineNo, subNode._nLength, subNode._lsFilesHereHashes)),
                                     subNode._strPath);
                             }
 
@@ -105,7 +104,7 @@ namespace DoubleFile
                     }
 
                     treeNode.NodeDatum = new NodeDatum(new DetailsDatum(
-                        _nPrevLineNo, _nLineNo, _nLength, _nAllFilesHash, _lsFilesHereHashes));  // this is almost but not quite always newly assigned here.
+                        _nPrevLineNo, _nLineNo, _nLength, _lsFilesHereHashes));  // this is almost but not quite always newly assigned here.
 
                     return treeNode;
                 }
@@ -124,8 +123,6 @@ namespace DoubleFile
                     _nLineNo = 0;
                 readonly ulong
                     _nLength = 0;
-                readonly int
-                    _nAllFilesHash = 0;
                 readonly IReadOnlyList<int>
                     _lsFilesHereHashes = null;
             }

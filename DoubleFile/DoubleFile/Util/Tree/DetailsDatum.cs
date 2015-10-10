@@ -38,12 +38,11 @@ namespace DoubleFile
             TreemapRect;
 
         internal DetailsDatum() { }
-        internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, int nAllFilesHash, IReadOnlyList<int> lsFilesHereHashes)
+        internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, IReadOnlyList<int> lsFilesHereHashes)
         {
             PrevLineNo = nPrevLineNo;
             LineNo = nLineNo;
             LengthHere = nLength;
-            Hash_AllFiles = nAllFilesHash;
             Hashes_FilesHere = lsFilesHereHashes.OrderBy(n => n).Distinct().ToArray();
         }
 
@@ -57,7 +56,6 @@ namespace DoubleFile
             PrevLineNo = datum.PrevLineNo;
             LineNo = datum.LineNo;
             LengthHere = datum.LengthHere;
-            Hash_AllFiles = datum.Hash_AllFiles;
             Hashes_FilesHere = datum.Hashes_FilesHere;
         }
 
@@ -70,10 +68,6 @@ namespace DoubleFile
             SubDirs = datum1.SubDirs + datum2.SubDirs,
             FileCountHere = datum1.FileCountHere + datum2.FileCountHere,
             DirsWithFiles = datum1.DirsWithFiles + datum2.DirsWithFiles,
-            Hash_AllFiles = datum1.Hash_AllFiles + datum2.Hash_AllFiles
         };
-
-        internal FolderKeyTuple
-            Key => new FolderKeyTuple(LengthTotal, FileCountTotal, DirsWithFiles, Hash_AllFiles);
     }
 }

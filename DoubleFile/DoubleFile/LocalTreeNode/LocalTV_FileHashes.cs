@@ -1,4 +1,4 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -44,7 +44,11 @@ namespace DoubleFile
             if (0 < --_nAllFileHashes_refCount)
                 return;
 
+            while (null != _cts)    // hold the caller while building so as not to signal built
+                Util.Block(50);
+
             Cleanup_AllFileHashes_Scratch(RootNodes);
+            GC.Collect();
         }
 
         static IReadOnlyList<int>

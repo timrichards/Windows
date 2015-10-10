@@ -56,15 +56,15 @@ namespace DoubleFile
             GetDuplicates(string[] asFileLine)
         {
             var nHashColumn =
-                _bAnyListingFilesHashV1pt0
-                ? 10
-                : 11;
+                AllListingsHashV2
+                ? 11
+                : 10;
 
             if (asFileLine.Length <= nHashColumn)
                 return null;
 
             var lsLookup =
-                _dictDuplicateFiles?.TryGetValue(FileKeyTuple.FactoryCreate(
+                _dictDuplicateFiles?.TryGetValue(HashTuple.FileIndexedIDfromString(
                 asFileLine[nHashColumn],
                 ("" + asFileLine[7]).ToUlong()));
 
@@ -127,10 +127,13 @@ namespace DoubleFile
 
             var cts = new CancellationTokenSource();
             var nProgress = 0;
-            var dictV1pt0 = new ConcurrentDictionary<FileKeyTuple, List<int>> { };
-            var dictV2 = new ConcurrentDictionary<FileKeyTuple, List<int>> { };
-            var nFolderCount1pt0 = 1;
-            var nFolderCount2 = 1;
+            var dict = new ConcurrentDictionary<int, List<Tuple<int, ulong>>> { };
+            var nFolderCount = 1;
+
+            var nHashColumn =
+                AllListingsHashV2
+                ? 11
+                : 10;
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                 .LocalSubscribe(99757, x => StatusCallback(nProgress: nProgress/(double) nLVitems)))
@@ -145,20 +148,18 @@ namespace DoubleFile
                 }
 
                 var nLVitem = _dictLVtoItemNumber[lvItem];
-                var bOnlyHashV1pt0 = true;
 
                 foreach (var tuple in
                     lvItem.ListingFile
                     .ReadLines(99649)
                     .Where(strLine => strLine.StartsWith(FileParse.ksLineType_File))
                     .Select(strLine => strLine.Split('\t'))
-                    .Where(asLine => 10 < asLine.Length)
+                    .Where(asLine => nHashColumn < asLine.Length)
 
                     .Select(asLine => Tuple.Create(
                         ("" + asLine[1]).ToInt(),                           // Item1 - line number
                         ("" + asLine[FileParse.knColLength]).ToUlong(),     // Item2 - file length
-                        asLine[10],                                         // Item3 - 4K hash
-                        (11 < asLine.Length) ? asLine[11] : null))          // Item4 - 1M hash
+                        asLine[nHashColumn]))                               // Item3 - hash
 
                     .OrderBy(tuple => tuple.Item2))
                 {
@@ -168,32 +169,8 @@ namespace DoubleFile
                         return;     // from inner lambda
                     }
 
-                    var keyv1pt0 = FileKeyTuple.FactoryCreate(tuple.Item3, tuple.Item2);
-
-                    if (null == keyv1pt0)
-                    {
-                        IsAborted = true;
-                        cts.Cancel();
-                        return;     // from inner lambda
-                    }
-
+                    var key = HashTuple.FileIndexedIDfromString(tuple.Item3, tuple.Item2);
                     var lookup = 0;
-                    FileKeyTuple keyV2 = null;
-
-                    if ((false == _bAnyListingFilesHashV1pt0) &&
-                        (null != tuple.Item4))
-                    {
-                        keyV2 = FileKeyTuple.FactoryCreate(tuple.Item4, tuple.Item2);
-
-                        if (null == keyV2)
-                        {
-                            IsAborted = true;
-                            cts.Cancel();
-                            return;     // from inner lambda
-                        }
-
-                        bOnlyHashV1pt0 = false;
-                    }
 
                     SetLVitemProjectVM(ref lookup, nLVitem);
                     SetLineNumber(ref lookup, tuple.Item1);
@@ -201,14 +178,8 @@ namespace DoubleFile
                     Util.Assert(99907, _dictItemNumberToLV[GetLVitemProjectVM(lookup)] == lvItem);
                     Util.Assert(99908, GetLineNumber(lookup) == tuple.Item1);
 #endif
-                    Insert(dictV1pt0, keyv1pt0, lookup, ref nFolderCount1pt0);
-
-                    if (null != keyV2)
-                        Insert(dictV2, keyV2, lookup, ref nFolderCount2);
+                    Insert(dict, key, lookup, tuple.Item2, ref nFolderCount);
                 }
-
-                if (bOnlyHashV1pt0)
-                    _bAnyListingFilesHashV1pt0 = true;
 
                 Interlocked.Increment(ref nProgress);
             });
@@ -220,38 +191,36 @@ namespace DoubleFile
             }
 
             var stopwatch = Stopwatch.StartNew();
-            var nFolderCount = (uint)(_bAnyListingFilesHashV1pt0 ? nFolderCount1pt0 : nFolderCount2);
+
+            foreach (var kvp in dict)
+            {
+                var nLength = kvp.Value.First().Item2;
+
+                Util.Assert(99958, kvp.Value.All(tuple => tuple.Item2 == nLength)); 
+            }
 
             _dictDuplicateFiles =
-                (_bAnyListingFilesHashV1pt0 ? dictV1pt0 : dictV2)
+                dict
                 .Where(kvp => 1 < kvp.Value.Count)
-                .OrderBy(kvp => kvp.Key.Item2)
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.AsEnumerable());
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Select(tuple => tuple.Item1));
 
             Util.Assert(99896, _dictDuplicateFiles.Count == nFolderCount - 1, bTraceOnly: true);
             stopwatch.Stop();
             Util.WriteLine("_DictFiles " + stopwatch.ElapsedMilliseconds + " ms");   // 650 ms 
-
-            // Skip enumerating AllListingsHashV2 when possible: not important, but it'd be a small extra step
-            // Otherwise note that _LVprojectVM gets nulled six lines down so the value has to be set by now.
-            if (null == _allListingsHashV2)
-                _allListingsHashV2 = (false == _bAnyListingFilesHashV1pt0);
-            else
-                Util.Assert(99958, _bAnyListingFilesHashV1pt0 != AllListingsHashV2);
-
             StatusCallback(bDone: true);
             _callbackWR = null;
             _LVprojectVM = null;
             _thread = null;
         }
 
-        void Insert(IDictionary<FileKeyTuple, List<int>> dictionary, FileKeyTuple key, int lookup, ref int nFolderCount)
+        void Insert(IDictionary<int, List<Tuple<int, ulong>>> dictionary, int key, int lookup, ulong nLength, ref int nFolderCount)
         {
             var ls = dictionary.TryGetValue(key);
+            var tuple = Tuple.Create(lookup, nLength);
 
             if (null == ls)
             {
-                dictionary[key] = new List<int> { lookup };
+                dictionary[key] = new List<Tuple<int, ulong>> { tuple };
                 return;
             }
 
@@ -262,8 +231,8 @@ namespace DoubleFile
 
                 // jic sorting downstream too at A
                 ls.Insert(
-                    ls.TakeWhile(nLookup => lookup >= nLookup).Count(),
-                    lookup);
+                    ls.TakeWhile(tupleA => lookup >= tupleA.Item1).Count(),
+                    tuple);
             }
         }
 
@@ -291,10 +260,8 @@ namespace DoubleFile
             _dictLVtoItemNumber = null;
         IReadOnlyDictionary<int, LVitemProject_Explorer>
             _dictItemNumberToLV = null;
-        IReadOnlyDictionary<FileKeyTuple, IEnumerable<int>>
+        IReadOnlyDictionary<int, IEnumerable<int>>
             _dictDuplicateFiles = null;
-        bool
-            _bAnyListingFilesHashV1pt0 = false;
 
         WeakReference<ICreateDupeFileDictStatus>
             _callbackWR = null;

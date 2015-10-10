@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Windows;
@@ -33,7 +32,6 @@ namespace DoubleFile
                 worker.Abort();
 
             _cbagWorkers = new ConcurrentBag<TreeRootNodeBuilder>();
-            _dictNodes.Clear();
         }
 
         internal Tree DoThreadFactory()

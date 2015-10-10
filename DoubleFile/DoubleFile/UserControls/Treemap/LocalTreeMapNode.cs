@@ -30,7 +30,6 @@ namespace DoubleFile
             foreach (var treeNode in lsNodes.Reverse())
             {
                 treeNode.Parent = this;
-                treeNode.NextNode = nextNode;
                 treeNode.Level = Level + 1;
                 nextNode = treeNode;
             }

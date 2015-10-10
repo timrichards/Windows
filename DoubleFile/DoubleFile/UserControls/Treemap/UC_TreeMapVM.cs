@@ -371,42 +371,22 @@ namespace DoubleFile
             _bSelRecAndTooltip = false;
         }
 
-        static LocalTreeNode FindMapNode(LocalTreeNode treeNode_in, Point pt)
+        static LocalTreeNode FindMapNode(LocalTreeNode treeNode, Point pt)
         {
-            pt.X /= TreemapFrame.ScaleFactor;
-            pt.Y /= TreemapFrame.ScaleFactor;
-            return FindMapNode(treeNode_in, pt, bNextNode: false);
-        }
-
-        static LocalTreeNode FindMapNode(LocalTreeNode treeNode_in, Point pt, bool bNextNode)
-        {
-            var treeNode = treeNode_in;
-
             if (null == treeNode)
                 return null;
 
-            do
+            if (null == treeNode.Nodes)
+                return treeNode;
+
+            pt.X /= TreemapFrame.ScaleFactor;
+            pt.Y /= TreemapFrame.ScaleFactor;
+
+            foreach (var subNode in treeNode.Nodes)
             {
-                if (false == treeNode.NodeDatum.TreemapRect.Contains(pt))
-                    continue;
-
-                if (bNextNode ||
-                    (treeNode != treeNode_in))
-                {
-                    return treeNode;
-                }
-
-                if (0 == (treeNode.Nodes?.Count ?? 0))
-                    continue;
-
-                var foundNode = FindMapNode(treeNode.Nodes[0], pt, bNextNode: true);
-
-                if (null != foundNode)
-                    return foundNode;
+                if (subNode.NodeDatum.TreemapRect.Contains(pt))
+                    return subNode;
             }
-            while (bNextNode &&
-                (null !=
-                (treeNode = treeNode.NextNode)));
 
             return null;
         }

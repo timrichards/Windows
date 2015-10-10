@@ -323,7 +323,6 @@
     <Compile Include="Util\Collate.cs" />
     <Compile Include="Util\Collate\AddTreeToList.cs" />
     <Compile Include="Util\Collate\InsertSizeMarkerStatic.cs" />
-    <Compile Include="Util\CountNodes.cs" />
     <Compile Include="UserControls\MVVM_Clones\LVitem_ClonesVM.cs" />
     <Compile Include="UserControls\SearchListings\SearchBase.cs" />
     <Compile Include="UserControls\SearchListings\SearchBase\SearchListings.cs" />

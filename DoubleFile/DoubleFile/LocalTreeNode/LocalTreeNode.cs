@@ -17,16 +17,12 @@ namespace DoubleFile
             Nodes { get; protected set; }
 
         internal LocalTreeNode
-            FirstNode => (0 < (Nodes?.Count ?? 0)) ? Nodes[0] : null;
-        public virtual LocalTreeNode
-            NextNode { get; protected set; }
+            FirstNode => Nodes?.First();
         public virtual LocalTreeNode
             Parent { get; protected set; }
 
         internal int
             Level { get { return Datum8bits; } private set { Datum8bits = value; } }
-        //internal int
-        //    SelectedImageIndex { get { return Datum16bits; } set { Datum16bits = value; } }
 
         internal LocalTreeNode Root
         {
@@ -66,7 +62,6 @@ namespace DoubleFile
 
         internal LocalTreeNode DetachFromTree()
         {
-            NextNode = null;
             Parent = null;
             Level = -1;
 
@@ -137,20 +132,16 @@ namespace DoubleFile
             return false;
         }
 
-        static internal void SetLevel(IReadOnlyList<LocalTreeNode> nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
+        static internal void SetLevel(IEnumerable<LocalTreeNode> nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
         {
-            LocalTreeNode nodePrev = null;
-
-            nodes?.ForEach(treeNode =>
+            foreach (var treeNode in nodes)
             {
-                if (null != nodePrev)
-                    nodePrev.NextNode = treeNode;
-
-                nodePrev = treeNode;
                 treeNode.Parent = nodeParent;
                 treeNode.Level = nLevel;
-                SetLevel(treeNode.Nodes, treeNode, nLevel + 1);
-            });
+
+                if (null != treeNode.Nodes)
+                    SetLevel(treeNode.Nodes, treeNode, nLevel + 1);
+            }
         }
 
         internal LocalTreeNode GoToFile(string strFile)

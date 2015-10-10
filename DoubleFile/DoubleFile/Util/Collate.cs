@@ -84,7 +84,7 @@ namespace DoubleFile
                 foreach (var lvItem in _lsLVignore)
                     sbMatch.AppendLine(lvItem.PathShort);
 
-                IgnoreNodeQuery(("" + sbMatch).ToLower(), nMaxLevel, _lsRootNodes[0]);
+                IgnoreNodeQuery(("" + sbMatch).ToLower(), nMaxLevel, _lsRootNodes);
                 stopwatch.Stop();
                 Util.WriteLine("IgnoreNode " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
             }
@@ -320,7 +320,7 @@ namespace DoubleFile
 
             if (0 < _lsRootNodes.Count)
             {
-                var nCount = CountNodes.Go(_lsRootNodes);
+                var nCount = CountNodes(_lsRootNodes);
                 
                 AddTreeToList.Go(_lsAllNodes, lsSameVol, _lsRootNodes);
                 Util.Assert(1305.6326m, _lsAllNodes.Count == nCount);
@@ -352,6 +352,21 @@ namespace DoubleFile
             }
 
             InsertSizeMarkers(_lsLVsameVol);
+        }
+
+        static int CountNodes(IEnumerable<LocalTreeNode> ieNodes)
+        {
+            var nCount = 0;
+
+            foreach (var treeNode in ieNodes)
+            {
+                if (null != treeNode.Nodes)
+                    nCount += CountNodes(treeNode.Nodes);
+
+                ++nCount;
+            }
+
+            return nCount;
         }
 
         internal void Step2()
@@ -482,11 +497,9 @@ namespace DoubleFile
             }
         }
 
-        void IgnoreNodeAndSubnodes(LVitem_ClonesVM lvItem, LocalTreeNode treeNode_in, bool bContinue = false)
+        void IgnoreNodeAndSubnodes(LVitem_ClonesVM lvItem, IEnumerable<LocalTreeNode> ieTreeNodes)
         {
-            var treeNode = treeNode_in;
-
-            do
+            foreach (var treeNode in ieTreeNodes)
             {
                 if (null != _dictIgnoreNodes.TryGetValue(treeNode))
                     continue;
@@ -494,21 +507,14 @@ namespace DoubleFile
                 Util.AssertNotNull(1305.6312m, lvItem);
                 _dictIgnoreNodes.Add(treeNode, lvItem);
 
-                if (0 < (treeNode.Nodes?.Count ?? 0))
-                    IgnoreNodeAndSubnodes(lvItem, treeNode.Nodes[0], bContinue: true);
+                if (null != treeNode.Nodes)
+                    IgnoreNodeAndSubnodes(lvItem, treeNode.Nodes);
             }
-            while (bContinue &&
-                (null != (treeNode = treeNode.NextNode)));
         }
 
-        void IgnoreNodeQuery(string sbMatch, int nMaxLevel, LocalTreeNode treeNode_in)
+        void IgnoreNodeQuery(string sbMatch, int nMaxLevel, IEnumerable<LocalTreeNode> ieTreeNodes)
         {
-            if (treeNode_in.Level > nMaxLevel)
-                return;
-
-            var treeNode = treeNode_in;
-
-            do
+            foreach (var treeNode in ieTreeNodes)
             {
                 if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                     _bAborted)
@@ -523,15 +529,16 @@ namespace DoubleFile
                         .Any(lvItem => ("" + lvItem.PathShort).Equals(treeNode.PathShort, StringComparison.Ordinal)))
                     {
                         Util.Assert(99898, false);    // replace the Tag field with an LVitem
-                  //      IgnoreNodeAndSubnodes((LocalLVitem)lvItem.Tag, treeNode);
+                                                      //      IgnoreNodeAndSubnodes((LocalLVitem)lvItem.Tag, treeNode);
                     }
                 }
 
-                if (0 < (treeNode.Nodes?.Count ?? 0))
-                    IgnoreNodeQuery(sbMatch, nMaxLevel, treeNode.Nodes[0]);
+                if ((null != treeNode.Nodes) &&
+                    (treeNode.Level <= nMaxLevel))
+                {
+                    IgnoreNodeQuery(sbMatch, nMaxLevel, treeNode.Nodes);
+                }
             }
-            while (null !=
-                (treeNode = treeNode.NextNode));
         }
 
         static void SnowUniqueParents(LocalTreeNode treeNode)

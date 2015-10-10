@@ -85,7 +85,8 @@ namespace DoubleFile
                 lsItems.Add(lvItem);
             }
 
-            Util.UIthread(99813, () => Add(lsItems));
+            if (0 < lsItems.Count)
+                Util.UIthread(99813, () => Add(lsItems));
         }
 
         void UC_Treemap_SelectedFile(Tuple<string, decimal> initiatorTuple)

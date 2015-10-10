@@ -19,25 +19,9 @@ namespace DoubleFile
                     .Go(lsNodes);
             }
 
-            AddTreeToList Go(IEnumerable<LocalTreeNode> lsNodes)
+            void Go(IEnumerable<LocalTreeNode> lsNodes, bool bCloneOK = false)
             {
                 foreach (var treeNode in lsNodes)
-                    Go(treeNode, bNextNode: false);
-
-                return this;
-            }
-
-            void Go(LocalTreeNode treeNode_in, bool bCloneOK = false, bool bNextNode = true)
-            {
-                if (treeNode_in == null)
-                {
-                    Util.Assert(1305.6302m, false);
-                    return;
-                }
-
-                var treeNode = treeNode_in;
-
-                do
                 {
                     _lsAllNodes.Add(treeNode);
 
@@ -57,13 +41,12 @@ namespace DoubleFile
                         //}
                     }
 
-                    if (treeNode.FirstNode != null)
+                    if (null != treeNode.Nodes)
                     {
-                        Go(treeNode.FirstNode, bCloneOK ||
+                        Go(treeNode.Nodes, bCloneOK ||
                             (new[] { UtilColorcode.OneCopy, UtilColorcode.MultipleCopies }.Contains(treeNode.ForeColor)));
                     }
                 }
-                while (bNextNode && ((treeNode = treeNode.NextNode) != null));
             }
 
             IList<LocalTreeNode>

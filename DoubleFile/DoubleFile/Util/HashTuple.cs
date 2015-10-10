@@ -12,6 +12,15 @@ namespace DoubleFile
         {
         }
 
+        static HashTuple()
+        {
+            LV_ProjectVM.Modified.LocalSubscribe(99597, x =>
+            {
+                _dictLookup = new ConcurrentDictionary<Tuple<ulong, ulong, ulong>, int>();
+                _nFileIndexedID = 0;
+            });
+        }
+
         static internal HashTuple
             FactoryCreate(IReadOnlyList<byte> abHash_in)    // only called by SaveDirListings
         {

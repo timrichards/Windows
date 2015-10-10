@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Collections.Concurrent;
 using System.Reactive.Linq;
 using System.Diagnostics;
 using System.Linq;

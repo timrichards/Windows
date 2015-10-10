@@ -169,7 +169,6 @@ namespace DoubleFile
                         return;     // from inner lambda
                     }
 
-                    var key = HashTuple.FileIndexedIDfromString(tuple.Item3, tuple.Item2);
                     var lookup = 0;
 
                     SetLVitemProjectVM(ref lookup, nLVitem);
@@ -178,7 +177,9 @@ namespace DoubleFile
                     Util.Assert(99907, _dictItemNumberToLV[GetLVitemProjectVM(lookup)] == lvItem);
                     Util.Assert(99908, GetLineNumber(lookup) == tuple.Item1);
 #endif
-                    Insert(dict, key, lookup, tuple.Item2, ref nFolderCount);
+                    Insert(dict,
+                        HashTuple.FileIndexedIDfromString(tuple.Item3, tuple.Item2),
+                        lookup, tuple.Item2, ref nFolderCount);
                 }
 
                 Interlocked.Increment(ref nProgress);
@@ -204,7 +205,7 @@ namespace DoubleFile
                 .Where(kvp => 1 < kvp.Value.Count)
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Select(tuple => tuple.Item1));
 
-            Util.Assert(99896, _dictDuplicateFiles.Count == nFolderCount - 1, bTraceOnly: true);
+            Util.Assert(99896, _dictDuplicateFiles.Count == nFolderCount - 1, bIfDefDebug: true);
             stopwatch.Stop();
             Util.WriteLine("_DictFiles " + stopwatch.ElapsedMilliseconds + " ms");   // 650 ms 
             StatusCallback(bDone: true);

@@ -95,14 +95,6 @@ namespace DoubleFile
         {
             var nodeDatum = treeNode.NodeDatum;
             var lieDetail = new List<IEnumerable<string>>();
-
-            if (0 == (nodeDatum?.LineNo ?? 0))
-            {
-                Util.Assert(99777, false);
-                FolderDetailUpdatedOnNext(new FolderDetailUpdated(lieDetail, null), nInitiator);
-                return;
-            }
-
             const string kStrFmt_thous = "###,###,###,##0";
 
             lieDetail.Add(new[] { "# Files Here", nodeDatum.FileCountHere.ToString(kStrFmt_thous) });

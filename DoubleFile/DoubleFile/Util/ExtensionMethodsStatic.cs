@@ -128,7 +128,7 @@ namespace DoubleFile
         {
             if (source is ICollection<T>)
             {
-                Util.Assert(99890, false, bTraceOnly: true);
+                Util.Assert(99890, false, bIfDefDebug: true);
                 return ((ICollection<T>)source).Count == nDesiredElements;
             }
 

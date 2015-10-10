@@ -415,17 +415,12 @@ namespace DoubleFile
         {
             var nodeDatum = parent.NodeDatum;
 
-            if (0 == nodeDatum.LineNo)
-                return null;
-
             var nPrevDir = (int)nodeDatum.PrevLineNo;
 
             if (0 == nPrevDir)
                 return null;
 
-            var nLineNo = (int)nodeDatum.LineNo;
-
-            if (1 >= (nLineNo - nPrevDir))  // dir has no files
+            if (0 == nodeDatum.FileCountHere)
                 return null;
 
             ulong nLengthDebug = 0;
@@ -434,7 +429,7 @@ namespace DoubleFile
             foreach (var asFileLine
                 in parent.RootNodeDatum.LVitemProjectVM.ListingFile.ReadLinesWait(99650)
                 .Skip(nPrevDir)
-                .Take((nLineNo - nPrevDir - 1))
+                .Take(nodeDatum.FileCountHere)
                 .Select(s =>
                     s
                     .Split('\t')

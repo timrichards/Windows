@@ -331,7 +331,7 @@ namespace DoubleFile
             if (false == LocalIsClosed)
                 Util.UIthread(99829, base.Close);
             else
-                Util.Assert(99801, false, bTraceOnly: true);
+                Util.Assert(99801, false, bIfDefDebug: true);
 
             return this;
         }

@@ -41,21 +41,19 @@ namespace DoubleFile
                             return datum;
                         }
 
-                        datum += TreeSubnodeDetails(node);
+                        var sumDatum = TreeSubnodeDetails(node);                    // recurse
+
+                        datum.LengthTotal += sumDatum.LengthTotal;
+                        datum.FileCountTotal += sumDatum.FileCountTotal;
+                        datum.SubDirs += sumDatum.SubDirs;
+                        datum.DirsWithFiles += sumDatum.DirsWithFiles;
                     }
                 }
 
                 var nodeDatum = treeNode.NodeDatum;
 
-                if (0 == (nodeDatum?.LineNo ?? 0))
-                {
-                    Util.Assert(99778, false);
-                    return datum;
-                }
-
                 nodeDatum.LengthTotal = (datum.LengthTotal += nodeDatum.LengthHere);
-                nodeDatum.FileCountHere = nodeDatum.LineNo - nodeDatum.PrevLineNo - 1;
-                nodeDatum.FileCountTotal = (datum.FileCountTotal += nodeDatum.FileCountHere);
+                nodeDatum.FileCountTotal = (datum.FileCountTotal += (uint)nodeDatum.FileCountHere);
                 nodeDatum.SubDirs = (datum.SubDirs += (uint)(treeNode.Nodes?.Count ?? 0));
 
                 if (0 < nodeDatum.FileCountHere)
@@ -294,7 +292,7 @@ namespace DoubleFile
                 if (nScannedLength != nTotalLength)
                 {
                     Util.WriteLine("" + nTotalLength);
-                    Util.Assert(1301.23101m, false, "nScannedLength != nTotalLength\n" + _lvItemProjectVM.ListingFile, bTraceOnly: true);
+                    Util.Assert(1301.23101m, false, "nScannedLength != nTotalLength\n" + _lvItemProjectVM.ListingFile, bIfDefDebug: true);
                 }
 
                 Util.WriteLine(_lvItemProjectVM.ListingFile + " tree took " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");

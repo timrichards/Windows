@@ -76,7 +76,7 @@ namespace DoubleFile
             }
             else
             {
-                Util.Assert(99865, 0 == Items.Count, bTraceOnly: true);
+                Util.Assert(99865, 0 == Items.Count, bIfDefDebug: true);
             }
 
             RaisePropertyChanged("UseNicknames");

@@ -130,10 +130,10 @@ namespace DoubleFile
             ProgressbarVisibility = Visibility.Visible;
             RaisePropertyChanged("ProgressbarVisibility");
 
-            const int kMax = 1 << 7;
             var lsFolder1 = _folder1.NodeDatum.Hashes_FilesHere.Union(_folder1.NodeDatum.Hashes_SubnodeFiles_Scratch).Distinct().ToList();
             var lsFolder2 = _folder2.NodeDatum.Hashes_FilesHere.Union(_folder2.NodeDatum.Hashes_SubnodeFiles_Scratch).Distinct().ToList();
             var lsIntersect_ = lsFolder1.Intersect(lsFolder2).Distinct().ToList();
+            const int kMax = 1 << 7;
             var lsDiff1_ = lsFolder1.Except(lsIntersect_).Take(kMax).ToList();
             var lsDiff2_ = lsFolder2.Except(lsIntersect_).Take(kMax).ToList();
 
@@ -153,14 +153,14 @@ namespace DoubleFile
                 Results = null;
                 RaisePropertyChanged("Results");
 
-                var lsIntersect = GetFileLines(_folder1, lsIntersect_).OrderBy(tuple => tuple.Item2[0]).ToList();
-                var lsDiff1 = GetFileLines(_folder1, lsDiff1_).OrderBy(tuple => tuple.Item2[0]).ToList();
-                var lsDiff2 = GetFileLines(_folder2, lsDiff2_).OrderBy(tuple => tuple.Item2[0]).ToList();
+                var lsIntersect = GetFileLines(_folder1, lsIntersect_);
+                var lsDiff1 = GetFileLines(_folder1, lsDiff1_);
+                var lsDiff2 = GetFileLines(_folder2, lsDiff2_);
                 Func<int, string> f = n => ((n < kMax) ? "" + n : "at least " + n) + " file" + ((1 != n) ? "s" : "");
 
-                Util.Assert(99602, lsIntersect.Count == lsIntersect_.Count, bTraceOnly: true);
-                Util.Assert(99601, lsDiff1.Count == lsDiff1_.Count, bTraceOnly: true);
-                Util.Assert(99600, lsDiff2.Count == lsDiff2_.Count, bTraceOnly: true);
+                Util.Assert(99602, lsIntersect.Count == lsIntersect_.Count, bIfDefDebug: true);
+                Util.Assert(99601, lsDiff1.Count == lsDiff1_.Count, bIfDefDebug: true);
+                Util.Assert(99600, lsDiff2.Count == lsDiff2_.Count, bIfDefDebug: true);
                 Results = f(lsIntersect_.Count) + " in common; " + f(lsDiff1_.Count) + " and " + f(lsDiff2_.Count) + " unique respectively.";
                 RaisePropertyChanged("Results");
 
@@ -185,26 +185,24 @@ namespace DoubleFile
             return this;
         }
 
-        IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<string>>>
+        IReadOnlyList<Tuple<LocalTreeNode, IReadOnlyList<string>>>
             GetFileLines(LocalTreeNode treeNode, IEnumerable<int> ieHashes)
         {
             IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<string>>> ieFiles = new Tuple<LocalTreeNode, IReadOnlyList<string>>[] { };
             var searchSet = new HashSet<int>(ieHashes);
 
             if (false == searchSet.Any())
-                return ieFiles;
-
-            var hashesHere = GetHashesHere(treeNode, ref searchSet);
+                return ieFiles.ToList();
 
             var lsHashesGrouped =
-                hashesHere
-                .OrderBy(tuple => tuple.Item1.NodeDatum.LineNo)
+                GetHashesHere(treeNode, ref searchSet)
+                .OrderBy(tuple => tuple.Item1.NodeDatum.PrevLineNo)
                 .ToList();
 
             Util.Assert(99608, false == searchSet.Any());
 
             if (0 == lsHashesGrouped.Count)
-                return ieFiles;
+                return ieFiles.ToList();
 
             var nHashColumn =
                 Statics.DupeFileDictionary.AllListingsHashV2
@@ -213,11 +211,9 @@ namespace DoubleFile
 
             foreach (var tuple in lsHashesGrouped)
             {
-                var fileList = tuple.Item1.GetFileList(bReadAllLines: true);
-
                 ieFiles =
                     ieFiles.Concat(
-                    fileList
+                    tuple.Item1.GetFileList(bReadAllLines: true)
                     .Select(strLine => strLine.Split('\t'))
                     .Where(asLine => nHashColumn < asLine.Length)
                     .DistinctBy(asLine => asLine[nHashColumn])
@@ -226,8 +222,10 @@ namespace DoubleFile
                     .Select(sel => Tuple.Create(tuple.Item1, (IReadOnlyList<string>)sel.b.Skip(3).ToArray())));
             }                                       // makes this an LV line: knColLengthLV----^
 
+            var lsRet = ieFiles.OrderBy(tuple => tuple.Item2[0]).ToList();
+
             LocalTreeNode.GetFileList_Done();
-            return ieFiles;
+            return lsRet;
         }
 
         IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>>

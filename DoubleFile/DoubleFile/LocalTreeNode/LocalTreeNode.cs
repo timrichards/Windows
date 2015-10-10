@@ -162,37 +162,48 @@ namespace DoubleFile
         internal IEnumerable<string> GetFileList(bool bReadAllLines = false)
         {
             var nPrevDir = (int)NodeDatum.PrevLineNo;
-            var nLineNo = (int)NodeDatum.LineNo;
 
             if (0 == nPrevDir)
-                return null;     // from lambda
+                return new string[0];
 
-            if (1 >= (nLineNo - nPrevDir))  // dir has no files
-                return null;     // from lambda
+            if (0 == NodeDatum.FileCountHere)
+                return new string[0];
 
             if (bReadAllLines)
             {
-                if (null == _allFileLines)
+                if (null == _currentIterator)
                 {
-                    _allFileLines =
+                    _currentIterator =
+                        (ReadLinesIterator)
                         RootNodeDatum.LVitemProjectVM.ListingFile
-                        .ReadLines(99643)
-                        .ToArray();
+                        .ReadLines(99596);
+
+                    _currentPos = 0;
                 }
+
+                var asRet =
+                    _currentIterator
+                    .Skip(nPrevDir - _currentPos)
+                    .Take(NodeDatum.FileCountHere)
+                    .ToArray();
+
+                Util.Assert(99595, NodeDatum.FileCountHere == asRet.Length);
+                _currentPos = nPrevDir + NodeDatum.FileCountHere;
+                return asRet;
             }
 
             return
-                ((null != _allFileLines)
-                ? _allFileLines
-                : RootNodeDatum.LVitemProjectVM.ListingFile
-                .ReadLines(99643))
+                RootNodeDatum.LVitemProjectVM.ListingFile
+                .ReadLines(99643)
                 .Skip(nPrevDir)
-                .Take((nLineNo - nPrevDir - 1))
+                .Take(NodeDatum.FileCountHere)
                 .ToArray();
         }
         static internal void
-            GetFileList_Done() => _allFileLines = null;
-        static IReadOnlyList<string>
-            _allFileLines = null;
+            GetFileList_Done() { _currentIterator.Dispose(); _currentIterator = null;}
+        static Iterator<string>
+            _currentIterator;
+        static int
+            _currentPos;
     }
 }

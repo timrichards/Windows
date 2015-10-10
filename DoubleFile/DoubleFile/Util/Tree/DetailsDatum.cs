@@ -9,8 +9,6 @@ namespace DoubleFile
     {
         internal readonly uint
             PrevLineNo;                             // Found 21 bits
-        internal readonly uint
-            LineNo;                                 // Found 21 bits
 
         internal int
             Hash_AllFiles = 0;
@@ -24,7 +22,7 @@ namespace DoubleFile
         internal ulong
             LengthTotal;
 
-        internal uint
+        internal readonly int
             FileCountHere;                          // Found 15 bits
         internal uint
             FileCountTotal;                         // Found 21 bits
@@ -41,7 +39,7 @@ namespace DoubleFile
         internal DetailsDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, IReadOnlyList<int> lsFilesHereHashes)
         {
             PrevLineNo = nPrevLineNo;
-            LineNo = nLineNo;
+            FileCountHere = (int)(nLineNo - PrevLineNo - 1);
             LengthHere = nLength;
             Hashes_FilesHere = lsFilesHereHashes.OrderBy(n => n).Distinct().ToArray();
         }
@@ -54,20 +52,8 @@ namespace DoubleFile
             FileCountHere = datum.FileCountHere;
             DirsWithFiles = datum.DirsWithFiles;
             PrevLineNo = datum.PrevLineNo;
-            LineNo = datum.LineNo;
             LengthHere = datum.LengthHere;
             Hashes_FilesHere = datum.Hashes_FilesHere;
         }
-
-        static public DetailsDatum
-            operator +(DetailsDatum datum1, DetailsDatum datum2) =>
-            new DetailsDatum
-        {
-            LengthTotal = datum1.LengthTotal + datum2.LengthTotal,
-            FileCountTotal = datum1.FileCountTotal + datum2.FileCountTotal,
-            SubDirs = datum1.SubDirs + datum2.SubDirs,
-            FileCountHere = datum1.FileCountHere + datum2.FileCountHere,
-            DirsWithFiles = datum1.DirsWithFiles + datum2.DirsWithFiles,
-        };
     }
 }

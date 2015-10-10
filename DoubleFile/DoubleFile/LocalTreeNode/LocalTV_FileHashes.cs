@@ -8,6 +8,11 @@ namespace DoubleFile
 {
     partial class LocalTV
     {
+        static LocalTV()
+        {
+            LV_ProjectVM.Modified.LocalSubscribe(99778, x => Cleanup_AllFileHashes_Scratch());
+        }
+
         static internal void
             AllFileHashes_AddRef(CancellationTokenSource cts = null)
         {
@@ -44,11 +49,7 @@ namespace DoubleFile
             if (0 < --_nAllFileHashes_refCount)
                 return;
 
-            while (null != _cts)    // hold the caller while building so as not to signal built
-                Util.Block(50);
-
-            Cleanup_AllFileHashes_Scratch(RootNodes);
-            GC.Collect();
+            Cleanup_AllFileHashes_Scratch();
         }
 
         static IReadOnlyList<int>
@@ -146,7 +147,20 @@ namespace DoubleFile
         //}
 
         static void
-            Cleanup_AllFileHashes_Scratch(IReadOnlyList<LocalTreeNode> nodes)
+            Cleanup_AllFileHashes_Scratch()
+        {
+            _cts?.Cancel();
+
+            while (null != _cts)
+                Util.Block(50);
+
+            Cleanup_AllFileHashes_ScratchA(RootNodes);
+            _nAllFileHashes_refCount = 0;
+            GC.Collect();
+        }
+
+        static void
+            Cleanup_AllFileHashes_ScratchA(IReadOnlyList<LocalTreeNode> nodes)
         {
             if (null == nodes)
                 return;
@@ -154,7 +168,7 @@ namespace DoubleFile
             foreach (var treeNode in nodes)
             {
                 treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch = null;
-                Cleanup_AllFileHashes_Scratch(treeNode.Nodes);                 // recurse
+                Cleanup_AllFileHashes_ScratchA(treeNode.Nodes);                 // recurse
             }
         }
 

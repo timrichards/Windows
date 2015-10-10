@@ -181,6 +181,8 @@ namespace DoubleFile
                 return ieRet;
             }
 
+            _currentIterator = null;    // jic
+
             return
                 RootNodeDatum.LVitemProjectVM.ListingFile
                 .ReadLines(99643)

@@ -53,9 +53,24 @@ namespace DoubleFile
             if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                 return;
 
+            var t = _t.As<TabledStringGenerating>();
+
+            if (null == t)
+            {
+                Util.Assert(99915, false);
+                return;
+            }
+
+            if (t.IndexGenerator != t.DictSortedStrings.Count)
+            {
+                Util.Assert(99922, false);
+                _t = TabledStringTypesBase.Types[new T().Type] = new TabledStringGenerating();
+                return;
+            }
+
             _t =
                 TabledStringTypesBase.Types[new T().Type] =
-                new TabledStringGenerated(_t);
+                new TabledStringGenerated(t);
         }
 
         static TabledStringBase

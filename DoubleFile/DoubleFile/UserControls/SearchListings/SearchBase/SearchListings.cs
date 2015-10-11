@@ -38,19 +38,7 @@ namespace DoubleFile
 
             stopwatch.Stop();
             Util.WriteLine(string.Format("Completed Search for {0} in {1} seconds.", _strSearch, ((int)stopwatch.ElapsedMilliseconds / 100) / 10d));
-
-            if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
-                return;
-
-            var searchStatus = _callbackWR?.Get(w => w);
-
-            if (null == searchStatus)
-            {
-                Util.Assert(99859, false);
-                return;
-            }
-
-            Util.ThreadMake(() => searchStatus.Done());
+            Util.ThreadMake(() => _callbackWR?.Get(w => w.Done()));
         }
 
         internal void Abort()
@@ -58,7 +46,11 @@ namespace DoubleFile
             foreach (SearchListing worker in _cbagWorkers)
                 worker.Abort();
 
+            if (_thread.IsAlive)
+                return;
+
             _thread.Abort();
+            Util.ThreadMake(() => _callbackWR?.Get(w => w.Done()));
         }
 
         internal SearchListings DoThreadFactory()

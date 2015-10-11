@@ -25,6 +25,7 @@ namespace DoubleFile
                 : base(searchBase)
             {
                 _lvItemProjectVM = lvItemProjectVM;
+                AbortAll = onAbort;
             }
 
             internal SearchListing DoThreadFactory()
@@ -37,11 +38,14 @@ namespace DoubleFile
                     }
                     catch (ArgumentException e)
                     {
+                        AbortAll?.Invoke();
+
                         Util.Assert(99863, false, "ArgumentException in SearchListing\n" +
                             e.GetBaseException().Message);
                     }
                     catch (OutOfMemoryException)
                     {
+                        AbortAll?.Invoke();
                         Util.Assert(99921, false, "OutOfMemoryException in SearchListing");
                     }
                 });
@@ -49,7 +53,7 @@ namespace DoubleFile
                 return this;
             }
 
-            internal void Join() =>  _thread.Join();
+            internal void Join() => _thread.Join();
 
             internal void Abort()
             {
@@ -171,7 +175,7 @@ namespace DoubleFile
 
                             if (false == TabledString<TabledStringType_Files>.IsAlive)
                             {
-                                AbortAll();
+                                AbortAll?.Invoke();
                                 return;
                             }
 
@@ -182,7 +186,7 @@ namespace DoubleFile
                             catch (Exception e) when ((e is ArgumentException) || (e is NullReferenceException))
                             {
                                 Util.Assert(99659, (false == TabledString<TabledStringType_Files>.IsAlive));
-                                AbortAll();
+                                AbortAll?.Invoke();
                                 return;
                             }
                         }

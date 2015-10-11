@@ -54,7 +54,7 @@ namespace DoubleFile
                 if (owner?.LocalIsClosing ?? true)
                     MessageBox.Show(strErrorOut + "\n(MBoxStatic: there is a local assert box already up.)");
                 else
-                    MessageBox.Show(owner, strErrorOut + "\n(MBoxStatic: there is a local assert box already up.)");
+                    Util.UIthread(99595, () => MessageBox.Show(owner, strErrorOut + "\n(MBoxStatic: there is a local assert box already up.)"));
             }
             else
             {

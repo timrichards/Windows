@@ -6,19 +6,10 @@ namespace DoubleFile
     class TabledStringGenerated : TabledStringBase
     {
         internal
-            TabledStringGenerated(TabledStringBase t_)
+            TabledStringGenerated(TabledStringGenerating t)
         {
-            var t = t_.As<TabledStringGenerating>();
-
-            if (null == t)
-            {
-                Util.Assert(99915, false);
-                return;
-            }
-
             var nCount = t.DictSortedStrings.Count;
 
-            Util.Assert(99922, t.IndexGenerator == nCount);
             _strings = new string[nCount];
             _sort = new int[nCount];
 

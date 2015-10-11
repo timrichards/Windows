@@ -110,6 +110,17 @@ namespace DoubleFile
                 action(item);
         }
 
+        static internal void
+            Get<THolder>(this WeakReference<THolder> wr, Action<THolder> doSomethingWith) where THolder : class
+        {
+            THolder holder = null;
+
+            wr.TryGetTarget(out holder);
+
+            if (null != holder)
+                doSomethingWith(holder);
+        }
+
         static internal TMember
             Get<THolder, TMember>(this WeakReference<THolder> wr, Func<THolder, TMember> getValue) where THolder : class
         {

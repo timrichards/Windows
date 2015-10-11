@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using System.Windows;
 
 namespace DoubleFile
 {
@@ -47,15 +45,6 @@ namespace DoubleFile
             {
                 if (caller != worker)
                     worker.Abort();
-            }
-
-            if (null == caller)
-            {
-                if (_thread.IsAlive)
-                    return;
-
-                _thread.Abort();
-                Util.ThreadMake(() => _callbackWR?.Get(w => w.Done()));
             }
         }
 

@@ -8,6 +8,8 @@ using System.Windows;
 
 namespace DoubleFile
 {
+    interface ISearchListing { }
+
     partial class SearchListings : SearchBase
     {
         static internal Func<string, string, bool>
@@ -19,13 +21,13 @@ namespace DoubleFile
                 return (a, b) => a.Contains(b);
         }
 
-        class SearchListing : SearchBase
+        class SearchListing : SearchBase, ISearchListing
         {
-            internal SearchListing(SearchBase searchBase, LVitemProject_Explorer lvItemProjectVM, Action onAbort)
+            internal SearchListing(SearchBase searchBase, LVitemProject_Explorer lvItemProjectVM, Action<SearchListing> onAbort)
                 : base(searchBase)
             {
                 _lvItemProjectVM = lvItemProjectVM;
-                AbortAll = onAbort;
+                AbortAll = () => onAbort(this);
             }
 
             internal SearchListing DoThreadFactory()
@@ -139,7 +141,7 @@ namespace DoubleFile
                             // a. SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
                             // The reason the directory for a folder with files gets an extra backslash is that
                             // it naturally sorts after the item containing the directory alone.
-                            searchResultDir.PathBuilder = PathBuilder.FactoryCreateOrFind(strDir + '\\', Cancel: AbortAll);
+                            searchResultDir.PathBuilder = PathBuilder.FactoryCreateOrFind(strDir + '\\', Cancel: () => AbortAll?.Invoke());
                             listResults.Add(searchResultDir, false);
                             searchResultDir = null;
                         }
@@ -161,7 +163,7 @@ namespace DoubleFile
 
                             // b. SearchResults.StrDir has a \ at the end for folder & file search where folder matches, because the key would dupe for file matches.
                             // Not here. The other case a above.
-                            searchResultDir.PathBuilder = PathBuilder.FactoryCreateOrFind(strDir, Cancel: AbortAll);
+                            searchResultDir.PathBuilder = PathBuilder.FactoryCreateOrFind(strDir, Cancel: () => AbortAll?.Invoke());
                             listResults.Add(searchResultDir, false);
                             searchResultDir = null;
                         }

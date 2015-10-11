@@ -41,16 +41,22 @@ namespace DoubleFile
             Util.ThreadMake(() => _callbackWR?.Get(w => w.Done()));
         }
 
-        internal void Abort()
+        internal void Abort(ISearchListing caller = null)
         {
             foreach (SearchListing worker in _cbagWorkers)
-                worker.Abort();
+            {
+                if (caller != worker)
+                    worker.Abort();
+            }
 
-            if (_thread.IsAlive)
-                return;
+            if (null == caller)
+            {
+                if (_thread.IsAlive)
+                    return;
 
-            _thread.Abort();
-            Util.ThreadMake(() => _callbackWR?.Get(w => w.Done()));
+                _thread.Abort();
+                Util.ThreadMake(() => _callbackWR?.Get(w => w.Done()));
+            }
         }
 
         internal SearchListings DoThreadFactory()

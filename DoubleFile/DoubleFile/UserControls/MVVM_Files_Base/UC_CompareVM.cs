@@ -227,7 +227,7 @@ namespace DoubleFile
                     .Select(sel => Tuple.Create(tuple.Item1, (IReadOnlyList<string>)sel.b.Skip(3).ToArray())));
             }                                       // makes this an LV line: knColLengthLV----^
 
-            return ieFiles.OrderBy(tuple => tuple.Item2[0]).ToList();   // reads all lines exactly once and closes the enumerable
+            return ieFiles.OrderBy(tuple => tuple.Item2[0]).ToList();   // ToList() enumerates: reads through the file exactly once and closes it
         }
 
         IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>>

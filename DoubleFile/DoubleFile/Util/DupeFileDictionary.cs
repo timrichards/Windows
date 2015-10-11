@@ -177,9 +177,25 @@ namespace DoubleFile
                     Util.Assert(99907, _dictItemNumberToLV[GetLVitemProjectVM(lookup)] == lvItem);
                     Util.Assert(99908, GetLineNumber(lookup) == tuple.Item1);
 #endif
-                    Insert(dict,
-                        HashTuple.FileIndexedIDfromString(tuple.Item3, tuple.Item2),
-                        lookup, tuple.Item2, ref nFolderCount);
+                    var tupleB = Tuple.Create(lookup, tuple.Item2);
+
+                    dict.AddOrUpdate(HashTuple.FileIndexedIDfromString(tuple.Item3, tuple.Item2),
+                        x => new List<Tuple<int, ulong>> { tupleB },
+                        (x, ls) =>
+                    {
+                        lock (ls)
+                        {
+                            if (1 == ls.Count)
+                                Interlocked.Increment(ref nFolderCount);
+
+                            // jic sorting downstream too at A
+                            ls.Insert(
+                                ls.TakeWhile(tupleA => lookup >= tupleA.Item1).Count(),
+                                tupleB);
+                        }
+
+                        return ls;      // from lambda
+                    });
                 }
 
                 Interlocked.Increment(ref nProgress);
@@ -188,7 +204,7 @@ namespace DoubleFile
             if (IsAborted)
             {
                 cts.Cancel();
-                return;     // from inner lambda
+                return;
             }
 
             var stopwatch = Stopwatch.StartNew();
@@ -212,29 +228,6 @@ namespace DoubleFile
             _callbackWR = null;
             _LVprojectVM = null;
             _thread = null;
-        }
-
-        void Insert(IDictionary<int, List<Tuple<int, ulong>>> dictionary, int key, int lookup, ulong nLength, ref int nFolderCount)
-        {
-            var ls = dictionary.TryGetValue(key);
-            var tuple = Tuple.Create(lookup, nLength);
-
-            if (null == ls)
-            {
-                dictionary[key] = new List<Tuple<int, ulong>> { tuple };
-                return;
-            }
-
-            lock (ls)
-            {
-                if (1 == ls.Count)
-                    Interlocked.Increment(ref nFolderCount);
-
-                // jic sorting downstream too at A
-                ls.Insert(
-                    ls.TakeWhile(tupleA => lookup >= tupleA.Item1).Count(),
-                    tuple);
-            }
         }
 
         void StatusCallback(bool bDone = false, double nProgress = double.NaN)

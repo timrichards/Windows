@@ -27,44 +27,43 @@ namespace DoubleFile
                 {
                     _lsAllNodes.Add(treeNode);
 
-                    if (0 == treeNode.NodeDatum.LengthTotal)
-                        continue;
-
-                    if ((AllOnOneVolume == treeNode.ColorcodeFG) &&
-                        (treeNode == treeNode.NodeDatum.Clones[0]))
+                    if (0 < treeNode.NodeDatum.LengthTotal)
                     {
-                        _lsSameVol.Add(treeNode);
-                    }
-
-                    if (bCloneOK)
-                    {
-                        treeNode.ColorcodeBG = ParentClonedBG;
-
-                        // set the forecolor same as parent's
-                        if (false ==
-                            new[] { MultipleCopies, ZeroLengthFolder }
-                            .Contains(treeNode.ColorcodeFG))
+                        if ((AllOnOneVolume == treeNode.ColorcodeFG) &&
+                            (treeNode == treeNode.NodeDatum.Clones[0]))
                         {
-                            var bExpected =
-                                new[] { Solitary, Transparent,
-                                OneCopy,
-                                AllOnOneVolume }      // A Useful Find
-                                .Contains(treeNode.ColorcodeFG);
-
-                            Util.Assert(99859, bExpected, bIfDefDebug: true);
-
-                            if (bExpected)
-                                treeNode.ColorcodeFG = ParentCloned;
+                            _lsSameVol.Add(treeNode);
                         }
 
-                        //if ((nodeDatum.LVitem != null) && (nodeDatum.LVitem.ListView == null))  // ignore LV
-                        //{
-                        //    nodeDatum.LVitem.BackColor = treeNode.BackColor;
-                        //}
+                        if (bCloneOK)
+                        {
+                            treeNode.ColorcodeBG = ParentClonedBG;
+
+                            if (false ==
+                                new[] { ManyClonesSepVolume, ZeroLengthFolder }
+                                .Contains(treeNode.ColorcodeFG))
+                            {
+                                var bExpected =
+                                    new[] { Solitary, Transparent,
+                                OneCloneSepVolume,
+                                AllOnOneVolume }      // A Useful Find
+                                    .Contains(treeNode.ColorcodeFG);
+
+                                Util.Assert(99859, bExpected, bIfDefDebug: true);
+
+                                if (bExpected)
+                                    treeNode.ColorcodeFG = ParentCloned;
+                            }
+
+                            //if ((nodeDatum.LVitem != null) && (nodeDatum.LVitem.ListView == null))  // ignore LV
+                            //{
+                            //    nodeDatum.LVitem.BackColor = treeNode.BackColor;
+                            //}
+                        }
                     }
 
                     if (null != treeNode.Nodes)
-                        Go(treeNode.Nodes, bCloneOK || new[] { OneCopy, MultipleCopies }.Contains(treeNode.ColorcodeFG));
+                        Go(treeNode.Nodes, bCloneOK || new[] { OneCloneSepVolume, ManyClonesSepVolume }.Contains(treeNode.ColorcodeFG));
                 }
             }
 

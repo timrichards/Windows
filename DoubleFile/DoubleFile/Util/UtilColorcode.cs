@@ -9,13 +9,13 @@ namespace DoubleFile
             Descriptions = new Dictionary<int, string>
         {
             {Transparent,           ""},
-            {DarkGray,              ""},						            // ignore list
             {ParentCloned,          ""},        // decription would look redundant in detailed info view
             {ParentClonedBG,        "This folder and its parent have a copy on a separate volume."},
-            {MultipleCopies,        "This folder has multiple copies on at least two separate volumes."},
-            {OneCopy,               "This folder has a copy on a separate volume."},
+            {ManyClonesSepVolume,   "This folder has multiple copies on at least two separate volumes."},
+            {OneCloneSepVolume,     "This folder has a copy on a separate volume."},
             {AllOnOneVolume,        "All copies of this folder reside on one volume."},
             {Solitary,              "This folder has no exact copy."},
+            {SolitaryHasClones,     "This folder hsa no exact copy, yet it contains folders that do."},
             {SolitaryClonedParent,  "This folder has no exact copy, yet its parent does."},
             {SolitaryOneVolParent,  "This folder has no exact copy, yet its parent does, on only one volume."},
             {ContainsSolitaryBG,    "Contains folders that have no copy, or copies are on one volume."},
@@ -43,13 +43,13 @@ namespace DoubleFile
 
         // these need to remain properties - unless const
         internal const int Transparent          =                0x00FFFFFF;    // => Colors.Transparent.ToArgb();              // Transparent
-        internal const int DarkGray             = unchecked((int)0xFFA9A9A9);   // => Colors.DarkGray.ToArgb();                 // DarkGray
         internal const int ParentClonedBG       =                0x40004040;    // => Color.FromArgb(64, 0, 64, 64).ToArgb();   // DarkYellowBG
-        internal const int ParentCloned         = unchecked((int)0xFFFFFFCC);
-        internal const int MultipleCopies       = unchecked((int)0xFFADD8E6);   // => Colors.LightBlue.ToArgb();                // LightBlue
-        internal const int OneCopy              = unchecked((int)0xFF4682B4);   // => Colors.SteelBlue.ToArgb();                // SteelBlue
+        internal const int ParentCloned         = unchecked((int)0xFFEEEECC);
+        internal const int ManyClonesSepVolume  = unchecked((int)0xFFADD8E6);   // => Colors.LightBlue.ToArgb();                // LightBlue
+        internal const int OneCloneSepVolume    = unchecked((int)0xFF4682B4);   // => Colors.SteelBlue.ToArgb();                // SteelBlue
         internal const int AllOnOneVolume       = unchecked((int)0xFFB22222);   // => Colors.Firebrick.ToArgb();                // Firebrick
         internal const int Solitary             = unchecked((int)0xFFC00000);   // => Color.FromArgb(255, 192, 0, 0).ToArgb();  // Red
+        internal const int SolitaryHasClones    = unchecked((int)0xFFBB82B4);
         internal const int SolitaryClonedParent = unchecked((int)0xFF4477AA);
         internal const int SolitaryOneVolParent = unchecked((int)0xFFBB3333);
         internal const int ContainsSolitaryBG   =                0x40400000;    // => Color.FromArgb(64, 64, 0, 0).ToArgb();    // DarkRedBG
@@ -83,9 +83,9 @@ namespace DoubleFile
         readonly static IReadOnlyList<int>
             CLUT = new int[_knNumColors]
         {
-            Transparent, MultipleCopies, DarkGray, TreemapFolder, ContainsSolitaryBG,
+            Transparent, ManyClonesSepVolume, SolitaryHasClones, TreemapFolder, ContainsSolitaryBG,
             AllOnOneVolume, ParentClonedBG, ParentCloned, ZeroLengthFolder, TreemapFreespace, TreemapUnreadspace,
-            TreemapFile, Solitary, SolitaryClonedParent, SolitaryOneVolParent, OneCopy
+            TreemapFile, Solitary, SolitaryClonedParent, SolitaryOneVolParent, OneCloneSepVolume
         };
 
         static UtilColorcode()
@@ -94,8 +94,8 @@ namespace DoubleFile
             var revClut = new Dictionary<int, int>();
 
             revClut[Transparent] = nIx++;
-            revClut[MultipleCopies] = nIx++;
-            revClut[DarkGray] = nIx++;
+            revClut[ManyClonesSepVolume] = nIx++;
+            revClut[SolitaryHasClones] = nIx++;
             revClut[TreemapFolder] = nIx++;
             revClut[ContainsSolitaryBG] = nIx++;
             revClut[AllOnOneVolume] = nIx++;
@@ -108,7 +108,7 @@ namespace DoubleFile
             revClut[Solitary] = nIx++;
             revClut[SolitaryClonedParent] = nIx++;
             revClut[SolitaryOneVolParent] = nIx++;
-            revClut[OneCopy] = nIx++;
+            revClut[OneCloneSepVolume] = nIx++;
             _revCLUT = revClut;
             Util.Assert(99957, nIx == _knNumColors);
             Util.Assert(99910, 0 == CLUT_Shift >> 4);          // 16 bits, not _knNumColors

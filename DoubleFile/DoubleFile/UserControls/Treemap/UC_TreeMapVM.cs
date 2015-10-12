@@ -64,7 +64,7 @@ namespace DoubleFile
                     {
                         { UtilColorcode.Transparent, new RadialGradientBrush(_kCenterColor, UtilColorcode.Dark(Colors.SandyBrown)) { RadiusX = 1, RadiusY = 1 } },
                         { UtilColorcode.Solitary, Init(UtilColorcode.Solitary) },
-                        { UtilColorcode.OneCopy, Init(UtilColorcode.OneCopy) },
+                        { UtilColorcode.OneCloneSepVolume, Init(UtilColorcode.OneCloneSepVolume) },
                         { UtilColorcode.TreemapFolder, Init(UtilColorcode.TreemapFolder) },
                         { UtilColorcode.TreemapFile, Init(UtilColorcode.TreemapFile) }
                     };

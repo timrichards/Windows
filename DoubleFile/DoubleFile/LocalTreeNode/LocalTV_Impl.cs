@@ -141,9 +141,9 @@ namespace DoubleFile
             TabledString<TabledStringType_Folders>.GenerationEnded();
             _rootNodes.Sort((x, y) => x.PathShort.LocalCompare(y.PathShort));
             _topNode = _rootNodes[0];
-            var nCount = LocalTreeNode.SetLevel(_rootNodes);
             _tree = null;
 
+            var nCount = LocalTreeNode.SetLevel(_rootNodes);
             var lsLocalLVignore = new List<LVitem_ClonesVM> { };  // when implementing, replace the Forms ListViewItem.Tag in LocalLVItem
             double nProgress = 0;
 
@@ -157,7 +157,7 @@ namespace DoubleFile
                 double nProgressDenominator = 2 * nCount;
 
                 using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
-                    .LocalSubscribe(99614, x => nProgress = _progress * 4 / nProgressDenominator / 5.1))
+                    .LocalSubscribe(99614, x => nProgress = _progress * 4 / nProgressDenominator / 5))
                 {
                     AllFileHashes_AddRef();             //  _progress
                     SetAllFilesHashes(RootNodes);       //  _progress
@@ -182,7 +182,7 @@ namespace DoubleFile
 
                     var nFolderIndexedID = 1;   // first folder ID is 1: zero is not valid: no unchecked/overflow/wraparound (<<1.5M is reasonable)
 
-                    foreach (var kvp in dictLength.OrderBy(kvp => kvp.Value))               // sort by total length
+                    foreach (var kvp in dictLength.OrderByDescending(kvp => kvp.Value))     // sort by total length descending
                     {
                         var lsTreeNodes = dictNodes_[kvp.Key];
 
@@ -205,23 +205,14 @@ namespace DoubleFile
 
                 var stopwatch = Stopwatch.StartNew();
 
-                collate.Step1(d => nProgress = (4 + d)/ 5.1);
+                collate.Go(d => nProgress = (4 + d)/ 5);
                 stopwatch.Stop();
-                Util.WriteLine("collate.Step1 " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
+                Util.WriteLine("collate.Go " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
                 stopwatch.Reset();
-                stopwatch.Start();
-
-                if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
-                    return;
-
-                collate.Step2();
-                nProgress = .999;
 
                 if (null == _selectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
                     _selectedNode = _topNode;
 
-                stopwatch.Stop();
-                Util.WriteLine("collate.Step2 " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
                 stopwatch.Reset();
                 stopwatch.Start();
                 GC.Collect();

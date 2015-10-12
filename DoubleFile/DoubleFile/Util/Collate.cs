@@ -92,10 +92,8 @@ namespace DoubleFile
             var dictIgnoreMark = new Dictionary<LocalTreeNode, LVitem_ClonesVM>();
             var dictNodes = new SortedDictionary<int, List<LocalTreeNode>>();
 
-            foreach (var kvp in _dictNodes)                     // clone to remove ignored
-            {                                                   // m_ vs local check is via List vs UList
-                dictNodes.Add(kvp.Key, kvp.Value.ToList());     // clone pair.Value to remove ignored, using ToList() 
-            }
+            foreach (var kvp in _dictNodes)
+                dictNodes.Add(kvp.Key, kvp.Value.ToList()); // ToList() copies kvp.Value in order to remove items marked "ignore"
 
             nProgressDenominator += _dictIgnoreNodes.Count;
             ++nProgressItem;
@@ -128,7 +126,7 @@ namespace DoubleFile
                 }
             }
 
-            var dictUnique = new SortedDictionary<int, LocalTreeNode>();
+            var dictSolitary = new SortedDictionary<int, LocalTreeNode>();
 
             nProgressDenominator += dictNodes.Count;
             ++nProgressItem;
@@ -193,7 +191,7 @@ namespace DoubleFile
                     var treeNode = lsNodes[0];
 
                     if (0 < treeNode.NodeDatum.FileCountHere)
-                        dictUnique.Add(kvp.Key, treeNode);
+                        dictSolitary.Add(kvp.Key, treeNode);
                 }
             }
 
@@ -202,7 +200,7 @@ namespace DoubleFile
             nProgressDenominator += _lsRootNodes.Count;
             ++nProgressItem;
 
-            foreach (var treeNode in _lsRootNodes)
+            foreach (var rootNode in _lsRootNodes)
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator * nProgressItem / knTotalProgressItems);
                 
@@ -212,7 +210,43 @@ namespace DoubleFile
                     return;
                 }
 
-                DifferentVolsQuery(dictClones, treeNode);
+                DictClonesAdd_MarkIfAllOneVol(dictClones, rootNode);
+            }
+
+            // A parent may be cloned and its child may be solitary.
+            foreach (var kvp in dictSolitary.ToList())
+            {
+                var parent = kvp.Value.Parent;
+                var nParentCloneColor = 0;
+
+                while (null != parent)
+                {
+                    if (null != parent.NodeDatum.Clones)
+                    {
+                        nParentCloneColor =
+                            (parent.ColorcodeFG == UtilColorcode.AllOnOneVolume)
+                            ? UtilColorcode.SolitaryOneVolParent
+                            : UtilColorcode.SolitaryClonedParent;
+
+                        break;
+                    }
+
+                    parent = parent.Parent;
+                }
+
+                if (0 != nParentCloneColor)
+                {
+                    while (null != parent)
+                    {
+                        if (null != parent.NodeDatum.Clones)
+                            break;
+
+                        parent.ColorcodeFG = nParentCloneColor;
+                        parent = parent.Parent;
+                    }
+
+                    dictSolitary.Remove(kvp.Key);
+                }
             }
 
             nProgressDenominator += dictClones.Count;
@@ -244,10 +278,10 @@ namespace DoubleFile
                     continue;               // keep the same-vol
 
                 if ((3 <= nClones) &&       // includes the subject node: only note three clones or more
-                    (UtilColorcode.OneCopy == listNodes.Value[0].ForeColor))  // otherwise it'd be FireBrick: all one volume
+                    (UtilColorcode.OneCopy == listNodes.Value[0].ColorcodeFG))  // otherwise it'd be FireBrick: all one volume
                 {
                     foreach (var node in listNodes.Value)
-                        node.ForeColor = UtilColorcode.MultipleCopies;
+                        node.ColorcodeFG = UtilColorcode.MultipleCopies;
                 }
 
                 var lvItem = new LVitem_ClonesVM(listNodes.Value, nicknameUpdater);
@@ -276,8 +310,8 @@ namespace DoubleFile
                 var treeNode = kvp.Key;
                 var lvIgnoreItem = kvp.Value;
 
-                treeNode.ForeColor = UtilColorcode.DarkGray;
-                treeNode.BackColor = UtilColorcode.Transparent;
+                treeNode.ColorcodeFG = UtilColorcode.DarkGray;
+                treeNode.ColorcodeBG = UtilColorcode.Transparent;
 
                 var nodeDatum = treeNode.NodeDatum;
 
@@ -287,9 +321,9 @@ namespace DoubleFile
             }
 
             InsertSizeMarkers(_lsLVdiffVol);
-            nProgressDenominator += dictUnique.Count;
+            nProgressDenominator += dictSolitary.Count;
 
-            foreach (var kvp in dictUnique.Reverse())
+            foreach (var kvp in dictSolitary.Reverse())
             {
                 reportProgress(++nProgressNumerator / nProgressDenominator);
 
@@ -303,9 +337,7 @@ namespace DoubleFile
                 var nodeDatum = treeNode.NodeDatum;
 
                 Util.Assert(99975, 0 < nodeDatum.FileCountHere);
-                SnowUniqueParents(treeNode);
-                Util.Assert(99974, UtilColorcode.Transparent == treeNode.ForeColor);
-                treeNode.ForeColor = UtilColorcode.Solitary;
+                MarkSolitaryParentsAsSolitary(treeNode);
 
                 var lvItem = new LVitem_ClonesVM(new[] { treeNode }, nicknameUpdater);
 
@@ -341,7 +373,7 @@ namespace DoubleFile
                     return;
                 }
 
-                SnowUniqueParents(treeNode);
+                MarkSolitaryParentsAsSolitary(treeNode);
 
                 var nodeDatum = treeNode.NodeDatum;
 
@@ -407,7 +439,7 @@ namespace DoubleFile
 
         // If an outer directory is cloned then all the inner ones are part of the outer clone and their clone status is redundant.
         // Breadth-first.
-        void DifferentVolsQuery(
+        void DictClonesAdd_MarkIfAllOneVol(
             IDictionary<int, List<LocalTreeNode>> dictClones,
             LocalTreeNode treeNode,
             LocalTreeNode rootClone = null)
@@ -421,7 +453,7 @@ namespace DoubleFile
 
             if (0 == nLength)
             {
-                treeNode.ForeColor = UtilColorcode.ZeroLengthFolder;
+                treeNode.ColorcodeFG = UtilColorcode.ZeroLengthFolder;
                 nodeDatum.Clones = null;
             }
 
@@ -435,7 +467,7 @@ namespace DoubleFile
                 if (null != lsTreeNodes)
                 {
                     Util.Assert(99971, lsTreeNodes == listClones);
-                    Util.Assert(99913, lsTreeNodes[0].ForeColor == treeNode.ForeColor);
+                    Util.Assert(99913, lsTreeNodes[0].ColorcodeFG == treeNode.ColorcodeFG);
                 }
                 else
                 {
@@ -446,8 +478,8 @@ namespace DoubleFile
                     var rootNode = treeNode.Root;
                     var rootNodeDatum = rootNode.RootNodeDatum;
 
-                    Util.Assert(99970, UtilColorcode.Transparent == treeNode.ForeColor);
-                    treeNode.ForeColor = UtilColorcode.AllOnOneVolume;
+                    Util.Assert(99970, UtilColorcode.Transparent == treeNode.ColorcodeFG);
+                    treeNode.ColorcodeFG = UtilColorcode.AllOnOneVolume;
 
                     foreach (var subnode in listClones)
                     {
@@ -472,13 +504,13 @@ namespace DoubleFile
                             continue;
                         }
 
-                        Util.Assert(1305.6311m, treeNode.ForeColor == UtilColorcode.AllOnOneVolume);
-                        treeNode.ForeColor = UtilColorcode.OneCopy;
+                        Util.Assert(1305.6311m, treeNode.ColorcodeFG == UtilColorcode.AllOnOneVolume);
+                        treeNode.ColorcodeFG = UtilColorcode.OneCopy;
                         break;
                     }
 
                     foreach (var subNode in listClones)
-                        subNode.ForeColor = treeNode.ForeColor;
+                        subNode.ColorcodeFG = treeNode.ColorcodeFG;
                 }
             }
 
@@ -493,7 +525,7 @@ namespace DoubleFile
                     return;
                 }
 
-                DifferentVolsQuery(dictClones, subNode, rootClone);
+                DictClonesAdd_MarkIfAllOneVol(dictClones, subNode, rootClone);             // recurse
             }
         }
 
@@ -541,17 +573,41 @@ namespace DoubleFile
             }
         }
 
-        static void SnowUniqueParents(LocalTreeNode treeNode)
+        static void MarkSolitaryParentsAsSolitary(LocalTreeNode treeNode)
         {
+    //        Util.Assert(99974, UtilColorcode.Transparent == treeNode.ForeColor);
+            treeNode.ColorcodeFG = UtilColorcode.Solitary;
+
             LocalTreeNode parentNode = treeNode.Parent;
 
             while (null != parentNode)
             {
-                parentNode.BackColor = UtilColorcode.ContainsSolitary;
+                parentNode.ColorcodeBG = UtilColorcode.ContainsSolitaryBG;
 
-                Util.Assert(99900,
-                    (parentNode.ForeColor == UtilColorcode.Transparent) ==
-                    (null == parentNode.NodeDatum.LVitem));
+
+                //Util.Assert(99900,
+                //    (parentNode.ForeColor == UtilColorcode.Transparent) ==
+                //    (null == parentNode.NodeDatum.LVitem));
+
+                //var a = parentNode.ForeColor == UtilColorcode.Transparent;
+                //var b = null == parentNode.NodeDatum.LVitem;
+
+     //           Util.Assert(99900, a == b);
+
+
+                if (UtilColorcode.Transparent == parentNode.ColorcodeFG)
+                {
+                    Util.Assert(99900, null == parentNode.NodeDatum.LVitem);
+                    parentNode.ColorcodeFG = UtilColorcode.Solitary;
+                }
+                else
+                {
+      //              Util.Assert(99593, null != parentNode.NodeDatum.LVitem);
+    //                Util.Assert(99594, UtilColorcode.Solitary == parentNode.ForeColor);
+                }
+
+                parentNode.ColorcodeFG = UtilColorcode.Solitary;
+//                Util.Assert(99594, new[] { UtilColorcode.Solitary, UtilColorcode.Transparent }.Contains(parentNode.ForeColor));
 
                 parentNode = parentNode.Parent;
             }

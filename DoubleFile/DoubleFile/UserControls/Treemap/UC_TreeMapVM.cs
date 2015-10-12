@@ -443,7 +443,7 @@ namespace DoubleFile
                 lsNodes.Add(new LocalTreemapFileNode(tuple.Item1)
                 {
                     NodeDatum = new NodeDatum { LengthTotal = tuple.Item2 },
-                    ForeColor = UtilColorcode.TreemapFile
+                    ColorcodeFG = UtilColorcode.TreemapFile
                 });
             }
 
@@ -624,7 +624,7 @@ namespace DoubleFile
                     (32 > rc.Height))
                 {
                     // Speedup. Draw an "empty" folder in place of too much detail
-                    _lsFills.Add(new Folder(rc, treeNode.ForeColor));
+                    _lsFills.Add(new Folder(rc, treeNode.ColorcodeFG));
                     return;
                 }
 
@@ -666,7 +666,7 @@ namespace DoubleFile
                         var nodeFree = new LocalTreemapFileNode(nodeDatumFree.LengthTotal.FormatSize() + " free space")
                         {
                             NodeDatum = nodeDatumFree,
-                            ForeColor = UtilColorcode.TreemapFreespace
+                            ColorcodeFG = UtilColorcode.TreemapFreespace
                         };
 
                         var nodeDatumUnread = new NodeDatum();
@@ -693,7 +693,7 @@ namespace DoubleFile
                         var nodeUnread = new LocalTreemapFileNode(nodeDatumUnread.LengthTotal.FormatSize() + " unread data (estimate affected by compression and hard links)")
                         {
                             NodeDatum = nodeDatumUnread,
-                            ForeColor = UtilColorcode.TreemapUnreadspace
+                            ColorcodeFG = UtilColorcode.TreemapUnreadspace
                         };
 
                         // parent added as child, with two other nodes:
@@ -746,7 +746,7 @@ namespace DoubleFile
                 }
 
                 // There are no children. Draw a file or an empty folder.
-                _lsFills.Add(new Folder(rc, treeNode.ForeColor));
+                _lsFills.Add(new Folder(rc, treeNode.ColorcodeFG));
             }
 
             //My first approach was to make this member pure virtual and have three
@@ -772,7 +772,7 @@ namespace DoubleFile
                     ieChildren = ieChildren.Concat(new[] { new LocalTreemapFileNode(parent.PathShort)
                     {
                         NodeDatum = new NodeDatum { LengthTotal = nodeDatum.LengthHere },
-                        ForeColor = UtilColorcode.TreemapFolder
+                        ColorcodeFG = UtilColorcode.TreemapFolder
                     }});
                 }
 

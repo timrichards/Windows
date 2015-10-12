@@ -2,29 +2,46 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Windows.Media;
 
 namespace DoubleFile
 {
     [DebuggerDisplay("{_strPathShort} {Nodes?.Count}")]
-    class LocalTreeNode : LocalColorItemBase
+    class LocalTreeNode
     {
+        internal int ColorcodeFG { get { return UtilColorcode.GetFG_ARGB(Color); } set { int c = Color; Color = UtilColorcode.SetFG_ARGB(ref c, value); } }
+        internal int ColorcodeBG { get { return UtilColorcode.GetBG_ARGB(Color); } set { int c = Color; Color = UtilColorcode.SetBG_ARGB(ref c, value); } }
+
+        internal Brush
+            Foreground =>
+            (UtilColorcode.Transparent == ColorcodeFG)
+            ? Brushes.White
+            : UtilColorcode.ARGBtoBrush(ColorcodeFG);
+
+        internal Brush
+            Background => UtilColorcode.ARGBtoBrush(ColorcodeBG);
+
         internal NodeDatum
-            NodeDatum;
+            NodeDatum;                                  // stored
         internal RootNodeDatum
             RootNodeDatum => (RootNodeDatum)Root.NodeDatum;
 
-        public IReadOnlyList<LocalTreeNode>
-            Nodes { get; protected set; }
+        internal IReadOnlyList<LocalTreeNode>
+            Nodes { get; set; }                         // stored
 
         internal LocalTreeNode
             FirstNode => Nodes?.First();
-        public virtual LocalTreeNode
-            Parent { get; protected set; }
+        internal virtual LocalTreeNode
+            Parent { get; set; }                        // stored
 
-        internal int
-            Level { get { return Datum8bits; } private set { Datum8bits = value; } }
+        internal int Level
+        {
+            get { return (int)(_datum_color_level & _knDatum8bitMask) >> UtilColorcode.CLUT_Shift; }
+            set { _datum_color_level = (short)((_datum_color_level & (-1 - _knDatum8bitMask)) + (value << UtilColorcode.CLUT_Shift)); }
+        }
 
-        internal LocalTreeNode Root
+        internal LocalTreeNode
+            Root
         {
             get
             {
@@ -39,6 +56,7 @@ namespace DoubleFile
 
         internal LocalTreeNode()
         {
+            Color = UtilColorcode.Set_ARGB(UtilColorcode.Transparent, UtilColorcode.Transparent);
             Level = -1;
         }
 
@@ -60,18 +78,6 @@ namespace DoubleFile
             Nodes = lsNodes;
         }
 
-        internal LocalTreeNode DetachFromTree()
-        {
-            Parent = null;
-            Level = -1;
-
-            Nodes?.ForEach(treeNode =>
-                treeNode.DetachFromTree());
-
-            Nodes = null;
-            return this;
-        }
-
         internal virtual string
             PathShort
         {
@@ -87,7 +93,6 @@ namespace DoubleFile
             }
             set { _strPathShort = (TabledString<TabledStringType_Folders>)value; }
         }
-        TabledString<TabledStringType_Folders> _strPathShort;
 
         internal string
             PathFull => PathFullGet(true);
@@ -114,7 +119,8 @@ namespace DoubleFile
             }
         }
 
-        internal bool IsChildOf(LocalTreeNode treeNode)
+        internal bool
+            IsChildOf(LocalTreeNode treeNode)
         {
             if (Level <= treeNode.Level)
                 return false;
@@ -132,7 +138,8 @@ namespace DoubleFile
             return false;
         }
 
-        static internal int SetLevel(IEnumerable<LocalTreeNode> nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
+        static internal int
+            SetLevel(IEnumerable<LocalTreeNode> nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
         {
             var nCount = 0;
 
@@ -150,13 +157,15 @@ namespace DoubleFile
             return nCount;
         }
 
-        internal LocalTreeNode GoToFile(string strFile)
+        internal LocalTreeNode
+            GoToFile(string strFile)
         {
             TreeSelect.DoThreadFactory(this, 0 /* UI Initiator */, strFile);
             return this;
         }
 
-        internal IEnumerable<string> GetFileList(bool bReadAllLines = false)
+        internal IEnumerable<string>
+            GetFileList(bool bReadAllLines = false)
         {
             var nPrevDir = (int)NodeDatum.PrevLineNo;
 
@@ -198,6 +207,21 @@ namespace DoubleFile
                 .Take(NodeDatum.FileCountHere)
                 .ToArray();
         }
+
+        int Color
+        {
+            get { return _datum_color_level & UtilColorcode.CLUT_Mask; }
+            set { _datum_color_level = (short)((_datum_color_level & (-1 - UtilColorcode.CLUT_Mask)) + value); }
+        }
+
+        TabledString<TabledStringType_Folders>
+            _strPathShort;
+        static readonly uint
+            _knDatum8bitMask = (1 << 16) - 1 - UtilColorcode.CLUT_Mask;
+        const uint
+            _knDatum16bitMask = (uint)((1 << 16) - 1) << 16;
+        short
+            _datum_color_level = 0;
 
         static ReadLinesIterator
             _currentIterator;

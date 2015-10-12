@@ -7,7 +7,7 @@ namespace DoubleFile
         internal bool
             IsSolitary => null == Clones;
         internal bool
-            IsAllOnOneVolume => UtilColorcode.AllOnOneVolume == Clones?[0].ForeColor;
+            IsAllOnOneVolume => UtilColorcode.AllOnOneVolume == Clones?[0].ColorcodeFG;
 
         internal List<LocalTreeNode>
             Clones;

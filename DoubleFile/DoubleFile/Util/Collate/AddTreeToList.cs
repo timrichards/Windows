@@ -3,6 +3,8 @@ using System.Linq;
 
 namespace DoubleFile
 {
+    using static UtilColorcode;
+
     partial class Collate
     {
         // can't be struct because it has an auto-implemented property
@@ -25,7 +27,10 @@ namespace DoubleFile
                 {
                     _lsAllNodes.Add(treeNode);
 
-                    if ((treeNode.ForeColor == UtilColorcode.AllOnOneVolume) &&
+                    if (0 == treeNode.NodeDatum.LengthTotal)
+                        continue;
+
+                    if ((AllOnOneVolume == treeNode.ColorcodeFG) &&
                         (treeNode == treeNode.NodeDatum.Clones[0]))
                     {
                         _lsSameVol.Add(treeNode);
@@ -33,7 +38,24 @@ namespace DoubleFile
 
                     if (bCloneOK)
                     {
-                        treeNode.BackColor = UtilColorcode.ParentCloned;
+                        treeNode.ColorcodeBG = ParentClonedBG;
+
+                        // set the forecolor same as parent's
+                        if (false ==
+                            new[] { MultipleCopies, ZeroLengthFolder }
+                            .Contains(treeNode.ColorcodeFG))
+                        {
+                            var bExpected =
+                                new[] { Solitary, Transparent,
+                                OneCopy,
+                                AllOnOneVolume }      // A Useful Find
+                                .Contains(treeNode.ColorcodeFG);
+
+                            Util.Assert(99859, bExpected, bIfDefDebug: true);
+
+                            if (bExpected)
+                                treeNode.ColorcodeFG = ParentCloned;
+                        }
 
                         //if ((nodeDatum.LVitem != null) && (nodeDatum.LVitem.ListView == null))  // ignore LV
                         //{
@@ -42,10 +64,7 @@ namespace DoubleFile
                     }
 
                     if (null != treeNode.Nodes)
-                    {
-                        Go(treeNode.Nodes, bCloneOK ||
-                            (new[] { UtilColorcode.OneCopy, UtilColorcode.MultipleCopies }.Contains(treeNode.ForeColor)));
-                    }
+                        Go(treeNode.Nodes, bCloneOK || new[] { OneCopy, MultipleCopies }.Contains(treeNode.ColorcodeFG));
                 }
             }
 

@@ -11,7 +11,7 @@ namespace DoubleFile
         public string PathShort => "" + _datum.PathShort;
         public Brush Foreground => _isSelected ? Brushes.Transparent : _datum.Foreground;
         public Brush SelectedForeground => _isSelected ? Brushes.Transparent : _datum.Foreground;
-        public Brush Background => UtilColorcode.ARGBtoBrush(_datum.BackColor);
+        public Brush Background => UtilColorcode.ARGBtoBrush(_datum.ColorcodeBG);
         public FontWeight FontWeight => _isSelected ? FontWeights.ExtraBold : FontWeights.Normal;
 
         internal readonly TreeViewItemVM

@@ -1,3 +1,60 @@
+                parentNode.BackColor = UtilColorcode.ContainsSolitaryBG;
+
+
+                Util.Assert(99900,
+                    (parentNode.ForeColor == UtilColorcode.Transparent) ==
+                    (null == parentNode.NodeDatum.LVitem));
+
+                var a = parentNode.ForeColor == UtilColorcode.Transparent;
+                var b = null == parentNode.NodeDatum.LVitem;
+
+                Util.Assert(99900, a == b);
+
+
+                if (UtilColorcode.Transparent == parentNode.ForeColor)
+                {
+                    Util.Assert(99900, null == parentNode.NodeDatum.LVitem);
+                    parentNode.ForeColor = UtilColorcode.Solitary;
+                }
+                else
+                {
+                    Util.Assert(99593, null != parentNode.NodeDatum.LVitem);
+                    Util.Assert(99594, UtilColorcode.Solitary == parentNode.ForeColor);
+                }
+
+                Util.Assert(99594, new[] { UtilColorcode.Solitary, UtilColorcode.Transparent }.Contains(parentNode.ForeColor));
+
+                parentNode.ForeColor = UtilColorcode.Solitary;
+                parentNode = parentNode.Parent;
+
+
+
+
+
+        static void MarkSolitaryParentsAsSolitary(LocalTreeNode treeNode)
+        {
+            Util.Assert(99974, UtilColorcode.Transparent == treeNode.ForeColor);
+            treeNode.ForeColor = UtilColorcode.Solitary;
+
+            LocalTreeNode parentNode = treeNode.Parent;
+
+            while (null != parentNode)
+            {
+                parentNode.BackColor = UtilColorcode.ContainsSolitaryBG;
+
+                Util.Assert(99900,
+                    (parentNode.ForeColor == UtilColorcode.Transparent) ==
+                    (null == parentNode.NodeDatum.LVitem));
+
+                parentNode.ForeColor = UtilColorcode.Solitary;
+                parentNode = parentNode.Parent;
+            }
+        }
+
+
+
+
+
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;

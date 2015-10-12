@@ -191,7 +191,6 @@
     <Compile Include="Introduction.xaml.cs">
       <DependentUpon>Introduction.xaml</DependentUpon>
     </Compile>
-    <Compile Include="LocalTreeNode\LocalColorItemBase.cs" />
     <Compile Include="LocalTreeNode\LocalTV_FileHashes.cs" />
     <Compile Include="LocalTreeNode\LVitemProject_Explorer.cs" />
     <Compile Include="MoreLinq\MoreEnumerable.DistinctBy.cs" />

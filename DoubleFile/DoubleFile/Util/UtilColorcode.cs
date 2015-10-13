@@ -49,7 +49,7 @@ namespace DoubleFile
         internal const int OneCloneSepVolume    = unchecked((int)0xFF4682B4);   // => Colors.SteelBlue.ToArgb();                // SteelBlue
         internal const int AllOnOneVolume       = unchecked((int)0xFFB22222);   // => Colors.Firebrick.ToArgb();                // Firebrick
         internal const int Solitary             = unchecked((int)0xFFC00000);   // => Color.FromArgb(255, 192, 0, 0).ToArgb();  // Red
-        internal const int SolitaryHasClones    = unchecked((int)0xFFBB82B4);
+        internal const int SolitaryHasClones    = unchecked((int)0xFFC02222);
         internal const int SolitaryClonedParent = unchecked((int)0xFF4477AA);
         internal const int SolitaryOneVolParent = unchecked((int)0xFFBB3333);
         internal const int ContainsSolitaryBG   =                0x40400000;    // => Color.FromArgb(64, 64, 0, 0).ToArgb();    // DarkRedBG

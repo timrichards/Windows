@@ -33,32 +33,115 @@ namespace DoubleFile
             _bLoose = bLoose;
         }
 
-        static internal void InsertSizeMarkers(IList<LVitem_ClonesVM> listLVitems)
+        internal void Go(Action<double> reportProgress_)
         {
-            var nCount = listLVitems.Count;
+            double nProgressNumerator = 0;
+            double nProgressDenominator = 0;
+            double nProgressItem = 0;
+            const double knTotalProgressItems = 5;
+            Action reportProgress = () => reportProgress_(++nProgressNumerator / nProgressDenominator * nProgressItem / knTotalProgressItems);
 
-            if (0 == nCount)
-                return;
 
-            var bUnique = (1 == listLVitems.Count);
-            var nInterval = (nCount < 100) ? 10 : (nCount < 1000) ? 25 : 50;
+            // Step1_CreateDictSolitary_NodeDatumClones
+            nProgressDenominator += _dictNodes.Count;
+            ++nProgressItem;
 
-            InsertSizeMarkerStatic.Go(listLVitems, nCount - 1, bUnique, bAdd: true);
+            var dictSolitary = Step1_CreateDictSolitary_NodeDatumClones(reportProgress);
 
-            var nInitial = nCount % nInterval;
 
-            if (0 == nInitial)
-                nInitial = nInterval;
+            // Step2_DictClonesAdd_MarkIfAllOneVol
+            nProgressDenominator += _lsRootNodes.Count;
+            ++nProgressItem;
 
-            var nHalf = (nInterval >> 1);
+            var dictClones = new SortedDictionary<int, List<LocalTreeNode>>();
 
-            if (nCount - nInitial > nHalf)
+            foreach (var rootNode in _lsRootNodes)
             {
-                for (var i = nCount - nInitial; i > nHalf; i -= nInterval)
-                    InsertSizeMarkerStatic.Go(listLVitems, i, bUnique);
+                reportProgress();
+                Step2_DictClonesAdd_MarkIfAllOneVol(dictClones, rootNode);
             }
 
-            InsertSizeMarkerStatic.Go(listLVitems, 0, bUnique);            // Enter the Zeroth
+
+            // Step3_UnmarkSolitaryChildrenOfClones
+            Step3_UnmarkSolitaryChildrenOfClones(dictSolitary);
+
+
+            // Step4_Create_lsLVdiffVol_LVitem_ClonesVM ManyClonesSepVolume OneCloneSepVolume AllOnOneVolume
+            nProgressDenominator += dictClones.Count;
+            ++nProgressItem;
+
+            var nicknameUpdater = new ListUpdater<bool>(99676);
+            Step4_Create_lsLVdiffVol_LVitem_ClonesVM(dictClones, nicknameUpdater, reportProgress);
+
+
+            // Create lsLVsolitary MarkSolitaryParentsAsSolitary
+            nProgressDenominator += dictSolitary.Count;
+            ++nProgressItem;
+
+            foreach (var kvp in dictSolitary)
+            {
+                reportProgress();
+
+                var treeNode = kvp.Value;
+                var nodeDatum = treeNode.NodeDatum;
+
+                Util.Assert(99975, 0 < nodeDatum.FileCountHere);
+                MarkSolitaryParentsAsSolitary(treeNode);
+
+                var lvItem = new LVitem_ClonesVM(new[] { treeNode }, nicknameUpdater);
+
+                _lsLVsolitary.Add(lvItem);
+                Util.Assert(99973, null == nodeDatum.LVitem);
+                nodeDatum.LVitem = lvItem;
+            }
+
+            InsertSizeMarkers(_lsLVsolitary);
+
+
+            // Create_lsLVsameVol_MarkSolitaryParentsAsSolitary
+            var lsSameVol = new List<LocalTreeNode>();
+
+            if (0 < _lsRootNodes.Count)
+            {
+                var nCount = CountNodes(_lsRootNodes);
+                
+                AddTreeToList.Go(_lsAllNodes, lsSameVol, _lsRootNodes);
+                Util.Assert(1305.6326m, _lsAllNodes.Count == nCount);
+                Util.WriteLine("Step1_OnThread " + nCount);
+            }
+
+            lsSameVol.Sort((y, x) => x.NodeDatum.LengthTotal.CompareTo(y.NodeDatum.LengthTotal));
+            nProgressDenominator += lsSameVol.Count;
+            ++nProgressItem;
+
+            foreach (var treeNode in lsSameVol)
+            {
+                reportProgress();
+                MarkSolitaryParentsAsSolitary(treeNode);
+
+                var nodeDatum = treeNode.NodeDatum;
+
+                if (0 == (nodeDatum.Clones?.Count ?? 0))
+                    Util.Assert(99972, false);
+
+                _lsLVsameVol.Add(nodeDatum.LVitem = new LVitem_ClonesVM(nodeDatum.Clones, nicknameUpdater));
+            }
+
+            InsertSizeMarkers(_lsLVsameVol);
+
+
+            Util.Assert(1305.6333m, 0 == _lvClones.Items.Count);
+            Util.Assert(1305.6334m, 0 == _lvSolitary.Items.Count);
+            Util.Assert(1305.6335m, 0 == _lvSameVol.Items.Count);
+
+            if (0 < _lsLVdiffVol.Count)
+                _lvClones.Add(_lsLVdiffVol);
+
+            if (0 < _lsLVsolitary.Count)
+                _lvSolitary.Add(_lsLVsolitary);
+
+            if (0 < _lsLVsameVol.Count)
+                _lvSameVol.Add(_lsLVsameVol);
         }
 
         IDictionary<int, LocalTreeNode>
@@ -112,75 +195,73 @@ namespace DoubleFile
         void Step2_DictClonesAdd_MarkIfAllOneVol(
             IDictionary<int, List<LocalTreeNode>> dictClones,
             LocalTreeNode treeNode,
-            LocalTreeNode rootClone = null)
+            bool rootClone = false)
         {
-            // neither rootClone nor nMaxLength are used at all (rootClone is used like a bool).
-            // provisional.
-
             var nodeDatum = treeNode.NodeDatum;
-            var listClones = nodeDatum.Clones;
-            var nLength = nodeDatum.LengthTotal;
 
-            if (0 == nLength)
+            if (0 == nodeDatum.LengthTotal)
             {
                 treeNode.ColorcodeFG = ZeroLengthFolder;
-                nodeDatum.Clones = null;
+                Util.Assert(99978, null == nodeDatum.Clones);
             }
 
-            if ((0 < (listClones?.Count ?? 0)) &&
-                (null == rootClone))
+            if ((false == rootClone) &&
+                (null != nodeDatum.Clones))
             {
-                rootClone = treeNode;
+                rootClone = true;
+
+                // mark all parents as having clones
+                for (var parent = treeNode.Parent; null != parent; parent = parent.Parent)
+                {
+                    if (SolitaryHasClones != parent.ColorcodeFG)
+                    {
+                        Util.Assert(99977, Transparent == parent.ColorcodeFG, bIfDefDebug: true);
+                        parent.ColorcodeFG = SolitaryHasClones;
+                    }
+                }
 
                 var lsTreeNodes = dictClones.TryGetValue(nodeDatum.Hash_AllFiles);
 
-                if (null != lsTreeNodes)
+                if (null == lsTreeNodes)
                 {
-                    Util.Assert(99971, lsTreeNodes == listClones);
-                    Util.Assert(99913, lsTreeNodes[0].ColorcodeFG == treeNode.ColorcodeFG);
-                }
-                else
-                {
-                    dictClones.Add(nodeDatum.Hash_AllFiles, listClones);
+                    dictClones.Add(nodeDatum.Hash_AllFiles, nodeDatum.Clones);          // add to dictClones
 
                     // Test to see if clones are on separate volumes.
 
                     var rootNode = treeNode.Root;
                     var rootNodeDatum = rootNode.RootNodeDatum;
 
-                    Util.Assert(99970, Transparent == treeNode.ColorcodeFG);
+                    Util.Assert(99970, Transparent == treeNode.ColorcodeFG, bIfDefDebug: true);
                     treeNode.ColorcodeFG = AllOnOneVolume;
 
-                    foreach (var subnode in listClones)
+                    foreach (var clone in nodeDatum.Clones)
                     {
-                        if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
-                            _bAborted)
-                        {
-                            return;
-                        }
+                        Util.Assert(99999, clone.NodeDatum.Hash_AllFiles.Equals(nodeDatum.Hash_AllFiles));
 
-                        Util.Assert(99999, subnode.NodeDatum.Hash_AllFiles.Equals(nodeDatum.Hash_AllFiles));
-
-                        var rootNodeA = subnode.Root;
+                        var rootNodeA = clone.Root;
 
                         if (rootNode == rootNodeA)
                             continue;
 
                         var rootNodeDatumA = rootNodeA.RootNodeDatum;
 
-                        if (false == string.IsNullOrWhiteSpace(rootNodeDatum.LVitemProjectVM.VolumeGroup) &&
-                            (rootNodeDatum.LVitemProjectVM.VolumeGroup == rootNodeDatumA.LVitemProjectVM.VolumeGroup))
+                        if (string.IsNullOrWhiteSpace(rootNodeDatum.LVitemProjectVM.VolumeGroup) ||
+                            (rootNodeDatum.LVitemProjectVM.VolumeGroup != rootNodeDatumA.LVitemProjectVM.VolumeGroup))
                         {
-                            continue;
+                            Util.Assert(1305.6311m, treeNode.ColorcodeFG == AllOnOneVolume, bIfDefDebug: true);
+                            treeNode.ColorcodeFG = OneCloneSepVolume;
+                            break;
                         }
-
-                        Util.Assert(1305.6311m, treeNode.ColorcodeFG == AllOnOneVolume);
-                        treeNode.ColorcodeFG = OneCloneSepVolume;
-                        break;
                     }
 
-                    foreach (var subNode in listClones)
-                        subNode.ColorcodeFG = treeNode.ColorcodeFG;
+                    foreach (var clone in nodeDatum.Clones)
+                        clone.ColorcodeFG = treeNode.ColorcodeFG;
+                }
+                else
+                {
+                    // lsTreeNodes is in dictClones so this is a clone and the first clone was already added to dictClones
+                    Util.Assert(99971, lsTreeNodes == nodeDatum.Clones);
+                    Util.Assert(99913, lsTreeNodes[0].ColorcodeFG == treeNode.ColorcodeFG, bIfDefDebug: true);
                 }
             }
 
@@ -188,15 +269,7 @@ namespace DoubleFile
                 return;
 
             foreach (var subNode in treeNode.Nodes)
-            {
-                if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
-                    _bAborted)
-                {
-                    return;
-                }
-
                 Step2_DictClonesAdd_MarkIfAllOneVol(dictClones, subNode, rootClone);             // recurse
-            }
         }
 
         void Step3_UnmarkSolitaryChildrenOfClones(IDictionary<int, LocalTreeNode> dictSolitary)
@@ -204,10 +277,9 @@ namespace DoubleFile
             // A parent may be cloned and its child may be solitary: files may be distributed differently than in the clone.
             foreach (var kvp in dictSolitary.ToList())
             {
-                var parent = kvp.Value.Parent;
                 var nParentCloneColor = 0;
 
-                while (null != parent)
+                for (var parent = kvp.Value.Parent; null != parent; parent = parent.Parent)
                 {
                     if (null != parent.NodeDatum.Clones)
                     {
@@ -218,19 +290,16 @@ namespace DoubleFile
 
                         break;
                     }
-
-                    parent = parent.Parent;
                 }
 
                 if (0 != nParentCloneColor)
                 {
-                    while (null != parent)
+                    for (var parent = kvp.Value.Parent; null != parent; parent = parent.Parent)
                     {
                         if (null != parent.NodeDatum.Clones)
                             break;
 
                         parent.ColorcodeFG = nParentCloneColor;
-                        parent = parent.Parent;
                     }
 
                     dictSolitary.Remove(kvp.Key);
@@ -253,7 +322,7 @@ namespace DoubleFile
                     continue;
                 }
 
-                Util.Assert(99591, new[] { OneCloneSepVolume, AllOnOneVolume }.Contains(kvp.Value[0].ColorcodeFG));
+                Util.Assert(99591, new[] { OneCloneSepVolume, AllOnOneVolume }.Contains(kvp.Value[0].ColorcodeFG), bIfDefDebug: true);
 
                 if (1 == nClones)
                     continue;
@@ -274,126 +343,6 @@ namespace DoubleFile
             }
 
             InsertSizeMarkers(_lsLVdiffVol);
-        }
-
-        internal void Go(Action<double> reportProgress_)
-        {
-            double nProgressNumerator = 0;
-            double nProgressDenominator = 0;
-            double nProgressItem = 0;
-            const double knTotalProgressItems = 6;
-
-            Action reportProgress = () => reportProgress_(++nProgressNumerator / nProgressDenominator * nProgressItem / knTotalProgressItems);
-
-
-            // Step1_CreateDictSolitary_NodeDatumClones
-            nProgressDenominator += _dictNodes.Count;
-            ++nProgressItem;
-
-            var dictSolitary = Step1_CreateDictSolitary_NodeDatumClones(reportProgress);
-
-
-            // Step2_DictClonesAdd_MarkIfAllOneVol
-            nProgressDenominator += _lsRootNodes.Count;
-            ++nProgressItem;
-
-            var dictClones = new SortedDictionary<int, List<LocalTreeNode>>();
-
-            foreach (var rootNode in _lsRootNodes)
-            {
-                reportProgress();
-                Step2_DictClonesAdd_MarkIfAllOneVol(dictClones, rootNode);
-            }
-
-
-            // Step3_UnmarkSolitaryChildrenOfClones
-            Step3_UnmarkSolitaryChildrenOfClones(dictSolitary);
-
-
-            // Step4_Create_lsLVdiffVol_LVitem_ClonesVM ManyClonesSepVolume OneCloneSepVolume AllOnOneVolume
-            nProgressDenominator += dictClones.Count;
-            ++nProgressItem;
-
-            var nicknameUpdater = new ListUpdater<bool>(99676);
-            Step4_Create_lsLVdiffVol_LVitem_ClonesVM(dictClones, nicknameUpdater, reportProgress);
-
-
-            // Create_lsLVsolitary_MarkSolitaryParentsAsSolitary
-            nProgressDenominator += dictSolitary.Count;
-            ++nProgressItem;
-
-            foreach (var kvp in dictSolitary)
-            {
-                reportProgress();
-
-                var treeNode = kvp.Value;
-                var nodeDatum = treeNode.NodeDatum;
-
-                Util.Assert(99975, 0 < nodeDatum.FileCountHere);
-                MarkSolitaryParentsAsSolitary(treeNode);
-
-                var lvItem = new LVitem_ClonesVM(new[] { treeNode }, nicknameUpdater);
-
-                _lsLVsolitary.Add(lvItem);
-                Util.Assert(99973, null == nodeDatum.LVitem);
-                nodeDatum.LVitem = lvItem;
-            }
-
-            InsertSizeMarkers(_lsLVsolitary);
-
-
-
-            // Create_lsLVsameVol
-            var lsSameVol = new List<LocalTreeNode>();
-
-            if (0 < _lsRootNodes.Count)
-            {
-                var nCount = CountNodes(_lsRootNodes);
-                
-                AddTreeToList.Go(_lsAllNodes, lsSameVol, _lsRootNodes);
-                Util.Assert(1305.6326m, _lsAllNodes.Count == nCount);
-                Util.WriteLine("Step1_OnThread " + nCount);
-            }
-
-            lsSameVol.Sort((y, x) => x.NodeDatum.LengthTotal.CompareTo(y.NodeDatum.LengthTotal));
-            nProgressDenominator += lsSameVol.Count;
-            ++nProgressItem;
-
-            foreach (var treeNode in lsSameVol)
-            {
-                reportProgress();
-
-                if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
-                    _bAborted)
-                {
-                    return;
-                }
-
-                MarkSolitaryParentsAsSolitary(treeNode);
-
-                var nodeDatum = treeNode.NodeDatum;
-
-                if (0 == (nodeDatum.Clones?.Count ?? 0))
-                    Util.Assert(99972, false);
-
-                _lsLVsameVol.Add(nodeDatum.LVitem = new LVitem_ClonesVM(nodeDatum.Clones, nicknameUpdater));
-            }
-
-            InsertSizeMarkers(_lsLVsameVol);
-
-
-            Util.Assert(1305.6333m, 0 == _lvClones.Items.Count);
-            Util.Assert(1305.6334m, 0 == _lvSolitary.Items.Count);
-            Util.Assert(1305.6335m, 0 == _lvSameVol.Items.Count);
-
-            if (0 < _lsLVdiffVol.Count)
-                _lvClones.Add(_lsLVdiffVol);
-
-            if (0 < _lsLVsolitary.Count)
-                _lvSolitary.Add(_lsLVsolitary);
-
-            if (0 < _lsLVsameVol.Count)
-                _lvSameVol.Add(_lsLVsameVol);
         }
 
         static int CountNodes(IEnumerable<LocalTreeNode> ieNodes)
@@ -455,43 +404,60 @@ namespace DoubleFile
             }
         }
 
+        static internal void InsertSizeMarkers(IList<LVitem_ClonesVM> listLVitems)
+        {
+            var nCount = listLVitems.Count;
+
+            if (0 == nCount)
+                return;
+
+            var bUnique = (1 == listLVitems.Count);
+            var nInterval = (nCount < 100) ? 10 : (nCount < 1000) ? 25 : 50;
+
+            InsertSizeMarkerStatic.Go(listLVitems, nCount - 1, bUnique, bAdd: true);
+
+            var nInitial = nCount % nInterval;
+
+            if (0 == nInitial)
+                nInitial = nInterval;
+
+            var nHalf = (nInterval >> 1);
+
+            if (nCount - nInitial > nHalf)
+            {
+                for (var i = nCount - nInitial; i > nHalf; i -= nInterval)
+                    InsertSizeMarkerStatic.Go(listLVitems, i, bUnique);
+            }
+
+            InsertSizeMarkerStatic.Go(listLVitems, 0, bUnique);            // Enter the Zeroth
+        }
+
         static void MarkSolitaryParentsAsSolitary(LocalTreeNode treeNode)
         {
-    //        Util.Assert(99974, Transparent == treeNode.ForeColor);
-            treeNode.ColorcodeFG = Solitary;
-
-            LocalTreeNode parentNode = treeNode.Parent;
-
-            while (null != parentNode)
+            Func<LocalTreeNode, bool> check_and_mark = checkNode =>
             {
-                parentNode.ColorcodeBG = ContainsSolitaryBG;
+                if (new[] { ManyClonesSepVolume, OneCloneSepVolume, AllOnOneVolume }.Contains(checkNode.ColorcodeFG))
+                    return true; // from lambda. solitary folder can have cloned parent if files are distributed differently among the parent's clones
 
-
-                //Util.Assert(99900,
-                //    (parentNode.ForeColor == Transparent) ==
-                //    (null == parentNode.NodeDatum.LVitem));
-
-                //var a = parentNode.ForeColor == Transparent;
-                //var b = null == parentNode.NodeDatum.LVitem;
-
-     //           Util.Assert(99900, a == b);
-
-
-                if (Transparent == parentNode.ColorcodeFG)
+                if (false == new[] { SolitaryHasClones, Solitary }.Contains(checkNode.ColorcodeFG))
                 {
-                    Util.Assert(99900, null == parentNode.NodeDatum.LVitem);
-                    parentNode.ColorcodeFG = Solitary;
-                }
-                else
-                {
-      //              Util.Assert(99593, null != parentNode.NodeDatum.LVitem);
-    //                Util.Assert(99594, Solitary == parentNode.ForeColor);
+                    // ParentCloned is unimportant because it's just a nicety: it's got ParentClonedBG
+                    Util.Assert(99974, new[] { Transparent, ParentCloned }.Contains(checkNode.ColorcodeFG), bIfDefDebug: true);
+                    checkNode.ColorcodeFG = Solitary;
                 }
 
-                parentNode.ColorcodeFG = Solitary;
-//                Util.Assert(99594, new[] { Solitary, Transparent }.Contains(parentNode.ForeColor));
+                return false;   // from lambda
+            };
 
-                parentNode = parentNode.Parent;
+            if (check_and_mark(treeNode))
+                return;
+
+            for (var parent = treeNode.Parent; null != parent; parent = parent.Parent)
+            {
+                parent.ColorcodeBG = ContainsSolitaryBG;
+
+                if (check_and_mark(parent))
+                    return;
             }
         }
 

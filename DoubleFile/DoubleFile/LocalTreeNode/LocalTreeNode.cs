@@ -45,12 +45,12 @@ namespace DoubleFile
         {
             get
             {
-                var nodeParent = this;
+                var parent = this;
 
-                while (nodeParent.Parent != null)
-                    nodeParent = nodeParent.Parent;
+                for (; null != parent.Parent; parent = parent.Parent)
+                    ;
 
-                return nodeParent;
+                return parent;
             }
         }
 

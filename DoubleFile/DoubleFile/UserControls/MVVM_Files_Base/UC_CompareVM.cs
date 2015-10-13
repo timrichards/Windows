@@ -92,48 +92,52 @@ namespace DoubleFile
         internal UC_CompareVM
             Update(LocalTreeNode folderSel = null)
         {
-            Util.ThreadMake(() => Update_(folderSel));
+            Util.ThreadMake(() =>
+            {
+                LV_Both.ClearItems();
+                LV_First.ClearItems();
+                LV_Second.ClearItems();
+
+                if (null == folderSel)
+                    folderSel = LocalTV.TreeSelect_FolderDetail.treeNode;
+
+                _selectedItem = null;
+                RaisePathFull();
+                Results = "Same, nested, or no folder selected";
+                RaisePropertyChanged("Results");
+                NoResultsVisibility = Visibility.Visible;
+                RaisePropertyChanged("NoResultsVisibility");
+
+                if (null == _folder1)
+                    return;     // from lamnda
+
+                if (null == _folder2)
+                    return;     // from lamnda
+
+                if (ReferenceEquals(_folder1, _folder2))
+                    return;     // from lamnda
+
+                if (_folder1.IsChildOf(_folder2))
+                    return;     // from lamnda
+
+                if (_folder2.IsChildOf(_folder1))
+                    return;     // from lamnda
+
+                NoResultsVisibility = Visibility.Collapsed;
+                RaisePropertyChanged("NoResultsVisibility");
+                ProgressbarVisibility = Visibility.Visible;
+                RaisePropertyChanged("ProgressbarVisibility");
+                CanPick = false;
+                Update_(folderSel);
+                ProgressbarVisibility = Visibility.Collapsed;
+                RaisePropertyChanged("ProgressbarVisibility");
+                CanPick = true;
+            });
+
             return this;
         }
-
-        UC_CompareVM
-            Update_(LocalTreeNode folderSel)
+        UC_CompareVM Update_(LocalTreeNode folderSel)
         {
-            LV_Both.ClearItems();
-            LV_First.ClearItems();
-            LV_Second.ClearItems();
-
-            if (null == folderSel)
-                folderSel = LocalTV.TreeSelect_FolderDetail.treeNode;
-
-            _selectedItem = null;
-            RaisePathFull();
-            Results = "Same, nested, or no folder selected";
-            RaisePropertyChanged("Results");
-            NoResultsVisibility = Visibility.Visible;
-            RaisePropertyChanged("NoResultsVisibility");
-
-            if (null == _folder1)
-                return this;
-
-            if (null == _folder2)
-                return this;
-
-            if (ReferenceEquals(_folder1, _folder2))
-                return this;
-
-            if (_folder1.IsChildOf(_folder2))
-                return this;
-
-            if (_folder2.IsChildOf(_folder1))
-                return this;
-
-            NoResultsVisibility = Visibility.Collapsed;
-            RaisePropertyChanged("NoResultsVisibility");
-            ProgressbarVisibility = Visibility.Visible;
-            RaisePropertyChanged("ProgressbarVisibility");
-            CanPick = false;
-
             var lsFolder1 = _folder1.NodeDatum.Hashes_FilesHere.Union(_folder1.NodeDatum.Hashes_SubnodeFiles_Scratch).Distinct().ToList();
             var lsFolder2 = _folder2.NodeDatum.Hashes_FilesHere.Union(_folder2.NodeDatum.Hashes_SubnodeFiles_Scratch).Distinct().ToList();
             var lsIntersect_ = lsFolder1.Intersect(lsFolder2).Distinct().ToList();
@@ -145,48 +149,41 @@ namespace DoubleFile
             lsFolder1 = null;
             lsFolder2 = null;
 
-            Util.Closure(() =>
+            if (0 == lsIntersect_.Count)
             {
-                if (0 == lsIntersect_.Count)
-                {
-                    Results = "These folders have nothing in common.";
-                    RaisePropertyChanged("Results");
-                    return;     // from lambda
-                }
-
-                Results = null;
+                Results = "These folders have nothing in common.";
                 RaisePropertyChanged("Results");
+                return this;
+            }
 
-                var lsIntersect = GetFileLines(_folder1, lsIntersect_);
-                var lsDiff1 = GetFileLines(_folder1, lsDiff1_);
-                var lsDiff2 = GetFileLines(_folder2, lsDiff2_);
-                Func<int, string> f = n => ((n < kMax) ? "" + n : "at least " + n) + " file" + ((1 != n) ? "s" : "");
+            Results = null;
+            RaisePropertyChanged("Results");
 
-                Util.Assert(99602, lsIntersect.Count == lsIntersect_.Count, bIfDefDebug: true);
-                Util.Assert(99601, lsDiff1.Count == lsDiff1_.Count, bIfDefDebug: true);
-                Util.Assert(99600, lsDiff2.Count == lsDiff2_.Count, bIfDefDebug: true);
-                Results = f(lsIntersect_.Count) + " in common; " + f(lsDiff1_.Count) + " and " + f(lsDiff2_.Count) + " unique respectively.";
-                RaisePropertyChanged("Results");
+            var lsIntersect = GetFileLines(_folder1, lsIntersect_);
+            var lsDiff1 = GetFileLines(_folder1, lsDiff1_);
+            var lsDiff2 = GetFileLines(_folder2, lsDiff2_);
+            Func<int, string> f = n => ((n < kMax) ? "" + n : "at least " + n) + " file" + ((1 != n) ? "s" : "");
 
-                Util.UIthread(99606, () =>
-                {
-                    if (0 < lsIntersect.Count)
-                        LV_Both.Add(lsIntersect.Select(asLine => new LVitem_CompareVM { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
+            Util.Assert(99602, lsIntersect.Count == lsIntersect_.Count, bIfDefDebug: true);
+            Util.Assert(99601, lsDiff1.Count == lsDiff1_.Count, bIfDefDebug: true);
+            Util.Assert(99600, lsDiff2.Count == lsDiff2_.Count, bIfDefDebug: true);
+            Results = f(lsIntersect_.Count) + " in common; " + f(lsDiff1_.Count) + " and " + f(lsDiff2_.Count) + " unique respectively.";
+            RaisePropertyChanged("Results");
 
-                    if (0 < lsDiff1.Count)
-                        LV_First.Add(lsDiff1.Select(asLine => new LVitem_CompareVM { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
+            Util.UIthread(99606, () =>
+            {
+                if (0 < lsIntersect.Count)
+                    LV_Both.Add(lsIntersect.Select(asLine => new LVitem_CompareVM { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
 
-                    if (0 < lsDiff2.Count)
-                        LV_Second.Add(lsDiff2.Select(asLine => new LVitem_CompareVM { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
-                });
+                if (0 < lsDiff1.Count)
+                    LV_First.Add(lsDiff1.Select(asLine => new LVitem_CompareVM { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
 
-                NoResultsVisibility = Visibility.Collapsed;
-                RaisePropertyChanged("NoResultsVisibility");
+                if (0 < lsDiff2.Count)
+                    LV_Second.Add(lsDiff2.Select(asLine => new LVitem_CompareVM { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
             });
 
-            ProgressbarVisibility = Visibility.Collapsed;
-            RaisePropertyChanged("ProgressbarVisibility");
-            CanPick = true;
+            NoResultsVisibility = Visibility.Collapsed;
+            RaisePropertyChanged("NoResultsVisibility");
             return this;
         }
 

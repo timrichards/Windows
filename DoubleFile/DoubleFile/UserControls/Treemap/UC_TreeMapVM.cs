@@ -382,10 +382,13 @@ namespace DoubleFile
             pt.X /= TreemapFrame.ScaleFactor;
             pt.Y /= TreemapFrame.ScaleFactor;
 
-            foreach (var subNode in treeNode.Nodes)
+            for (var testNode = treeNode; null != testNode; testNode = testNode.Parent)
             {
-                if (subNode.NodeDatum.TreemapRect.Contains(pt))
-                    return subNode;
+                foreach (var subNode in testNode.Nodes)
+                {
+                    if (subNode.NodeDatum.TreemapRect.Contains(pt))
+                        return subNode;
+                }
             }
 
             return null;

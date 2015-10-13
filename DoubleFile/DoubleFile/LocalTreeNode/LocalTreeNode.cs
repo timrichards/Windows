@@ -83,13 +83,12 @@ namespace DoubleFile
         {
             get
             {
-                var strText = "" + _strPathShort;
                 var rootNodeDatum = NodeDatum.As<RootNodeDatum>();
 
                 return
                     (null != rootNodeDatum)
                     ? "" + rootNodeDatum.LVitemProjectVM.RootText   // if this is a root treenode return nickname text
-                    : strText;
+                    : "" + _strPathShort;
             }
             set { _strPathShort = (TabledString<TabledStringType_Folders>)value; }
         }

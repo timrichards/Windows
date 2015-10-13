@@ -13,7 +13,7 @@ namespace DoubleFile
             Clones;
         internal LVitem_ClonesVM
             LVitem;
-        internal LocalTreeNode
+        internal LocalTreemapFileListNode
             TreemapFiles;
 
         internal NodeDatum() { }

@@ -389,15 +389,18 @@ namespace DoubleFile
                     if (subNode.NodeDatum.TreemapRect.Contains(pt))
                         return subNode;
                 }
+
+                if (treeNode is LocalTreemapFileListNode)
+                    return null;
             }
 
             return null;
         }
 
-        static LocalTreeNode GetFileList(LocalTreeNode parent)
+        static LocalTreemapFileListNode
+            GetFileList(LocalTreeNode parent)
         {
             var nodeDatum = parent.NodeDatum;
-
             var nPrevDir = (int)nodeDatum.PrevLineNo;
 
             if (0 == nPrevDir)

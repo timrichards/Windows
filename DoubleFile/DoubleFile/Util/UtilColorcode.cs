@@ -15,7 +15,7 @@ namespace DoubleFile
             {OneCloneSepVolume,     "This folder has a copy on a separate volume."},
             {AllOnOneVolume,        "All copies of this folder reside on one volume."},
             {Solitary,              "This folder has no exact copy."},
-            {SolitaryHasClones,     "This folder hsa no exact copy, yet it contains folders that do."},
+            {SolitaryHasClones,     "This folder has no exact copy, yet it contains folders that do."},
             {SolitaryClonedParent,  "This folder has no exact copy, yet its parent does."},
             {SolitaryOneVolParent,  "This folder has no exact copy, yet its parent does, on only one volume."},
             {ContainsSolitaryBG,    "Contains folders that have no copy, or copies are on one volume."},
@@ -85,7 +85,7 @@ namespace DoubleFile
         {
             Transparent, ManyClonesSepVolume, SolitaryHasClones, TreemapFolder, ContainsSolitaryBG,
             AllOnOneVolume, ParentClonedBG, ParentCloned, ZeroLengthFolder, TreemapFreespace, TreemapUnreadspace,
-            TreemapFile, Solitary, SolitaryClonedParent, SolitaryOneVolParent, OneCloneSepVolume
+            TreemapFile, Solitary, SolitaryClonedParent, SolitaryOneVolParent, OneCloneSepVolume,
         };
 
         static UtilColorcode()
@@ -117,7 +117,7 @@ namespace DoubleFile
         const int
             _knNumColors = 16;
         const uint
-            _knCLUT_FGmask = 0xF;
+            _knCLUT_FGmask = (1 << (CLUT_Shift >> 1)) - 1;
         static readonly uint
             _knCLUT_BGmask = CLUT_Mask - _knCLUT_FGmask;
         static readonly IReadOnlyDictionary<int, int>

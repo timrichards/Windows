@@ -40,13 +40,13 @@ namespace DoubleFile
                             treeNode.ColorcodeBG = ParentClonedBG;
 
                             if (false ==
-                                new[] { ManyClonesSepVolume, ZeroLengthFolder }
+                                new[] { SolitaryClonedParent, SolitaryOneVolParent, ManyClonesSepVolume, ZeroLengthFolder }
                                 .Contains(treeNode.ColorcodeFG))
                             {
                                 var bExpected =
                                     new[] { Solitary, Transparent,
-                                OneCloneSepVolume,
-                                AllOnOneVolume }      // A Useful Find
+                                    OneCloneSepVolume,
+                                    AllOnOneVolume }      // A Useful Find
                                     .Contains(treeNode.ColorcodeFG);
 
                                 Util.Assert(99859, bExpected, bIfDefDebug: true);

@@ -294,12 +294,12 @@ namespace DoubleFile
 
                 if (0 != nParentCloneColor)
                 {
-                    for (var parent = kvp.Value.Parent; null != parent; parent = parent.Parent)
+                    for (var treeNode = kvp.Value; null != treeNode; treeNode = treeNode.Parent)
                     {
-                        if (null != parent.NodeDatum.Clones)
+                        if (null != treeNode.NodeDatum.Clones)
                             break;
 
-                        parent.ColorcodeFG = nParentCloneColor;
+                        treeNode.ColorcodeFG = nParentCloneColor;
                     }
 
                     dictSolitary.Remove(kvp.Key);

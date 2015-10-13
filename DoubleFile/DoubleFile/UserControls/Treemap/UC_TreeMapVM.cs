@@ -400,63 +400,42 @@ namespace DoubleFile
         static LocalTreemapFileListNode
             GetFileList(LocalTreeNode parent)
         {
-            var nodeDatum = parent.NodeDatum;
-            var nPrevDir = (int)nodeDatum.PrevLineNo;
+            ulong nTotalLength = 0;
 
-            if (0 == nPrevDir)
-                return null;
-
-            if (0 == nodeDatum.FileCountHere)
-                return null;
-
-            ulong nLengthDebug = 0;
-            var lsFiles = new List<Tuple<string, ulong>> { };
-
-            foreach (var asFileLine
-                in parent.RootNodeDatum.LVitemProjectVM.ListingFile.ReadLinesWait(99650)
-                .Skip(nPrevDir)
-                .Take(nodeDatum.FileCountHere)
-                .Select(s =>
-                    s
-                    .Split('\t')
-                    .Skip(3)                    // makes this an LV line: knColLengthLV
-                    .ToArray()))
+            var lsNodes =
+                parent.GetFileList()
+                .Select(s => s
+                .Split('\t').Skip(3).ToArray())    // makes this an LV line: knColLengthLV
+                .Select(asFileLine =>
             {
                 ulong nLength = 0;
 
                 if ((asFileLine.Length > FileParse.knColLengthLV) &&
                     (false == string.IsNullOrWhiteSpace(asFileLine[FileParse.knColLengthLV])))
                 {
-                    nLengthDebug += nLength = ("" + asFileLine[FileParse.knColLengthLV]).ToUlong();
-                    asFileLine[FileParse.knColLengthLV] = asFileLine[FileParse.knColLengthLV].FormatSize();
+                    nTotalLength += nLength = ("" + asFileLine[FileParse.knColLengthLV]).ToUlong();
+                    asFileLine[FileParse.knColLengthLV] = nLength.FormatSize();
                 }
 
-                lsFiles.Add(Tuple.Create(asFileLine[0], nLength));
-            }
+                if (0 == nLength)
+                    return null;                                // from lambda
 
-            Util.Assert(1301.2313m, nLengthDebug == nodeDatum.LengthHere);
-
-            ulong nTotalLength = 0;
-            var lsNodes = new List<LocalTreemapFileNode> { };
-
-            foreach (var tuple in lsFiles)
-            {
-                if (0 == tuple.Item2)
-                    continue;
-
-                nTotalLength += tuple.Item2;
-
-                lsNodes.Add(new LocalTreemapFileNode(tuple.Item1)
+                return new LocalTreemapFileNode(asFileLine[0])  // from lambda
                 {
-                    NodeDatum = new NodeDatum { LengthTotal = tuple.Item2 },
+                    NodeDatum = new NodeDatum { LengthTotal = nLength },
                     ColorcodeFG = UtilColorcode.TreemapFile
-                });
-            }
+                };
+            })
+                .Where(fileNode => null != fileNode)
+                .ToList();
+
+            if (0 == lsNodes.Count)
+                return null;
 
             if (0 == nTotalLength)
                 return null;
 
-            Util.Assert(1302.3301m, nTotalLength == parent.NodeDatum.LengthHere);
+            Util.Assert(99650, nTotalLength == parent.NodeDatum.LengthHere);
 
             return new LocalTreemapFileListNode(parent, lsNodes)
             {

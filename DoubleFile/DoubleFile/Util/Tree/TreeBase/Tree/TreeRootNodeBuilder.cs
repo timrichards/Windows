@@ -34,32 +34,10 @@ namespace DoubleFile
                 if (null != treeNode.Nodes)
                 {
                     foreach (var node in treeNode.Nodes)
-                    {
-                        if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
-                            _bThreadAbort)
-                        {
-                            return datum;
-                        }
-
-                        var sumDatum = TreeSubnodeDetails(node);                    // recurse
-
-                        datum.LengthTotal += sumDatum.LengthTotal;
-                        datum.FileCountTotal += sumDatum.FileCountTotal;
-                        datum.SubDirs += sumDatum.SubDirs;
-                        datum.DirsWithFiles += sumDatum.DirsWithFiles;
-                    }
+                        datum.AddDatum(TreeSubnodeDetails(node));       // recurse
                 }
 
-                var nodeDatum = treeNode.NodeDatum;
-
-                nodeDatum.LengthTotal = (datum.LengthTotal += nodeDatum.LengthHere);
-                nodeDatum.FileCountTotal = (datum.FileCountTotal += (uint)nodeDatum.FileCountHere);
-                nodeDatum.SubDirs = (datum.SubDirs += (uint)(treeNode.Nodes?.Count ?? 0));
-
-                if (0 < nodeDatum.FileCountHere)
-                    ++datum.DirsWithFiles;
-
-                nodeDatum.DirsWithFiles = datum.DirsWithFiles;
+                treeNode.NodeDatum.SetDatum(datum, (uint)(treeNode.Nodes?.Count ?? 0));
                 return datum;
             }
 

@@ -432,7 +432,7 @@ namespace DoubleFile
 
                 return new LocalTreemapFileNode(asFileLine[0])  // from lambda
                 {
-                    NodeDatum = new NodeDatum { LengthTotal = nLength },
+                    NodeDatum = new NodeDatum(lengthTotal: nLength),
                     ColorcodeFG = UtilColorcode.TreemapFile
                 };
             })
@@ -446,7 +446,7 @@ namespace DoubleFile
 
             return new LocalTreemapFileListNode(parent, lsNodes)
             {
-                NodeDatum = new NodeDatum { LengthTotal = nTotalLength},
+                NodeDatum = new NodeDatum(lengthTotal: nTotalLength),
                 TreemapRect = parent.TreemapRect
             };
         }
@@ -652,7 +652,7 @@ namespace DoubleFile
                         if (false == rootNodeDatum.VolumeView)
                             return;     // from lambda
 
-                        var nodeDatumFree = new NodeDatum { LengthTotal = rootNodeDatum.VolumeFree };
+                        var nodeDatumFree = new NodeDatum(lengthTotal: rootNodeDatum.VolumeFree);
 
                         var nodeFree = new LocalTreemapFileNode(nodeDatumFree.LengthTotal.FormatSize() + " free space")
                         {
@@ -660,7 +660,7 @@ namespace DoubleFile
                             ColorcodeFG = UtilColorcode.TreemapFreespace
                         };
 
-                        var nodeDatumUnread = new NodeDatum();
+                        NodeDatum nodeDatumUnread = null;
                         var nVolumeLength = rootNodeDatum.VolumeLength;
 
                         var nUnreadLength =
@@ -670,7 +670,7 @@ namespace DoubleFile
 
                         if (0 < nUnreadLength)
                         {
-                            nodeDatumUnread.LengthTotal = (ulong)nUnreadLength;
+                            nodeDatumUnread = new NodeDatum(lengthTotal: (ulong)nUnreadLength);
                         }
                         else
                         {
@@ -678,7 +678,7 @@ namespace DoubleFile
                             nVolumeLength =
                                 rootNodeDatum.VolumeFree + rootNodeDatum.LengthTotal;
 
-                            nodeDatumUnread.LengthTotal = 0;
+                            nodeDatumUnread = new NodeDatum();      // lengthTotal: 0
                         }
 
                         var nodeUnread = new LocalTreemapFileNode(nodeDatumUnread.LengthTotal.FormatSize() + " unread data (estimate affected by compression and hard links)")
@@ -698,15 +698,13 @@ namespace DoubleFile
                         }
 
                         ieChildren = lsChildren;
-                        parent = new LocalTreemapFileNode(treeNode.PathShort + " (volume)");
 
-                        var nodeDatumVolume = new NodeDatum
+                        parent = new LocalTreemapFileNode(treeNode.PathShort + " (volume)")
                         {
-                            LengthTotal = nVolumeLength,
+                            NodeDatum = new NodeDatum(lengthTotal: nVolumeLength),
+                            TreemapRect = treeNode.TreemapRect
                         };
 
-                        parent.NodeDatum = nodeDatumVolume;
-                        parent.TreemapRect = treeNode.TreemapRect;
                         bVolumeNode = true;
                     });
 
@@ -762,7 +760,7 @@ namespace DoubleFile
                 {
                     ieChildren = ieChildren.Concat(new[] { new LocalTreemapFileNode(parent.PathShort)
                     {
-                        NodeDatum = new NodeDatum { LengthTotal = nodeDatum.LengthHere },
+                        NodeDatum = new NodeDatum(lengthTotal: nodeDatum.LengthHere),
                         ColorcodeFG = UtilColorcode.TreemapFolder
                     }});
                 }

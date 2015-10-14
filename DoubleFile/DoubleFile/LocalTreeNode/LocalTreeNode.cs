@@ -7,23 +7,32 @@ using System.Windows.Media;
 
 namespace DoubleFile
 {
-    [DebuggerDisplay("{_strPathShort} {Nodes?.Count}")]
+    [DebuggerDisplay("{PathShort} {Nodes?.Count}")]
     class LocalTreeNode
     {
-        internal bool
-            IsSolitary => null == Clones;
-        internal bool
-            IsAllOnOneVolume => UtilColorcode.AllOnOneVolume == Clones?[0].ColorcodeFG;
-
+        internal NodeDatum
+            NodeDatum;
+        internal IReadOnlyList<LocalTreeNode>
+            Nodes;
+        internal LocalTreeNode
+            Parent;
         internal List<LocalTreeNode>
             Clones;
         internal LVitem_ClonesVM
             LVitem;
         internal LocalTreemapFileListNode
             TreemapFiles;
-
         internal Rect
             TreemapRect;
+
+        internal LocalTreeNode
+            FirstNode => Nodes?.First();
+        internal RootNodeDatum
+            RootNodeDatum => (RootNodeDatum)Root.NodeDatum;
+        internal bool
+            IsSolitary => null == Clones;
+        internal bool
+            IsAllOnOneVolume => UtilColorcode.AllOnOneVolume == Clones?[0].ColorcodeFG;
 
         internal int ColorcodeFG { get { return UtilColorcode.GetFG_ARGB(Color); } set { int c = Color; Color = UtilColorcode.SetFG_ARGB(ref c, value); } }
         internal int ColorcodeBG { get { return UtilColorcode.GetBG_ARGB(Color); } set { int c = Color; Color = UtilColorcode.SetBG_ARGB(ref c, value); } }
@@ -36,19 +45,6 @@ namespace DoubleFile
 
         internal Brush
             Background => UtilColorcode.ARGBtoBrush(ColorcodeBG);
-
-        internal NodeDatum
-            NodeDatum;                                  // stored
-        internal RootNodeDatum
-            RootNodeDatum => (RootNodeDatum)Root.NodeDatum;
-
-        internal IReadOnlyList<LocalTreeNode>
-            Nodes { get; set; }                         // stored
-
-        internal LocalTreeNode
-            FirstNode => Nodes?.First();
-        internal virtual LocalTreeNode
-            Parent { get; set; }                        // stored
 
         internal int Level
         {
@@ -229,15 +225,15 @@ namespace DoubleFile
             set { _datum_color_level = (short)((_datum_color_level & (-1 - UtilColorcode.CLUT_Mask)) + value); }
         }
 
-        TabledString<TabledStringType_Folders>
-            _strPathShort;
-        static readonly uint
-            _knDatum8bitMask = (1 << 16) - 1 - UtilColorcode.CLUT_Mask;
         const uint
             _knDatum16bitMask = (uint)((1 << 16) - 1) << 16;
         short
             _datum_color_level = 0;
 
+        TabledString<TabledStringType_Folders>
+            _strPathShort;
+        static readonly uint
+            _knDatum8bitMask = (1 << 16) - 1 - UtilColorcode.CLUT_Mask;
         static ReadLinesIterator
             _currentIterator;
         static int

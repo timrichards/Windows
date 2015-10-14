@@ -377,7 +377,10 @@ namespace DoubleFile
                 return null;
 
             if (null == treeNode.Nodes)
-                return treeNode;
+                treeNode = treeNode.Parent;
+
+            if (null == treeNode)
+                return null;
 
             pt.X /= TreemapFrame.ScaleFactor;
             pt.Y /= TreemapFrame.ScaleFactor;
@@ -414,7 +417,6 @@ namespace DoubleFile
                     (false == string.IsNullOrWhiteSpace(asFileLine[FileParse.knColLengthLV])))
                 {
                     nTotalLength += nLength = ("" + asFileLine[FileParse.knColLengthLV]).ToUlong();
-                    asFileLine[FileParse.knColLengthLV] = nLength.FormatSize();
                 }
 
                 if (0 == nLength)

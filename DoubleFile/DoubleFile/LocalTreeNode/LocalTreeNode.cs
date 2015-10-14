@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Media;
 
 namespace DoubleFile
@@ -9,6 +10,21 @@ namespace DoubleFile
     [DebuggerDisplay("{_strPathShort} {Nodes?.Count}")]
     class LocalTreeNode
     {
+        internal bool
+            IsSolitary => null == Clones;
+        internal bool
+            IsAllOnOneVolume => UtilColorcode.AllOnOneVolume == Clones?[0].ColorcodeFG;
+
+        internal List<LocalTreeNode>
+            Clones;
+        internal LVitem_ClonesVM
+            LVitem;
+        internal LocalTreemapFileListNode
+            TreemapFiles;
+
+        internal Rect
+            TreemapRect;
+
         internal int ColorcodeFG { get { return UtilColorcode.GetFG_ARGB(Color); } set { int c = Color; Color = UtilColorcode.SetFG_ARGB(ref c, value); } }
         internal int ColorcodeBG { get { return UtilColorcode.GetBG_ARGB(Color); } set { int c = Color; Color = UtilColorcode.SetBG_ARGB(ref c, value); } }
 

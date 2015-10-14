@@ -30,7 +30,7 @@ namespace DoubleFile
                     if (0 < treeNode.NodeDatum.LengthTotal)
                     {
                         if ((AllOnOneVolume == treeNode.ColorcodeFG) &&
-                            (treeNode == treeNode.NodeDatum.Clones[0]))
+                            (treeNode == treeNode.Clones[0]))
                         {
                             _lsSameVol.Add(treeNode);
                         }

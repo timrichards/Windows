@@ -55,28 +55,28 @@ namespace DoubleFile
                 return;
 
             Util.ParallelForEach(99912, searchFolder.Nodes, new ParallelOptions { CancellationToken = _cts.Token },
-                folder =>
+                treeNode =>
             {
-                var nodeDatum = folder.NodeDatum;
-
-                if ((false == nodeDatum.IsSolitary)
-                    && (false == (AllOneVolIsSolitary && nodeDatum.IsAllOnOneVolume)))
+                if ((false == treeNode.IsSolitary)
+                    && (false == (AllOneVolIsSolitary && treeNode.IsAllOnOneVolume)))
                 {
                     return;     // from lambda
                 }
 
                 // Can't descend all copies. Take just element 0, count that one as solitary
-                if (false == ReferenceEquals(folder, (nodeDatum.Clones?[0] ?? folder)))
+                if (false == ReferenceEquals(treeNode, (treeNode.Clones?[0] ?? treeNode)))
                     return;     // from lambda
 
+                var nodeDatum = treeNode.NodeDatum;
+
                 if (0 < nodeDatum.LengthHere)
-                    _lsFolders.Add(new LVitem_FolderListVM(folder, _nicknameUpdater) { Alternate = nodeDatum.IsAllOnOneVolume });
+                    _lsFolders.Add(new LVitem_FolderListVM(treeNode, _nicknameUpdater) { Alternate = treeNode.IsAllOnOneVolume });
 
                 if (bStart)
                     Interlocked.Add(ref _nLengthTotal, (long)nodeDatum.LengthTotal);
 
-                if (null != folder.Nodes)
-                    FindAllSolitary(folder, bStart: false);                 // recurse
+                if (null != treeNode.Nodes)
+                    FindAllSolitary(treeNode, bStart: false);                 // recurse
             });
         }
 

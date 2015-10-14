@@ -79,8 +79,8 @@ namespace DoubleFile
                             {
                                 // pass the culled path back to TreeRootNodeBuilder; ultimately to LVitem_ProjectExplorer
                                 treeNode.NodeDatum =
-                                    new RootNodeDatum(new NodeDatum(new DetailsDatum(
-                                    subNode._nPrevLineNo, subNode._nLineNo, subNode._nLength, subNode._lsFilesHereHashes)),
+                                    new RootNodeDatum(new NodeDatum(
+                                    subNode._nPrevLineNo, subNode._nLineNo, subNode._nLength, subNode._lsFilesHereHashes),
                                     subNode._strPath);
                             }
 
@@ -103,8 +103,8 @@ namespace DoubleFile
                         treeNode = new LocalTreeNode(strShortPath);
                     }
 
-                    treeNode.NodeDatum = new NodeDatum(new DetailsDatum(
-                        _nPrevLineNo, _nLineNo, _nLength, _lsFilesHereHashes));  // this is almost but not quite always newly assigned here.
+                    treeNode.NodeDatum = new NodeDatum(
+                        _nPrevLineNo, _nLineNo, _nLength, _lsFilesHereHashes);  // this is almost but not quite always newly assigned here.
 
                     return treeNode;
                 }

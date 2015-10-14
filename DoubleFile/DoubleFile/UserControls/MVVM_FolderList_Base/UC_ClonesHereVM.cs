@@ -53,22 +53,20 @@ namespace DoubleFile
                 return;
 
             Util.ParallelForEach(99620, searchFolder.Nodes, new ParallelOptions { CancellationToken = _cts.Token },
-                folder =>
+                treeNode =>
             {
-                var nodeDatum = folder.NodeDatum;
-
-                if (nodeDatum.IsSolitary)
+                if (treeNode.IsSolitary)
                 {
-                    if (null != folder.Nodes)
-                        FindAllClones(folder);                 // recurse
+                    if (null != treeNode.Nodes)
+                        FindAllClones(treeNode);                 // recurse
 
                     return;     // from lambda
                 }
 
                 if (false ==
-                    (AllOneVolIsSolitary && nodeDatum.IsAllOnOneVolume && (false == ReferenceEquals(folder, nodeDatum.Clones[0]))))
+                    (AllOneVolIsSolitary && treeNode.IsAllOnOneVolume && (false == ReferenceEquals(treeNode, treeNode.Clones[0]))))
                 {
-                    _lsFolders.Add(new LVitem_FolderListVM(folder, _nicknameUpdater) { Alternate = nodeDatum.IsAllOnOneVolume });
+                    _lsFolders.Add(new LVitem_FolderListVM(treeNode, _nicknameUpdater) { Alternate = treeNode.IsAllOnOneVolume });
                 }
             });
         }

@@ -26,10 +26,10 @@ namespace DoubleFile
                 Util.Assert(1301.2301m, _callbackWR != null);
             }
 
-            DetailsDatum
+            NodeDatum
                 TreeSubnodeDetails(LocalTreeNode treeNode)
             {
-                var datum = new DetailsDatum();
+                var datum = new NodeDatum();
 
                 if (null != treeNode.Nodes)
                 {

@@ -302,8 +302,8 @@
       <DependentUpon>UC_TreeList.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\MVVM_TreeList\LV_TreeListSiblingsVM.cs" />
-    <Compile Include="UserControls\Treemap\LocalTreeMapNode.cs" />
-    <Compile Include="Util\Tree\DetailsDatum.cs" />
+    <Compile Include="UserControls\Treemap\LocalTreemapFileNode.cs" />
+    <Compile Include="Util\Tree\NodeDatum.cs" />
     <Compile Include="UserControls\Treemap\WinTooltip.xaml.cs">
       <DependentUpon>WinTooltip.xaml</DependentUpon>
     </Compile>
@@ -328,7 +328,6 @@
     <Compile Include="UserControls\SearchListings\SearchBase\SearchListings\SearchListing.cs" />
     <Compile Include="UserControls\SearchListings\SearchResults.cs" />
     <Compile Include="UserControls\SearchListings\SearchResultsDir.cs" />
-    <Compile Include="Util\Tree\DetailsDatum\NodeDatum.cs" />
     <Compile Include="Util\Tree\DetailsDatum\NodeDatum\RootNodeDatum.cs" />
     <Compile Include="Util\Tree\TreeBase.cs" />
     <Compile Include="Util\Tree\TreeBase\Tree.cs" />

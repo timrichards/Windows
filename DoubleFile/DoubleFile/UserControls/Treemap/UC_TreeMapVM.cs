@@ -94,7 +94,7 @@ namespace DoubleFile
             set
             {
                 var rect =
-                    value?.NodeDatum.TreemapRect.Scale(TreemapFrame.ScaleFactor)
+                    value?.TreemapRect.Scale(TreemapFrame.ScaleFactor)
                     ?? default(Rect);
 
                 SelectionLeft = rect.Left;
@@ -218,15 +218,14 @@ namespace DoubleFile
             Util.Closure(() =>
             {
                 {
-                    var nodeDatum = TreeNode.NodeDatum;
-                    var rootNodeDatum = nodeDatum.As<RootNodeDatum>();
+                    bVolumeView = TreeNode.NodeDatum.As<RootNodeDatum>()?.VolumeView ?? false;
 
-                    bVolumeView = rootNodeDatum?.VolumeView ?? false;
-
+                    Util.Write("A");
                     if ((false == bVolumeView) &&
                         (null !=
-                        (nodeRet = FindMapNode(nodeDatum.TreemapFiles, pt))))
+                        (nodeRet = FindMapNode(TreeNode.TreemapFiles, pt))))
                     {
+                        Util.Write("B");
                         bFilesHere = true;
                         return;     // from lambda
                     }
@@ -234,8 +233,10 @@ namespace DoubleFile
 
                 var prevNode_A = _prevNode ?? TreeNode;
 
+                Util.Write("C");
                 if (null != (nodeRet = FindMapNode(prevNode_A, pt)))
                     return;         // from lambda
+                Util.Write("D");
 
                 if (_prevNode?.IsChildOf(TreeNode) ?? false)
                 {
@@ -243,8 +244,10 @@ namespace DoubleFile
 
                     while (nodeUplevel?.IsChildOf(TreeNode) ?? false)
                     {
+                        Util.Write("E");
                         if (null != (nodeRet = FindMapNode(nodeUplevel, pt)))
                             return;     // from lambda
+                        Util.Write("F");
 
                         nodeUplevel = nodeUplevel.Parent;
                     }
@@ -254,15 +257,19 @@ namespace DoubleFile
                     (null == _prevNode) ||
                     (false == TreeNode.IsChildOf(_prevNode)));
 
+                Util.Write("G");
                 if (null != (nodeRet = FindMapNode(TreeNode, pt)))
                     return;         // from lambda
+                Util.Write("H");
 
                 nodeRet = TreeNode;
 
                 if (bVolumeView)
                     return;         // from lambda
 
-                var nodeRet_A = FindMapNode(nodeRet.NodeDatum.TreemapFiles, pt);
+                Util.Write("I");
+                var nodeRet_A = FindMapNode(nodeRet.TreemapFiles, pt);
+                Util.Write("J");
 
                 if (null != nodeRet_A)
                 {
@@ -310,13 +317,13 @@ namespace DoubleFile
                 return;
             }
 
-            if (null == tuple.treeNode.NodeDatum.TreemapFiles)     // TODO: Why would this be null?
+            if (null == tuple.treeNode.TreemapFiles)     // TODO: Why would this be null?
                 return;
 
             bool bCloseTooltip = true;
 
             tuple.fileLine.FirstOrDefault(strFile =>
-                tuple.treeNode.NodeDatum.TreemapFiles.Nodes
+                tuple.treeNode.TreemapFiles.Nodes
                 .Where(treeNodeA => treeNodeA.PathShort == strFile)
                 .Where(treeNodeA => treeNodeA is LocalTreemapFileNode)
                 .FirstOnlyAssert(fileNode =>
@@ -371,16 +378,17 @@ namespace DoubleFile
             _bSelRecAndTooltip = false;
         }
 
-        static LocalTreeNode FindMapNode(LocalTreeNode treeNode, Point pt)
+        static LocalTreeNode
+            FindMapNode(LocalTreeNode treeNode, Point pt)
         {
-            if (null == treeNode)
-                return null;
-
-            if (null == treeNode.Nodes)
-                treeNode = treeNode.Parent;
+            if (null == treeNode?.Nodes)
+                treeNode = treeNode?.Parent;
 
             if (null == treeNode)
                 return null;
+
+            if (treeNode.TreemapFiles?.TreemapRect.Contains(pt) ?? false)
+                return treeNode.TreemapFiles;
 
             pt.X /= TreemapFrame.ScaleFactor;
             pt.Y /= TreemapFrame.ScaleFactor;
@@ -389,7 +397,7 @@ namespace DoubleFile
             {
                 foreach (var subNode in testNode.Nodes)
                 {
-                    if (subNode.NodeDatum.TreemapRect.Contains(pt))
+                    if (subNode.TreemapRect.Contains(pt))
                         return subNode;
                 }
 
@@ -434,14 +442,12 @@ namespace DoubleFile
             if (0 == lsNodes.Count)
                 return null;
 
-            if (0 == nTotalLength)
-                return null;
-
             Util.Assert(99650, nTotalLength == parent.NodeDatum.LengthHere);
 
             return new LocalTreemapFileListNode(parent, lsNodes)
             {
-                NodeDatum = new NodeDatum { LengthTotal = nTotalLength, TreemapRect = parent.NodeDatum.TreemapRect }
+                NodeDatum = new NodeDatum { LengthTotal = nTotalLength},
+                TreemapRect = parent.TreemapRect
             };
         }
 
@@ -514,7 +520,7 @@ namespace DoubleFile
             else
             {
                 _rectDeepnode =
-                    _deepNodeDrawn.NodeDatum.TreemapRect;
+                    _deepNodeDrawn.TreemapRect;
             }
 
             RaisePropertyChanged("GoofballVisibility");
@@ -597,9 +603,7 @@ namespace DoubleFile
             void
                 RecurseDrawGraph(LocalTreeNode treeNode, Rect rc, bool bStart = false)
             {
-                var nodeDatum = treeNode.NodeDatum;
-
-                nodeDatum.TreemapRect = rc;
+                treeNode.TreemapRect = rc;
 
                 if ((1 > rc.Width) ||
                     (1 > rc.Height))
@@ -622,14 +626,14 @@ namespace DoubleFile
                 }
 
                 if (bStart &&
-                    (null == nodeDatum.TreemapFiles) &&
+                    (null == treeNode.TreemapFiles) &&
                     (false == treeNode is LocalTreemapFileNode))
                 {
-                    nodeDatum.TreemapFiles = GetFileList(treeNode);
+                    treeNode.TreemapFiles = GetFileList(treeNode);
                 }
 
                 if ((0 < (treeNode.Nodes?.Count ?? 0)) ||
-                    (bStart && (null != nodeDatum.TreemapFiles)))
+                    (bStart && (null != treeNode.TreemapFiles)))
                 {
                     IEnumerable<LocalTreeNode> ieChildren = null;
                     LocalTreeNode parent = null;
@@ -699,10 +703,10 @@ namespace DoubleFile
                         var nodeDatumVolume = new NodeDatum
                         {
                             LengthTotal = nVolumeLength,
-                            TreemapRect = rootNodeDatum.TreemapRect
                         };
 
                         parent.NodeDatum = nodeDatumVolume;
+                        parent.TreemapRect = treeNode.TreemapRect;
                         bVolumeNode = true;
                     });
 
@@ -717,7 +721,7 @@ namespace DoubleFile
                     }
 
                     if ((null == ieChildren) &&
-                        (null != nodeDatum.TreemapFiles))
+                        (null != treeNode.TreemapFiles))
                     {
                         parent = treeNode;
                         ieChildren = new List<LocalTreeNode> { };
@@ -750,9 +754,9 @@ namespace DoubleFile
                 var nodeDatum = parent.NodeDatum;
 
                 if (bStart &&
-                    (null != nodeDatum.TreemapFiles))
+                    (null != parent.TreemapFiles))
                 {
-                    ieChildren = ieChildren.Concat(new[] { nodeDatum.TreemapFiles });
+                    ieChildren = ieChildren.Concat(new[] { parent.TreemapFiles });
                 }
                 else if (0 < nodeDatum.LengthHere)
                 {
@@ -782,7 +786,7 @@ namespace DoubleFile
                 var anChildWidth = // Widths of the children (fraction of row width).
                     new double[nCount];
 
-                var rc = nodeDatum.TreemapRect;
+                var rc = parent.TreemapRect;
                 var horizontalRows = (rc.Width >= rc.Height);
                 double width_A = 1;
 
@@ -871,7 +875,7 @@ namespace DoubleFile
                             c++;
 
                             if (i < row.ChildrenPerRow)
-                                lsChildren[c].NodeDatum.TreemapRect = new Rect(-1, -1, -1, -1);
+                                lsChildren[c].TreemapRect = new Rect(-1, -1, -1, -1);
 
                             c += row.ChildrenPerRow - i;
                             break;

@@ -91,8 +91,8 @@ namespace DoubleFile
                 var lvItem = new LVitem_ClonesVM(new[] { treeNode }, nicknameUpdater);
 
                 _lsLVsolitary.Add(lvItem);
-                Util.Assert(99973, null == nodeDatum.LVitem);
-                nodeDatum.LVitem = lvItem;
+                Util.Assert(99973, null == treeNode.LVitem);
+                treeNode.LVitem = lvItem;
             }
 
             InsertSizeMarkers(_lsLVsolitary);
@@ -119,12 +119,10 @@ namespace DoubleFile
                 reportProgress();
                 MarkSolitaryParentsAsSolitary(treeNode);
 
-                var nodeDatum = treeNode.NodeDatum;
-
-                if (0 == (nodeDatum.Clones?.Count ?? 0))
+                if (0 == (treeNode.Clones?.Count ?? 0))
                     Util.Assert(99972, false);
 
-                _lsLVsameVol.Add(nodeDatum.LVitem = new LVitem_ClonesVM(nodeDatum.Clones, nicknameUpdater));
+                _lsLVsameVol.Add(treeNode.LVitem = new LVitem_ClonesVM(treeNode.Clones, nicknameUpdater));
             }
 
             InsertSizeMarkers(_lsLVsameVol);
@@ -170,7 +168,7 @@ namespace DoubleFile
                     if (1 < lsKeep.Count)
                     {
                         foreach (var treeNode_A in lsKeep)
-                            treeNode_A.NodeDatum.Clones = lsKeep;
+                            treeNode_A.Clones = lsKeep;
                     }
                     else
                     {
@@ -202,11 +200,11 @@ namespace DoubleFile
             if (0 == nodeDatum.LengthTotal)
             {
                 treeNode.ColorcodeFG = ZeroLengthFolder;
-                Util.Assert(99978, null == nodeDatum.Clones);
+                Util.Assert(99978, null == treeNode.Clones);
             }
 
             if ((false == rootClone) &&
-                (null != nodeDatum.Clones))
+                (null != treeNode.Clones))
             {
                 rootClone = true;
 
@@ -224,7 +222,7 @@ namespace DoubleFile
 
                 if (null == lsTreeNodes)
                 {
-                    dictClones.Add(nodeDatum.Hash_AllFiles, nodeDatum.Clones);          // add to dictClones
+                    dictClones.Add(nodeDatum.Hash_AllFiles, treeNode.Clones);          // add to dictClones
 
                     // Test to see if clones are on separate volumes.
 
@@ -234,7 +232,7 @@ namespace DoubleFile
                     Util.Assert(99970, Transparent == treeNode.ColorcodeFG, bIfDefDebug: true);
                     treeNode.ColorcodeFG = AllOnOneVolume;
 
-                    foreach (var clone in nodeDatum.Clones)
+                    foreach (var clone in treeNode.Clones)
                     {
                         Util.Assert(99999, clone.NodeDatum.Hash_AllFiles.Equals(nodeDatum.Hash_AllFiles));
 
@@ -254,13 +252,13 @@ namespace DoubleFile
                         }
                     }
 
-                    foreach (var clone in nodeDatum.Clones)
+                    foreach (var clone in treeNode.Clones)
                         clone.ColorcodeFG = treeNode.ColorcodeFG;
                 }
                 else
                 {
                     // lsTreeNodes is in dictClones so this is a clone and the first clone was already added to dictClones
-                    Util.Assert(99971, lsTreeNodes == nodeDatum.Clones);
+                    Util.Assert(99971, lsTreeNodes == treeNode.Clones);
                     Util.Assert(99913, lsTreeNodes[0].ColorcodeFG == treeNode.ColorcodeFG, bIfDefDebug: true);
                 }
             }
@@ -281,7 +279,7 @@ namespace DoubleFile
 
                 for (var parent = kvp.Value.Parent; null != parent; parent = parent.Parent)
                 {
-                    if (null != parent.NodeDatum.Clones)
+                    if (null != parent.Clones)
                     {
                         nParentCloneColor =
                             (parent.ColorcodeFG == AllOnOneVolume)
@@ -296,7 +294,7 @@ namespace DoubleFile
                 {
                     for (var treeNode = kvp.Value; null != treeNode; treeNode = treeNode.Parent)
                     {
-                        if (null != treeNode.NodeDatum.Clones)
+                        if (null != treeNode.Clones)
                             break;
 
                         treeNode.ColorcodeFG = nParentCloneColor;
@@ -337,7 +335,7 @@ namespace DoubleFile
                 var lvItem = new LVitem_ClonesVM(kvp.Value, nicknameUpdater);
 
                 foreach (var treeNode in kvp.Value)
-                    treeNode.NodeDatum.LVitem = lvItem;
+                    treeNode.LVitem = lvItem;
 
                 _lsLVdiffVol.Add(lvItem);
             }

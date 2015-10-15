@@ -180,7 +180,7 @@ namespace DoubleFile
                         dictLength[kvp.Key] = kvp.Value.Max(treeNode => treeNode.NodeDatum.LengthTotal);
                     }
 
-                    var nFolderIndexedID = 1;   // first folder ID is 1: zero is not valid: no unchecked/overflow/wraparound (<<1.5M is reasonable)
+                    var nFolderIndexedID = 1;   // first folder ID is 1: zero is all empty folders: no unchecked/overflow/wraparound (<<1.5M is reasonable)
 
                     foreach (var kvp in dictLength.OrderByDescending(kvp => kvp.Value))     // sort by total length descending
                     {

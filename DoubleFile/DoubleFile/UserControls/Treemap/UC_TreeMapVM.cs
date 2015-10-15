@@ -166,7 +166,7 @@ namespace DoubleFile
         {
             var treeNode = WinTooltip.LocalTreeNode;
 
-            if (treeNode is LocalTreemapFileNode)
+            if (treeNode is ITreeMapFileNode)
                 return;     // file fake node
 
             WinTooltip.CloseTooltip();
@@ -336,7 +336,7 @@ namespace DoubleFile
                 WinTooltip.CloseTooltip();
         }
 
-        void SelRectAndTooltip(LocalTreeNode treeNodeChild, decimal nInitiator, bool bFile)
+        void SelRectAndTooltip(LocalTreeNode treeNode, decimal nInitiator, bool bFile)
         {
             if (_bTreeSelect ||
                 _bSelRecAndTooltip)
@@ -344,20 +344,20 @@ namespace DoubleFile
                 return;
             }
 
-            if (SelChildNode == treeNodeChild)
+            if (SelChildNode == treeNode)
                 return;
 
             _bSelRecAndTooltip = true;
 
-            var nodeDatum = treeNodeChild.NodeDatum;
-            var strFolder = treeNodeChild.PathShort;
-            var nodeTreeSelect = treeNodeChild;
+            var nodeDatum = treeNode.NodeDatum;
+            var strFolder = treeNode.PathShort;
+            var nodeTreeSelect = treeNode;
 
             if (bFile)
             {
                 strFolder += " (file)";
-                nodeTreeSelect = treeNodeChild.Parent.Parent;   // Parent is TreemapFileListNode
-                SelectedFileOnNext(treeNodeChild.PathShort, nInitiator);
+                nodeTreeSelect = treeNode.Parent.Parent;   // Parent is TreemapFileListNode
+                SelectedFileOnNext(treeNode.PathShort, nInitiator);
             }
 
             WinTooltip.ShowTooltip(
@@ -367,13 +367,16 @@ namespace DoubleFile
                     LocalOwner,
                     Tooltip_Click,
                     () => ClearSelection(bDontCloseTooltip: true)),
-                treeNodeChild);
+                treeNode);
 
-            SelChildNode = treeNodeChild;
-            _prevNode = treeNodeChild;
+            SelChildNode = treeNode;
+            _prevNode = treeNode;
 
-            if (LV_TreeListChildrenVM.kChildSelectedOnNext != nInitiator)
+            if ((false == nodeTreeSelect is ITreeMapFileNode) &&
+                (LV_TreeListChildrenVM.kChildSelectedOnNext != nInitiator))
+            {
                 _bTreeSelect = TreeSelect.DoThreadFactory(nodeTreeSelect, nInitiator);
+            }
 
             _bSelRecAndTooltip = false;
         }
@@ -387,9 +390,6 @@ namespace DoubleFile
             if (null == treeNode)
                 return null;
 
-            if (treeNode.TreemapFiles?.TreemapRect.Contains(pt) ?? false)
-                return treeNode.TreemapFiles;
-
             pt.X /= TreemapFrame.ScaleFactor;
             pt.Y /= TreemapFrame.ScaleFactor;
 
@@ -401,20 +401,23 @@ namespace DoubleFile
                         return subNode;
                 }
 
-                if (treeNode is LocalTreemapFileListNode)
+                if (testNode.TreemapFiles?.TreemapRect.Contains(pt) ?? false)
+                    return testNode.TreemapFiles;
+
+                if (treeNode is ITreeMapFileNode)
                     return null;
             }
 
             return null;
         }
 
-        static LocalTreemapFileListNode
-            GetFileList(LocalTreeNode parent)
+        static void
+            GetFileList(LocalTreeNode treeNode)
         {
-            ulong nTotalLength = 0;
+            ulong nLengthHere = 0;
 
-            var lsNodes =
-                parent.GetFileList()
+            treeNode.TreemapFiles.Nodes =
+                treeNode.GetFileList()
                 .Select(s => s
                 .Split('\t').Skip(3).ToArray())    // makes this an LV line: knColLengthLV
                 .Select(asFileLine =>
@@ -424,13 +427,13 @@ namespace DoubleFile
                 if ((asFileLine.Length > FileParse.knColLengthLV) &&
                     (false == string.IsNullOrWhiteSpace(asFileLine[FileParse.knColLengthLV])))
                 {
-                    nTotalLength += nLength = ("" + asFileLine[FileParse.knColLengthLV]).ToUlong();
+                    nLengthHere += nLength = ("" + asFileLine[FileParse.knColLengthLV]).ToUlong();
                 }
 
                 if (0 == nLength)
                     return null;                                // from lambda
 
-                return new LocalTreemapFileNode(asFileLine[0])  // from lambda
+                return new LocalTreemapFileNode(treeNode.TreemapFiles, asFileLine[0])  // from lambda
                 {
                     NodeDatum = new NodeDatum(lengthTotal: nLength),
                     ColorcodeFG = UtilColorcode.TreemapFile
@@ -439,16 +442,7 @@ namespace DoubleFile
                 .Where(fileNode => null != fileNode)
                 .ToList();
 
-            if (0 == lsNodes.Count)
-                return null;
-
-            Util.Assert(99650, nTotalLength == parent.NodeDatum.LengthHere);
-
-            return new LocalTreemapFileListNode(parent, lsNodes)
-            {
-                NodeDatum = new NodeDatum(lengthTotal: nTotalLength),
-                TreemapRect = parent.TreemapRect
-            };
+            Util.Assert(99650, nLengthHere == treeNode.NodeDatum.LengthHere);
         }
 
         void Render(LocalTreeNode treeNode)
@@ -625,11 +619,19 @@ namespace DoubleFile
                     _deepNodeDrawn = treeNode;
                 }
 
-                if (bStart &&
-                    (null == treeNode.TreemapFiles) &&
-                    (false == treeNode is LocalTreemapFileNode))
+                if ((false == treeNode is LocalTreemapFileNode) &&
+                    (0 < treeNode.NodeDatum.LengthHere))
                 {
-                    treeNode.TreemapFiles = GetFileList(treeNode);
+                    if (null == treeNode.TreemapFiles)
+                        treeNode.TreemapFiles = new LocalTreemapFileListNode(treeNode)
+                    {
+                        NodeDatum = new NodeDatum(lengthTotal: treeNode.NodeDatum.LengthHere)
+                    };
+
+                    if (bStart && (false == treeNode.TreemapFiles.Filled))
+                        GetFileList(treeNode);
+
+                    treeNode.TreemapFiles.Start = bStart;
                 }
 
                 if ((0 < (treeNode.Nodes?.Count ?? 0)) ||
@@ -654,7 +656,7 @@ namespace DoubleFile
 
                         var nodeDatumFree = new NodeDatum(lengthTotal: rootNodeDatum.VolumeFree);
 
-                        var nodeFree = new LocalTreemapFileNode(nodeDatumFree.LengthTotal.FormatSize() + " free space")
+                        var nodeFree = new LocalTreemapFileNode(treeNode, nodeDatumFree.LengthTotal.FormatSize() + " free space")
                         {
                             NodeDatum = nodeDatumFree,
                             ColorcodeFG = UtilColorcode.TreemapFreespace
@@ -681,7 +683,7 @@ namespace DoubleFile
                             nodeDatumUnread = new NodeDatum();      // lengthTotal: 0
                         }
 
-                        var nodeUnread = new LocalTreemapFileNode(nodeDatumUnread.LengthTotal.FormatSize() + " unread data (estimate affected by compression and hard links)")
+                        var nodeUnread = new LocalTreemapFileNode(treeNode, nodeDatumUnread.LengthTotal.FormatSize() + " unread data (estimate affected by compression and hard links)")
                         {
                             NodeDatum = nodeDatumUnread,
                             ColorcodeFG = UtilColorcode.TreemapUnreadspace
@@ -699,7 +701,7 @@ namespace DoubleFile
 
                         ieChildren = lsChildren;
 
-                        parent = new LocalTreemapFileNode(treeNode.PathShort + " (volume)")
+                        parent = new LocalTreemapFileNode(treeNode, treeNode.PathShort + " (volume)")
                         {
                             NodeDatum = new NodeDatum(lengthTotal: nVolumeLength),
                             TreemapRect = treeNode.TreemapRect
@@ -751,18 +753,10 @@ namespace DoubleFile
             {
                 var nodeDatum = parent.NodeDatum;
 
-                if (bStart &&
-                    (null != parent.TreemapFiles))
+                if (null != parent.TreemapFiles)
                 {
+                    parent.TreemapFiles.Start = bStart;
                     ieChildren = ieChildren.Concat(new[] { parent.TreemapFiles });
-                }
-                else if (0 < nodeDatum.LengthHere)
-                {
-                    ieChildren = ieChildren.Concat(new[] { new LocalTreemapFileNode(parent.PathShort)
-                    {
-                        NodeDatum = new NodeDatum(lengthTotal: nodeDatum.LengthHere),
-                        ColorcodeFG = UtilColorcode.TreemapFolder
-                    }});
                 }
 
                 // could do array here but it's slightly less efficient because element sizes have to be shrunk

@@ -12,8 +12,8 @@ namespace DoubleFile
     {
         internal NodeDatum
             NodeDatum;
-        internal IReadOnlyList<LocalTreeNode>
-            Nodes;
+        internal virtual IReadOnlyList<LocalTreeNode>
+            Nodes { get; set; }
         internal LocalTreeNode
             Parent;
         internal List<LocalTreeNode>

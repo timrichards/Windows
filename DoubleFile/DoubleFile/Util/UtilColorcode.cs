@@ -54,7 +54,7 @@ namespace DoubleFile
         internal const int SolitaryOneVolParent = unchecked((int)0xFFBB3333);
         internal const int ContainsSolitaryBG   =                0x40400000;    // => Color.FromArgb(64, 64, 0, 0).ToArgb();    // DarkRedBG
         internal const int ZeroLengthFolder     = unchecked((int)0xFFD3D3D3);   // => Colors.LightGray.ToArgb();                // LightGray
-        internal const int TreemapFolder        = unchecked((int)0xFFBDB76B);   // => Colors.DarkKhaki.ToArgb();                // DarkKhaki
+        internal const int TreemapFolder        = unchecked((int)0xFF66AA44);
         internal const int TreemapFreespace     = unchecked((int)0xFF00FA9A);   // => Colors.MediumSpringGreen.ToArgb();        // MediumSpringGreen
         internal const int TreemapUnreadspace   = unchecked((int)0xFFC71585);   // => Colors.MediumVioletRed.ToArgb();          // MediumVioletRed
         internal const int TreemapFile          = unchecked((int)0xFF6B8E23);   // => Colors.OliveDrab.ToArgb();                // OliveDrab

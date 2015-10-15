@@ -3,42 +3,42 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    class LocalTreemapFileListNode : LocalTreeNode
+    interface ITreeMapFileNode { }
+
+    class LocalTreemapFileListNode : LocalTreeNode, ITreeMapFileNode
     {
-        internal override string PathShort { get; set; }
+        internal bool Start = false;
+        internal bool Filled = false;
 
-        internal new int
-            Level;
+        internal override IReadOnlyList<LocalTreeNode>
+            Nodes { get { return Start ? base.Nodes : null; } set { base.Nodes = value; } }
 
-        internal LocalTreemapFileListNode(string strContent)
+        internal override string PathShort => Parent.PathShort + " (files)";
+
+        internal LocalTreemapFileListNode(LocalTreeNode parent)
             : base()
         {
-            PathShort = strContent;
+            Parent = parent;
+            ColorcodeFG = UtilColorcode.TreemapFolder;
         }
 
-        internal LocalTreemapFileListNode(LocalTreeNode parent, IReadOnlyList<LocalTreemapFileNode> lsNodes)
-            : this(parent.PathShort)
+        internal LocalTreemapFileListNode
+            Fill(IReadOnlyList<LocalTreeNode> lsNodes)
         {
-            Parent = parent;
-            PathShort = parent.PathShort;
-            Level = parent.Level + 1;       // just for fun: not used
-
-            Nodes = lsNodes;
-
-            LocalTreemapFileNode nextNode = null;
-
-            foreach (var treeNode in lsNodes.Reverse())
-            {
-                treeNode.Parent = this;
-                treeNode.Level = Level + 1;
-                nextNode = treeNode;
-            }
+            base.Nodes = lsNodes;
+            Filled = true;
+            return this;
         }
     }
 
-    class LocalTreemapFileNode : LocalTreemapFileListNode
+    class LocalTreemapFileNode : LocalTreeNode, ITreeMapFileNode
     {
-        internal LocalTreemapFileNode(string strContent)
-            : base(strContent) { }
+        internal override string PathShort { get; set; }
+
+        internal LocalTreemapFileNode(LocalTreeNode parent, string strContent)
+        {
+            Parent = parent;
+            PathShort = strContent;
+        }
     }
 }

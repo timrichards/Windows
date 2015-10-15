@@ -451,7 +451,9 @@ namespace DoubleFile
 
                 var drawingGroup = new DrawingGroup();
 
-                drawingGroup.Children.Add(new GeometryDrawing(new SolidColorBrush(Color.FromRgb(193, 176, 139)), new Pen(), new RectangleGeometry(new Rect(0, 0, BitmapSize, BitmapSize))));
+                drawingGroup.Children.Add(
+                    new GeometryDrawing(
+                    new SolidColorBrush(Color.FromRgb(193, 176, 139)), new Pen(), new RectangleGeometry(new Rect(0, 0, BitmapSize, BitmapSize))));
 
                 foreach (var render in ieFills.OrderByDescending(r => r.Area).Take(1 << 11))
                     drawingGroup.Children.Add(render.GeometryDrawing);
@@ -587,7 +589,7 @@ namespace DoubleFile
                     if (bStart)
                         treeNode.TreemapFiles.GetFileList();
 
-                    treeNode.TreemapFiles.Start = bStart || (null == treeNode.Parent);
+                    treeNode.TreemapFiles.Start = bStart; //|| (null == treeNode.Parent);
                 }
 
                 IEnumerable<LocalTreeNode> ieChildren = null;
@@ -604,20 +606,28 @@ namespace DoubleFile
                         (long)rootNodeDatum.VolumeFree -
                         (long)rootNodeDatum.LengthTotal;
 
-                    if (0 >= nUnreadLength)     // Faked length to make up for compression and hard links
-                        nVolumeLength = rootNodeDatum.VolumeFree + rootNodeDatum.LengthTotal;
-
                     // parent added as child, with two other nodes: free space (color: spring green); and...
                     ieChildren = new List<LocalTreeNode> { treeNode, nodeFree };
 
-                    if (0 < nUnreadLength)     // ...unread guess, affected by compression and hard links (violet)
-                        ieChildren.Concat(new[]
+                    if (0 < nUnreadLength)
                     {
-                        new LocalTreemapFileNode(treeNode, (ulong)nUnreadLength,
-                            "unread data (estimate affected by compression and hard links)", UtilColorcode.TreemapUnreadspace)
-                    });
+                        // ...unread guess, affected by compression and hard links (violet)
+                        ieChildren = ieChildren.Concat(new[]
+                        {
+                            new LocalTreemapFileNode(treeNode, (ulong)nUnreadLength,
+                                "unread data (estimate affected by compression and hard links)", UtilColorcode.TreemapUnreadspace)
+                        });
+                    }
+                    else
+                    {
+                        // Faked length to make up for compression and hard links
+                        nVolumeLength = rootNodeDatum.VolumeFree + rootNodeDatum.LengthTotal;
+                    }
 
-                    parent = new LocalTreemapFileNode(treeNode, nVolumeLength, treeNode.PathShort + " (volume)", UtilColorcode.Transparent);
+                    parent = new LocalTreemapFileNode(treeNode, nVolumeLength, treeNode.PathShort + " (volume)", UtilColorcode.Transparent)
+                    {
+                        TreemapRect = treeNode.TreemapRect
+                    };
                 }
                 else if (null != treeNode.Nodes)
                 {
@@ -681,17 +691,13 @@ namespace DoubleFile
 
                 var rows = new List<RowStruct> { };
 
+                for (int nextChild = 0, childrenUsed = 0; nextChild < nCount; nextChild += childrenUsed)
                 {
-                    var childrenUsed = 0;
-
-                    for (var nextChild = 0; nextChild < nCount; nextChild += childrenUsed)
+                    rows.Add(new RowStruct
                     {
-                        rows.Add(new RowStruct
-                        {
-                            RowHeight = KDirStat_CalculateNextRow(parent, nextChild, width_A, out childrenUsed, anChildWidth, lsChildren),
-                            ChildrenPerRow = childrenUsed
-                        });
-                    }
+                        RowHeight = KDirStat_CalculateNextRow(parent, nextChild, width_A, out childrenUsed, anChildWidth, lsChildren),
+                        ChildrenPerRow = childrenUsed
+                    });
                 }
 
                 var width = horizontalRows ? rc.Width : rc.Height;
@@ -707,7 +713,7 @@ namespace DoubleFile
                     if (ReferenceEquals(row, lastRow))
                         bottom = horizontalRows ? rc.Bottom() : rc.Right();
 
-                    double left = horizontalRows ? rc.Left : rc.Top;
+                    var left = horizontalRows ? rc.Left : rc.Top;
 
                     for (var i = 0; i < row.ChildrenPerRow; i++, c++)
                     {

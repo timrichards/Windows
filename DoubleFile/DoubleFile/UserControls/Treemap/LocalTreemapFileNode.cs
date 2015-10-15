@@ -71,7 +71,6 @@ namespace DoubleFile
         {
             Parent = treeNode;
             NodeDatum = new NodeDatum(lengthTotal: nLength);
-            TreemapRect = treeNode.TreemapRect;
 
             PathShort = strContent;
             ColorcodeFG = UtilColorcode.TreemapFile;
@@ -81,7 +80,6 @@ namespace DoubleFile
         {
             Parent = treeNode;
             NodeDatum = new NodeDatum(lengthTotal: nLength);
-            TreemapRect = treeNode.TreemapRect;
 
             PathShort = nLength.FormatSize() + " " + strContent;
             ColorcodeFG = nColorcode;

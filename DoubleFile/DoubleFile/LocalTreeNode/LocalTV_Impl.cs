@@ -187,7 +187,7 @@ namespace DoubleFile
                         var lsTreeNodes = dictNodes_[kvp.Key];
 
                         foreach (var treeNode in lsTreeNodes)
-                            treeNode.NodeDatum.Hash_AllFiles = nFolderIndexedID;
+                            ((ISetNodeDatum_Hash_AllFiles)treeNode.NodeDatum).Set_Hash_AllFiles(nFolderIndexedID);
 
                         dictNodes[nFolderIndexedID] = lsTreeNodes;
                         ++nFolderIndexedID;
@@ -278,16 +278,14 @@ namespace DoubleFile
                     .Distinct();
 
                 var nCount = 0;
-
-                Util.Assert(99599, 0 == treeNode.NodeDatum.Hash_AllFiles);
-                treeNode.NodeDatum.Hash_AllFiles = 0;
+                var nHash = 0;
 
                 foreach (var nFileIndexedID in ieHashes)
                 {
                     unchecked
                     {
-                        treeNode.NodeDatum.Hash_AllFiles += nFileIndexedID;
-                        treeNode.NodeDatum.Hash_AllFiles *= 37;
+                        nHash += nFileIndexedID;
+                        nHash *= 37;
                     }
 
                     ++nCount;
@@ -295,9 +293,11 @@ namespace DoubleFile
 
                 unchecked
                 {
-                    treeNode.NodeDatum.Hash_AllFiles += nCount;
-                    treeNode.NodeDatum.Hash_AllFiles *= 37;
+                    nHash += nCount;
+                    nHash *= 37;
                 }
+
+                ((ISetNodeDatum_Hash_AllFiles)treeNode.NodeDatum).Set_Hash_AllFiles(nHash);
 
                 if (null != treeNode.Nodes)
                     SetAllFilesHashes(treeNode.Nodes);      // recurse
@@ -327,14 +327,17 @@ namespace DoubleFile
                         {
                             // collision: adjust. All its clones will pachenko into the same slot.
 
+                            var nHash = nodeDatum.Hash_AllFiles;
+
                             unchecked
                             {
-                                ++nodeDatum.Hash_AllFiles;
+                                ++nHash;
                             }
 
                             if (0 == nodeDatum.Hash_AllFiles)
-                                ++nodeDatum.Hash_AllFiles;
+                                ++nHash;
 
+                            ((ISetNodeDatum_Hash_AllFiles)treeNode.NodeDatum).Set_Hash_AllFiles(nHash);
                             continue;
                         }
                     }

@@ -3,14 +3,19 @@ using System.Linq;
 
 namespace DoubleFile
 {
+    interface ISetNodeDatum_Hash_AllFiles
+    {
+        void Set_Hash_AllFiles(int nHash);
+    }
+
     // can't be struct because it serves covariance; has parameterless constructor
-    class NodeDatum
+    class NodeDatum : ISetNodeDatum_Hash_AllFiles
     {
         internal readonly uint
             PrevLineNo;                             // Found 21 bits
 
         internal int
-            Hash_AllFiles = 0;
+            Hash_AllFiles { get; private set; }
         internal readonly IReadOnlyList<int>
             Hashes_FilesHere = null;
         internal IReadOnlyList<int>
@@ -77,5 +82,7 @@ namespace DoubleFile
             DirsWithFiles = datum.DirsWithFiles;
             return this;
         }
+
+        void ISetNodeDatum_Hash_AllFiles.Set_Hash_AllFiles(int nHash) => Hash_AllFiles = nHash;
     }
 }

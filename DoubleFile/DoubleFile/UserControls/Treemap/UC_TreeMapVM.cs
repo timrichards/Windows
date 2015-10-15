@@ -411,40 +411,6 @@ namespace DoubleFile
             return null;
         }
 
-        static void
-            GetFileList(LocalTreeNode treeNode)
-        {
-            ulong nLengthHere = 0;
-
-            treeNode.TreemapFiles.Nodes =
-                treeNode.GetFileList()
-                .Select(s => s
-                .Split('\t').Skip(3).ToArray())    // makes this an LV line: knColLengthLV
-                .Select(asFileLine =>
-            {
-                ulong nLength = 0;
-
-                if ((asFileLine.Length > FileParse.knColLengthLV) &&
-                    (false == string.IsNullOrWhiteSpace(asFileLine[FileParse.knColLengthLV])))
-                {
-                    nLengthHere += nLength = ("" + asFileLine[FileParse.knColLengthLV]).ToUlong();
-                }
-
-                if (0 == nLength)
-                    return null;                                // from lambda
-
-                return new LocalTreemapFileNode(treeNode.TreemapFiles, asFileLine[0])  // from lambda
-                {
-                    NodeDatum = new NodeDatum(lengthTotal: nLength),
-                    ColorcodeFG = UtilColorcode.TreemapFile
-                };
-            })
-                .Where(fileNode => null != fileNode)
-                .ToList();
-
-            Util.Assert(99650, nLengthHere == treeNode.NodeDatum.LengthHere);
-        }
-
         void Render(LocalTreeNode treeNode)
         {
             if (_bSelRecAndTooltip ||
@@ -599,146 +565,88 @@ namespace DoubleFile
             {
                 treeNode.TreemapRect = rc;
 
-                if ((1 > rc.Width) ||
-                    (1 > rc.Height))
-                {
-                    return;
-                }
+                if ((treeNode == _deepNode) || (_deepNode?.IsChildOf(treeNode) ?? false))
+                    _deepNodeDrawn = treeNode;
 
-                if ((32 > rc.Width) ||
-                    (32 > rc.Height))
+                if ((1 > rc.Width) || (1 > rc.Height))
+                    return;
+
+                if ((32 > rc.Width) || (32 > rc.Height))
                 {
                     // Speedup. Draw an "empty" folder in place of too much detail
                     _lsFills.Add(new Folder(rc, treeNode.ColorcodeFG));
                     return;
                 }
 
-                if ((treeNode == _deepNode) ||
-                    (_deepNode?.IsChildOf(treeNode) ?? false))
-                {
-                    _deepNodeDrawn = treeNode;
-                }
-
                 if ((false == treeNode is LocalTreemapFileNode) &&
                     (0 < treeNode.NodeDatum.LengthHere))
                 {
                     if (null == treeNode.TreemapFiles)
-                        treeNode.TreemapFiles = new LocalTreemapFileListNode(treeNode)
-                    {
-                        NodeDatum = new NodeDatum(lengthTotal: treeNode.NodeDatum.LengthHere)
-                    };
+                        treeNode.TreemapFiles = new LocalTreemapFileListNode(treeNode);
 
-                    if (bStart && (false == treeNode.TreemapFiles.Filled))
-                        GetFileList(treeNode);
+                    if (bStart)
+                        treeNode.TreemapFiles.GetFileList();
 
-                    treeNode.TreemapFiles.Start = bStart;
+                    treeNode.TreemapFiles.Start = bStart || (null == treeNode.Parent);
                 }
 
-                if ((0 < (treeNode.Nodes?.Count ?? 0)) ||
-                    (bStart && (null != treeNode.TreemapFiles)))
+                IEnumerable<LocalTreeNode> ieChildren = null;
+                LocalTreeNode parent = treeNode;
+                var rootNodeDatum = treeNode.NodeDatum.As<RootNodeDatum>();
+
+                if (bStart && (rootNodeDatum?.VolumeView ?? false))
                 {
-                    IEnumerable<LocalTreeNode> ieChildren = null;
-                    LocalTreeNode parent = null;
-                    var bVolumeNode = false;
+                    var nodeFree = new LocalTreemapFileNode(treeNode, rootNodeDatum.VolumeFree, "free space", UtilColorcode.TreemapFreespace);
+                    var nVolumeLength = rootNodeDatum.VolumeLength;
 
-                    Util.Closure(() =>
+                    var nUnreadLength =
+                        (long)nVolumeLength -
+                        (long)rootNodeDatum.VolumeFree -
+                        (long)rootNodeDatum.LengthTotal;
+
+                    if (0 >= nUnreadLength)     // Faked length to make up for compression and hard links
+                        nVolumeLength = rootNodeDatum.VolumeFree + rootNodeDatum.LengthTotal;
+
+                    // parent added as child, with two other nodes: free space (color: spring green); and...
+                    ieChildren = new List<LocalTreeNode> { treeNode, nodeFree };
+
+                    if (0 < nUnreadLength)     // ...unread guess, affected by compression and hard links (violet)
+                        ieChildren.Concat(new[]
                     {
-                        var rootNodeDatum = treeNode.NodeDatum.As<RootNodeDatum>();
-
-                        if ((false == bStart) ||
-                            (null == rootNodeDatum))
-                        {
-                            return;     // from lambda
-                        }
-
-                        if (false == rootNodeDatum.VolumeView)
-                            return;     // from lambda
-
-                        var nodeDatumFree = new NodeDatum(lengthTotal: rootNodeDatum.VolumeFree);
-
-                        var nodeFree = new LocalTreemapFileNode(treeNode, nodeDatumFree.LengthTotal.FormatSize() + " free space")
-                        {
-                            NodeDatum = nodeDatumFree,
-                            ColorcodeFG = UtilColorcode.TreemapFreespace
-                        };
-
-                        NodeDatum nodeDatumUnread = null;
-                        var nVolumeLength = rootNodeDatum.VolumeLength;
-
-                        var nUnreadLength =
-                            (long)nVolumeLength -
-                            (long)rootNodeDatum.VolumeFree -
-                            (long)rootNodeDatum.LengthTotal;
-
-                        if (0 < nUnreadLength)
-                        {
-                            nodeDatumUnread = new NodeDatum(lengthTotal: (ulong)nUnreadLength);
-                        }
-                        else
-                        {
-                            // Faked length to make up for compression and hard links
-                            nVolumeLength =
-                                rootNodeDatum.VolumeFree + rootNodeDatum.LengthTotal;
-
-                            nodeDatumUnread = new NodeDatum();      // lengthTotal: 0
-                        }
-
-                        var nodeUnread = new LocalTreemapFileNode(treeNode, nodeDatumUnread.LengthTotal.FormatSize() + " unread data (estimate affected by compression and hard links)")
-                        {
-                            NodeDatum = nodeDatumUnread,
-                            ColorcodeFG = UtilColorcode.TreemapUnreadspace
-                        };
-
-                        // parent added as child, with two other nodes:
-                        // free space (color: spring green); and...
-                        var lsChildren = new List<LocalTreeNode> { treeNode, nodeFree };
-
-                        if (0 < nUnreadLength)
-                        {
-                            // ...unread guess, affected by compression and hard links (violet)
-                            lsChildren.Add(nodeUnread);
-                        }
-
-                        ieChildren = lsChildren;
-
-                        parent = new LocalTreemapFileNode(treeNode, treeNode.PathShort + " (volume)")
-                        {
-                            NodeDatum = new NodeDatum(lengthTotal: nVolumeLength),
-                            TreemapRect = treeNode.TreemapRect
-                        };
-
-                        bVolumeNode = true;
+                        new LocalTreemapFileNode(treeNode, (ulong)nUnreadLength,
+                            "unread data (estimate affected by compression and hard links)", UtilColorcode.TreemapUnreadspace)
                     });
 
-                    if ((false == bVolumeNode) &&
-                        (null != treeNode.Nodes))
-                    {
-                        parent = treeNode;
-
-                        ieChildren =
-                            treeNode.Nodes
-                            .Where(t => 0 < t.NodeDatum.LengthTotal);
-                    }
-
-                    if ((null == ieChildren) &&
-                        (null != treeNode.TreemapFiles))
-                    {
-                        parent = treeNode;
-                        ieChildren = new List<LocalTreeNode> { };
-                    }
-
-                    // returns true if there are children
-                    if ((null != ieChildren) &&
-                        KDirStat_DrawChildren(parent, ieChildren, bStart))
-                    {
-                        // example scenario: empty folder when there are files here and bStart is not true
-                        return;
-                    }
+                    parent = new LocalTreemapFileNode(treeNode, nVolumeLength, treeNode.PathShort + " (volume)", UtilColorcode.Transparent);
+                }
+                else if (null != treeNode.Nodes)
+                {
+                    ieChildren =
+                        treeNode.Nodes
+                        .Where(t => 0 < t.NodeDatum.LengthTotal);
+                }
+                else if (null != treeNode.TreemapFiles)
+                {
+                    ieChildren = new List<LocalTreeNode> { };
+                }
+                else
+                {
+                    // There are no children. Draw a file or an empty folder.
+                    _lsFills.Add(new Folder(rc, treeNode.ColorcodeFG));
+                    return;
                 }
 
-                // There are no children. Draw a file or an empty folder.
-                _lsFills.Add(new Folder(rc, treeNode.ColorcodeFG));
-            }
+                if (null != treeNode.TreemapFiles)
+                    ieChildren = ieChildren.Concat(new[] { treeNode.TreemapFiles });
+
+                var lsChildren =
+                    ieChildren
+                    .OrderByDescending(treeNodeA => treeNodeA.NodeDatum.LengthTotal)
+                    .ToList();
+
+                if (0 < lsChildren.Count)
+                    KDirStat_DrawChildren(parent, lsChildren, bStart);
+           }
 
             //My first approach was to make this member pure virtual and have three
             //classes derived from CTreemap. The disadvantage is then, that we cannot
@@ -748,36 +656,14 @@ namespace DoubleFile
             //I learned this squarification style from the KDirStat executable.
             //It's the most complex one here but also the clearest, imho.
 
-            bool
-                KDirStat_DrawChildren(LocalTreeNode parent, IEnumerable<LocalTreeNode> ieChildren, bool bStart)
+            void
+                KDirStat_DrawChildren(LocalTreeNode parent, IReadOnlyList<LocalTreeNode> lsChildren, bool bStart)
             {
-                var nodeDatum = parent.NodeDatum;
-
-                if (null != parent.TreemapFiles)
-                {
-                    parent.TreemapFiles.Start = bStart;
-                    ieChildren = ieChildren.Concat(new[] { parent.TreemapFiles });
-                }
-
-                // could do array here but it's slightly less efficient because element sizes have to be shrunk
-                var lsChildren =
-                    ieChildren
-                    .OrderByDescending(treeNode => treeNode.NodeDatum.LengthTotal)
-                    .ToList();
-
                 var nCount = lsChildren.Count;
-
-                if (0 == nCount)
-                {
-                    // any files are zero in length
-                    return false;
-                }
 
                 Interlocked.Add(ref _nWorkerCount, nCount);
 
-                var anChildWidth = // Widths of the children (fraction of row width).
-                    new double[nCount];
-
+                var anChildWidth = new double[nCount];      // Widths of the children (fraction of row width).
                 var rc = parent.TreemapRect;
                 var horizontalRows = (rc.Width >= rc.Height);
                 double width_A = 1;
@@ -879,7 +765,6 @@ namespace DoubleFile
                     top = bottom;
                 });
                 // This asserts due to rounding error: Utilities.Assert(1302.3307, top == (horizontalRows ? rc.Bottom : rc.Right));
-                return true;
             }
 
             static double KDirStat_CalculateNextRow(LocalTreeNode parent, int nextChild, double width,

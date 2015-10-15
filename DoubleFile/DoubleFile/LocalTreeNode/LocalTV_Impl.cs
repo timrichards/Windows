@@ -187,7 +187,7 @@ namespace DoubleFile
                         var lsTreeNodes = dictNodes_[kvp.Key];
 
                         foreach (var treeNode in lsTreeNodes)
-                            ((ISetNodeDatum_Hash_AllFiles)treeNode.NodeDatum).Set_Hash_AllFiles(nFolderIndexedID);
+                            ((ISetNodeDatum_Hash_AllFiles)treeNode.NodeDatum).Set(nFolderIndexedID);
 
                         dictNodes[nFolderIndexedID] = lsTreeNodes;
                         ++nFolderIndexedID;
@@ -297,7 +297,7 @@ namespace DoubleFile
                     nHash *= 37;
                 }
 
-                ((ISetNodeDatum_Hash_AllFiles)treeNode.NodeDatum).Set_Hash_AllFiles(nHash);
+                ((ISetNodeDatum_Hash_AllFiles)treeNode.NodeDatum).Set(nHash);
 
                 if (null != treeNode.Nodes)
                     SetAllFilesHashes(treeNode.Nodes);      // recurse
@@ -334,10 +334,10 @@ namespace DoubleFile
                                 ++nHash;
                             }
 
-                            if (0 == nodeDatum.Hash_AllFiles)
+                            if (0 == nHash)
                                 ++nHash;
 
-                            ((ISetNodeDatum_Hash_AllFiles)treeNode.NodeDatum).Set_Hash_AllFiles(nHash);
+                            ((ISetNodeDatum_Hash_AllFiles)treeNode.NodeDatum).Set(nHash);
                             continue;
                         }
                     }

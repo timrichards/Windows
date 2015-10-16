@@ -590,7 +590,7 @@ namespace DoubleFile
                     if (bStart)
                         treeNode.TreemapFiles.GetFileList();
 
-                    treeNode.TreemapFiles.Start = bStart || (null == treeNode.Parent);
+                    treeNode.TreemapFiles.Start = bStart;
                 }
 
                 IEnumerable<LocalTreeNode> ieChildren = null;
@@ -636,7 +636,7 @@ namespace DoubleFile
                         treeNode.Nodes
                         .Where(t => 0 < t.NodeDatum.LengthTotal);
                 }
-                else if (null != treeNode.TreemapFiles)
+                else if (null != parent.TreemapFiles)
                 {
                     ieChildren = new List<LocalTreeNode> { };
                 }
@@ -650,13 +650,13 @@ namespace DoubleFile
                 if (null != parent.TreemapFiles)
                     ieChildren = ieChildren.Concat(new[] { parent.TreemapFiles });
 
-                var lsChildren =
+                var lsOrderedChildren =
                     ieChildren
                     .OrderByDescending(treeNodeA => treeNodeA.NodeDatum.LengthTotal)
                     .ToList();
 
-                if (0 < lsChildren.Count)
-                    KDirStat_DrawChildren(parent, lsChildren, bStart);
+                if (0 < lsOrderedChildren.Count)
+                    KDirStat_DrawChildren(parent, lsOrderedChildren, bStart);
             }
 
             //My first approach was to make this member pure virtual and have three
@@ -668,9 +668,9 @@ namespace DoubleFile
             //It's the most complex one here but also the clearest, imho.
 
             void
-                KDirStat_DrawChildren(LocalTreeNode parent, IReadOnlyList<LocalTreeNode> lsChildren, bool bStart)
+                KDirStat_DrawChildren(LocalTreeNode parent, IReadOnlyList<LocalTreeNode> lsOrderedChildren, bool bStart)
             {
-                var nCount = lsChildren.Count;
+                var nCount = lsOrderedChildren.Count;
 
                 Interlocked.Add(ref _nWorkerCount, nCount);
 
@@ -696,7 +696,7 @@ namespace DoubleFile
                 {
                     rows.Add(new RowStruct
                     {
-                        RowHeight = KDirStat_CalculateNextRow(parent, nextChild, width_A, out childrenUsed, anChildWidth, lsChildren),
+                        RowHeight = KDirStat_CalculateNextRow(parent, nextChild, width_A, out childrenUsed, anChildWidth, lsOrderedChildren),
                         ChildrenPerRow = childrenUsed
                     });
                 }
@@ -718,7 +718,7 @@ namespace DoubleFile
 
                     for (var i = 0; i < row.ChildrenPerRow; i++, c++)
                     {
-                        var child = lsChildren[c];
+                        var child = lsOrderedChildren[c];
 
                         Util.Assert(1302.3305m, 0 <= anChildWidth[c]);
 
@@ -756,7 +756,7 @@ namespace DoubleFile
                             c++;
 
                             if (i < row.ChildrenPerRow)
-                                lsChildren[c].TreemapRect = new Rect(-1, -1, -1, -1);
+                                lsOrderedChildren[c].TreemapRect = new Rect(-1, -1, -1, -1);
 
                             c += row.ChildrenPerRow - i;
                             break;

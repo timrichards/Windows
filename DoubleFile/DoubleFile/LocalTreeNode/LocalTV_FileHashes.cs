@@ -173,6 +173,95 @@ namespace DoubleFile
             }
         }
 
+        void SetAllFilesHashes(IEnumerable<LocalTreeNode> treeNodes)
+        {
+            foreach (var treeNode in treeNodes)
+            {
+                ++_progress;
+
+                var ieHashes =
+                    treeNode.NodeDatum.Hashes_FilesHere
+                    .Union(treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch)
+                    .OrderBy(n => n)
+                    .Distinct();
+
+                var nCount = 0;
+                var nHash = 0;
+
+                foreach (var nFileIndexedID in ieHashes)
+                {
+                    unchecked
+                    {
+                        nHash += nFileIndexedID;
+                        nHash *= 37;
+                    }
+
+                    ++nCount;
+                }
+
+                unchecked
+                {
+                    nHash += nCount;
+                    nHash *= 37;
+                }
+
+                ((ISetNodeDatum_Hash_AllFiles)treeNode.NodeDatum).Set(nHash);
+
+                if (null != treeNode.Nodes)
+                    SetAllFilesHashes(treeNode.Nodes);      // recurse
+            }
+        }
+
+        void SetDictNodes(IDictionary<int, List<LocalTreeNode>> dictNodes, IEnumerable<LocalTreeNode> treeNodes)
+        {
+            foreach (var treeNode in treeNodes)
+            {
+                var nodeDatum = treeNode.NodeDatum;
+
+                if (0 == nodeDatum.Hash_AllFiles)
+                    continue;
+
+                for (;;)
+                {
+                    var lsTreeNodes = dictNodes.TryGetValue(nodeDatum.Hash_AllFiles);
+
+                    if (null != lsTreeNodes)
+                    {
+                        if (lsTreeNodes[0].NodeDatum.Hashes_SubnodeFiles_Scratch.SequenceEqual(nodeDatum.Hashes_SubnodeFiles_Scratch))
+                        {
+                            lsTreeNodes.Add(treeNode);
+                        }
+                        else
+                        {
+                            // collision: adjust. All its clones will pachenko into the same slot.
+
+                            var nHash = nodeDatum.Hash_AllFiles;
+
+                            unchecked
+                            {
+                                ++nHash;
+                            }
+
+                            if (0 == nHash)
+                                ++nHash;
+
+                            ((ISetNodeDatum_Hash_AllFiles)treeNode.NodeDatum).Set(nHash);
+                            continue;       // for (;;)
+                        }
+                    }
+                    else if (0 < nodeDatum.LengthTotal)
+                    {
+                        dictNodes[nodeDatum.Hash_AllFiles] = new List<LocalTreeNode> { treeNode };
+                    }
+
+                    break;      // for (;;)
+                }
+
+                if (null != treeNode.Nodes)
+                    SetDictNodes(dictNodes, treeNode.Nodes);      // recurse
+            }
+        }
+
         //static ConcurrentDictionary<int, IReadOnlyList<int>>
         //    _dictClones = null;
         static CancellationTokenSource

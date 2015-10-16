@@ -7,8 +7,13 @@ using System.Windows.Media;
 
 namespace DoubleFile
 {
+    interface ILocalTreeNode_SetLevel
+    {
+        int Set(IEnumerable<LocalTreeNode> rootNodes);
+    }
+
     [DebuggerDisplay("{PathShort} {Nodes?.Count}")]
-    class LocalTreeNode
+    class LocalTreeNode : ILocalTreeNode_SetLevel
     {
         internal NodeDatum
             NodeDatum;
@@ -149,8 +154,9 @@ namespace DoubleFile
             return false;
         }
 
-        static internal int
-            SetLevel(IEnumerable<LocalTreeNode> nodes, LocalTreeNode nodeParent = null, int nLevel = 0)
+        int
+            ILocalTreeNode_SetLevel.Set(IEnumerable<LocalTreeNode> rootNodes) => SetLevel(rootNodes, null, 0); 
+        static int SetLevel(IEnumerable<LocalTreeNode> nodes, LocalTreeNode nodeParent, int nLevel)
         {
             var nCount = 0;
 

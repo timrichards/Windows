@@ -143,7 +143,7 @@ namespace DoubleFile
             _topNode = _rootNodes[0];
             _tree = null;
 
-            var nCount = LocalTreeNode.SetLevel(_rootNodes);
+            var nCount = ((ILocalTreeNode_SetLevel)_topNode).Set(_rootNodes);
             var lsLocalLVignore = new List<LVitem_ClonesVM> { };  // when implementing, replace the Forms ListViewItem.Tag in LocalLVItem
             double nProgress = 0;
 
@@ -166,11 +166,10 @@ namespace DoubleFile
                 IDictionary<int, List<LocalTreeNode>> dictNodes = new Dictionary<int, List<LocalTreeNode>>();
 
                 {
+                    var dictLength = new Dictionary<int, ulong>();
                     var dictNodes_ = new Dictionary<int, List<LocalTreeNode>>();
 
                     SetDictNodes(dictNodes_, RootNodes);
-
-                    var dictLength = new Dictionary<int, ulong>();
 
                     foreach (var kvp in dictNodes_)
                     {
@@ -185,6 +184,9 @@ namespace DoubleFile
                     foreach (var kvp in dictLength.OrderByDescending(kvp => kvp.Value))     // sort by total length descending
                     {
                         var lsTreeNodes = dictNodes_[kvp.Key];
+
+                        if (1 == lsTreeNodes.Count)
+                            continue;           // first file ID is 1: zero is all non-clones: no unchecked/overflow/wraparound (1.5M is reasonable)
 
                         foreach (var treeNode in lsTreeNodes)
                             ((ISetNodeDatum_Hash_AllFiles)treeNode.NodeDatum).Set(nFolderIndexedID);
@@ -263,95 +265,6 @@ namespace DoubleFile
             _tree?.EndThread();
             _tree = null;
             return true;
-        }
-
-        void SetAllFilesHashes(IEnumerable<LocalTreeNode> treeNodes)
-        {
-            foreach (var treeNode in treeNodes)
-            {
-                ++_progress;
-
-                var ieHashes =
-                    treeNode.NodeDatum.Hashes_FilesHere
-                    .Union(treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch)
-                    .OrderBy(n => n)
-                    .Distinct();
-
-                var nCount = 0;
-                var nHash = 0;
-
-                foreach (var nFileIndexedID in ieHashes)
-                {
-                    unchecked
-                    {
-                        nHash += nFileIndexedID;
-                        nHash *= 37;
-                    }
-
-                    ++nCount;
-                }
-
-                unchecked
-                {
-                    nHash += nCount;
-                    nHash *= 37;
-                }
-
-                ((ISetNodeDatum_Hash_AllFiles)treeNode.NodeDatum).Set(nHash);
-
-                if (null != treeNode.Nodes)
-                    SetAllFilesHashes(treeNode.Nodes);      // recurse
-            }
-        }
-
-        void SetDictNodes(IDictionary<int, List<LocalTreeNode>> dictNodes, IEnumerable<LocalTreeNode> treeNodes)
-        {
-            foreach (var treeNode in treeNodes)
-            {
-                var nodeDatum = treeNode.NodeDatum;
-
-                if (0 == nodeDatum.Hash_AllFiles)
-                    continue;
-
-                for (;;)
-                {
-                    var lsTreeNodes = dictNodes.TryGetValue(nodeDatum.Hash_AllFiles);
-
-                    if (null != lsTreeNodes)
-                    {
-                        if (lsTreeNodes[0].NodeDatum.Hashes_SubnodeFiles_Scratch.SequenceEqual(nodeDatum.Hashes_SubnodeFiles_Scratch))
-                        {
-                            lsTreeNodes.Add(treeNode);
-                        }
-                        else
-                        {
-                            // collision: adjust. All its clones will pachenko into the same slot.
-
-                            var nHash = nodeDatum.Hash_AllFiles;
-
-                            unchecked
-                            {
-                                ++nHash;
-                            }
-
-                            if (0 == nHash)
-                                ++nHash;
-
-                            ((ISetNodeDatum_Hash_AllFiles)treeNode.NodeDatum).Set(nHash);
-                            continue;
-                        }
-                    }
-                    else if (0 < nodeDatum.LengthTotal)
-                    {
-                        dictNodes[nodeDatum.Hash_AllFiles] = new List<LocalTreeNode> { treeNode };
-                    }
-
-                    break;
-                }
-
-                if (null != treeNode.Nodes)
-                    SetDictNodes(dictNodes, treeNode.Nodes);      // recurse
-            }
         }
 
         const string _ksDupeFileDictKey = "Matching duplicate files";

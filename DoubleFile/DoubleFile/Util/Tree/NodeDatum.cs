@@ -14,7 +14,7 @@ namespace DoubleFile
         internal readonly uint
             PrevLineNo;                             // Found 21 bits
 
-        internal int
+        internal int        // first file ID is 1: zero is all non-clones: no unchecked/overflow/wraparound (1.5M is reasonable)
             Hash_AllFiles { get; private set; }
         internal readonly IReadOnlyList<int>
             Hashes_FilesHere = null;

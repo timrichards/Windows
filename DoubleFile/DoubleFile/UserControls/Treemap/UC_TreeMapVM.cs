@@ -169,8 +169,11 @@ namespace DoubleFile
         {
             var treeNode = WinTooltip.LocalTreeNode;
 
-            if (treeNode is ITreeMapFileNode)
+            if (treeNode is LocalTreemapFileNode)
                 return;     // file fake node
+
+            if (treeNode is LocalTreemapFileListNode)
+                treeNode = treeNode.Parent;
 
             WinTooltip.CloseTooltip();
             _bTooltipVolumeView = false;
@@ -215,7 +218,6 @@ namespace DoubleFile
                 return null;
 
             LocalTreeNode nodeRet = null;
-            var bFilesHere = false;
             var bVolumeView = false;
 
             Util.Closure(() =>
@@ -228,8 +230,7 @@ namespace DoubleFile
                         (null !=
                         (nodeRet = FindMapNode(TreeNode.TreemapFiles, pt))))
                     {
-                        Util.Write("B");
-                        bFilesHere = true;
+                        Util.Write("B");                // file list node
                         return;     // from lambda
                     }
                 }
@@ -275,19 +276,13 @@ namespace DoubleFile
                 Util.Write("J");
 
                 if (null != nodeRet_A)
-                {
-                    nodeRet = nodeRet_A;
-                    bFilesHere = true;
-                }
+                    nodeRet = nodeRet_A;        // file list node
             });
 
             if (ReferenceEquals(nodeRet, _prevNode))
-            {
-                nodeRet = TreeNode;
-                bFilesHere = false;
-            }
+                nodeRet = TreeNode;             // file list node
 
-            SelRectAndTooltip(nodeRet, /* UI Initiator */ kSelRectAndTooltip, bFilesHere);
+            SelRectAndTooltip(nodeRet, /* UI Initiator */ kSelRectAndTooltip);
             return null;
         }
 
@@ -305,7 +300,7 @@ namespace DoubleFile
             if (false == ReferenceEquals(TreeNode, treeNodeChild.Parent))
                 return;
 
-            SelRectAndTooltip(treeNodeChild, initiatorTuple.Item2, bFile: false);
+            SelRectAndTooltip(treeNodeChild, initiatorTuple.Item2);
         }
 
         void LV_FilesVM_SelectedFileChanged(Tuple<LV_FilesVM.SelectedFileChanged, decimal> initiatorTuple)
@@ -331,7 +326,7 @@ namespace DoubleFile
                 .Where(treeNodeA => treeNodeA is LocalTreemapFileNode)
                 .FirstOnlyAssert(fileNode =>
             {
-                SelRectAndTooltip(fileNode, initiatorTuple.Item2, bFile: true);
+                SelRectAndTooltip(fileNode, initiatorTuple.Item2);
                 bCloseTooltip = false;
             }));
 
@@ -339,7 +334,7 @@ namespace DoubleFile
                 WinTooltip.CloseTooltip();
         }
 
-        void SelRectAndTooltip(LocalTreeNode treeNode, decimal nInitiator, bool bFile)
+        void SelRectAndTooltip(LocalTreeNode treeNode, decimal nInitiator)
         {
             if (_bTreeSelect ||
                 _bSelRecAndTooltip)
@@ -356,11 +351,15 @@ namespace DoubleFile
             var strFolder = treeNode.PathShort;
             var nodeTreeSelect = treeNode;
 
-            if (bFile)
+            if (nodeTreeSelect is LocalTreemapFileNode)
             {
                 strFolder += " (file)";
                 nodeTreeSelect = treeNode.Parent.Parent;   // Parent is TreemapFileListNode
                 SelectedFileOnNext(treeNode.PathShort, nInitiator);
+            }
+            else if (nodeTreeSelect is LocalTreemapFileListNode)
+            {
+                nodeTreeSelect = nodeTreeSelect.Parent;
             }
 
             WinTooltip.ShowTooltip(
@@ -375,11 +374,8 @@ namespace DoubleFile
             SelChildNode = treeNode;
             _prevNode = treeNode;
 
-            if ((false == nodeTreeSelect is ITreeMapFileNode) &&
-                (LV_TreeListChildrenVM.kChildSelectedOnNext != nInitiator))
-            {
+            if (LV_TreeListChildrenVM.kChildSelectedOnNext != nInitiator)
                 _bTreeSelect = TreeSelect.DoThreadFactory(nodeTreeSelect, nInitiator);
-            }
 
             _bSelRecAndTooltip = false;
         }
@@ -636,7 +632,7 @@ namespace DoubleFile
                         treeNode.Nodes
                         .Where(t => 0 < t.NodeDatum.LengthTotal);
                 }
-                else if (null != parent.TreemapFiles)
+                else if (null != treeNode.TreemapFiles)
                 {
                     ieChildren = new List<LocalTreeNode> { };
                 }

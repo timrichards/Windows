@@ -592,6 +592,14 @@ namespace DoubleFile
                     treeNode.TreemapFiles.Start = bStart; //|| (null == treeNode.Parent);
                 }
 
+                if ((null == treeNode.Nodes) &&
+                    ((false == bStart) || (null == treeNode.TreemapFiles)))
+                {
+                    // There are no children. Draw a file or an empty folder.
+                    _lsFills.Add(new Folder(rc, treeNode.ColorcodeFG));
+                    return;
+                }
+
                 IEnumerable<LocalTreeNode> ieChildren = null;
                 LocalTreeNode parent = treeNode;
                 var rootNodeDatum = treeNode.NodeDatum.As<RootNodeDatum>();
@@ -607,7 +615,7 @@ namespace DoubleFile
                         (long)rootNodeDatum.LengthTotal;
 
                     // parent added as child, with two other nodes: free space (color: spring green); and...
-                    ieChildren = new List<LocalTreeNode> { treeNode, nodeFree };
+                    ieChildren = new[] { treeNode, nodeFree };
 
                     if (0 < nUnreadLength)
                     {
@@ -639,15 +647,9 @@ namespace DoubleFile
                 {
                     ieChildren = new List<LocalTreeNode> { };
                 }
-                else
-                {
-                    // There are no children. Draw a file or an empty folder.
-                    _lsFills.Add(new Folder(rc, treeNode.ColorcodeFG));
-                    return;
-                }
 
-                if (null != treeNode.TreemapFiles)
-                    ieChildren = ieChildren.Concat(new[] { treeNode.TreemapFiles });
+                if (null != parent.TreemapFiles)
+                    ieChildren = ieChildren.Concat(new[] { parent.TreemapFiles });
 
                 var lsChildren =
                     ieChildren
@@ -656,7 +658,7 @@ namespace DoubleFile
 
                 if (0 < lsChildren.Count)
                     KDirStat_DrawChildren(parent, lsChildren, bStart);
-           }
+            }
 
             //My first approach was to make this member pure virtual and have three
             //classes derived from CTreemap. The disadvantage is then, that we cannot
@@ -806,7 +808,7 @@ namespace DoubleFile
                     // Rect(childSize) = childWidth * virtualRowHeight
                     // Rect(childSize) = childSize / mySize * width
 
-                    double childWidth =
+                    var childWidth =
                         childSize / mySize *
                         width / virtualRowHeight;
 

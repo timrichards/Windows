@@ -19,7 +19,7 @@ namespace DoubleFile
             internal const int
                 ScaleFactor = 1 << 2;
             internal double
-                Area => _rc.Width * _rc.Height;
+                Area => _rc.Area();
 
             public double X => _rc.X;
             public double Y => _rc.Y;
@@ -42,10 +42,13 @@ namespace DoubleFile
             internal GeometryDrawing
                 GeometryDrawing => new GeometryDrawing(Fill, new Pen(), new RectangleGeometry(_rc));
 
-            internal Folder(Rect rc, int fill)
-                : base(rc)
+            internal Folder(LocalTreeNode treeNode)
+                : base(treeNode.TreemapRect)
             {
-                _fill = fill;
+                _fill = treeNode.ColorcodeFG;
+
+                if (UtilColorcode.Transparent == _fill)
+                    _fill = Colors.Wheat.ToArgb();
             }
 
             Brush
@@ -521,25 +524,25 @@ namespace DoubleFile
             _deepNodeDrawn = null;
             ieFrames = null;
 
-            var rc = new Rect(0, 0, BitmapSize, BitmapSize).Scale(1d / TreemapFrame.ScaleFactor);
+            TreeNode.TreemapRect = new Rect(0, 0, BitmapSize, BitmapSize).Scale(1d / TreemapFrame.ScaleFactor);
 
             return
                 (0 < TreeNode.NodeDatum.LengthTotal)
-                ? new Recurse().Render(TreeNode, rc, DeepNode, out _deepNodeDrawn, out ieFrames)
-                : new[] { new Folder(rc, Colors.Wheat.ToArgb()) };
+                ? new Recurse().Render(TreeNode, DeepNode, out _deepNodeDrawn, out ieFrames)
+                : new[] { new Folder(TreeNode) };
         }
 
         class
             Recurse
         {
             internal IEnumerable<Folder>
-                Render(LocalTreeNode treeNode, Rect rc, LocalTreeNode deepNode,
+                Render(LocalTreeNode treeNode, LocalTreeNode deepNode,
                 out LocalTreeNode deepNodeDrawn_out, out IEnumerable<TreemapFrame> ieFrames)
             {
                 _lsFills = new ConcurrentBag<Folder>();
                 _lsFrames = new ConcurrentBag<TreemapFrame>();
                 _deepNode = deepNode;
-                RecurseDrawGraph(treeNode, rc, true);
+                RecurseDrawGraph(treeNode, bStart: true);
 
                 using (Observable.Timer(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1)).Timestamp()
                     .LocalSubscribe(99881, x => Util.WriteLine(_nWorkerCount + " " + treeNode + " DrawTreemap")))
@@ -563,20 +566,18 @@ namespace DoubleFile
             }
             
             void
-                RecurseDrawGraph(LocalTreeNode treeNode, Rect rc, bool bStart = false)
+                RecurseDrawGraph(LocalTreeNode treeNode, bool bStart = false)
             {
-                treeNode.TreemapRect = rc;
-
                 if ((treeNode == _deepNode) || (_deepNode?.IsChildOf(treeNode) ?? false))
                     _deepNodeDrawn = treeNode;
 
-                if ((1 > rc.Width) || (1 > rc.Height))
+                if (1 > treeNode.TreemapRect.Area())
                     return;
 
-                if ((32 > rc.Width) || (32 > rc.Height))
+                if (1 << 10 > treeNode.TreemapRect.Area())
                 {
                     // Speedup. Draw an "empty" folder in place of too much detail
-                    _lsFills.Add(new Folder(rc, treeNode.ColorcodeFG));
+                    _lsFills.Add(new Folder(treeNode));
                     return;
                 }
 
@@ -589,7 +590,7 @@ namespace DoubleFile
                     if (bStart)
                         treeNode.TreemapFiles.GetFileList();
 
-                    treeNode.TreemapFiles.Start = bStart; //|| (null == treeNode.Parent);
+                    treeNode.TreemapFiles.Start = bStart || (null == treeNode.Parent);
                 }
 
                 IEnumerable<LocalTreeNode> ieChildren = null;
@@ -642,7 +643,7 @@ namespace DoubleFile
                 else
                 {
                     // There are no children. Draw a file or an empty folder.
-                    _lsFills.Add(new Folder(rc, treeNode.ColorcodeFG));
+                    _lsFills.Add(new Folder(treeNode));
                     return;
                 }
 
@@ -730,7 +731,7 @@ namespace DoubleFile
                         if (lastChild)
                             right = horizontalRows ? rc.Right() : rc.Bottom();
 
-                        var rcChild =
+                        child.TreemapRect =
                             horizontalRows
                             ? new Rect(left, top, right - left, bottom - top)
                             : new Rect(top, left, bottom - top, right - left);
@@ -738,20 +739,16 @@ namespace DoubleFile
                         ThreadPool.QueueUserWorkItem(
                             state =>
                             {
-                                var param = (Tuple<LocalTreeNode, Rect>)state;
-
-                                RecurseDrawGraph(param.Item1, param.Item2);
+                                RecurseDrawGraph((LocalTreeNode)state);
                                 Interlocked.Decrement(ref _nWorkerCount);
 
                                 if (0 == _nWorkerCount)
                                     _blockingFrame.Continue = false;
-                            },
-
-                            Tuple.Create(child, rcChild)
+                            }, child
                         );
 
                         if (bStart)
-                            _lsFrames.Add(new TreemapFrame(rcChild, child.As<LocalTreemapFileNode>()));
+                            _lsFrames.Add(new TreemapFrame(child.TreemapRect, child.As<LocalTreemapFileNode>()));
 
                         if (lastChild)
                         {

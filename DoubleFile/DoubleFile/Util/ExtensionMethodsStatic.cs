@@ -277,5 +277,9 @@ namespace DoubleFile
             CenterX(this Rect r) => r.X + r.Width / 2;
         static internal double
             CenterY(this Rect r) => r.Y + r.Height / 2;
+
+        static internal double
+            Area(this Rect r) => r.Width * r.Height;
+
     }
 }

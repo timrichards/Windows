@@ -592,14 +592,6 @@ namespace DoubleFile
                     treeNode.TreemapFiles.Start = bStart; //|| (null == treeNode.Parent);
                 }
 
-                if ((null == treeNode.Nodes) &&
-                    ((false == bStart) || (null == treeNode.TreemapFiles)))
-                {
-                    // There are no children. Draw a file or an empty folder.
-                    _lsFills.Add(new Folder(rc, treeNode.ColorcodeFG));
-                    return;
-                }
-
                 IEnumerable<LocalTreeNode> ieChildren = null;
                 LocalTreeNode parent = treeNode;
                 var rootNodeDatum = treeNode.NodeDatum.As<RootNodeDatum>();
@@ -646,6 +638,12 @@ namespace DoubleFile
                 else if (null != treeNode.TreemapFiles)
                 {
                     ieChildren = new List<LocalTreeNode> { };
+                }
+                else
+                {
+                    // There are no children. Draw a file or an empty folder.
+                    _lsFills.Add(new Folder(rc, treeNode.ColorcodeFG));
+                    return;
                 }
 
                 if (null != parent.TreemapFiles)

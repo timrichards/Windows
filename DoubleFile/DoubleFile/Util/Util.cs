@@ -24,8 +24,11 @@ namespace DoubleFile
         {
             if (bCondition)
                 return true;
-
-            MBoxStatic.Fail(nLocation, strError, bIfDefDebug);
+#if (false == DEBUG)
+            if (bIfDefDebug)
+                return false;
+#endif
+            MBoxStatic.Fail(nLocation, strError);
             return false;
         }
 

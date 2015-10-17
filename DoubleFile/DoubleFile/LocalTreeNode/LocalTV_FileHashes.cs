@@ -26,9 +26,10 @@ namespace DoubleFile
             }
 
             var stopwatch = Stopwatch.StartNew();
+            var isHashComplete_throwaway = false;
 
             _cts = cts ?? new CancellationTokenSource();
-            Setup_AllFileHashes_Scratch(RootNodes);
+            Setup_AllFileHashes_Scratch(RootNodes, out isHashComplete_throwaway);
             stopwatch.Stop();
             Util.WriteLine("Setup_AllFileHashes_Scratch " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
 #if (false)
@@ -52,34 +53,44 @@ namespace DoubleFile
         }
 
         static IReadOnlyList<int>
-            Setup_AllFileHashes_Scratch(IReadOnlyList<LocalTreeNode> nodes, bool bStart = true)
+            Setup_AllFileHashes_Scratch(IReadOnlyList<LocalTreeNode> nodes, out bool isHashComplete, bool bStart = true)
         {
             var lsAllFilesHashes = new List<int> { };
+
+            isHashComplete = true;
 
             foreach (var treeNode in nodes)
             {
                 ++_progress;
 
+                var nodeDatum = treeNode.NodeDatum;
+
                 if (_cts.IsCancellationRequested)
                     return new int[0];
 
-                if (false == bStart)
-                    lsAllFilesHashes.AddRange(treeNode.NodeDatum.Hashes_FilesHere);
+                if (false == nodeDatum.Hashes_FilesHere_IsComplete)
+                    isHashComplete = false;
 
-                if (0 == (treeNode.Nodes?.Count ?? 0))
+                if (false == bStart)
+                    lsAllFilesHashes.AddRange(nodeDatum.Hashes_FilesHere);
+
+                if (null == treeNode.Nodes)
                 {
-                    treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch = new int[0];
+                    nodeDatum.Hashes_SubnodeFiles_Scratch = new int[0];
                     continue;
                 }
 
-                treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch =
-                    Setup_AllFileHashes_Scratch(treeNode.Nodes, bStart: false)              // recurse
+                nodeDatum.Hashes_SubnodeFiles_Scratch =
+                    Setup_AllFileHashes_Scratch(treeNode.Nodes, out nodeDatum.Hashes_SubnodeFiles_Scratch_IsComplete, bStart: false)   // recurse
                     .OrderBy(n => n)
                     .Distinct()
                     .ToList();
 
+                if (false == nodeDatum.Hashes_SubnodeFiles_Scratch_IsComplete)
+                    isHashComplete = false;
+
                 if (false == bStart)
-                    lsAllFilesHashes.AddRange(treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch);
+                    lsAllFilesHashes.AddRange(nodeDatum.Hashes_SubnodeFiles_Scratch);
             }
 
             return lsAllFilesHashes;

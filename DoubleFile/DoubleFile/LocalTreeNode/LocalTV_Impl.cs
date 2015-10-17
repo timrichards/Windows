@@ -193,7 +193,6 @@ namespace DoubleFile
                     }
                 }
 
-                AllFileHashes_DropRef();
                 _allNodes = new List<LocalTreeNode> { };
 
                 var collate = new Collate(
@@ -207,6 +206,7 @@ namespace DoubleFile
                 collate.Go(d => nProgress = (4 + d)/ 5);
                 stopwatch.Stop();
                 Util.WriteLine("collate.Go " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
+                AllFileHashes_DropRef();
                 stopwatch.Reset();
 
                 if (null == _selectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()

@@ -9,7 +9,7 @@ namespace DoubleFile
         static internal decimal? FailUp { get; private set; }
 
         static internal bool
-            Fail(decimal nLocation, string strError_in, bool bIfDefDebug)
+            Fail(decimal nLocation, string strError_in)
         {
             LocalModernWindowBase owner = null;
 
@@ -33,10 +33,6 @@ namespace DoubleFile
                 strError += "\n\nAdditional information: " + strError_in;
 
             Util.WriteLine(strError);
-#if (false == DEBUG)
-            if (bIfDefDebug)
-                return false;
-#endif
 #if (DEBUG && (false == LOCALMBOX))
             Debug.Assert(false, strError);
             return false;

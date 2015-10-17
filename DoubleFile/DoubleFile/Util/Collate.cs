@@ -94,8 +94,8 @@ namespace DoubleFile
                 Util.Assert(99973, null == treeNode.LVitem);
                 treeNode.LVitem = lvItem;
 
-                if (nodeDatum.IsHashComplete &&
-                    nodeDatum.Hashes_FilesHere.All(nFileID => Statics.DupeFileDictionary.IsDuplicate(nFileID)))
+                if (nodeDatum.Hashes_SubnodeFiles_Scratch_IsComplete &&
+                    nodeDatum.Hashes_SubnodeFiles_Scratch.AsParallel().All(nFileID => Statics.DupeFileDictionary.IsDuplicate(nFileID)))
                 {
                     treeNode.ColorcodeFG = SolitaryHasAllDupes;
                 }

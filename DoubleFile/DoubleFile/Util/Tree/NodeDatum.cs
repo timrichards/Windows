@@ -14,20 +14,6 @@ namespace DoubleFile
         internal readonly uint
             PrevLineNo;                             // Found 21 bits
 
-        internal bool
-            IsHashComplete { get; private set; }
-        internal int
-            Hash_AllFiles { get; private set; }
-        internal readonly IReadOnlyList<int>
-            Hashes_FilesHere = null;
-        internal IReadOnlyList<int>
-            Hashes_SubnodeFiles_Scratch = null;
-
-        internal readonly ulong
-            LengthHere;
-        internal ulong
-            LengthTotal { get; private set; }
-
         internal readonly int
             FileCountHere;                          // Found 15 bits
         internal uint
@@ -38,6 +24,24 @@ namespace DoubleFile
         internal uint
             DirsWithFiles { get; private set; }     // Found 15 bits
 
+        internal int
+            Hash_AllFiles { get; private set; }
+
+        internal readonly IReadOnlyList<int>
+            Hashes_FilesHere = null;
+        internal bool
+            Hashes_FilesHere_IsComplete { get; private set; }
+
+        internal IReadOnlyList<int>
+            Hashes_SubnodeFiles_Scratch = null;
+        internal bool
+            Hashes_SubnodeFiles_Scratch_IsComplete = false;
+
+        internal readonly ulong
+            LengthHere;
+        internal ulong
+            LengthTotal { get; private set; }
+
         internal NodeDatum() { }
         internal NodeDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, IReadOnlyList<int> lsFilesHereHashes, bool isHashComplete)
         {
@@ -45,7 +49,7 @@ namespace DoubleFile
             FileCountHere = (int)(nLineNo - PrevLineNo - 1);
             LengthHere = nLength;
             Hashes_FilesHere = lsFilesHereHashes.OrderBy(n => n).Distinct().ToArray();
-            IsHashComplete = isHashComplete;
+            Hashes_FilesHere_IsComplete = isHashComplete;
         }
         internal NodeDatum(ulong lengthTotal)
         {
@@ -57,11 +61,13 @@ namespace DoubleFile
             LengthTotal = datum.LengthTotal;
             FileCountTotal = datum.FileCountTotal;
             SubDirs = datum.SubDirs;
-            FileCountHere = datum.FileCountHere;
             DirsWithFiles = datum.DirsWithFiles;
+
+            FileCountHere = datum.FileCountHere;
             PrevLineNo = datum.PrevLineNo;
             LengthHere = datum.LengthHere;
             Hashes_FilesHere = datum.Hashes_FilesHere;
+            Hashes_FilesHere_IsComplete = datum.Hashes_FilesHere_IsComplete;
         }
 
         internal NodeDatum AddDatum(NodeDatum datum)

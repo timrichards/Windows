@@ -302,7 +302,7 @@
       <DependentUpon>UC_TreeList.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\MVVM_TreeList\LV_TreeListSiblingsVM.cs" />
-    <Compile Include="UserControls\Treemap\LocalTreemapFileNode.cs" />
+    <Compile Include="UserControls\Treemap\LocalTreemapNode.cs" />
     <Compile Include="Util\Tree\NodeDatum.cs" />
     <Compile Include="UserControls\Treemap\WinTooltip.xaml.cs">
       <DependentUpon>WinTooltip.xaml</DependentUpon>

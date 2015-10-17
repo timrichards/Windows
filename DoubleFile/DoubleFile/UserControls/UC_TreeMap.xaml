@@ -45,7 +45,17 @@
                     </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Rectangle Width="{Binding Width}" Height="{Binding Height}" ToolTip="{Binding VolumeViewDescription}" Fill="Transparent" Stroke="Black"/>
+                            <Grid Width="{Binding Width}" Height="{Binding Height}">
+                                <Rectangle Visibility="{Binding VisibilityNotFile}" ToolTip="{Binding VolumeViewDescription}" Fill="Transparent" StrokeThickness="1" Stroke="Black"/>
+                                <Rectangle Visibility="{Binding VisibilityOnFile}" ToolTip="{Binding VolumeViewDescription}" StrokeThickness="1" Stroke="Tan">
+                                    <Rectangle.Fill>
+                                        <LinearGradientBrush EndPoint="0, 0" MappingMode="Absolute" StartPoint="200,200">
+                                            <GradientStop Color="Transparent" Offset=".9"/>
+                                            <GradientStop Color="Tan" Offset=".901"/>
+                                        </LinearGradientBrush>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                            </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

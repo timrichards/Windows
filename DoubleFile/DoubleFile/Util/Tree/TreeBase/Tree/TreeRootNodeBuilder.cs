@@ -189,6 +189,7 @@ namespace DoubleFile
                 }
 
                 var lsFilesHereIndexedIDs = new List<int> { };
+                var isHashComplete = true;
                 var nHashColumn = Statics.DupeFileDictionary.HashColumn;
 
                 foreach (var strLine in _lvItemProjectVM.ListingFile.ReadLines(99640))
@@ -201,13 +202,17 @@ namespace DoubleFile
 
                     var asLine = strLine.Split('\t');
 
-                    if ((nHashColumn < asLine.Length) &&
-                        strLine.StartsWith(ksLineType_File))
+                    if (strLine.StartsWith(ksLineType_File))
                     {
                         var nFileLength = ("" + asLine[knColLength]).ToUlong();
 
                         if (0 < nFileLength)
-                            lsFilesHereIndexedIDs.Add(HashTuple.FileIndexedIDfromString(asLine[nHashColumn], nFileLength));
+                        {
+                            if (nHashColumn < asLine.Length)
+                                lsFilesHereIndexedIDs.Add(HashTuple.FileIndexedIDfromString(asLine[nHashColumn], nFileLength));
+                            else
+                                isHashComplete = false;
+                        }
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {
@@ -215,9 +220,10 @@ namespace DoubleFile
                             asLine[2],
                             (uint)("" + asLine[1]).ToInt(),
                             ("" + asLine[knColLength]).ToUlong(),
-                            lsFilesHereIndexedIDs);
+                            lsFilesHereIndexedIDs, isHashComplete);
 
                         lsFilesHereIndexedIDs = new List<int> { };
+                        isHashComplete = true;
                     }
                 }
 

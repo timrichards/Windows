@@ -14,6 +14,8 @@ namespace DoubleFile
         internal readonly uint
             PrevLineNo;                             // Found 21 bits
 
+        internal bool
+            IsHashComplete { get; private set; }
         internal int
             Hash_AllFiles { get; private set; }
         internal readonly IReadOnlyList<int>
@@ -37,12 +39,13 @@ namespace DoubleFile
             DirsWithFiles { get; private set; }     // Found 15 bits
 
         internal NodeDatum() { }
-        internal NodeDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, IReadOnlyList<int> lsFilesHereHashes)
+        internal NodeDatum(uint nPrevLineNo, uint nLineNo, ulong nLength, IReadOnlyList<int> lsFilesHereHashes, bool isHashComplete)
         {
             PrevLineNo = nPrevLineNo;
             FileCountHere = (int)(nLineNo - PrevLineNo - 1);
             LengthHere = nLength;
             Hashes_FilesHere = lsFilesHereHashes.OrderBy(n => n).Distinct().ToArray();
+            IsHashComplete = isHashComplete;
         }
         internal NodeDatum(ulong lengthTotal)
         {

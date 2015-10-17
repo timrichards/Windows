@@ -12,7 +12,7 @@ namespace DoubleFile
             class Node
             {
                 internal
-                    Node(string strPath, uint nLineNo, ulong nLength, IReadOnlyList<int> lsFilesHereHashes, RootNode rootNode)
+                    Node(string strPath, uint nLineNo, ulong nLength, IReadOnlyList<int> lsFilesHereHashes, bool isHashComplete, RootNode rootNode)
                 {
                     if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                         return;
@@ -47,7 +47,7 @@ namespace DoubleFile
 
                     if (null == nodeParent)
                     {
-                        nodeParent = new Node(strParent, _nLineNo, 0, null, _rootNode);
+                        nodeParent = new Node(strParent, _nLineNo, 0, null, _isHashComplete, _rootNode);
                         _rootNode.Nodes.Add(strParent, nodeParent);
                     }
 
@@ -80,7 +80,7 @@ namespace DoubleFile
                                 // pass the culled path back to TreeRootNodeBuilder; ultimately to LVitem_ProjectExplorer
                                 treeNode.NodeDatum =
                                     new RootNodeDatum(new NodeDatum(
-                                    subNode._nPrevLineNo, subNode._nLineNo, subNode._nLength, subNode._lsFilesHereHashes),
+                                    subNode._nPrevLineNo, subNode._nLineNo, subNode._nLength, subNode._lsFilesHereHashes, subNode._isHashComplete),
                                     subNode._strPath);
                             }
 
@@ -104,7 +104,7 @@ namespace DoubleFile
                     }
 
                     treeNode.NodeDatum = new NodeDatum(
-                        _nPrevLineNo, _nLineNo, _nLength, _lsFilesHereHashes);  // this is almost but not quite always newly assigned here.
+                        _nPrevLineNo, _nLineNo, _nLength, _lsFilesHereHashes, _isHashComplete);  // this is almost but not quite always newly assigned here.
 
                     return treeNode;
                 }
@@ -125,6 +125,8 @@ namespace DoubleFile
                     _nLength = 0;
                 readonly IReadOnlyList<int>
                     _lsFilesHereHashes = null;
+                readonly bool
+                    _isHashComplete = false;
             }
         }
     }

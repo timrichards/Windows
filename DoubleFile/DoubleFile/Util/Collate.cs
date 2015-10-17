@@ -93,6 +93,9 @@ namespace DoubleFile
                 _lsLVsolitary.Add(lvItem);
                 Util.Assert(99973, null == treeNode.LVitem);
                 treeNode.LVitem = lvItem;
+
+                if (kvp.Value.NodeDatum.Hashes_FilesHere.All(nFileID => Statics.DupeFileDictionary.IsDuplicate(nFileID)))
+                    kvp.Value.ColorcodeFG = SolitaryHasAllDupes;
             }
 
             InsertSizeMarkers(_lsLVsolitary);
@@ -437,7 +440,7 @@ namespace DoubleFile
                 if (new[] { ManyClonesSepVolume, OneCloneSepVolume, AllOnOneVolume }.Contains(checkNode.ColorcodeFG))
                     return true; // from lambda. solitary folder can have cloned parent if files are distributed differently among the parent's clones
 
-                if (false == new[] { SolitaryHasClones, Solitary }.Contains(checkNode.ColorcodeFG))
+                if (false == new[] { SolitaryHasClones, SolitaryHasAllDupes, Solitary }.Contains(checkNode.ColorcodeFG))
                 {
                     // ParentCloned is unimportant because it's just a nicety: it's got ParentClonedBG
                     Util.Assert(99974, new[] { Transparent, ParentCloned }.Contains(checkNode.ColorcodeFG), bIfDefDebug: true);

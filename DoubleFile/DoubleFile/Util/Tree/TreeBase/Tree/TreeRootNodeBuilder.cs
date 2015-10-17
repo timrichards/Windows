@@ -189,11 +189,7 @@ namespace DoubleFile
                 }
 
                 var lsFilesHereIndexedIDs = new List<int> { };
-
-                var nHashColumn =
-                    Statics.DupeFileDictionary.AllListingsHashV2
-                    ? 11
-                    : 10;
+                var nHashColumn = Statics.DupeFileDictionary.HashColumn;
 
                 foreach (var strLine in _lvItemProjectVM.ListingFile.ReadLines(99640))
                 {

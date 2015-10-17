@@ -185,9 +185,6 @@ namespace DoubleFile
                     {
                         var lsTreeNodes = dictNodes_[kvp.Key];
 
-                        if (1 == lsTreeNodes.Count)
-                            continue;           // first file ID is 1: zero is all non-clones: no unchecked/overflow/wraparound (1.5M is reasonable)
-
                         foreach (var treeNode in lsTreeNodes)
                             ((ISetNodeDatum_Hash_AllFiles)treeNode.NodeDatum).Set(nFolderIndexedID);
 

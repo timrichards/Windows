@@ -206,10 +206,7 @@ namespace DoubleFile
             if (0 == lsHashesGrouped.Count)
                 return ieFiles.ToList();
 
-            var nHashColumn =
-                Statics.DupeFileDictionary.AllListingsHashV2
-                ? 11
-                : 10;
+            var nHashColumn = Statics.DupeFileDictionary.HashColumn;
 
             foreach (var tuple in lsHashesGrouped)
             {

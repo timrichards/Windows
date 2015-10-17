@@ -68,7 +68,7 @@ namespace DoubleFile
             }
             catch (ArgumentException)
             {
-                Util.Assert(99935, false);
+                Util.Assert(99588, false);
             }
             catch (FormatException)
             {

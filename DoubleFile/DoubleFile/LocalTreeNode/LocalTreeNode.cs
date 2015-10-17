@@ -231,8 +231,6 @@ namespace DoubleFile
             set { _datum_color_level = (short)((_datum_color_level & (-1 - UtilColorcode.CLUT_Mask)) + value); }
         }
 
-        const uint
-            _knDatum16bitMask = (uint)((1 << 16) - 1) << 16;
         short
             _datum_color_level = 0;
 

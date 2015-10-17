@@ -36,6 +36,7 @@ namespace DoubleFile
                 return;
 
             ulong nLengthHere = 0;
+            var nHashColumn = Statics.DupeFileDictionary.HashColumn - 3;
 
             base.Nodes =
                 Parent.GetFileList()
@@ -51,10 +52,15 @@ namespace DoubleFile
                     nLengthHere += nLength = ("" + asFileLine[FileParse.knColLengthLV]).ToUlong();
                 }
 
-                return                   // from lambda
-                    (0 < nLength)
-                    ? new LocalTreemapFileNode(this, asFileLine[0], nLength)
-                    : null;                               
+                if (0 == nLength)
+                    return null;        // from lambda
+
+                var isDuplicate =
+                    (nHashColumn < asFileLine.Length)
+                    ? Statics.DupeFileDictionary.IsDuplicate(HashTuple.FileIndexedIDfromString(asFileLine[nHashColumn], nLength))
+                    : false;
+
+                return new LocalTreemapFileNode(this, asFileLine[0], nLength, isDuplicate);     // from lambda                        
             })
                 .Where(fileNode => null != fileNode)
                 .ToList();
@@ -67,13 +73,13 @@ namespace DoubleFile
     {
         internal override string PathShort { get; set; }
 
-        internal LocalTreemapFileNode(LocalTreeNode treeNode, string strContent, ulong nLength)
+        internal LocalTreemapFileNode(LocalTreeNode treeNode, string strContent, ulong nLength, bool isDuplicate)
         {
             Parent = treeNode;
             NodeDatum = new NodeDatum(lengthTotal: nLength);
 
             PathShort = strContent;
-            ColorcodeFG = UtilColorcode.TreemapFile;
+            ColorcodeFG = isDuplicate ? UtilColorcode.TreemapDupeFile : UtilColorcode.TreemapUniqueFile;
         }
 
         internal LocalTreemapFileNode(LocalTreeNode treeNode, ulong nLength, string strContent, int nColorcode)

@@ -31,6 +31,11 @@ namespace DoubleFile
         internal bool
             IsEmpty => null == _dictDuplicateFiles;
 
+        internal int
+            HashColumn => AllListingsHashV2
+            ? 11
+            : 10;
+
         internal bool
             AllListingsHashV2
         {
@@ -52,13 +57,12 @@ namespace DoubleFile
         }
         bool? _allListingsHashV2 = null;
 
+        internal bool IsDuplicate(int nFileID) => null != _dictDuplicateFiles.TryGetValue(nFileID);
+
         internal IReadOnlyList<DuplicateStruct>
             GetDuplicates(string[] asFileLine)
         {
-            var nHashColumn =
-                AllListingsHashV2
-                ? 11
-                : 10;
+            var nHashColumn = HashColumn;
 
             if (asFileLine.Length <= nHashColumn)
                 return null;
@@ -129,11 +133,7 @@ namespace DoubleFile
             var nProgress = 0;
             var dict = new ConcurrentDictionary<int, List<Tuple<int, ulong>>> { };
             var nFolderCount = 1;
-
-            var nHashColumn =
-                AllListingsHashV2
-                ? 11
-                : 10;
+            var nHashColumn = HashColumn;
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                 .LocalSubscribe(99757, x => StatusCallback(nProgress: nProgress/(double) nLVitems)))

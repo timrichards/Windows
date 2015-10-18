@@ -394,7 +394,7 @@ namespace DoubleFile
             _bSelRecAndTooltip = false;
         }
 
-        static LocalTreeNode
+        LocalTreeNode
             FindMapNode(LocalTreeNode treeNode, Point pt)
         {
             if (null == treeNode?.Nodes)
@@ -418,6 +418,9 @@ namespace DoubleFile
                     return testNode.TreemapFiles;
 
                 if (treeNode is ITreemapNode)
+                    return null;
+
+                if (ReferenceEquals(treeNode, TreeNode))
                     return null;
             }
 

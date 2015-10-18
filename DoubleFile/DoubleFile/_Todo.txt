@@ -1,5 +1,8 @@
-﻿- "estimate" may be unnecessary: volume length
+﻿- Treemap zoom selection on empty folder has latched on to last known completely non-related outer folder
+- Treemap: inner folders white?
+- "estimate" may be unnecessary: volume length
 - A folder may not have a copy, but all it's files do: all on different drives?
+	- dupe file too: different drives?
 - Treemap selection resets for neighbor folders
 - Clones col can sort: turn that off until sorting removes size labels and 3-mode sorting is enabled
 - treemap folder color is the same as the one that represents files: it can drill down while the files one selects the outer folder

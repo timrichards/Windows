@@ -45,16 +45,20 @@
                     </ItemsControl.ItemContainerStyle>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Grid Width="{Binding Width}" Height="{Binding Height}">
-                                <Rectangle Visibility="{Binding VisibilityNotFile}" ToolTip="{Binding VolumeViewDescription}" Fill="Transparent" StrokeThickness="1" Stroke="Black"/>
-                                <Rectangle Visibility="{Binding VisibilityOnFile}" ToolTip="{Binding VolumeViewDescription}" StrokeThickness="1" Stroke="Tan">
-                                    <Rectangle.Fill>
-                                        <LinearGradientBrush EndPoint="0, 0" MappingMode="Absolute" StartPoint="200,200">
-                                            <GradientStop Color="Transparent" Offset=".9"/>
-                                            <GradientStop Color="Tan" Offset=".901"/>
-                                        </LinearGradientBrush>
-                                    </Rectangle.Fill>
-                                </Rectangle>
+                            <Grid Width="{Binding Width}" Height="{Binding Height}" ToolTip="{Binding Tooltip}">
+                                <Rectangle Visibility="{Binding VisibilityNotFile}" Fill="Transparent" StrokeThickness="1" Stroke="Black"/>
+                                <Grid Visibility="{Binding VisibilityOnFile}">
+                                    <Rectangle ToolTip="{Binding Tooltip}" Fill="Transparent" StrokeThickness="1" Stroke="Tan"/>
+                                    <Rectangle Width="25" Height="25" Stroke="Tan" StrokeThickness="1" HorizontalAlignment="Right" VerticalAlignment="Top">
+                                        <Rectangle.Fill>
+                                            <LinearGradientBrush EndPoint="1, 0" StartPoint="0,1" MappingMode="RelativeToBoundingBox" Opacity=".5">
+                                                <GradientStop Color="Transparent" Offset=".5"/>
+                                                <GradientStop Color="Tan" Offset=".501"/>
+                                                <GradientStop Color="Tan" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+                                </Grid>
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

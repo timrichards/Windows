@@ -74,22 +74,24 @@ namespace DoubleFile
         internal override string PathShort { get; set; }
         internal bool IsFile = false;
 
+        // File
         internal LocalTreemapNode(LocalTreeNode treeNode, string strContent, ulong nLength, bool isDuplicate)
         {
             Parent = treeNode;
             NodeDatum = new NodeDatum(lengthTotal: nLength);
-
             PathShort = strContent;
+
             ColorcodeFG = isDuplicate ? UtilColorcode.TreemapDupeFile : UtilColorcode.TreemapUniqueFile;
             IsFile = true;
         }
 
+        // Volume free; volume unread
         internal LocalTreemapNode(LocalTreeNode treeNode, ulong nLength, string strContent, int nColorcode)
         {
             Parent = treeNode;
             NodeDatum = new NodeDatum(lengthTotal: nLength);
+            PathShort = strContent;
 
-            PathShort = nLength.FormatSize() + " " + strContent;
             ColorcodeFG = nColorcode;
         }
     }

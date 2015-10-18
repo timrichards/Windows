@@ -26,14 +26,14 @@ namespace DoubleFile
             public double Width => _rc.Width;
             public double Height => _rc.Height;
 
-            public string VolumeViewDescription { get; } = null;
+            public string Tooltip { get; } = null;
             public Visibility VisibilityOnFile { get; } = Visibility.Collapsed;
             public Visibility VisibilityNotFile { get; } = Visibility.Visible;
 
             internal TreemapFrame(LocalTreeNode treeNode)
             {
                 _rc = treeNode.TreemapRect.Scale(ScaleFactor);
-                VolumeViewDescription = treeNode?.PathShort;
+                Tooltip = treeNode?.PathShort + " (" + treeNode.NodeDatum.LengthTotal.FormatSize() + ")";
 
                 if (treeNode.As<LocalTreemapNode>()?.IsFile ?? false)
                 {

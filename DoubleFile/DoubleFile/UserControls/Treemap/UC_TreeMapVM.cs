@@ -655,9 +655,7 @@ namespace DoubleFile
                 }
                 else if (null != treeNode.Nodes)
                 {
-                    ieChildren =
-                        treeNode.Nodes
-                        .Where(t => 0 < t.NodeDatum.LengthTotal);
+                    ieChildren = treeNode.Nodes;
                 }
                 else if (null != treeNode.TreemapFiles)
                 {
@@ -673,9 +671,14 @@ namespace DoubleFile
                 if (null != parent.TreemapFiles)
                     ieChildren = ieChildren.Concat(new[] { parent.TreemapFiles });
 
-                var lsOrderedChildren =
+                var ieOrderedChildren =
                     ieChildren
-                    .OrderByDescending(treeNodeA => treeNodeA.NodeDatum.LengthTotal)
+                    .OrderByDescending(treeNodeA => treeNodeA.NodeDatum.LengthTotal);
+
+                foreach (var treeNodeB in ieOrderedChildren.Where(treeNodeA => 0 == treeNodeA.NodeDatum.LengthTotal))
+                    treeNodeB.TreemapRect = new Rect();
+
+                var lsOrderedChildren = ieOrderedChildren.Where(treeNodeA => 0 < treeNodeA.NodeDatum.LengthTotal)
                     .ToList();
 
                 if (0 < lsOrderedChildren.Count)

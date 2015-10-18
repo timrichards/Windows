@@ -64,7 +64,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 <Canvas Name="form_Canvas">
-                    <Rectangle Canvas.Left="{Binding SelectionLeft}" Canvas.Top="{Binding SelectionTop}" Width="{Binding SelectionWidth}" Height="{Binding SelectionHeight}" Fill="Black" Opacity=".4"/>
+                    <Rectangle ToolTip="{Binding SelectionTooltip}" Canvas.Left="{Binding SelectionLeft}" Canvas.Top="{Binding SelectionTop}" Width="{Binding SelectionWidth}" Height="{Binding SelectionHeight}" Fill="Black" Opacity=".4"/>
                     <Rectangle Width="{Binding GoofballX}" Height="{Binding GoofballY}" x:Name="form_rectGoofball" Opacity="0"/>
                 </Canvas>
             </Grid>

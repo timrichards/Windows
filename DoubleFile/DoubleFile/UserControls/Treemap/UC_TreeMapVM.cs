@@ -12,6 +12,8 @@ namespace DoubleFile
 {
     class UC_TreemapVM : SliderVM_Base<ListViewItemVM_Base>, IDisposable
     {
+        static string TooltipText(LocalTreeNode treeNode) => treeNode?.PathShort + " (" + treeNode?.NodeDatum.LengthTotal.FormatSize() + ")";
+
         public ObservableCollection<TreemapFrame>
             Frames { get; } = new ObservableCollection<TreemapFrame>();
         public class TreemapFrame
@@ -33,7 +35,7 @@ namespace DoubleFile
             internal TreemapFrame(LocalTreeNode treeNode)
             {
                 _rc = treeNode.TreemapRect.Scale(ScaleFactor);
-                Tooltip = treeNode?.PathShort + " (" + treeNode.NodeDatum.LengthTotal.FormatSize() + ")";
+                Tooltip = TooltipText(treeNode);
 
                 if (treeNode.As<LocalTreemapNode>()?.IsFile ?? false)
                 {
@@ -95,6 +97,7 @@ namespace DoubleFile
         public const double
             BitmapSize = 1 << 11;
 
+        public string SelectionTooltip { get; private set; }
         public double SelectionLeft { get; private set; }
         public double SelectionWidth { get; private set; }
         public double SelectionTop { get; private set; }
@@ -109,10 +112,12 @@ namespace DoubleFile
                     value?.TreemapRect.Scale(TreemapFrame.ScaleFactor)
                     ?? default(Rect);
 
+                SelectionTooltip = TooltipText(value);
                 SelectionLeft = rect.Left;
                 SelectionTop = rect.Top;
                 SelectionWidth = rect.Width;
                 SelectionHeight = rect.Height;
+                RaisePropertyChanged("SelectionTooltip");
                 RaisePropertyChanged("SelectionLeft");
                 RaisePropertyChanged("SelectionTop");
                 RaisePropertyChanged("SelectionWidth");

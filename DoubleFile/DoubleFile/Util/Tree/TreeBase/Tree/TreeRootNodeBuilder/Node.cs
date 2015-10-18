@@ -24,6 +24,7 @@ namespace DoubleFile
                     _nLineNo = nLineNo;
                     _nLength = nLength;
                     _lsFilesHereHashes = lsFilesHereHashes ?? new int[0];
+                    _isHashComplete = isHashComplete;
 
                     // Path.GetDirectoryName() does not preserve filesystem root
 

@@ -42,7 +42,7 @@ namespace DoubleFile
             Statics.DupeFileDictionary.ResetAbortFlag();
 
             var lsProgressItems = new List<string> { _ksFolderTreeKey };
-            _bFileDictDone = false == Statics.DupeFileDictionary.IsEmpty && (Statics.Namespace == GetType().Namespace);     // VolTreemap assembly: skip it
+            _bFileDictDone = false == Statics.DupeFileDictionary.IsEmpty || (Statics.Namespace != GetType().Namespace);     // VolTreemap assembly: skip it
 
             if (false == _bFileDictDone)
                 lsProgressItems.Insert(0, _ksDupeFileDictKey);

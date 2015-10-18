@@ -15,6 +15,7 @@ namespace DoubleFile
             {OneCloneSepVolume,     "This folder has a copy on a separate volume."},
             {AllOnOneVolume,        "All copies of this folder reside on one volume."},
             {Solitary,              "This folder has no exact copy."},
+            {SolitaryHasAllDupes,   "This folder has no exact copy, yet all its files are duplicated."},
             {SolitaryHasClones,     "This folder has no exact copy, yet it contains folders that do."},
             {SolitaryClonedParent,  "This folder has no exact copy, yet its parent does."},
             {SolitaryOneVolParent,  "This folder has no exact copy, yet its parent does, on only one volume."},
@@ -25,7 +26,6 @@ namespace DoubleFile
             {TreemapUnreadspace,    ""},						            // Treemap: Unread space
             {TreemapDupeFile,       ""},						            // Treemap: Duplicate File
             {TreemapUniqueFile,     ""},						            // Treemap: Unique File
-            {SolitaryHasAllDupes,   "This folder has no exact copy, yet all its files are duplicated."}
         };
 
         static internal int
@@ -52,6 +52,7 @@ namespace DoubleFile
         internal const int OneCloneSepVolume    = unchecked((int)0xFF4682B4);   // => Colors.SteelBlue.ToArgb();                // SteelBlue
         internal const int AllOnOneVolume       = unchecked((int)0xFFB22222);   // => Colors.Firebrick.ToArgb();                // Firebrick
         internal const int Solitary             = unchecked((int)0xFFC00000);   // => Color.FromArgb(255, 192, 0, 0).ToArgb();  // Red
+        internal const int SolitaryHasAllDupes  = unchecked((int)0xFFFFCCDD);
         internal const int SolitaryHasClones    = unchecked((int)0xFFC02222);
         internal const int SolitaryClonedParent = unchecked((int)0xFF4477AA);
         internal const int SolitaryOneVolParent = unchecked((int)0xFFBB3333);
@@ -62,7 +63,6 @@ namespace DoubleFile
         internal const int TreemapUnreadspace   = unchecked((int)0xFFC71585);   // => Colors.MediumVioletRed.ToArgb();          // MediumVioletRed
         internal const int TreemapDupeFile      = unchecked((int)0xFF6B8E23);   // => Colors.OliveDrab.ToArgb();                // OliveDrab
         internal const int TreemapUniqueFile    = unchecked((int)0xFFC00001);
-        internal const int SolitaryHasAllDupes  = unchecked((int)0xFF4682B3);
 
         internal const int
             CLUT_Mask = (1 << CLUT_Shift) - 1;

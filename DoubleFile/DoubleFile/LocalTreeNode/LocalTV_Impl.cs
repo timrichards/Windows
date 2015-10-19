@@ -195,23 +195,22 @@ namespace DoubleFile
 
                 _allNodes = new List<LocalTreeNode> { };
 
-                var collate = new Collate(
-                    dictNodes,
-                    _clones, _sameVol, _solitary,
-                    _rootNodes, _allNodes,
-                    lsLVignore: lsLocalLVignore, bLoose: true);
-
                 var stopwatch = Stopwatch.StartNew();
 
-                collate.Go(d => nProgress = (4 + d)/ 5);
+                new Collate
+                {
+                    RootNodes = _rootNodes,
+                    DictNodes = dictNodes,
+                    AllNodes = _allNodes,
+                    LVclones = _lvClones,
+                    LVsameVol = _lvSameVol,
+                    LVsolitary = _lvSolitary,
+                }
+                    .Go(d => nProgress = (4 + d)/ 5);
+
                 stopwatch.Stop();
                 Util.WriteLine("collate.Go " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
                 AllFileHashes_DropRef();
-                stopwatch.Reset();
-
-                if (null == _selectedNode)      // gd.m_bPutPathInFindEditBox is set in TreeDoneCallback()
-                    _selectedNode = _topNode;
-
                 stopwatch.Reset();
                 stopwatch.Start();
                 GC.Collect();

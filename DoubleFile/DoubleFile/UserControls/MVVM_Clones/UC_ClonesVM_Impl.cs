@@ -25,21 +25,21 @@ namespace DoubleFile
                 case UC_Clones.FolderListSolitary:
                 {
                     Util.WriteLine("FolderListUnique");
-                    localLVVM = LocalTV.Solitary;
+                    localLVVM = LocalTV.LVsolitary;
                     break;
                 }
 
                 case UC_Clones.FolderListSameVol:
                 {
                     Util.WriteLine("FolderListSameVol");
-                    localLVVM = LocalTV.SameVol;
+                    localLVVM = LocalTV.LVsameVol;
                     break;
                 }
 
                 case UC_Clones.FolderListClones:
                 {
                     Util.WriteLine("FolderListClones");
-                    localLVVM = LocalTV.Clones;
+                    localLVVM = LocalTV.LVclones;
                     break;
                 }
 

@@ -21,25 +21,17 @@ namespace DoubleFile
             TopNode => _wr.Get(o => o._topNode);
         LocalTreeNode _topNode = null;
 
-        static internal LocalTreeNode
-            SelectedNode
-        {
-            get { return _wr.Get(o => o._selectedNode); }
-            set { _wr.Get(o => o._selectedNode = value); }
-        }
-        LocalTreeNode _selectedNode = null;
+        static internal UC_ClonesVM
+            LVclones => _wr.Get(o => o._lvClones);
+        UC_ClonesVM _lvClones = new UC_ClonesVM();
 
         static internal UC_ClonesVM
-            Clones => _wr.Get(o => o._clones);
-        UC_ClonesVM _clones = new UC_ClonesVM();
+            LVsameVol => _wr.Get(o => o._lvSameVol);
+        UC_ClonesVM _lvSameVol = new UC_ClonesVM();
 
         static internal UC_ClonesVM
-            SameVol => _wr.Get(o => o._sameVol);
-        UC_ClonesVM _sameVol = new UC_ClonesVM();
-
-        static internal UC_ClonesVM
-            Solitary => _wr.Get(o => o._solitary);
-        UC_ClonesVM _solitary = new UC_ClonesVM();
+            LVsolitary => _wr.Get(o => o._lvSolitary);
+        UC_ClonesVM _lvSolitary = new UC_ClonesVM();
 
         static internal IReadOnlyDictionary<string, string>
             DictVolumeInfo => _wr.Get(o => o._dictVolumeInfo);

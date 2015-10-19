@@ -1,4 +1,5 @@
-﻿- A folder may not have a copy, but all it's files do: all on different drives?
+﻿- Clones don't sync to folder detail updated in extra window.
+- A folder may not have a copy, but all it's files do: all on different drives?
 	- dupe file too: different drives?
 - Treemap selection resets for neighbor folders
 - Clones col can sort: turn that off until sorting removes size labels and 3-mode sorting is enabled
@@ -208,5 +209,10 @@ Specific code areas:
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
 
+99971
+99970
+99913
+99591
+
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
-99585 next low assert
+99582 next low assert

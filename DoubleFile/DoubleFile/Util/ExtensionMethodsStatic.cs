@@ -169,6 +169,8 @@ namespace DoubleFile
         }
 
         static internal T2
+            TryGetValue<T1, T2>(this ConcurrentDictionary<T1, T2> dict, T1 key) => TryGetValue((IDictionary<T1, T2>)dict, key);
+        static internal T2
             TryGetValue<T1, T2>(this IDictionary<T1, T2> dict, T1 key)
         {
             var outValue = default(T2);

@@ -45,6 +45,7 @@ namespace DoubleFile
                             {
                                 var bExpected =
                                     new[] { Solitary, Transparent,
+                                    ChildAllOnOneVolume, ChildClonedSepVolume,
                                     OneCloneSepVolume,
                                     AllOnOneVolume }      // A Useful Find
                                     .Contains(treeNode.ColorcodeFG);

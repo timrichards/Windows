@@ -1,4 +1,5 @@
-﻿- Clones don't sync to folder detail updated in extra window.
+﻿- This folder has no exact copy, yet all the folders in it do (has no files here)
+- Clones don't sync to folder detail updated in extra window.
 - A folder may not have a copy, but all it's files do: all on different drives?
 	- dupe file too: different drives?
 - Treemap selection resets for neighbor folders
@@ -209,7 +210,6 @@ Specific code areas:
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
 
-99971
 99970
 99913
 99591

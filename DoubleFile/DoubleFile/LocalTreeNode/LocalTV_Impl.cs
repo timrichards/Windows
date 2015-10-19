@@ -144,13 +144,12 @@ namespace DoubleFile
             _tree = null;
 
             var nCount = ((ILocalTreeNode_SetLevel)_topNode).Set(_rootNodes);
-            var lsLocalLVignore = new List<LVitem_ClonesVM> { };  // when implementing, replace the Forms ListViewItem.Tag in LocalLVItem
             double nProgress = 0;
 
             using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                 .LocalSubscribe(99761, x => ProgressOverlay.WithProgressOverlay(w => w.SetProgress(_ksFolderTreeKey, (1 + nProgress) / 2))))
             {
-                while (false == _bFileDictDone)      // the only reason _bFileDictDone is to SetAllFilesHashes() 
+                while (false == _bFileDictDone)     // this block is here is to SetAllFilesHashes() 
                     Util.Block(200);
 
                 _progress = 0;

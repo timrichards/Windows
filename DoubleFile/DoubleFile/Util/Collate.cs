@@ -228,8 +228,12 @@ namespace DoubleFile
                     foreach (var treeNode in lsNodes.Except(lsKeep))
                         treeNode.ColorcodeFG = nColorParent;
 
-                    if (null == _dictClones.TryGetValue(kvp.Key))
+                    var lsCheck = _dictClones.TryGetValue(kvp.Key);
+
+                    if (null == lsCheck)
                         _dictClones[kvp.Key] = lsKeep;
+                    else
+                        Util.Assert(99971, ReferenceEquals(lsCheck, lsKeep));
                 }
                 else
                 {
@@ -281,29 +285,29 @@ namespace DoubleFile
 
             for (var parent = kvp.Value.Parent; null != parent; parent = parent.Parent)
             {
-                if (null != parent.Clones)
-                {
-                    nParentCloneColor =
-                        (parent.ColorcodeFG == AllOnOneVolume)
-                        ? SolitaryOneVolParent
-                        : SolitaryClonedParent;
+                if (null == parent.Clones)
+                    continue;
 
-                    break;
-                }
+                nParentCloneColor =
+                    (AllOnOneVolume == parent.ColorcodeFG)
+                    ? SolitaryOneVolParent
+                    : SolitaryClonedParent;
+
+                break;
             }
 
-            if (0 != nParentCloneColor)
+            if (0 == nParentCloneColor)
+                return;
+
+            for (var treeNode = kvp.Value; null != treeNode; treeNode = treeNode.Parent)
             {
-                for (var treeNode = kvp.Value; null != treeNode; treeNode = treeNode.Parent)
-                {
-                    if (null != treeNode.Clones)
-                        break;
+                if (null != treeNode.Clones)
+                    break;
 
-                    treeNode.ColorcodeFG = nParentCloneColor;
-                }
-
-                _dictSolitary.Remove(kvp.Key);
+                treeNode.ColorcodeFG = nParentCloneColor;
             }
+
+            _dictSolitary.Remove(kvp.Key);
         }
 
         void Step4_Create_lsLVdiffVol_LVitem_ClonesVM(ListUpdater<bool> nicknameUpdater, Action reportProgress)

@@ -77,7 +77,7 @@ namespace DoubleFile
                 var nodeDatum = treeNode.NodeDatum;
 
                 Util.Assert(99975, 0 < nodeDatum.FileCountHere);
-                Step5_MarkSolitaryParentsAsSolitary(treeNode);
+                Step5_MarkSolitaryParentsAsSolitary(treeNode.Parent);
 
                 var lvItem = new LVitem_ClonesVM(new[] { treeNode }, nicknameUpdater);
 
@@ -180,7 +180,7 @@ namespace DoubleFile
 
             if (1 < lsNodes.Count)
             {
-                // Parent folder may contain only its clone subfolder, in which case unmark the subfolder
+                // Parent folder may contain only its clone subfolder, in which case unmark the parent folder
 
                 var lsKeep = new List<LocalTreeNode> { };
 
@@ -240,7 +240,7 @@ namespace DoubleFile
                     foreach (var treeNode in lsNodes)
                         treeNode.ColorcodeFG = Solitary;
 
-                    lsNodes = lsKeep;   // kick off "else" logic below after deleting child clones
+                    lsNodes = lsKeep;   // kick off "else" logic below after unmarking parent folders
                 }
             }
 
@@ -329,30 +329,19 @@ namespace DoubleFile
 
         static void Step5_MarkSolitaryParentsAsSolitary(LocalTreeNode treeNode)
         {
-            Func<LocalTreeNode, bool> check_and_mark = checkNode =>
-            {
-                if (new[] { ManyClonesSepVolume, OneCloneSepVolume, AllOnOneVolume }.Contains(checkNode.ColorcodeFG))
-                    return true; // from lambda. solitary folder can have cloned parent if files are distributed differently among the parent's clones
-
-                if (false == new[] { SolitaryHasClones, SolitaryHasAllDupes, Solitary }.Contains(checkNode.ColorcodeFG))
-                {
-                    // ParentCloned is unimportant because it's just a nicety: it's got ParentClonedBG
-                    Util.Assert(99974, new[] { Transparent, ParentCloned }.Contains(checkNode.ColorcodeFG), bIfDefDebug: true);
-                    checkNode.ColorcodeFG = Solitary;
-                }
-
-                return false;   // from lambda
-            };
-
-            if (check_and_mark(treeNode))
-                return;
-
-            for (var parent = treeNode.Parent; null != parent; parent = parent.Parent)
+            for (var parent = treeNode; null != parent; parent = parent.Parent)
             {
                 parent.ColorcodeBG = ContainsSolitaryBG;
 
-                if (check_and_mark(parent))
-                    return;
+                if (new[] { ManyClonesSepVolume, OneCloneSepVolume, AllOnOneVolume }.Contains(parent.ColorcodeFG))
+                    return; // solitary folder can have cloned parent if files are distributed differently among the parent's clones
+
+                if (false == new[] { SolitaryHasClones, SolitaryHasAllDupes, Solitary }.Contains(parent.ColorcodeFG))
+                {
+                    // ParentCloned is unimportant because it's just a nicety: it's got ParentClonedBG
+                    Util.Assert(99974, new[] { Transparent, ParentCloned }.Contains(parent.ColorcodeFG), bIfDefDebug: true);
+                    parent.ColorcodeFG = Solitary;
+                }
             }
         }
 

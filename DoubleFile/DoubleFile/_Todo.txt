@@ -1,5 +1,4 @@
-﻿- This folder has no exact copy, yet all the folders in it do (has no files here)
-- Clones don't sync to folder detail updated in extra window.
+﻿- Clones don't sync to folder detail updated in extra window.
 - A folder may not have a copy, but all it's files do: all on different drives?
 	- dupe file too: different drives?
 - Treemap selection resets for neighbor folders

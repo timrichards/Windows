@@ -57,12 +57,25 @@ namespace DoubleFile
                 Step3_DictSolitaryRemove_ChildrenOfClones(kvp);
 
 
-            // Step4_Create_lsLVdiffVol_LVitem_ClonesVM ManyClonesSepVolume OneCloneSepVolume AllOnOneVolume
+            // LVitem_ClonesVM
             nProgressDenominator += _dictClones.Count;
             ++nProgressItem;
 
             var nicknameUpdater = new ListUpdater<bool>(99676);
-            Step4_Create_lsLVdiffVol_LVitem_ClonesVM(nicknameUpdater, reportProgress);
+
+            foreach (var kvp in _dictClones)
+            {
+                reportProgress();
+
+                var lvItem = new LVitem_ClonesVM(kvp.Value, nicknameUpdater);
+
+                foreach (var treeNode in kvp.Value)
+                    treeNode.LVitem = lvItem;
+
+                _lsLVclones.Add(lvItem);
+            }
+
+            InsertSizeMarkers(_lsLVclones);
 
 
             // Create lsLVsolitary MarkSolitaryParentsAsSolitary
@@ -90,7 +103,10 @@ namespace DoubleFile
                     nodeDatum.Hashes_FilesHere.AsParallel().All(nFileID => Statics.DupeFileDictionary.IsDuplicate(nFileID)) &&
                     nodeDatum.Hashes_SubnodeFiles_Scratch.AsParallel().All(nFileID => Statics.DupeFileDictionary.IsDuplicate(nFileID)))
                 {
-                    treeNode.ColorcodeFG = SolitaryHasAllDupes;
+                    treeNode.ColorcodeFG =
+                        (treeNode.Nodes?.Any(subNode => subNode.IsSolitary) ?? false)
+                        ? SolitaryHasAllDupes
+                        : SolitaryHasAllClones;
                 }
             }
 
@@ -310,26 +326,9 @@ namespace DoubleFile
             _dictSolitary.Remove(kvp.Key);
         }
 
-        void Step4_Create_lsLVdiffVol_LVitem_ClonesVM(ListUpdater<bool> nicknameUpdater, Action reportProgress)
+        static void Step5_MarkSolitaryParentsAsSolitary(LocalTreeNode parent)
         {
-            foreach (var kvp in _dictClones)
-            {
-                reportProgress();
-
-                var lvItem = new LVitem_ClonesVM(kvp.Value, nicknameUpdater);
-
-                foreach (var treeNode in kvp.Value)
-                    treeNode.LVitem = lvItem;
-
-                _lsLVclones.Add(lvItem);
-            }
-
-            InsertSizeMarkers(_lsLVclones);
-        }
-
-        static void Step5_MarkSolitaryParentsAsSolitary(LocalTreeNode treeNode)
-        {
-            for (var parent = treeNode; null != parent; parent = parent.Parent)
+            for (; null != parent; parent = parent.Parent)
             {
                 parent.ColorcodeBG = ContainsSolitaryBG;
 

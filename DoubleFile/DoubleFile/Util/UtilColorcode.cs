@@ -19,6 +19,7 @@ namespace DoubleFile
             { Solitary,             "This folder has no exact copy." },
             { SolitaryHasAllDupes,  "This folder has no exact copy, yet all its files are duplicated." },
             { SolitaryHasClones,    "This folder has no exact copy, yet it contains folders that do." },
+            { SolitaryHasAllClones, "This folder has no exact copy, yet all its folders do, and any files here are duplicated." },
             { SolitaryClonedParent, "This folder has no exact copy, yet its parent does." },
             { SolitaryOneVolParent, "This folder has no exact copy, yet its parent does, on only one volume." },
             { ContainsSolitaryBG,   "Contains folders that have no copy, or copies are on one volume." },
@@ -59,16 +60,17 @@ namespace DoubleFile
         internal const int Solitary             = unchecked((int)0xFFC70707);   // => Color.FromArgb(255, 192, 0, 0).ToArgb();  // Red
         internal const int SolitaryHasAllDupes  = unchecked((int)0xFFF8C8D8);
         internal const int SolitaryHasClones    = unchecked((int)0xFFC92929);
-        internal const int SolitaryClonedParent = unchecked((int)0xFF4A7AAA);
-        internal const int SolitaryOneVolParent = unchecked((int)0xFFBB3B3B);
-        internal const int ContainsSolitaryBG   =                0x404C0C0C;    // => Color.FromArgb(64, 64, 0, 0).ToArgb();    // DarkRedBG
-        internal const int FolderHasNoHashes    = unchecked((int)0xFFAD0D0D);
-        internal const int ZeroLengthFolder     = unchecked((int)0xFFDEDEDE);   // => Colors.LightGray.ToArgb();                // LightGray
-        internal const int TreemapFolder        = unchecked((int)0xFF6FAF4F);
-        internal const int TreemapFreespace     = unchecked((int)0xFF00F090);   // => Colors.MediumSpringGreen.ToArgb();        // MediumSpringGreen
-        internal const int TreemapUnreadspace   = unchecked((int)0xFFC11181);   // => Colors.MediumVioletRed.ToArgb();          // MediumVioletRed
-        internal const int TreemapDupeFile      = unchecked((int)0xFF628202);   // => Colors.OliveDrab.ToArgb();                // OliveDrab
-        internal const int TreemapUniqueFile    = unchecked((int)0xFFC30303);
+        internal const int SolitaryHasAllClones = unchecked((int)0xFFFACADA);
+        internal const int SolitaryClonedParent = unchecked((int)0xFF4B7BAB);
+        internal const int SolitaryOneVolParent = unchecked((int)0xFFBC3C3C);
+        internal const int ContainsSolitaryBG   =                0x404D0D0D;    // => Color.FromArgb(64, 64, 0, 0).ToArgb();    // DarkRedBG
+        internal const int FolderHasNoHashes    = unchecked((int)0xFFAE0E0E);
+        internal const int ZeroLengthFolder     = unchecked((int)0xFFDFDFDF);   // => Colors.LightGray.ToArgb();                // LightGray
+        internal const int TreemapFolder        = unchecked((int)0xFF60A040);
+        internal const int TreemapFreespace     = unchecked((int)0xFF01F191);   // => Colors.MediumSpringGreen.ToArgb();        // MediumSpringGreen
+        internal const int TreemapUnreadspace   = unchecked((int)0xFFC21282);   // => Colors.MediumVioletRed.ToArgb();          // MediumVioletRed
+        internal const int TreemapDupeFile      = unchecked((int)0xFF638303);   // => Colors.OliveDrab.ToArgb();                // OliveDrab
+        internal const int TreemapUniqueFile    = unchecked((int)0xFFC40404);
 
         internal const int
             CLUT_Mask = (1 << CLUT_Shift) - 1;
@@ -97,7 +99,8 @@ namespace DoubleFile
             Transparent, ManyClonesSepVolume, SolitaryHasClones, TreemapFolder, ContainsSolitaryBG,
             AllOnOneVolume, ParentClonedBG, ParentCloned, ZeroLengthFolder, TreemapFreespace, TreemapUnreadspace,
             TreemapDupeFile, Solitary, SolitaryClonedParent, SolitaryOneVolParent, OneCloneSepVolume,
-            TreemapUniqueFile, SolitaryHasAllDupes, ChildClonedSepVolume, ChildAllOnOneVolume, FolderHasNoHashes
+            TreemapUniqueFile, SolitaryHasAllDupes, ChildClonedSepVolume, ChildAllOnOneVolume, FolderHasNoHashes,
+            SolitaryHasAllClones
         };
 
         static UtilColorcode()
@@ -128,13 +131,14 @@ namespace DoubleFile
             revClut[ChildClonedSepVolume] = nIx++;
             revClut[ChildAllOnOneVolume] = nIx++;
             revClut[FolderHasNoHashes] = nIx++;
+            revClut[SolitaryHasAllClones] = nIx++;
             _revCLUT = revClut;
             Util.Assert(99957, nIx == _knNumColors);
             Util.Assert(99910, 0 == CLUT_Shift >> 4);          // 16 bits, not _knNumColors
         }
 
         const int
-            _knNumColors = 21;
+            _knNumColors = 22;
         const uint
             _knCLUT_FGmask = (1 << (CLUT_Shift >> 1)) - 1;
         static readonly uint

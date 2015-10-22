@@ -109,7 +109,7 @@ namespace DoubleFile
                         ? false
                         : Statics.DupeFileDictionary.IsDupeSepVolume(nFileID);
 
-                    var isAllDupSepVolHere = nodeDatum.Hashes_FilesHere.AsParallel().Aggregate(null, f);
+                    var isAllDupSepVolHere = nodeDatum.Hashes_FilesHere.AsParallel().Aggregate(true, f);
 
                     if (null != isAllDupSepVolHere)
                     {
@@ -353,7 +353,7 @@ namespace DoubleFile
                 if (new[] { ManyClonesSepVolume, OneCloneSepVolume, AllOnOneVolume }.Contains(parent.ColorcodeFG))
                     return; // solitary folder can have cloned parent if files are distributed differently among the parent's clones
 
-                if (false == new[] { SolitaryHasClones, SolitAllDupesOneVol, Solitary }.Contains(parent.ColorcodeFG))
+                if (false == new[] { SolitaryHasClones, SolitAllDupesOneVol, SolitAllDupesSepVol, Solitary }.Contains(parent.ColorcodeFG))
                 {
                     // ParentCloned is unimportant because it's just a nicety: it's got ParentClonedBG
                     Util.Assert(99974, new[] { Transparent, ParentCloned }.Contains(parent.ColorcodeFG), bIfDefDebug: true);

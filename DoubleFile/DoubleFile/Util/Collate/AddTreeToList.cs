@@ -40,7 +40,7 @@ namespace DoubleFile
                             treeNode.ColorcodeBG = ParentClonedBG;
 
                             if (false ==
-                                new[] { SolitaryClonedParent, SolitaryOneVolParent, SolitaryHasAllDupes, ManyClonesSepVolume, ZeroLengthFolder }
+                                new[] { SolitaryClonedParent, SolitaryOneVolParent, SolitAllDupesOneVol, ManyClonesSepVolume, ZeroLengthFolder }
                                 .Contains(treeNode.ColorcodeFG))
                             {
                                 var bExpected =

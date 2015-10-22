@@ -57,7 +57,8 @@ namespace DoubleFile
         }
         bool? _allListingsHashV2 = null;
 
-        internal bool IsDuplicate(int nFileID) => null != _dictDuplicateFiles.TryGetValue(nFileID);
+        internal bool?      // not null: dup; true: sep vol
+            IsDupeSepVolume(int nFileID) => _dictDuplicateFiles.TryGetValue(nFileID)?.Item2;
 
         internal IReadOnlyList<DuplicateStruct>
             GetDuplicates(string[] asFileLine)
@@ -67,16 +68,16 @@ namespace DoubleFile
             if (asFileLine.Length <= nHashColumn)
                 return null;
 
-            var lsLookup =
+            var tuple =
                 _dictDuplicateFiles?.TryGetValue(HashTuple.FileIndexedIDfromString(
                 asFileLine[nHashColumn],
                 ("" + asFileLine[7]).ToUlong()));
 
-            if (null == lsLookup)
+            if (null == tuple)
                 return null;
 
             return
-                lsLookup.AsParallel()
+                tuple.Item1.AsParallel()
                 .Select(lookup => new DuplicateStruct
             {
                 LVitemProjectVM = _dictItemNumberToLV[GetLVitemProjectVM(lookup)],
@@ -219,7 +220,14 @@ namespace DoubleFile
             _dictDuplicateFiles =
                 dict
                 .Where(kvp => 1 < kvp.Value.Count)
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Select(tuple => tuple.Item1));
+                .ToDictionary(kvp => kvp.Key, kvp =>
+            {
+                var firstVolume = _dictItemNumberToLV[GetLVitemProjectVM(kvp.Value.First().Item1)].Volume;
+
+                return Tuple.Create(
+                kvp.Value.Select(tuple => tuple.Item1),
+                kvp.Value.Any(tuple => firstVolume != _dictItemNumberToLV[GetLVitemProjectVM(tuple.Item1)].Volume));
+            });
 
             Util.Assert(99896, _dictDuplicateFiles.Count == nFolderCount - 1, bIfDefDebug: true);
             stopwatch.Stop();
@@ -254,7 +262,7 @@ namespace DoubleFile
             _dictLVtoItemNumber = null;
         IReadOnlyDictionary<int, LVitemProject_Explorer>
             _dictItemNumberToLV = null;
-        IReadOnlyDictionary<int, IEnumerable<int>>
+        IReadOnlyDictionary<int, Tuple<IEnumerable<int>, bool>>
             _dictDuplicateFiles = null;
 
         WeakReference<ICreateDupeFileDictStatus>

@@ -57,7 +57,7 @@ namespace DoubleFile
 
                 var isDuplicate =
                     (nHashColumn < asFileLine.Length)
-                    ? Statics.DupeFileDictionary.IsDuplicate(HashTuple.FileIndexedIDfromString(asFileLine[nHashColumn], nLength))
+                    ? Statics.DupeFileDictionary.IsDupeSepVolume(HashTuple.FileIndexedIDfromString(asFileLine[nHashColumn], nLength))
                     : false;
 
                 return new LocalTreemapNode(this, asFileLine[0], nLength, isDuplicate);     // from lambda                        
@@ -75,13 +75,19 @@ namespace DoubleFile
         internal bool IsFile = false;
 
         // File
-        internal LocalTreemapNode(LocalTreeNode treeNode, string strContent, ulong nLength, bool isDuplicate)
+        internal LocalTreemapNode(LocalTreeNode treeNode, string strContent, ulong nLength, bool? isDuplicate)
         {
             Parent = treeNode;
             NodeDatum = new NodeDatum(lengthTotal: nLength);
             PathShort = strContent;
 
-            ColorcodeFG = isDuplicate ? UtilColorcode.TreemapDupeFile : UtilColorcode.TreemapUniqueFile;
+            ColorcodeFG =
+                (null == isDuplicate)
+                ? UtilColorcode.TreemapUniqueFile
+                : isDuplicate.Value
+                ? UtilColorcode.TreemapDupeSepVol
+                : UtilColorcode.TreemapDupeOneVol;
+
             IsFile = true;
         }
 

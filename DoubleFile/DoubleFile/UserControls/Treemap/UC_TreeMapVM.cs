@@ -79,7 +79,7 @@ namespace DoubleFile
                         { UtilColorcode.Solitary, Init(UtilColorcode.Solitary) },
                         { UtilColorcode.OneCloneSepVolume, Init(UtilColorcode.OneCloneSepVolume) },
                         { UtilColorcode.TreemapFolder, Init(UtilColorcode.TreemapFolder) },
-                        { UtilColorcode.TreemapDupeFile, Init(UtilColorcode.TreemapDupeFile) },
+                        { UtilColorcode.TreemapDupeSepVol, Init(UtilColorcode.TreemapDupeSepVol) },
                         { UtilColorcode.TreemapUniqueFile, Init(UtilColorcode.TreemapUniqueFile) }
                     };
                 });

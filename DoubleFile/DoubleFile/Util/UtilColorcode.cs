@@ -17,7 +17,7 @@ namespace DoubleFile
             { OneCloneSepVolume,    "This folder has a copy on a separate volume." },
             { AllOnOneVolume,       "All copies of this folder reside on one volume." },
             { Solitary,             "This folder has no exact copy." },
-            { SolitAllDupesOneVol,  "This folder has no exact copy, yet all its files are duplicated, on just one volume." },
+            { SolitAllDupesOneVol,  "This folder has no exact copy, yet all its files are duplicated, at least one on one volume." },
             { SolitAllDupesSepVol,  "This folder has no exact copy, yet all its files are duplicated, on more than one volume." },
             { SolitaryHasClones,    "This folder has no exact copy, yet it contains folders that do." },
             { SolitAllClonesOneVol, "This folder has no exact copy, yet all its folders and any files here are duplicated, at least one on one volume." },

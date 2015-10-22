@@ -121,8 +121,9 @@ namespace DoubleFile
 
                             treeNode.ColorcodeFG =
                                 (treeNode.Nodes?.Any(subNode => subNode.IsSolitary) ?? false)
-                                ? (bAllDupSepVol ? SolitAllDupesSepVol : SolitAllDupesOneVol)
-                                : (bAllDupSepVol ? SolitAllClonesSepVol : SolitAllClonesOneVol);
+                                ? (bAllDupSepVol ? SolitAllDupesOneVol : SolitAllClonesOneVol)      // all on one vol
+                                : (bAllDupSepVol ? SolitAllDupesSepVol : SolitAllClonesSepVol);     // sep vols
+                                                    // all dupes            not all dupes
                         }
                     }
                 }
@@ -293,13 +294,27 @@ namespace DoubleFile
         {
             if (null != treeNode.Clones)
             {
-                for (var parent = treeNode.Parent; null != parent; parent = parent.Parent)
+                var bCheck = true;
+
+                for (var parent = treeNode.Parent; null != parent; parent = parent.Parent, bCheck = false)
                 {
-                    if (SolitaryHasClones == parent.ColorcodeFG)
+                    if (new[] { SolitaryHasClones, SolitAllClonesOneVol, SolitAllClonesSepVol }.Contains(parent.ColorcodeFG))
                         continue;
 
                     Util.Assert(99977, new[] { Solitary, Transparent }.Contains(parent.ColorcodeFG), bIfDefDebug: true);
-                    parent.ColorcodeFG = SolitaryHasClones;
+
+                    var bSet = SolitaryHasClones;
+
+                    if (bCheck && 
+                        parent.Nodes.All(treeNodeA => false == treeNodeA.IsSolitary))
+                    {
+                        bSet =
+                            parent.Nodes.Any(treeNodeA => treeNodeA.IsAllOnOneVolume)
+                            ? SolitAllClonesOneVol
+                            : SolitAllClonesSepVol;
+                    }
+
+                    parent.ColorcodeFG = bSet;
                 }
 
                 return;
@@ -353,7 +368,13 @@ namespace DoubleFile
                 if (new[] { ManyClonesSepVolume, OneCloneSepVolume, AllOnOneVolume }.Contains(parent.ColorcodeFG))
                     return; // solitary folder can have cloned parent if files are distributed differently among the parent's clones
 
-                if (false == new[] { SolitaryHasClones, SolitAllDupesOneVol, SolitAllDupesSepVol, Solitary }.Contains(parent.ColorcodeFG))
+                if (false == new[]
+                {
+                    SolitaryHasClones, Solitary,
+                    SolitAllDupesOneVol, SolitAllDupesSepVol,
+                    SolitAllClonesOneVol, SolitAllClonesSepVol
+                }
+                    .Contains(parent.ColorcodeFG))
                 {
                     // ParentCloned is unimportant because it's just a nicety: it's got ParentClonedBG
                     Util.Assert(99974, new[] { Transparent, ParentCloned }.Contains(parent.ColorcodeFG), bIfDefDebug: true);

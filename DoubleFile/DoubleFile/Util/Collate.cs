@@ -82,6 +82,9 @@ namespace DoubleFile
             nProgressDenominator += _dictSolitary.Count;
             ++nProgressItem;
 
+            foreach (var kvp in _dictSolitary.ToList())
+                Step4_DictSolitaryAdd_SolitaryParent(kvp.Value.Parent);
+
             foreach (var kvp in _dictSolitary)
             {
                 reportProgress();
@@ -90,46 +93,114 @@ namespace DoubleFile
                 var nodeDatum = treeNode.NodeDatum;
 
                 Util.Assert(99975, 0 < nodeDatum.FileCountHere);
-                Step5_MarkSolitaryParentsAsSolitary(treeNode.Parent);
+                Step4_DictSolitaryAdd_SolitaryParent(treeNode.Parent);
 
                 var lvItem = new LVitem_ClonesVM(new[] { treeNode }, nicknameUpdater);
 
                 _lsLVsolitary.Add(lvItem);
                 Util.Assert(99973, null == treeNode.LVitem);
                 treeNode.LVitem = lvItem;
+            }
 
-                if (nodeDatum.Hashes_SubnodeFiles_Scratch_IsComplete &&
-                    nodeDatum.Hashes_FilesHere_IsComplete)
+            InsertSizeMarkers(_lsLVsolitary);
+
+
+            Func<bool?, int, bool?>
+                f = (current, nFileID) =>
+                (null == current)
+                ? null
+                : (false == current)    // this waterfall binning may only work due to parallel aggregation
+                ? false
+                : Statics.DupeFileDictionary.IsDupeSepVolume(nFileID);
+
+
+            foreach (var kvp in _dictSolitary)
+            {
+                var treeNode = kvp.Value;
+                var nodeDatum = treeNode.NodeDatum;
+
+                if (false ==
+                    (nodeDatum.Hashes_SubnodeFiles_Scratch_IsComplete && nodeDatum.Hashes_FilesHere_IsComplete))
                 {
-                    Func<bool?, int, bool?>
-                        f = (current, nFileID) =>
-                        (null == current)
-                        ? null
-                        : (false == current)
-                        ? false
-                        : Statics.DupeFileDictionary.IsDupeSepVolume(nFileID);
+                    continue;
+                }
 
-                    var isAllDupSepVolHere = nodeDatum.Hashes_FilesHere.AsParallel().Aggregate(true, f);
+                var isAllDupSepVol = nodeDatum.Hashes_FilesHere.AsParallel().Aggregate(true, f);
 
-                    if (null != isAllDupSepVolHere)
+                if (null == isAllDupSepVol)
+                    continue;
+
+                isAllDupSepVol = nodeDatum.Hashes_SubnodeFiles_Scratch.AsParallel().Aggregate(isAllDupSepVol.Value, f);
+
+                if (null == isAllDupSepVol)
+                    continue;
+
+                var bAllDupSepVol = isAllDupSepVol.Value;
+
+                treeNode.ColorcodeFG =
+                    (treeNode.Nodes?.Any(subNode => subNode.IsSolitary) ?? false)
+                    ? (bAllDupSepVol ? SolitAllDupesOneVol : SolitAllClonesOneVol)      // at least one on one vol
+                    : (bAllDupSepVol ? SolitAllDupesSepVol : SolitAllClonesSepVol);     // sep vols
+            }                           // all dupes            not all dupes
+
+
+            foreach (var kvp in _dictSolitary)
+            {
+                var treeNode = kvp.Value;
+
+                if (SolitaryHasClones != treeNode.ColorcodeFG)
+                    continue;
+
+                if (null == treeNode.Nodes)
+                    continue;
+
+                var nodeDatum = treeNode.NodeDatum;
+
+                if (0 < nodeDatum.LengthHere)
+                    continue;   // any files here'd be unique else this folder'd bin above
+
+                if (treeNode.Nodes.All(treeNodeA => new[]
+                {
+                    AllOnOneVolume, SolitAllDupesOneVol, SolitAllClonesOneVol,
+                    OneCloneSepVolume, ManyClonesSepVolume, SolitAllDupesSepVol, SolitAllClonesSepVol
+                }
+                    .Contains(treeNodeA.ColorcodeFG)))
+                {
+                    if (treeNode.Nodes.Any(treeNodeA => new[] { AllOnOneVolume, SolitAllDupesOneVol, SolitAllClonesOneVol }
+                        .Contains(treeNodeA.ColorcodeFG)))
                     {
-                        var isAllDupSepVol = nodeDatum.Hashes_SubnodeFiles_Scratch.AsParallel().Aggregate(isAllDupSepVolHere.Value, f);
-
-                        if (null != isAllDupSepVol)
-                        {
-                            var bAllDupSepVol = isAllDupSepVol.Value;
-
-                            treeNode.ColorcodeFG =
-                                (treeNode.Nodes?.Any(subNode => subNode.IsSolitary) ?? false)
-                                ? (bAllDupSepVol ? SolitAllDupesOneVol : SolitAllClonesOneVol)      // all on one vol
-                                : (bAllDupSepVol ? SolitAllDupesSepVol : SolitAllClonesSepVol);     // sep vols
-                                                    // all dupes            not all dupes
-                        }
+                        treeNode.ColorcodeFG = SolitAllDupesOneVol;
+                    }
+                    else
+                    {
+                        treeNode.ColorcodeFG = SolitAllDupesSepVol;
                     }
                 }
             }
 
-            InsertSizeMarkers(_lsLVsolitary);
+
+            foreach (var kvp in _dictSolitary)
+            {
+                var treeNode = kvp.Value;
+
+                if (SolitAllDupesOneVol != treeNode.ColorcodeFG)
+                    continue;
+
+                if (null == treeNode.Nodes)
+                    continue;
+
+                var nodeDatum = treeNode.NodeDatum;
+
+                if (treeNode.Nodes.All(treeNodeA => new[]
+                {
+                    OneCloneSepVolume, ManyClonesSepVolume, SolitAllDupesSepVol, SolitAllClonesSepVol
+                }
+                    .Contains(treeNodeA.ColorcodeFG)))
+                {
+                    if (nodeDatum.Hashes_FilesHere.AsParallel().Aggregate(true, f) ?? false)
+                        treeNode.ColorcodeFG = SolitAllDupesSepVol;
+                }
+            }
 
 
             // Create lsLVsameVol MarkSolitaryParentsAsSolitary
@@ -138,6 +209,7 @@ namespace DoubleFile
 
             AddTreeToList.Go(AllNodes, lsSameVol, RootNodes);
             Util.Assert(1305.6326m, AllNodes.Count == nCount);
+
 
             foreach (var treeNode in AllNodes)
             {
@@ -298,8 +370,15 @@ namespace DoubleFile
 
                 for (var parent = treeNode.Parent; null != parent; parent = parent.Parent, bCheck = false)
                 {
-                    if (new[] { SolitaryHasClones, SolitAllClonesOneVol, SolitAllClonesSepVol }.Contains(parent.ColorcodeFG))
+                    if (new[]
+                    {
+                        SolitaryHasClones, SolitAllClonesOneVol, SolitAllClonesSepVol,
+                        SolitAllDupesOneVol, SolitAllDupesSepVol
+                    }
+                        .Contains(parent.ColorcodeFG))
+                    {
                         continue;
+                    }
 
                     Util.Assert(99977, new[] { Solitary, Transparent }.Contains(parent.ColorcodeFG), bIfDefDebug: true);
 
@@ -359,7 +438,7 @@ namespace DoubleFile
             _dictSolitary.Remove(kvp.Key);
         }
 
-        static void Step5_MarkSolitaryParentsAsSolitary(LocalTreeNode parent)
+        void Step4_DictSolitaryAdd_SolitaryParent(LocalTreeNode parent)
         {
             for (; null != parent; parent = parent.Parent)
             {
@@ -379,6 +458,7 @@ namespace DoubleFile
                     // ParentCloned is unimportant because it's just a nicety: it's got ParentClonedBG
                     Util.Assert(99974, new[] { Transparent, ParentCloned }.Contains(parent.ColorcodeFG), bIfDefDebug: true);
                     parent.ColorcodeFG = Solitary;
+                    _dictSolitary.Add(parent.NodeDatum.Hash_AllFiles, parent);
                 }
             }
         }

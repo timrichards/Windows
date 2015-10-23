@@ -92,7 +92,9 @@ namespace DoubleFile
                 var treeNode = kvp.Value;
                 var nodeDatum = treeNode.NodeDatum;
 
-                Util.Assert(99975, 0 < nodeDatum.FileCountHere);
+                if (0 == treeNode.NodeDatum.FileCountHere)
+                    continue;
+
                 Step4_DictSolitaryAdd_SolitaryParent(treeNode.Parent);
 
                 var lvItem = new LVitem_ClonesVM(new[] { treeNode }, nicknameUpdater);
@@ -208,8 +210,7 @@ namespace DoubleFile
             var nCount = CountNodes(RootNodes);
 
             AddTreeToList.Go(AllNodes, lsSameVol, RootNodes);
-            Util.Assert(1305.6326m, AllNodes.Count == nCount);
-
+            Util.Assert(99975, AllNodes.Count == nCount);
 
             foreach (var treeNode in AllNodes)
             {
@@ -355,9 +356,7 @@ namespace DoubleFile
             {
                 var treeNode = lsNodes[0];
 
-                if (0 < treeNode.NodeDatum.FileCountHere)
-                    _dictSolitary.Add(kvp.Key, treeNode);
-
+                _dictSolitary.Add(kvp.Key, treeNode);
                 treeNode.ColorcodeFG = Solitary;
             }
         }

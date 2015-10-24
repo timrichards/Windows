@@ -1,4 +1,5 @@
-﻿- Clones don't sync to folder detail updated in extra window.
+﻿- Tree list slider does not always go to root; and skips to root: try a search to subfolder then nav up.
+- Clones don't sync to folder detail updated in extra window.
 - Treemap selection resets for neighbor folders
 - Clones col can sort: turn that off until sorting removes size labels and 3-mode sorting is enabled
 - treemap folder color is the same as the one that represents files: it can drill down while the files one selects the outer folder
@@ -114,6 +115,7 @@
 	- Nor can they assign to base class { get; }, which makes such useless in abstract class?
 - Abstract and base statics are not unique in each derived class. Generic base statics are.
 - Parameterless base constructors are automatically called, and first
+- Aggregate returns seed on empty enumerable
 - directory listings preserve display case, which is irrespective: NTFS usage is always case insensitive.
 	Regex is case sensitive because the regex iteself might be: user can inline case-insensitve.
 - Rename set methods to MethodSet(): hard to find: e.g. AbortSet() in WinProgress

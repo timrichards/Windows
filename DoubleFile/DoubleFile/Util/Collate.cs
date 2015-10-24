@@ -92,20 +92,8 @@ namespace DoubleFile
                 var treeNode = kvp.Value;
                 var nodeDatum = treeNode.NodeDatum;
 
-                if (Transparent == treeNode.ColorcodeFG)
-                {
-                    Util.Assert(99978, null == treeNode.Clones);
-
-                    if (0 == nodeDatum.LengthTotal)
-                        treeNode.ColorcodeFG = ZeroLengthFolder;
-                    else if (0 == nodeDatum.Hash_AllFiles)
-                        treeNode.ColorcodeFG = FolderHasNoHashes;
-                }
-
                 if (0 == treeNode.NodeDatum.FileCountHere)
                     continue;
-
-                Step4_DictSolitaryAdd_SolitaryParent(treeNode.Parent);
 
                 var lvItem = new LVitem_ClonesVM(new[] { treeNode }, nicknameUpdater);
 
@@ -154,6 +142,30 @@ namespace DoubleFile
                     ? (bAllDupSepVol ? SolitAllDupesOneVol : SolitAllClonesOneVol)      // at least one on one vol
                     : (bAllDupSepVol ? SolitAllDupesSepVol : SolitAllClonesSepVol);     // sep vols
             }                           // all dupes            not all dupes
+
+
+            // Create lsLVsameVol MarkSolitaryParentsAsSolitary
+            var lsSameVol = new List<LocalTreeNode> { };
+            var nCount = CountNodes(RootNodes);
+
+            AddTreeToList.Go(AllNodes, lsSameVol, RootNodes);
+            Util.Assert(99975, AllNodes.Count == nCount);
+
+
+            foreach (var treeNode in AllNodes)
+            {
+                var nodeDatum = treeNode.NodeDatum;
+
+                if (Transparent == treeNode.ColorcodeFG)
+                {
+                    Util.Assert(99978, null == treeNode.Clones);
+
+                    if (0 == nodeDatum.LengthTotal)
+                        treeNode.ColorcodeFG = ZeroLengthFolder;
+                    else if (0 == nodeDatum.Hash_AllFiles)
+                        treeNode.ColorcodeFG = FolderHasNoHashes;
+                }
+            }
 
 
             foreach (var kvp in _dictSolitary)
@@ -227,13 +239,6 @@ namespace DoubleFile
                 }
             }
 
-
-            // Create lsLVsameVol MarkSolitaryParentsAsSolitary
-            var lsSameVol = new List<LocalTreeNode> { };
-            var nCount = CountNodes(RootNodes);
-
-            AddTreeToList.Go(AllNodes, lsSameVol, RootNodes);
-            Util.Assert(99975, AllNodes.Count == nCount);
 
 #if (DEBUG)
             foreach (var treeNode in AllNodes)

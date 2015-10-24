@@ -77,6 +77,7 @@ namespace DoubleFile
                 if (null == treeNode.Nodes)
                 {
                     nodeDatum.Hashes_SubnodeFiles_Scratch = new int[0];
+                    nodeDatum.Hashes_SubnodeFiles_Scratch_IsComplete = true;
                     continue;
                 }
 

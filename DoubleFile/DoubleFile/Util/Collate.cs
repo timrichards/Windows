@@ -163,7 +163,7 @@ namespace DoubleFile
 
                 if (treeNode.Nodes.All(treeNodeA => new[]
                 {
-                    AllOnOneVolume, SolitAllDupesOneVol, SolitAllClonesOneVol,
+                    ZeroLengthFolder, AllOnOneVolume, SolitAllDupesOneVol, SolitAllClonesOneVol,
                     OneCloneSepVolume, ManyClonesSepVolume, SolitAllDupesSepVol, SolitAllClonesSepVol
                 }
                     .Contains(treeNodeA.ColorcodeFG)))
@@ -195,7 +195,7 @@ namespace DoubleFile
 
                 if (treeNode.Nodes.All(treeNodeA => new[]
                 {
-                    OneCloneSepVolume, ManyClonesSepVolume, SolitAllDupesSepVol, SolitAllClonesSepVol
+                    ZeroLengthFolder, OneCloneSepVolume, ManyClonesSepVolume, SolitAllDupesSepVol, SolitAllClonesSepVol
                 }
                     .Contains(treeNodeA.ColorcodeFG)))
                 {

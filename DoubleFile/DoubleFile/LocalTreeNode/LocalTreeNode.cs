@@ -12,7 +12,7 @@ namespace DoubleFile
         int Set(IEnumerable<LocalTreeNode> rootNodes);
     }
 
-    [DebuggerDisplay("{PathShort} {Nodes?.Count}")]
+    [DebuggerDisplay("{NodeDatum.Hash_AllFiles} {PathShort} {Nodes?.Count}")]
     class LocalTreeNode : ILocalTreeNode_SetLevel
     {
         internal NodeDatum

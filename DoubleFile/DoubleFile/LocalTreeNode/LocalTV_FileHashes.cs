@@ -77,17 +77,17 @@ namespace DoubleFile
                 if (null == treeNode.Nodes)
                 {
                     nodeDatum.Hashes_SubnodeFiles_Scratch = new int[0];
-                    nodeDatum.Hashes_SubnodeFiles_Scratch_IsComplete = true;
+                    nodeDatum.Hashes_SubnodeFiles_IsComplete = true;
                     continue;
                 }
 
                 nodeDatum.Hashes_SubnodeFiles_Scratch =
-                    Setup_AllFileHashes_Scratch(treeNode.Nodes, out nodeDatum.Hashes_SubnodeFiles_Scratch_IsComplete, bStart: false)   // recurse
+                    Setup_AllFileHashes_Scratch(treeNode.Nodes, out nodeDatum.Hashes_SubnodeFiles_IsComplete, bStart: false)   // recurse
                     .OrderBy(n => n)
                     .Distinct()
                     .ToList();
 
-                if (false == nodeDatum.Hashes_SubnodeFiles_Scratch_IsComplete)
+                if (false == nodeDatum.Hashes_SubnodeFiles_IsComplete)
                     isHashComplete = false;
 
                 if (false == bStart)

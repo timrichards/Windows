@@ -35,7 +35,7 @@ namespace DoubleFile
         internal IReadOnlyList<int>
             Hashes_SubnodeFiles_Scratch = null;
         internal bool
-            Hashes_SubnodeFiles_Scratch_IsComplete = false;
+            Hashes_SubnodeFiles_IsComplete = false;
 
         internal readonly ulong
             LengthHere;

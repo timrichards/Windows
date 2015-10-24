@@ -181,26 +181,51 @@ namespace DoubleFile
             }
 
 
-            foreach (var kvp in _dictSolitary)
+            var bSolitAllDupesOneVol = true;
+
+            while (bSolitAllDupesOneVol)
             {
-                var treeNode = kvp.Value;
+                bSolitAllDupesOneVol = false;
 
-                if (SolitAllDupesOneVol != treeNode.ColorcodeFG)
-                    continue;
-
-                if (null == treeNode.Nodes)
-                    continue;
-
-                var nodeDatum = treeNode.NodeDatum;
-
-                if (treeNode.Nodes.All(treeNodeA => new[]
+                foreach (var kvp in _dictSolitary)
                 {
-                    ZeroLengthFolder, OneCloneSepVolume, ManyClonesSepVolume, SolitAllDupesSepVol, SolitAllClonesSepVol
-                }
-                    .Contains(treeNodeA.ColorcodeFG)))
-                {
-                    if (nodeDatum.Hashes_FilesHere.AsParallel().Aggregate(true, f) ?? false)
-                        treeNode.ColorcodeFG = SolitAllDupesSepVol;
+                    var treeNode = kvp.Value;
+
+  //                  Util.WriteLine(treeNode.PathFullGet(false));
+                    if (SolitAllDupesOneVol != treeNode.ColorcodeFG)
+                        continue;
+
+                    if (null == treeNode.Nodes)
+                        continue;
+
+                    var nodeDatum = treeNode.NodeDatum;
+
+                    if (false == nodeDatum.Hashes_FilesHere_IsComplete)
+                        continue;
+
+                    foreach (var treeNodeA in treeNode.Nodes)
+                    {
+                        var a = (ZeroLengthFolder == treeNode.ColorcodeFG);
+                        var b = (OneCloneSepVolume == treeNode.ColorcodeFG);
+                        var c = (ManyClonesSepVolume == treeNode.ColorcodeFG);
+                        var d = (SolitAllDupesSepVol == treeNode.ColorcodeFG);
+                        var e = (SolitAllClonesSepVol == treeNode.ColorcodeFG);
+
+                        var g = (false == (a || b || c || d || e));
+                    }
+
+                    if (treeNode.Nodes.All(treeNodeA => new[]
+                    {
+                        ZeroLengthFolder, OneCloneSepVolume, ManyClonesSepVolume, SolitAllDupesSepVol, SolitAllClonesSepVol
+                    }
+                        .Contains(treeNodeA.ColorcodeFG)))
+                    {
+                        if (nodeDatum.Hashes_FilesHere.AsParallel().Aggregate(true, f) ?? false)
+                        {
+                            treeNode.ColorcodeFG = SolitAllDupesSepVol;
+                            bSolitAllDupesOneVol = true;
+                        }
+                    }
                 }
             }
 

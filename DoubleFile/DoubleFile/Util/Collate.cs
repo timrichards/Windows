@@ -92,6 +92,16 @@ namespace DoubleFile
                 var treeNode = kvp.Value;
                 var nodeDatum = treeNode.NodeDatum;
 
+                if (Transparent == treeNode.ColorcodeFG)
+                {
+                    Util.Assert(99978, null == treeNode.Clones);
+
+                    if (0 == nodeDatum.LengthTotal)
+                        treeNode.ColorcodeFG = ZeroLengthFolder;
+                    else if (0 == nodeDatum.Hash_AllFiles)
+                        treeNode.ColorcodeFG = FolderHasNoHashes;
+                }
+
                 if (0 == treeNode.NodeDatum.FileCountHere)
                     continue;
 
@@ -191,7 +201,6 @@ namespace DoubleFile
                 {
                     var treeNode = kvp.Value;
 
-  //                  Util.WriteLine(treeNode.PathFullGet(false));
                     if (SolitAllDupesOneVol != treeNode.ColorcodeFG)
                         continue;
 
@@ -202,17 +211,6 @@ namespace DoubleFile
 
                     if (false == nodeDatum.Hashes_FilesHere_IsComplete)
                         continue;
-
-                    foreach (var treeNodeA in treeNode.Nodes)
-                    {
-                        var a = (ZeroLengthFolder == treeNode.ColorcodeFG);
-                        var b = (OneCloneSepVolume == treeNode.ColorcodeFG);
-                        var c = (ManyClonesSepVolume == treeNode.ColorcodeFG);
-                        var d = (SolitAllDupesSepVol == treeNode.ColorcodeFG);
-                        var e = (SolitAllClonesSepVol == treeNode.ColorcodeFG);
-
-                        var g = (false == (a || b || c || d || e));
-                    }
 
                     if (treeNode.Nodes.All(treeNodeA => new[]
                     {
@@ -237,20 +235,11 @@ namespace DoubleFile
             AddTreeToList.Go(AllNodes, lsSameVol, RootNodes);
             Util.Assert(99975, AllNodes.Count == nCount);
 
+#if (DEBUG)
             foreach (var treeNode in AllNodes)
             {
                 var nodeDatum = treeNode.NodeDatum;
 
-                if (Transparent == treeNode.ColorcodeFG)
-                {
-                    Util.Assert(99978, null == treeNode.Clones);
-
-                    if (0 == nodeDatum.LengthTotal)
-                        treeNode.ColorcodeFG = ZeroLengthFolder;
-                    else if (0 == nodeDatum.Hash_AllFiles)
-                        treeNode.ColorcodeFG = FolderHasNoHashes;
-                }
-#if (DEBUG)
                 if (null != treeNode.Clones)
                 {
                     if (0 == treeNode.Clones.Count)
@@ -273,8 +262,8 @@ namespace DoubleFile
 
                     Util.Assert(99585, false);
                 }
-#endif
             }
+#endif
 
             lsSameVol.Sort((y, x) => x.NodeDatum.LengthTotal.CompareTo(y.NodeDatum.LengthTotal));
             nProgressDenominator += lsSameVol.Count;

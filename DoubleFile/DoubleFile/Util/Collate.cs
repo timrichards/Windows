@@ -139,9 +139,9 @@ namespace DoubleFile
 
                 treeNode.ColorcodeFG =
                     (treeNode.Nodes?.Any(subNode => subNode.IsSolitary) ?? false)
-                    ? (bAllDupSepVol ? SolitAllDupesOneVol : SolitAllClonesOneVol)      // at least one on one vol
-                    : (bAllDupSepVol ? SolitAllDupesSepVol : SolitAllClonesSepVol);     // sep vols
-            }                           // all dupes            not all dupes
+                    ? (bAllDupSepVol ? SolitAllDupesOneVol : SolitAllDupesOneVol)      // at least one subfolder on one vol
+                    : (bAllDupSepVol ? SolitAllDupesSepVol : SolitAllDupesOneVol);     // all subfolders are on sep vols
+            }               //      all dupes are on sep vol    a dup is on one vol
 
 
             // Create lsLVsameVol MarkSolitaryParentsAsSolitary

@@ -64,7 +64,7 @@ namespace DoubleFile
         internal const int SolitAllDupesOneVol  = unchecked((int)0xFFF8C8D8);
         internal const int SolitAllDupesSepVol  = unchecked((int)0xFF7959D9);
         internal const int SolitaryHasClones    = unchecked((int)0xFFCA2A2A);
-        internal const int SolitAllClonesOneVol = unchecked((int)0xFFFBCBDB);
+        internal const int SolitAllClonesOneVol = unchecked((int)0xFFDBCBDB);
         internal const int SolitAllClonesSepVol = unchecked((int)0xFFACCCDC);
         internal const int SolitaryClonedParent = unchecked((int)0xFF4D7DAD);
         internal const int SolitaryOneVolParent = unchecked((int)0xFFBE3E3E);

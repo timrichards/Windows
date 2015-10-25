@@ -1,5 +1,7 @@
 ﻿- Tree list slider does not always go to root; and skips to root: try a search to subfolder then nav up. It also loses the deep node.
 - Clones don't sync to folder detail updated in extra window.
+- Option to sort file list solitary first
+- Scrollviewer for detail view
 - Treemap selection resets for neighbor folders
 - Clones col can sort: turn that off until sorting removes size labels and 3-mode sorting is enabled
 - treemap folder color is the same as the one that represents files: it can drill down while the files one selects the outer folder

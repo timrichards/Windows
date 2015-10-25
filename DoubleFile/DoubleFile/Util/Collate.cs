@@ -97,7 +97,7 @@ namespace DoubleFile
 
 
             foreach (var kvp in _dictSolitary)
-                Step4_SolitAllDupes(kvp);                                       //Step5_SolitAllDupes
+                Step4_SolitAllDupes(kvp);                                       //Step4_SolitAllDupes
 
 
             #region AllNodes _lsLVsameVol                                       //#region AllNodes _lsLVsameVol
@@ -145,13 +145,13 @@ namespace DoubleFile
             #endregion Transparent ZeroLengthFolder FolderHasNoHashes
 
 
-            Step5_SolitAllDupes();                                              //Step6_SolitAllDupes
-            Step6_SolitAllDupesSepVol();                                        //Step7_SolitAllDupesSepVol
+            Step5_SolitAllDupes();                                              //Step5_SolitAllDupes
+            Step6_SolitAllDupesSepVol();                                        //Step6_SolitAllDupesSepVol
 
 
 #if (DEBUG)
             foreach (var treeNode in AllNodes)
-                Step7_FauxUnitTest(treeNode);                                   //Step8_FauxUnitTest
+                Step7_FauxUnitTest(treeNode);                                   //Step7_FauxUnitTest
 #endif
 
 

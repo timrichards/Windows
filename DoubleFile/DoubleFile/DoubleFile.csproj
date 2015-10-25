@@ -198,10 +198,14 @@
     <Compile Include="UserControls\BindingProxy.cs" />
     <Compile Include="UserControls\MVVM_Files_Base\LVitem_CompareVM.cs" />
     <Compile Include="UserControls\MVVM_Files_Base\LV_FilesVM_Compare.cs" />
+    <Compile Include="UserControls\MVVM_Files_Base\UC_BackupVM.cs" />
     <Compile Include="UserControls\MVVM_Files_Base\UC_CompareVM.cs" />
     <Compile Include="UserControls\MVVM_FolderList_Base\UC_FolderListVM_Impl.cs" />
     <Compile Include="UserControls\MVVM_FolderList_Base\UC_ClonesHereVM.cs" />
     <Compile Include="UserControls\MVVM_FolderList_Base\UC_SolitaryHereVM.cs" />
+    <Compile Include="UserControls\UC_Backup.xaml.cs">
+      <DependentUpon>UC_Backup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\UC_Compare.xaml.cs">
       <DependentUpon>UC_Compare.xaml</DependentUpon>
     </Compile>
@@ -517,6 +521,10 @@
     <Page Include="Assets\VolumeEdit_Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\UC_Backup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\UC_Compare.xaml">
       <Generator>MSBuild:Compile</Generator>

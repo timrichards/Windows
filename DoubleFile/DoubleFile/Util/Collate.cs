@@ -84,11 +84,7 @@ namespace DoubleFile
             {
                 reportProgress();
 
-                var treeNode = kvp.Value[0];
-
-                if (0 == treeNode.NodeDatum.FileCountHere)
-                    continue;
-
+                var treeNode = kvp.Value.First();
                 var lvItem = new LVitem_ClonesVM(new[] { treeNode }, nicknameUpdater);
 
                 _lsLVsolitary.Add(lvItem);
@@ -104,7 +100,7 @@ namespace DoubleFile
                 Step4_SolitAllDupes(kvp);                                       //Step5_SolitAllDupes
 
 
-            #region _lsLVsameVol                                                //#region _lsLVsameVol
+            #region AllNodes _lsLVsameVol                                       //#region AllNodes _lsLVsameVol
             {
                 var lsSameVol = new List<LocalTreeNode> { };
                 var nCount = CountNodes(RootNodes);
@@ -134,9 +130,6 @@ namespace DoubleFile
             #region Transparent ZeroLengthFolder FolderHasNoHashes              //#region Transparent ZeroLengthFolder FolderHasNoHashes
             foreach (var treeNode in AllNodes)
             {
-                if (treeNode.PathFull == @"74.5 GB Photobank 1 (S:)\CARDS\CF0015\ROLAND")
-                    _nHashDebug = treeNode.NodeDatum.Hash_AllFiles;
-
                 if (Transparent != treeNode.ColorcodeFG)
                     continue;
 
@@ -333,11 +326,8 @@ namespace DoubleFile
             var testNode = kvp.Value.Last();
             var nodeDatum = testNode.NodeDatum;
 
-            if (false ==
-                (nodeDatum.Hashes_SubnodeFiles_IsComplete && nodeDatum.Hashes_FilesHere_IsComplete))
-            {
+            if (false == (nodeDatum.Hashes_SubnodeFiles_IsComplete && nodeDatum.Hashes_FilesHere_IsComplete))
                 return;
-            }
 
             var isAllDupSepVol = nodeDatum.Hashes_FilesHere.AsParallel().Aggregate<int, bool?>(true, IsDupeSepVolume);
 
@@ -349,19 +339,12 @@ namespace DoubleFile
             if (null == isAllDupSepVol)
                 return;
 
-            var color = 0;
-
-            if (testNode.Nodes?.Any(subNode => (subNode.IsSolitary && (subNode.NodeDatum.Hash_AllFiles != nodeDatum.Hash_AllFiles))) ?? false)
-            {
-                color = SolitAllDupesOneVol;
-            }
-            else
-            {
-                color =
-                    isAllDupSepVol.Value
-                    ? SolitAllDupesSepVol
-                    : SolitAllDupesOneVol;
-            }
+            var color =
+                isAllDupSepVol.Value &&
+                (false ==
+                (testNode.Nodes?.Any(subNode => (subNode.IsSolitary && (subNode.NodeDatum.Hash_AllFiles != nodeDatum.Hash_AllFiles))) ?? false))
+                ? SolitAllDupesSepVol
+                : SolitAllDupesOneVol;
 
             foreach (var treeNode in kvp.Value)
                 treeNode.ColorcodeFG = color;
@@ -370,7 +353,6 @@ namespace DoubleFile
         void Step5_SolitAllDupes()
         {
             var bSolitAllDupes = true;
-            var bHit = false;
 
             while (bSolitAllDupes)
             {
@@ -408,11 +390,6 @@ namespace DoubleFile
                             treeNode.ColorcodeFG = color;
 
                         bSolitAllDupes = true;
-
-                        if (bHit)
-                            Util.Write(".");
-
-                        bHit = true;
                     }
                 }
             }
@@ -421,7 +398,6 @@ namespace DoubleFile
         void Step6_SolitAllDupesSepVol()
         {
             var bSolitAllDupes = true;
-            var bHit = false;
 
             while (bSolitAllDupes)
             {
@@ -442,9 +418,6 @@ namespace DoubleFile
                     if (false == nodeDatum.Hashes_FilesHere_IsComplete)
                         continue;
 
-                    if (nodeDatum.Hash_AllFiles == _nHashDebug)
-                        Util.Assert(0, false);
-
                     if (testNode.Nodes.All(treeNodeA => new[]
                     {
                         ZeroLengthFolder, OneCloneSepVolume, ManyClonesSepVolume, SolitAllDupesSepVol, SolitAllClonesSepVol
@@ -457,11 +430,6 @@ namespace DoubleFile
                                 treeNode.ColorcodeFG = SolitAllDupesSepVol;
 
                             bSolitAllDupes = true;
-
-                            if (bHit)
-                                Util.Write("-");
-
-                            bHit = true;
                         }
                     }
                 }
@@ -546,9 +514,6 @@ namespace DoubleFile
             : (false == current)    // this waterfall binning may only work due to parallel aggregation
             ? false
             : Statics.DupeFileDictionary.IsDupeSepVolume(nFileID);
-
-        int
-            _nHashDebug = 0;
 
         IDictionary<int, List<LocalTreeNode>>
             _dictSolitary = new SortedDictionary<int, List<LocalTreeNode>>();

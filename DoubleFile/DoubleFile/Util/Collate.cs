@@ -508,12 +508,20 @@ namespace DoubleFile
         }
 
         bool?
-            IsDupeSepVolume(bool? current, int nFileID) =>
-            (null == current)
-            ? null
-            : (false == current)    // this waterfall binning may only work due to parallel aggregation
-            ? false
-            : Statics.DupeFileDictionary.IsDupeSepVolume(nFileID);
+            IsDupeSepVolume(bool? current, int nFileID)
+        {
+            if (null == current)
+                return null;
+
+            var retVal = Statics.DupeFileDictionary.IsDupeSepVolume(nFileID);
+
+            return
+                (null == retVal)
+                ? null
+                : (false == current)
+                ? false
+                : retVal;
+        }
 
         IDictionary<int, List<LocalTreeNode>>
             _dictSolitary = new SortedDictionary<int, List<LocalTreeNode>>();

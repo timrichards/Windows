@@ -76,10 +76,6 @@ namespace DoubleFile
             #endregion _lsLVclones
 
 
-            foreach (var kvp in _dictSolitary.ToList())
-                Step4_DictSolitaryAdd_SolitaryParent(kvp.Value.Parent);         //Step4_DictSolitaryAdd_SolitaryParent
-
-
             #region _lsLVsolitary                                               //#region _lsLVsolitary
             nProgressDenominator += _dictSolitary.Count;
             ++nProgressItem;
@@ -88,7 +84,7 @@ namespace DoubleFile
             {
                 reportProgress();
 
-                var treeNode = kvp.Value;
+                var treeNode = kvp.Value[0];
 
                 if (0 == treeNode.NodeDatum.FileCountHere)
                     continue;
@@ -105,7 +101,7 @@ namespace DoubleFile
 
 
             foreach (var kvp in _dictSolitary)
-                Step5_SolitAllDupes(kvp);                                       //Step5_SolitAllDupes
+                Step4_SolitAllDupes(kvp);                                       //Step5_SolitAllDupes
 
 
             #region _lsLVsameVol                                                //#region _lsLVsameVol
@@ -156,13 +152,13 @@ namespace DoubleFile
             #endregion Transparent ZeroLengthFolder FolderHasNoHashes
 
 
-            Step6_SolitAllDupes();                                              //Step6_SolitAllDupes
-            Step7_SolitAllDupesSepVol();                                        //Step7_SolitAllDupesSepVol
+            Step5_SolitAllDupes();                                              //Step6_SolitAllDupes
+            Step6_SolitAllDupesSepVol();                                        //Step7_SolitAllDupesSepVol
 
 
 #if (DEBUG)
             foreach (var treeNode in AllNodes)
-                Step8_FauxUnitTest(treeNode);                                   //Step8_FauxUnitTest
+                Step7_FauxUnitTest(treeNode);                                   //Step8_FauxUnitTest
 #endif
 
 
@@ -240,23 +236,16 @@ namespace DoubleFile
                         _dictClones[kvp.Key] = lsKeep;
                     else
                         Util.Assert(99971, ReferenceEquals(lsCheck, lsKeep));
-                }
-                else
-                {
-                    foreach (var treeNode in lsNodes)
-                        treeNode.ColorcodeFG = SolitarySoleChild;
 
-                    lsNodes = lsKeep;   // kick off "else" logic below after unmarking parent folders
+                    return;
                 }
             }
 
-            if (1 == lsNodes.Count)     // "else"
-            {
-                var treeNode = lsNodes[0];
-
-                _dictSolitary.Add(kvp.Key, treeNode);
+            foreach (var treeNode in lsNodes)
                 treeNode.ColorcodeFG = Solitary;
-            }
+
+            lsNodes.Sort((x, y) => x.Level.CompareTo(y.Level));
+            _dictSolitary.Add(kvp.Key, lsNodes);
         }
 
         void Step2_SolitaryHasClones(LocalTreeNode treeNode)
@@ -277,31 +266,17 @@ namespace DoubleFile
                         continue;
                     }
 
-                    Util.Assert(99977, new[] { Solitary, SolitarySoleChild, Transparent }.Contains(parent.ColorcodeFG), bIfDefDebug: true);
+                    Util.Assert(99977, new[] { Solitary, Transparent }.Contains(parent.ColorcodeFG), bIfDefDebug: true);
 
                     var bSet = SolitaryHasClones;
 
                     if (bCheck && 
                         parent.Nodes.All(treeNodeA => false == treeNodeA.IsSolitary))
                     {
-                        var nSolitarySoleChild = (SolitarySoleChild == parent.ColorcodeFG) ? parent.NodeDatum.Hash_AllFiles : 0;
-
                         bSet =
                             parent.Nodes.Any(treeNodeA => treeNodeA.IsAllOnOneVolume)
                             ? SolitAllClonesOneVol
                             : SolitAllClonesSepVol;
-
-                        if (0 != nSolitarySoleChild)
-                        {
-                            for (var parentA = parent.Parent; parentA?.NodeDatum.Hash_AllFiles == nSolitarySoleChild; parentA = parentA.Parent)
-                            {
-                                if (false == new[] { SolitAllClonesOneVol, SolitAllClonesSepVol }.Contains(parentA.ColorcodeFG))
-                                {
-                                    Util.Assert(99970, new[] { SolitaryHasClones, Solitary, SolitarySoleChild, Transparent }.Contains(parentA.ColorcodeFG), bIfDefDebug: true);
-                                    parentA.ColorcodeFG = bSet;
-                                }
-                            }
-                        }
                     }
 
                     parent.ColorcodeFG = bSet;
@@ -317,12 +292,13 @@ namespace DoubleFile
                 Step2_SolitaryHasClones(subNode);             // recurse
         }
 
-        void Step3_DictSolitaryRemove_ChildrenOfClones(KeyValuePair<int, LocalTreeNode> kvp)
+        void Step3_DictSolitaryRemove_ChildrenOfClones(KeyValuePair<int, List<LocalTreeNode>> kvp)
         {
             // A parent may be cloned and its child may be solitary: files may be distributed differently than in the clone.
             var nParentCloneColor = 0;
+            var testNode = kvp.Value.First();
 
-            for (var parent = kvp.Value.Parent; null != parent; parent = parent.Parent)
+            for (var parent = testNode.Parent; null != parent; parent = parent.Parent)
             {
                 if (null == parent.Clones)
                     continue;
@@ -338,7 +314,10 @@ namespace DoubleFile
             if (0 == nParentCloneColor)
                 return;
 
-            for (var treeNode = kvp.Value; null != treeNode; treeNode = treeNode.Parent)
+            foreach (var treeNode in kvp.Value)
+                treeNode.ColorcodeFG = nParentCloneColor;
+
+            for (var treeNode = testNode.Parent; null != treeNode; treeNode = treeNode.Parent)
             {
                 if (null != treeNode.Clones)
                     break;
@@ -349,35 +328,10 @@ namespace DoubleFile
             _dictSolitary.Remove(kvp.Key);
         }
 
-        void Step4_DictSolitaryAdd_SolitaryParent(LocalTreeNode parent)
+        void Step4_SolitAllDupes(KeyValuePair<int, List<LocalTreeNode>> kvp)
         {
-            for (; null != parent; parent = parent.Parent)
-            {
-                parent.ColorcodeBG = ContainsSolitaryBG;
-
-                if (new[] { ManyClonesSepVolume, OneCloneSepVolume, AllOnOneVolume }.Contains(parent.ColorcodeFG))
-                    return; // solitary folder can have cloned parent if files are distributed differently among the parent's clones
-
-                if (false == new[]
-                {
-                    SolitaryHasClones, Solitary, SolitarySoleChild,
-                    SolitAllDupesOneVol, SolitAllDupesSepVol,
-                    SolitAllClonesOneVol, SolitAllClonesSepVol
-                }
-                    .Contains(parent.ColorcodeFG))
-                {
-                    // ParentCloned is unimportant because it's just a nicety: it's got ParentClonedBG
-                    Util.Assert(99974, new[] { Transparent, ParentCloned }.Contains(parent.ColorcodeFG), bIfDefDebug: true);
-                    parent.ColorcodeFG = Solitary;
-                    _dictSolitary.Add(parent.NodeDatum.Hash_AllFiles, parent);
-                }
-            }
-        }
-
-        void Step5_SolitAllDupes(KeyValuePair<int, LocalTreeNode> kvp)
-        {
-            var treeNode = kvp.Value;
-            var nodeDatum = treeNode.NodeDatum;
+            var testNode = kvp.Value.Last();
+            var nodeDatum = testNode.NodeDatum;
 
             if (false ==
                 (nodeDatum.Hashes_SubnodeFiles_IsComplete && nodeDatum.Hashes_FilesHere_IsComplete))
@@ -395,21 +349,28 @@ namespace DoubleFile
             if (null == isAllDupSepVol)
                 return;
 
-            if (treeNode.Nodes?.Any(subNode => subNode.IsSolitary) ?? false)
+            var color = 0;
+
+            if (testNode.Nodes?.Any(subNode => (subNode.IsSolitary && (subNode.NodeDatum.Hash_AllFiles != nodeDatum.Hash_AllFiles))) ?? false)
             {
-                treeNode.ColorcodeFG = SolitAllDupesOneVol;
-                return;
+                color = SolitAllDupesOneVol;
+            }
+            else
+            {
+                color =
+                    isAllDupSepVol.Value
+                    ? SolitAllDupesSepVol
+                    : SolitAllDupesOneVol;
             }
 
-            treeNode.ColorcodeFG =
-                isAllDupSepVol.Value
-                ? SolitAllDupesSepVol
-                : SolitAllDupesOneVol;
+            foreach (var treeNode in kvp.Value)
+                treeNode.ColorcodeFG = color;
         }
 
-        void Step6_SolitAllDupes()
+        void Step5_SolitAllDupes()
         {
             var bSolitAllDupes = true;
+            var bHit = false;
 
             while (bSolitAllDupes)
             {
@@ -417,45 +378,50 @@ namespace DoubleFile
 
                 foreach (var kvp in _dictSolitary)
                 {
-                    var treeNode = kvp.Value;
+                    var testNode = kvp.Value.Last();
 
-                    if (SolitaryHasClones != treeNode.ColorcodeFG)
+                    if (SolitaryHasClones != testNode.ColorcodeFG)
                         continue;
 
-                    if (null == treeNode.Nodes)
+                    if (null == testNode.Nodes)
                         continue;
 
-                    var nodeDatum = treeNode.NodeDatum;
+                    var nodeDatum = testNode.NodeDatum;
 
                     if (0 < nodeDatum.LengthHere)
                         continue;   // any files here'd be unique else this folder'd bin above
 
-                    if (treeNode.Nodes.All(treeNodeA => new[]
+                    if (testNode.Nodes.All(treeNodeA => new[]
                     {
                         ZeroLengthFolder, AllOnOneVolume, SolitAllDupesOneVol, SolitAllClonesOneVol,
                         OneCloneSepVolume, ManyClonesSepVolume, SolitAllDupesSepVol, SolitAllClonesSepVol
                     }
                         .Contains(treeNodeA.ColorcodeFG)))
                     {
-                        if (treeNode.Nodes.Any(treeNodeA => new[] { AllOnOneVolume, SolitAllDupesOneVol, SolitAllClonesOneVol }
+                        var color =
+                            (testNode.Nodes.Any(treeNodeA => new[] { AllOnOneVolume, SolitAllDupesOneVol, SolitAllClonesOneVol }
                             .Contains(treeNodeA.ColorcodeFG)))
-                        {
-                            treeNode.ColorcodeFG = SolitAllDupesOneVol;
-                        }
-                        else
-                        {
-                            treeNode.ColorcodeFG = SolitAllDupesSepVol;
-                        }
+                            ? SolitAllDupesOneVol
+                            : SolitAllDupesSepVol;
+
+                        foreach (var treeNode in kvp.Value)
+                            treeNode.ColorcodeFG = color;
 
                         bSolitAllDupes = true;
+
+                        if (bHit)
+                            Util.Write(".");
+
+                        bHit = true;
                     }
                 }
             }
         }
 
-        void Step7_SolitAllDupesSepVol()
+        void Step6_SolitAllDupesSepVol()
         {
             var bSolitAllDupes = true;
+            var bHit = false;
 
             while (bSolitAllDupes)
             {
@@ -463,23 +429,23 @@ namespace DoubleFile
 
                 foreach (var kvp in _dictSolitary)
                 {
-                    var treeNode = kvp.Value;
+                    var testNode = kvp.Value.Last();
 
-                    if (treeNode.NodeDatum.Hash_AllFiles == _nHashDebug)
-                        Util.Assert(0, false);
-
-                    if (false == new[] { SolitaryHasClones, SolitAllDupesOneVol }.Contains(treeNode.ColorcodeFG))
+                    if (false == new[] { SolitaryHasClones, SolitAllDupesOneVol }.Contains(testNode.ColorcodeFG))
                         continue;
 
-                    if (null == treeNode.Nodes)
+                    if (null == testNode.Nodes)
                         continue;
 
-                    var nodeDatum = treeNode.NodeDatum;
+                    var nodeDatum = testNode.NodeDatum;
 
                     if (false == nodeDatum.Hashes_FilesHere_IsComplete)
                         continue;
 
-                    if (treeNode.Nodes.All(treeNodeA => new[]
+                    if (nodeDatum.Hash_AllFiles == _nHashDebug)
+                        Util.Assert(0, false);
+
+                    if (testNode.Nodes.All(treeNodeA => new[]
                     {
                         ZeroLengthFolder, OneCloneSepVolume, ManyClonesSepVolume, SolitAllDupesSepVol, SolitAllClonesSepVol
                     }
@@ -487,15 +453,22 @@ namespace DoubleFile
                     {
                         if (nodeDatum.Hashes_FilesHere.AsParallel().Aggregate<int, bool?>(true, IsDupeSepVolume) ?? false)
                         {
-                            treeNode.ColorcodeFG = SolitAllDupesSepVol;
+                            foreach (var treeNode in kvp.Value)
+                                treeNode.ColorcodeFG = SolitAllDupesSepVol;
+
                             bSolitAllDupes = true;
+
+                            if (bHit)
+                                Util.Write("-");
+
+                            bHit = true;
                         }
                     }
                 }
             }
         }
 
-        void Step8_FauxUnitTest(LocalTreeNode treeNode)
+        void Step7_FauxUnitTest(LocalTreeNode treeNode)
         {
             var nodeDatum = treeNode.NodeDatum;
 
@@ -577,8 +550,8 @@ namespace DoubleFile
         int
             _nHashDebug = 0;
 
-        IDictionary<int, LocalTreeNode>
-            _dictSolitary = new SortedDictionary<int, LocalTreeNode>();
+        IDictionary<int, List<LocalTreeNode>>
+            _dictSolitary = new SortedDictionary<int, List<LocalTreeNode>>();
         readonly IList<LVitem_ClonesVM>
             _lsLVsolitary = new List<LVitem_ClonesVM>();
 

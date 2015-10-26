@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
         LocalTitle="All cloned folders here">
-    <local:UC_FolderList_Base x:Name="form_ucFolderList">
+    <local:UC_FolderList_Base>
         <CheckBox IsChecked="{Binding AllOneVolIsSolitary}" Command="{Binding Icmd_SolitaryIsAllOneVol}" Content="All One Vol: Solitary"/>
         <Button Command="{Binding Icmd_Export}" Content="Export" />
     </local:UC_FolderList_Base>

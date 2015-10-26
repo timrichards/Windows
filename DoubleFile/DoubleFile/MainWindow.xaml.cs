@@ -261,10 +261,10 @@ namespace DoubleFile
             {
                 new MyLink("Compare", "/UserControls/UC_Compare.xaml")
             }},
-            //new LinkGroup { DisplayName="Backup", Links =
-            //{
-            //    new MyLink("Backup", "/UserControls/UC_Backup.xaml")
-            //}},
+            new LinkGroup { DisplayName="Backup", Links =
+            {
+                new MyLink("Backup", "/UserControls/UC_Backup.xaml")
+            }},
             new LinkGroup { DisplayName="Search", Links =
             {
                 new MyLink("Search", "/UserControls/UC_Search.xaml")

@@ -3,5 +3,5 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:DoubleFile"
         LocalTitle="Nearest">
-    <local:UC_FolderList_Base x:Name="form_ucFolderList"/>
+    <local:UC_FolderList_Base/>
 </local:LocalUserControlBase>

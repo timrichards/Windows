@@ -20,7 +20,7 @@ namespace DoubleFile
             Observable.FromEventPattern(this, "Loaded")
                 .LocalSubscribe(99617, x =>
             {
-                foreach (UIElement element in sidePanelsCtls.Cast<UIElement>().ToList())
+                foreach (var element in sidePanelsCtls.Cast<UIElement>().ToList())
                 {
                     sidePanelsCtls.Remove(element);
                     form_StackPanel.Children.Add(element);

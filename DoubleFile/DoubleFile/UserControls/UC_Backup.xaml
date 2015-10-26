@@ -65,21 +65,39 @@
                         <TextBox Text="{Binding FolderSel, Mode=OneWay}" Grid.Row="0"/>
 
                         <Border Grid.Row="1"/>
-                        <Button Command="{Binding Icmd_Pick1}" Content="Set Folder 1" Grid.Row="1" Style="{StaticResource Pick}"/>
-                        <TextBox Text="{Binding Folder1, Mode=OneWay}" Grid.Row="1"/>
+                        <Button Command="{Binding Icmd_Pick}" Content="Set Folder 1" Grid.Row="1" Style="{StaticResource Pick}"/>
+                        <TextBox Text="{Binding Folder, Mode=OneWay}" Grid.Row="1"/>
                         <Button Command="{Binding Icmd_GoTo1}" Grid.Row="1" Style="{StaticResource GoTo}"/>
-
-                        <Border Grid.Row="2"/>
-                        <Button Command="{Binding Icmd_Pick2}" Content="Set Folder 2" Grid.Row="2" Style="{StaticResource Pick}"/>
-                        <TextBox Text="{Binding Folder2, Mode=OneWay}" Grid.Row="2"/>
-                        <Button Command="{Binding Icmd_GoTo2}" Grid.Row="2" Style="{StaticResource GoTo}"/>
 
                         <Border Grid.Row="3" BorderThickness="0,1"/>
                         <TextBlock Text="Result summary:" Grid.Row="3"/>
                         <TextBox Text="{Binding Results, Mode=OneWay}" Grid.Row="3" Margin="0,10"/>
                     </Grid>
                     <Expander Header="Files common to both">
-                        <local:UC_Files DataContext="{Binding LV_Both}" Visibility="{Binding VisibilityOnItems}"/>
+                        <DataGrid>
+                            <DataGrid.Resources>
+                                <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Alternate}" Value="True">
+                                            <Setter Property="Foreground" Value="AntiqueWhite" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.Resources>
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn Header="Folders" Width="{Binding WidthFolder}">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock>
+                                                <Run Text="{Binding PathShort, Mode=OneWay}" FontWeight="SemiBold"/>
+                                                <Run Text="{Binding In, Mode=OneWay}" FontWeight="ExtraLight"/>
+                                                <Run Text="{Binding Parent, Mode=OneWay}"/>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
                     </Expander>
                     <Expander Header="Files that are only in the first directory tree">
                         <local:UC_Files DataContext="{Binding LV_First}" Visibility="{Binding VisibilityOnItems}"/>

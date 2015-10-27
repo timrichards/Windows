@@ -46,7 +46,7 @@ namespace DoubleFile
             _nLengthTotal = 0;
             FindAllSolitary(searchFolder);
             SetFoldersHeader(Util.FormatSize((ulong)_nLengthTotal));
-            return _lsFolders.OrderByDescending(lvItem => lvItem.Folder.NodeDatum.LengthTotal);
+            return _lsFolders.OrderByDescending(lvItem => lvItem.TreeNode.NodeDatum.LengthTotal);
         }
 
         void FindAllSolitary(LocalTreeNode searchFolder, bool bStart = true)

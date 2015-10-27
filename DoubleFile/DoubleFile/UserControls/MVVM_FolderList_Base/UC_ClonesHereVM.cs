@@ -43,8 +43,8 @@ namespace DoubleFile
         {
             _lsFolders = new ConcurrentBag<LVitem_FolderListVM>();
             FindAllClones(searchFolder);
-            SetFoldersHeader(Util.FormatSize((ulong)_lsFolders.Sum(lvItem => (long)lvItem.Folder.NodeDatum.LengthTotal)));
-            return _lsFolders.OrderByDescending(lvItem => lvItem.Folder.NodeDatum.LengthTotal);
+            SetFoldersHeader(Util.FormatSize((ulong)_lsFolders.Sum(lvItem => (long)lvItem.TreeNode.NodeDatum.LengthTotal)));
+            return _lsFolders.OrderByDescending(lvItem => lvItem.TreeNode.NodeDatum.LengthTotal);
         }
 
         void FindAllClones(LocalTreeNode searchFolder)

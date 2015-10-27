@@ -57,24 +57,20 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <TextBlock Text="Current folder:" Grid.Row="0"/>
+                        <StackPanel Grid.Row="0" Orientation="Horizontal">
+                            <Button Command="{Binding Icmd_Pick}" Content="Add" Style="{StaticResource Pick}"/>
+                            <TextBlock Text="Current folder:" />
+                        </StackPanel>
                         <TextBox Text="{Binding FolderSel, Mode=OneWay}" Grid.Row="0"/>
-
                         <Border Grid.Row="1"/>
-                        <Button Command="{Binding Icmd_Pick}" Content="Set Folder 1" Grid.Row="1" Style="{StaticResource Pick}"/>
-                        <TextBox Text="{Binding Folder, Mode=OneWay}" Grid.Row="1"/>
-                        <Button Command="{Binding Icmd_GoTo1}" Grid.Row="1" Style="{StaticResource GoTo}"/>
-
-                        <Border Grid.Row="3" BorderThickness="0,1"/>
-                        <TextBlock Text="Result summary:" Grid.Row="3"/>
-                        <TextBox Text="{Binding Results, Mode=OneWay}" Grid.Row="3" Margin="0,10"/>
                     </Grid>
-                    <Expander Header="Files common to both">
-                        <DataGrid>
+                    <Expander Header="Files that are unique or all on the same volume that are in the selected folders">
+                        <local:UC_Files DataContext="{Binding LV_Files}" Visibility="{Binding VisibilityOnItems}"/>
+                    </Expander>
+                    <Expander Header="Folders selected to back up">
+                        <DataGrid Visibility="{Binding VisibilityOnItems}">
                             <DataGrid.Resources>
                                 <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">
                                     <Style.Triggers>
@@ -99,21 +95,7 @@
                             </DataGrid.Columns>
                         </DataGrid>
                     </Expander>
-                    <Expander Header="Files that are only in the first directory tree">
-                        <local:UC_Files DataContext="{Binding LV_First}" Visibility="{Binding VisibilityOnItems}"/>
-                    </Expander>
-                    <Expander Header="Files that are only in the second directory tree">
-                        <local:UC_Files DataContext="{Binding LV_Second}" Visibility="{Binding VisibilityOnItems}"/>
-                    </Expander>
                 </StackPanel>
-                <Grid Height="50" Visibility="{Binding ProgressbarVisibility}" VerticalAlignment="Center" HorizontalAlignment="Stretch">
-                    <ProgressBar IsIndeterminate="True" VerticalAlignment="Bottom"/>
-                </Grid>
-                <TextBlock Visibility="{Binding NoResultsVisibility}" TextAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">
-                <Run Text="{Binding NoResultsText, Mode=OneWay}" FontWeight="SemiBold" Foreground="AntiqueWhite"/>
-                <LineBreak/>
-                <Run>No results</Run>
-                </TextBlock>
             </Grid>
         </ScrollViewer>
         <CheckBox Name="formChk_Nicknames" IsChecked="{Binding UseNicknames}" Command="{Binding Icmd_Nicknames}" Content="Nicknames" Grid.Column="1" Margin="5,0,0,0">
@@ -121,10 +103,12 @@
                 <RotateTransform Angle="90" />
             </CheckBox.LayoutTransform>
         </CheckBox>
-        <Button Command="{Binding Icmd_GoTo}" Content="Go To" Grid.Column="1" Margin="5,0,0,0" VerticalAlignment="Bottom">
-            <Button.LayoutTransform>
+        <StackPanel Orientation="Horizontal" Grid.Column="1" VerticalAlignment="Bottom">
+            <StackPanel.LayoutTransform>
                 <RotateTransform Angle="90" />
-            </Button.LayoutTransform>
-        </Button>
+            </StackPanel.LayoutTransform>
+            <Button Command="{Binding Icmd_Remove}" Content="Remove" Margin="5,0,0,0"/>
+            <Button Command="{Binding Icmd_GoTo}" Content="Go To" Margin="5,0,0,0"/>
+        </StackPanel>
     </Grid>
 </local:LocalUserControlBase>

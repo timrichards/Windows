@@ -5,12 +5,12 @@ namespace DoubleFile
     class LVitem_FolderListVM : ListViewItemVM_Base, IListUpdater
     {
         internal override string
-            ExportLine => Folder.PathFullGet(_nicknameUpdater.Value);
+            ExportLine => TreeNode.PathFullGet(_nicknameUpdater.Value);
 
         public bool
             Alternate { get; internal set; }
         public string
-            PathShort => Folder.PathShort;
+            PathShort => TreeNode.PathShort;
         public string
             In { get; private set; } = " in ";    // interned
 
@@ -19,7 +19,7 @@ namespace DoubleFile
         {
             get
             {
-                var parent = Folder.Parent;
+                var parent = TreeNode.Parent;
 
                 if (null != parent)
                 {
@@ -37,7 +37,7 @@ namespace DoubleFile
 
         internal LVitem_FolderListVM(LocalTreeNode folder, ListUpdater<bool> nicknameUpdater)
         {
-            Folder = folder;
+            TreeNode = folder;
             _nicknameUpdater = nicknameUpdater;
         }
 
@@ -48,7 +48,7 @@ namespace DoubleFile
         static IReadOnlyList<string> _propNamesA = null;
 
         internal readonly LocalTreeNode
-            Folder;
+            TreeNode;
 
         readonly ListUpdater<bool>
             _nicknameUpdater;

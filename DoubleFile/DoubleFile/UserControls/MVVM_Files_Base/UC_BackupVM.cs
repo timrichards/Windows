@@ -2,12 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
 
 namespace DoubleFile
 {
-    partial class UC_BackupVM : ObservableObjectBase, IDisposable
+    partial class UC_BackupVM : UC_FolderListVM_Base, IDisposable
     {
         internal bool
             IsDisposed { get; private set; } = false;
@@ -15,104 +14,61 @@ namespace DoubleFile
         public string FolderSel => _folderSel?.PathFullGet(UseNicknames);
         LocalTreeNode _folderSel = null;
 
-        public string Folder => _folder?.PathFullGet(UseNicknames);
-        LocalTreeNode _folder = null;
-
-        public string Results { get; private set; }
-
         public ICommand Icmd_Pick { get; }
-        public ICommand Icmd_GoTo1 { get; }
-        public ICommand Icmd_GoTo { get; }
-
-        public ICommand Icmd_Nicknames { get; }
-        public bool UseNicknames { get; set; }
-
-        public Visibility ProgressbarVisibility { get; private set; } = Visibility.Visible;
-        public Visibility NoResultsVisibility { get; private set; } = Visibility.Visible;
-        public string NoResultsText { get; private set; } = "setting up Compare view";
+        public ICommand Icmd_Remove { get; }
 
         public LV_FilesVM_Compare LV_Files { get; }
-        public LV_FilesVM_Compare LV_Folders { get; }
 
         bool CanPick { set { _bCanPick = value; Util.UIthread(99777, () => CommandManager.InvalidateRequerySuggested()); } }
         bool _bCanPick;
 
         internal UC_BackupVM()
         {
-            Icmd_Pick = new RelayCommand(() => { _folder = LocalTV.TreeSelect_FolderDetail.treeNode; Update(); }, () => _bCanPick);
-            Icmd_GoTo1 = new RelayCommand(() => _folder?.GoToFile(null), () => _bCanPick && (null != _folder));
-            Icmd_GoTo = new RelayCommand(() => _selectedItem.TreeNode.GoToFile(_selectedItem.Filename), () => null != _selectedItem);
+            Icmd_Pick = new RelayCommand(() => { Add(new LVitem_FolderListVM(_folderSel, _nicknameUpdater)); Update(); }, () => _bCanPick);
+            Icmd_GoTo = new RelayCommand(() => _selectedItem.TreeNode.GoToFile(null), () => null != _selectedItem);
+            Icmd_Remove = new RelayCommand(() => Items.Remove(_selectedItem), () => null != _selectedItem);
             LV_Files = new LV_FilesVM_Compare();
-            LV_Folders = new LV_FilesVM_Compare();
             Icmd_Nicknames = new RelayCommand(RaisePathFull);
             _folderSel = LocalTV.TreeSelect_FolderDetail?.treeNode;
 
             Util.ThreadMake(() =>
             {
+                LocalTV.AllFileHashes_AddRef();
+
                 _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable
                     .LocalSubscribe(99613, tuple => { _folderSel = tuple.Item1.treeNode; RaisePropertyChanged("FolderSel"); }));
 
-                NoResultsText = null;
-                RaisePropertyChanged("NoResultsText");
-                ProgressbarVisibility = Visibility.Collapsed;
-                RaisePropertyChanged("ProgressbarVisibility");
                 CanPick = true;
             });
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
-            Util.ThreadMake(() =>
-            {
-                Util.LocalDispose(_lsDisposable);
-                _folder = null;
-                IsDisposed = true;
-            });
+            LocalTV.AllFileHashes_DropRef();
+            base.Dispose();
         }
 
         void RaisePathFull()
         {
             RaisePropertyChanged("FolderSel");
-            RaisePropertyChanged("Folder1");
-            RaisePropertyChanged("Folder2");
+            RaisePropertyChanged("Folder");
         }
 
         internal UC_BackupVM
-            Update(LocalTreeNode folderSel = null)
+            Update()
         {
             Util.ThreadMake(() =>
             {
                 LV_Files.ClearItems();
-                LV_Folders.ClearItems();
-
-                if (null == folderSel)
-                    folderSel = LocalTV.TreeSelect_FolderDetail.treeNode;
 
                 _selectedItem = null;
                 RaisePathFull();
-                Results = "Same, nested, or no folder selected";
-                RaisePropertyChanged("Results");
-                NoResultsVisibility = Visibility.Visible;
-                RaisePropertyChanged("NoResultsVisibility");
 
-                if (null == _folder)
-                    return;     // from lamnda
-
-                NoResultsVisibility = Visibility.Collapsed;
-                RaisePropertyChanged("NoResultsVisibility");
-                ProgressbarVisibility = Visibility.Visible;
-                RaisePropertyChanged("ProgressbarVisibility");
                 CanPick = false;
-                Update_(folderSel);
-                ProgressbarVisibility = Visibility.Collapsed;
-                RaisePropertyChanged("ProgressbarVisibility");
+
                 CanPick = true;
             });
 
-            return this;
-        }
-        UC_BackupVM Update_(LocalTreeNode folderSel)
-        {
             return this;
         }
 
@@ -197,10 +153,5 @@ namespace DoubleFile
 
             return ieFiles;
         }
-
-        LVitem_CompareVM
-            _selectedItem;
-        readonly List<IDisposable>
-            _lsDisposable = new List<IDisposable> { };
     }
 }

@@ -190,11 +190,10 @@ namespace DoubleFile
         IReadOnlyList<Tuple<LocalTreeNode, IReadOnlyList<string>>>
             GetFileLines(LocalTreeNode treeNode, IEnumerable<int> ieHashes)
         {
-            IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<string>>> ieFiles = new Tuple<LocalTreeNode, IReadOnlyList<string>>[] { };
             var searchSet = new HashSet<int>(ieHashes);
 
             if (false == searchSet.Any())
-                return ieFiles.ToList();
+                return new Tuple<LocalTreeNode, IReadOnlyList<string>>[] { };
 
             var lsHashesGrouped =
                 GetHashesHere(treeNode, ref searchSet)
@@ -204,24 +203,9 @@ namespace DoubleFile
             Util.Assert(99608, false == searchSet.Any());
 
             if (0 == lsHashesGrouped.Count)
-                return ieFiles.ToList();
+                return new Tuple<LocalTreeNode, IReadOnlyList<string>>[] { };
 
-            var nHashColumn = Statics.DupeFileDictionary.HashColumn;
-
-            foreach (var tuple in lsHashesGrouped)
-            {
-                ieFiles =
-                    ieFiles.Concat(
-                    tuple.Item1.GetFileList(bReadAllLines: true)
-                    .Select(strLine => strLine.Split('\t'))
-                    .Where(asLine => nHashColumn < asLine.Length)
-                    .DistinctBy(asLine => asLine[nHashColumn])
-                    .Select(asLine => new { a = HashTuple.FileIndexedIDfromString(asLine[nHashColumn], asLine[FileParse.knColLength]), b = asLine })
-                    .Where(sel => tuple.Item2.Contains(sel.a))
-                    .Select(sel => Tuple.Create(tuple.Item1, (IReadOnlyList<string>)sel.b.Skip(3).ToArray())));
-            }                                       // makes this an LV line: knColLengthLV----^
-
-            return ieFiles.OrderBy(tuple => tuple.Item2[0]).ToList();   // ToList() enumerates: reads through the file exactly once and closes it
+            return LocalTreeNode.GetFileLines(lsHashesGrouped);
         }
 
         IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>>
@@ -253,13 +237,12 @@ namespace DoubleFile
 #else
                 return ieFiles;
 #endif
-
             foreach (var subNode in treeNode.Nodes)
             {
                 if (false == searchSet.Any())
                     return ieFiles;
 
-                ieFiles = ieFiles.Concat(GetHashesHere(subNode, ref searchSet, lsExpectNone));
+                ieFiles = ieFiles.Concat(GetHashesHere(subNode, ref searchSet, lsExpectNone));      // recurse
 #if (DEBUG && FOOBAR)
                 if (0 < lsExpectNone?.Count)
                     Util.Assert(99604, false);

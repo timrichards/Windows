@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using MoreLinq;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -181,8 +183,32 @@ namespace DoubleFile
             return this;
         }
 
+        static internal IReadOnlyList<Tuple<LocalTreeNode, IReadOnlyList<string>>>
+            GetFileLines(IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>> ieHashesGrouped)
+        {
+            IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<string>>> ieFiles = new Tuple<LocalTreeNode, IReadOnlyList<string>>[] { };
+            var nHashColumn = Statics.DupeFileDictionary.HashColumn;
+
+            foreach (var tuple in ieHashesGrouped)
+            {
+                ieFiles =
+                    ieFiles.Concat(
+                    tuple.Item1.GetFileList(bReadAllLines: true)
+                    .Select(strLine => strLine.Split('\t'))
+                    .Where(asLine => nHashColumn < asLine.Length)
+                    .DistinctBy(asLine => asLine[nHashColumn])
+                    .Select(asLine => new { a = HashTuple.FileIndexedIDfromString(asLine[nHashColumn], asLine[FileParse.knColLength]), b = asLine })
+                    .Where(sel => tuple.Item2.Contains(sel.a))
+                    .Select(sel => Tuple.Create(tuple.Item1, (IReadOnlyList<string>)sel.b.Skip(3).ToArray())));
+            }                                       // makes this an LV line: knColLengthLV----^
+
+            return ieFiles.OrderBy(tuple => tuple.Item2[0]).ToList();   // ToList() enumerates: reads through the file exactly once and closes it
+        }
+
         internal IEnumerable<string>
-            GetFileList(bool bReadAllLines = false)
+            GetFileList() => GetFileList(bReadAllLines: false);
+        IEnumerable<string>
+            GetFileList(bool bReadAllLines)
         {
             var nPrevDir = (int)NodeDatum.PrevLineNo;
 

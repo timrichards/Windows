@@ -22,17 +22,10 @@ namespace DoubleFile
             NodeDatum = new NodeDatum(lengthTotal: treeNode.NodeDatum.LengthHere);
         }
 
-        new internal IEnumerable<string>        // C# has this overload/override problem: the parameter can be optional here so who do you call?
-            GetFileList(bool doNotUseThisMethod_itIsOverridden)
-        {
-            Util.Assert(99589, false);
-            return null;
-        }
-
-        internal void
+        internal new void
             GetFileList()
         {
-            if (0 < (base.Nodes?.Count ?? 0))   // C# also has this base override is null problem: (null != base.Nodes) is always true even when null
+            if (0 < (base.Nodes?.Count ?? 0))   // C# has this base override is null problem: (null != base.Nodes) is always true even when null
                 return;
 
             ulong nLengthHere = 0;

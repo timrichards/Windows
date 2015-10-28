@@ -98,6 +98,12 @@
                 </StackPanel>
             </Grid>
         </ScrollViewer>
+        <Grid Height="50" Visibility="{Binding ProgressbarVisibility}" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+            <TextBlock TextAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">
+                <Run Text="setting up Backup view" FontWeight="SemiBold" Foreground="AntiqueWhite"/>
+            </TextBlock>
+            <ProgressBar IsIndeterminate="True" VerticalAlignment="Bottom"/>
+        </Grid>
         <CheckBox Name="formChk_Nicknames" IsChecked="{Binding UseNicknames}" Command="{Binding Icmd_Nicknames}" Content="Nicknames" Grid.Column="1" Margin="5,0,0,0">
             <CheckBox.LayoutTransform>
                 <RotateTransform Angle="90" />

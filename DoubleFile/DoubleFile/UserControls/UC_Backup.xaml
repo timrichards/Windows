@@ -66,10 +66,10 @@
                         <TextBox Text="{Binding FolderSel, Mode=OneWay}" Grid.Row="0"/>
                         <Border Grid.Row="1"/>
                     </Grid>
-                    <Expander Header="Files that are unique or all on the same volume that are in the selected folders">
+                    <Expander IsExpanded="True" Header="Files that are unique or all on the same volume that are in the selected folders">
                         <local:UC_Files DataContext="{Binding LV_Files}" Visibility="{Binding VisibilityOnItems}"/>
                     </Expander>
-                    <Expander Header="Folders selected to back up">
+                    <Expander IsExpanded="True" Header="Folders selected to back up">
                         <DataGrid Visibility="{Binding VisibilityOnItems}">
                             <DataGrid.Resources>
                                 <Style TargetType="DataGridCell" BasedOn="{StaticResource {x:Type DataGridCell}}">

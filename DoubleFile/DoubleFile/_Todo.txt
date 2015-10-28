@@ -1,7 +1,7 @@
 ﻿- Tree list slider does not always go to root; and skips to root: try a search to subfolder then nav up. It also loses the deep node.
 - Clones don't sync to folder detail updated in extra window.
 - Option to sort file list solitary first
-- All/some/none of this folder's files are duplicated (to replace "This folder has no exact copy")
+- Some/none of this folder's files are duplicated (to replace "This folder has no exact copy")
 - Scrollviewer for detail view
 - Treemap selection resets for neighbor folders
 - Clones col can sort: turn that off until sorting removes size labels and 3-mode sorting is enabled
@@ -212,8 +212,5 @@ Specific code areas:
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
 
-99913
-99591
-
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
-99582 next low assert
+99581 next low assert

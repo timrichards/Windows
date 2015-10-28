@@ -58,8 +58,8 @@ namespace DoubleFile
                     .ToArray();
 
                 var nLine = ("" + asFileLine[1]).ToInt();
-                var isAllOneVolume = true;
-                var lsDuplicates = Statics.DupeFileDictionary.GetDuplicates(asFileLine, out isAllOneVolume);
+                var isSepVol = false;
+                var lsDuplicates = Statics.DupeFileDictionary.GetDuplicates(asFileLine, out isSepVol);
 
                 asFileLine =
                     asFileLine
@@ -77,10 +77,10 @@ namespace DoubleFile
                         (dupe.LVitemProjectVM.ListingFile != strListingFile) ||    // exactly once every query
                         (dupe.LineNumber != nLine));
 
-                    lvItem.SameVolume = isAllOneVolume;
+                    lvItem.SameVolume = false == isSepVol;
 #if (DEBUG)
                     Util.Assert(99970,
-                        isAllOneVolume ==
+                        lvItem.SameVolume ==
                         lsDuplicates
                         .GroupBy(duplicate => duplicate.LVitemProjectVM.Volume)
                         .HasExactly(1));

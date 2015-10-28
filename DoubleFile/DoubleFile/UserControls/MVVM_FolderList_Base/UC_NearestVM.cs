@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 
 namespace DoubleFile
 {
-    partial class UC_NearestVM : UC_FolderListVM_Base
+    partial class UC_NearestVM : UC_FolderListVM
     {
         internal new UC_NearestVM               // new to hide then call base.Init() and return this
             Init()
@@ -16,6 +16,8 @@ namespace DoubleFile
 
             Util.ThreadMake(() =>
             {
+                NoResultsText = "setting up Nearest view";
+                RaisePropertyChanged("NoResultsText");
                 LocalTV.AllFileHashes_AddRef();
                 NoResultsText = null;
                 RaisePropertyChanged("NoResultsText");

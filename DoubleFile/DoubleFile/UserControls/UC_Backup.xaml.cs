@@ -26,6 +26,7 @@ namespace DoubleFile
                 : vm;
 
             _vm.UseNicknames = _bNicknames;
+            _vm.Init();
         }
 
         protected override void LocalNavigatedFrom()

@@ -61,11 +61,11 @@ namespace DoubleFile
             IsDupeSepVolume(int nFileID) => _dictDuplicateFiles.TryGetValue(nFileID)?.Item2;
 
         internal IReadOnlyList<DuplicateStruct>
-            GetDuplicates(string[] asFileLine, out bool isAllOneVolume)
+            GetDuplicates(string[] asFileLine, out bool isSepVol)
         {
             var nHashColumn = HashColumn;
 
-            isAllOneVolume = true;
+            isSepVol = false;
 
             if (asFileLine.Length <= nHashColumn)
                 return null;
@@ -78,7 +78,7 @@ namespace DoubleFile
             if (null == tuple)
                 return null;
 
-            isAllOneVolume = tuple.Item2;
+            isSepVol = tuple.Item2;
 
             return
                 tuple.Item1.AsParallel()

@@ -6,8 +6,17 @@ using System.Windows;
 
 namespace DoubleFile
 {
-    partial class UC_FolderListVM_Base : IDisposable
+    class UC_FolderListVM : UC_FolderListVM_Base
     {
+        public string FoldersHeader { get; private set; } = _ksFoldersHeader;
+        const string _ksFoldersHeader = "Folders";
+        protected void
+            SetFoldersHeader(string strHeader = null) { FoldersHeader = _ksFoldersHeader + " " + strHeader; RaisePropertyChanged("FoldersHeader"); }
+
+        public Visibility ProgressbarVisibility { get; protected set; } = Visibility.Visible;
+        public Visibility NoResultsVisibility { get; protected set; } = Visibility.Visible;
+        public string NoResultsText { get; protected set; } = null;
+
         protected void                              // new to hide then call base.Init() in the derived class and return itself
             Init()
         {
@@ -20,12 +29,12 @@ namespace DoubleFile
                 StartSearch(initiatorTuple.Item1)));
         }
 
-        public virtual void                         // call base.Dispose() in the derived class
+        public override void                        // call base.Dispose() in the derived class
             Dispose()
         {
             _bDisposed = true;
             _cts.Cancel();
-            Util.LocalDispose(_lsDisposable);
+            base.Dispose();
         }
 
         protected void                              // HideProgressbar() is useful in the derived classes
@@ -111,9 +120,5 @@ namespace DoubleFile
             _bDisposed = false;
         protected CancellationTokenSource
             _cts { get; private set; } = new CancellationTokenSource();
-        protected readonly ListUpdater<bool>
-            _nicknameUpdater = new ListUpdater<bool>(99667);
-        protected readonly IList<IDisposable>
-            _lsDisposable = new List<IDisposable> { };
     }
 }

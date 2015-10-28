@@ -1,21 +1,13 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 
 namespace DoubleFile
 {
-    partial class UC_FolderListVM_Base : ListViewVM_Base<LVitem_FolderListVM>
+    class UC_FolderListVM_Base : ListViewVM_Base<LVitem_FolderListVM>, IDisposable
     {
-        public string FoldersHeader { get; private set; } = _ksFoldersHeader;
-        const string _ksFoldersHeader = "Folders";
-        protected void
-            SetFoldersHeader(string strHeader = null) { FoldersHeader = _ksFoldersHeader + " " + strHeader; RaisePropertyChanged("FoldersHeader"); }
-
         public ICommand Icmd_Nicknames { get; protected set; }
         public ICommand Icmd_GoTo { get; protected set; }
-
-        public Visibility ProgressbarVisibility { get; protected set; } = Visibility.Visible;
-        public Visibility NoResultsVisibility { get; protected set; } = Visibility.Visible;
-        public string NoResultsText { get; protected set; } = "setting up Nearest view";
 
         public bool UseNicknames { internal get; set; }
 
@@ -47,10 +39,21 @@ namespace DoubleFile
         }
         protected LVitem_FolderListVM _selectedItem = null;
 
-        public string WidthPathShort => SCW;                   // franken all NaN
+        public virtual void                         // call base.Dispose() in the derived class
+            Dispose()
+        {
+            Util.LocalDispose(_lsDisposable);
+        }
+
+        public string WidthPathShort => SCW;        // franken all NaN
         public string WidthIn => SCW;
         public string WidthParent => SCW;
 
         internal override int NumCols => LVitem_FolderListVM.NumCols_;
+
+        protected readonly ListUpdater<bool>
+            _nicknameUpdater = new ListUpdater<bool>(99667);
+        protected readonly IList<IDisposable>
+            _lsDisposable = new List<IDisposable> { };
     }
 }

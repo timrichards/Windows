@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 namespace DoubleFile
 {
-    partial class UC_ClonesHereVM : UC_FolderListVM_Base
+    partial class UC_ClonesHereVM : UC_FolderListVM
     {
         public ICommand Icmd_SolitaryIsAllOneVol { get; private set; }
         public bool AllOneVolIsSolitary { internal get; set; }
@@ -21,8 +21,6 @@ namespace DoubleFile
 
             Util.ThreadMake(() =>
             {
-                NoResultsText = null;
-                RaisePropertyChanged("NoResultsText");
                 HideProgressbar();
                 StartSearch(LocalTV.TreeSelect_FolderDetail);
             });

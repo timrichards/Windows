@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 namespace DoubleFile
 {
-    partial class UC_BackupVM : UC_FolderListVM_Base, IDisposable
+    partial class UC_BackupVM : UC_FolderListVM_Base
     {
         internal bool
             IsDisposed { get; private set; } = false;
@@ -19,16 +19,14 @@ namespace DoubleFile
 
         public LV_FilesVM_Compare LV_Files { get; }
 
-        bool CanPick { set { _bCanPick = value; Util.UIthread(99777, () => CommandManager.InvalidateRequerySuggested()); } }
+        bool CanPick { set { _bCanPick = value; Util.UIthread(99913, () => CommandManager.InvalidateRequerySuggested()); } }
         bool _bCanPick;
 
         internal UC_BackupVM()
         {
-            Icmd_Pick = new RelayCommand(() => { Add(new LVitem_FolderListVM(_folderSel, _nicknameUpdater)); Update(); }, () => _bCanPick);
-            Icmd_GoTo = new RelayCommand(() => _selectedItem.TreeNode.GoToFile(null), () => null != _selectedItem);
+            Icmd_Pick = new RelayCommand(Add, () => _bCanPick);
             Icmd_Remove = new RelayCommand(() => Items.Remove(_selectedItem), () => null != _selectedItem);
             LV_Files = new LV_FilesVM_Compare();
-            Icmd_Nicknames = new RelayCommand(RaisePathFull);
             _folderSel = LocalTV.TreeSelect_FolderDetail?.treeNode;
 
             Util.ThreadMake(() =>
@@ -36,7 +34,7 @@ namespace DoubleFile
                 LocalTV.AllFileHashes_AddRef();
 
                 _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable
-                    .LocalSubscribe(99613, tuple => { _folderSel = tuple.Item1.treeNode; RaisePropertyChanged("FolderSel"); }));
+                    .LocalSubscribe(99591, tuple => { _folderSel = tuple.Item1.treeNode; RaisePropertyChanged("FolderSel"); }));
 
                 CanPick = true;
             });
@@ -44,23 +42,33 @@ namespace DoubleFile
 
         public override void Dispose()
         {
+            IsDisposed = true;
             LocalTV.AllFileHashes_DropRef();
             base.Dispose();
+        }
+
+        internal UC_BackupVM
+            Init()
+        {
+            Icmd_Nicknames = new RelayCommand(RaisePathFull);
+            return this;
         }
 
         void RaisePathFull()
         {
             RaisePropertyChanged("FolderSel");
-            RaisePropertyChanged("Folder");
+            _nicknameUpdater.UpdateViewport(UseNicknames);
         }
 
-        internal UC_BackupVM
-            Update()
+        void Add()
         {
             Util.ThreadMake(() =>
             {
-                LV_Files.ClearItems();
+                if (ItemsCast.Any(lvItem => _folderSel == lvItem.TreeNode))
+                    return;
 
+                Util.UIthread(99582, () => Add(new LVitem_FolderListVM(_folderSel, _nicknameUpdater)));
+                LV_Files.ClearItems();
                 _selectedItem = null;
                 RaisePathFull();
 
@@ -68,8 +76,6 @@ namespace DoubleFile
 
                 CanPick = true;
             });
-
-            return this;
         }
 
         IReadOnlyList<Tuple<LocalTreeNode, IReadOnlyList<string>>>

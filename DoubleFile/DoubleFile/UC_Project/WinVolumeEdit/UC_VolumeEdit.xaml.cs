@@ -5,6 +5,7 @@ using System.Windows.Input;
 using System.Linq;
 using System.IO;
 using System.Reactive.Linq;
+using System.Windows.Controls;
 
 namespace DoubleFile
 {
@@ -14,6 +15,27 @@ namespace DoubleFile
     partial class UC_VolumeEdit
     {
         internal char DriveLetter => (formEdit_DriveLetter.Text + "\0")[0];
+
+        static internal void
+            DriveLetterPreviewKeyDown(KeyEventArgs e)
+        {
+            if (new[] { Key.Tab, Key.Back, Key.Delete, Key.Left, Key.Right }.Contains(e.Key))
+                return;
+
+            e.Handled = true;
+
+            if ((Key.A > e.Key) || (Key.Z < e.Key))
+                return;
+
+            var strChar = "" + (new KeyConverter().ConvertToString(e.Key) + "\0")[0];
+            var textBox = (TextBox)e.Source;
+            var selStart = textBox.SelectionStart;
+            var selLength = textBox.SelectionLength;
+
+            textBox.Text = strChar;
+            textBox.SelectionStart = selStart;
+            textBox.SelectionLength = selLength;
+        }
 
         [Description("User control supports choice"), Category("New or Edit Volume window")]
         internal bool IsVolumeNew
@@ -46,7 +68,7 @@ namespace DoubleFile
                 .LocalSubscribe(99718, x => { if (IsValidSourcePathEdit) formEdit_SourcePath.Text = CapDrive(formEdit_SourcePath.Text); });
 
             Observable.FromEventPattern<KeyEventArgs>(formEdit_DriveLetter, "PreviewKeyDown")
-                .LocalSubscribe(99717, args => formEdit_DriveLetter_PreviewKeyDown(args.EventArgs));
+                .LocalSubscribe(99717, args => DriveLetterPreviewKeyDown(args.EventArgs));
 
             Observable.FromEventPattern(formEdit_SaveListingFile, "LostFocus")
                 .LocalSubscribe(99716, x => formEdit_ListingFile_LostFocus());
@@ -143,29 +165,6 @@ namespace DoubleFile
 
             textBox.Focus();
             textBox.CaretIndex = int.MaxValue;
-        }
-
-        void formEdit_DriveLetter_PreviewKeyDown(KeyEventArgs e)
-        {
-            if (new[] { Key.Tab, Key.Back, Key.Delete, Key.Left, Key.Right }.Contains(e.Key))
-                return;
-
-            e.Handled = true;
-
-            if ((Key.A > e.Key) || (Key.Z < e.Key))
-                return;
-
-            var strChar = "" + (new KeyConverter().ConvertToString(e.Key) + "\0")[0];
-
-            if (strChar[0] == formEdit_SourcePath.Text[0])
-                strChar = null;
-
-            var selStart = formEdit_DriveLetter.SelectionStart;
-            var selLength = formEdit_DriveLetter.SelectionLength;
-
-            formEdit_DriveLetter.Text = strChar;
-            formEdit_DriveLetter.SelectionStart = selStart;
-            formEdit_DriveLetter.SelectionLength = selLength;
         }
 
         void formEdit_ListingFile_LostFocus()

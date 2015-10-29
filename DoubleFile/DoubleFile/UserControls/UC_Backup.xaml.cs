@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Reactive.Linq;
+using System.Windows.Input;
 
 namespace DoubleFile
 {
@@ -11,6 +13,22 @@ namespace DoubleFile
         public UC_Backup()
         {
             InitializeComponent();
+
+            Observable.FromEventPattern<KeyEventArgs>(formEdit_DriveLetter, "PreviewKeyDown")
+                .LocalSubscribe(99580, args =>
+            {
+                args.EventArgs.Handled = true;
+
+                var strChar = (new KeyConverter().ConvertToString(args.EventArgs.Key) + "\0")[0] + @":\";
+
+                if (false == Directory.Exists(strChar))
+                {
+                    formEdit_DriveLetter.Text = "";
+                    return;
+                }
+
+                UC_VolumeEdit.DriveLetterPreviewKeyDown(args.EventArgs);
+            });
         }
 
         protected override void LocalNavigatedTo()

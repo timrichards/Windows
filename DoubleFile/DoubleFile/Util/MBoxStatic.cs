@@ -71,7 +71,7 @@ namespace DoubleFile
             AskToCancel(string strTitle) => ShowOverlay(_ksAskToCancel, strTitle, MessageBoxButton.YesNo);
 
         static internal MessageBoxResult
-            ShowOverlay(string strMessage, string strTitle = null, MessageBoxButton? buttons = null, ILocalWindow owner = null)
+            ShowOverlay(string strMessage, string strTitle = null, MessageBoxButton? buttons = null, LocalModernWindowBase owner = null)
         {
             MessageBoxResult retVal = MessageBoxResult.None;
 
@@ -80,17 +80,18 @@ namespace DoubleFile
 
             return retVal;
         }
-        static MessageBoxResult ShowOverlay_(string strMessage, string strTitle, MessageBoxButton? buttons, ILocalWindow owner)
+        static MessageBoxResult ShowOverlay_(string strMessage, string strTitle, MessageBoxButton? buttons, LocalModernWindowBase owner)
         {
             if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                 return MessageBox.Show(strMessage + "\n(MBoxStatic: application shutting down.)", strTitle, buttons ?? MessageBoxButton.OK);
 
-            var mainWindow = (LocalModernWindowBase)Application.Current.MainWindow;
+            if (null == owner)
+                owner = (LocalModernWindowBase)Application.Current.MainWindow;
 
-            if (null == mainWindow)
+            if (null == owner)
                 return MessageBox.Show(strMessage + "\n(MBoxStatic: no main window.)", strTitle, buttons ?? MessageBoxButton.OK);
 
-            return mainWindow.ShowMessagebox(strMessage, strTitle, buttons);
+            return owner.ShowMessagebox(strMessage, strTitle, buttons);
         }
 
         static readonly string

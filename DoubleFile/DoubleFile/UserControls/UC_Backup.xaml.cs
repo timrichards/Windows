@@ -26,6 +26,7 @@ namespace DoubleFile
                 : vm;
 
             _vm.UseNicknames = _bNicknames;
+            _vm.LocalOwner = LocalOwner;
             _vm.Init();
         }
 

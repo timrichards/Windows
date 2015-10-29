@@ -14,10 +14,11 @@ namespace DoubleFile
 
         internal bool
             IsDisposed { get; private set; } = false;
-
         internal LocalModernWindowBase
             LocalOwner = null;
-        internal Func<bool> IsEditBoxNonEmpty = null;
+
+        internal Func<bool>
+            IsEditBoxNonEmpty = null;
         bool IsSearchEnabled() => (IsEditBoxNonEmpty?.Invoke() ?? false) && (null == _searchType2);
 
         static internal IObservable<Tuple<Tuple<LVitem_ProjectVM, string, string>, decimal>>

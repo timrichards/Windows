@@ -1,5 +1,4 @@
-﻿using MoreLinq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -11,14 +10,25 @@ namespace DoubleFile
     {
         internal bool
             IsDisposed { get; private set; } = false;
+        internal LocalModernWindowBase
+            LocalOwner = null;
 
         public string FolderSel => _folderSel?.PathFullGet(UseNicknames);
         LocalTreeNode _folderSel = null;
 
         public ICommand Icmd_Pick { get; }
-        public ICommand Icmd_Remove { get; }
+        public ICommand Icmd_Remove { get; } 
+        public ICommand Icmd_SourceVolume { get; }
+        public ICommand Icmd_DestVolume { get; }
+        public ICommand Icmd_Backup { get; }
+
+        public string SourceVolume => "SourceVolume";
+        public string DestVolume => "DestVolume";
 
         public Visibility ProgressbarVisibility { get; private set; } = Visibility.Visible;
+
+        public Visibility
+            VisibilityOnItems => Items.Any() ? Visibility.Visible : Visibility.Collapsed;
 
         public LV_FilesVM_Compare LV_Files { get; }
 
@@ -28,7 +38,7 @@ namespace DoubleFile
         internal UC_BackupVM()
         {
             Icmd_Pick = new RelayCommand(Add, () => _bCanPick);
-            Icmd_Remove = new RelayCommand(() => Items.Remove(_selectedItem), () => null != _selectedItem);
+            Icmd_Remove = new RelayCommand(() => { Items.Remove(_selectedItem); Update(); }, () => null != _selectedItem);
             LV_Files = new LV_FilesVM_Compare();
             _folderSel = LocalTV.TreeSelect_FolderDetail?.treeNode;
 
@@ -63,6 +73,7 @@ namespace DoubleFile
         void RaisePathFull()
         {
             RaisePropertyChanged("FolderSel");
+            RaisePropertyChanged("VisibilityOnItems");
             _nicknameUpdater.UpdateViewport(UseNicknames);
         }
 
@@ -75,17 +86,25 @@ namespace DoubleFile
 
                 if (ItemsCast.Any(lvItem => _folderSel.IsChildOf(lvItem.TreeNode) || lvItem.TreeNode.IsChildOf(_folderSel)))
                 {
-                    MBoxStatic.ShowOverlay("The folder you selected is a child or parent of a folder already in the list."); //, owner: LocalOwner);
+                    MBoxStatic.ShowOverlay("The folder you selected is a child or parent of a folder already in the list.", owner: LocalOwner);
                     return;
                 }
 
                 if (ItemsCast.Take(1).Any(lvItem => false == ReferenceEquals(_folderSel.Root, lvItem.TreeNode.Root)))
                 {
-                    MBoxStatic.ShowOverlay("Only one volume at a time is currently supported."); //, owner: LocalOwner);
+                    MBoxStatic.ShowOverlay("Only one volume at a time is currently supported.", owner: LocalOwner);
                     return;
                 }
 
                 Util.UIthread(99582, () => Add(new LVitem_FolderListVM(_folderSel, _nicknameUpdater)));
+                Update();
+            });
+        }
+
+        void Update()
+        {
+            Util.ThreadMake(() =>
+            {
                 LV_Files.ClearItems();
 
                 _selectedItem = null;
@@ -104,10 +123,11 @@ namespace DoubleFile
                 if (0 < lsFiles.Count)
                 {
                     Util.UIthread(99581, () =>
-                        LV_Files.Add(lsFiles.Select(asLine =>
+                        LV_Files.Add(lsFiles.Take(1 << 9).Select(asLine =>
                         new LVitem_CompareVM { TreeNode = asLine.Item1, FileLine = asLine.Item2 })));
                 }
 
+                RaisePathFull();
                 CanPick = true;
             });
         }

@@ -21,16 +21,23 @@ namespace DoubleFile
 
                 var strChar = (new KeyConverter().ConvertToString(args.EventArgs.Key) + "\0")[0] + @":\";
 
-                if (false == Directory.Exists(strChar))
+                Util.Closure(() =>
                 {
-                    formEdit_DriveLetter.Text = "";
-                    return;
-                }
+                    if (false == Directory.Exists(strChar))
+                    {
+                        formEdit_DriveLetter.Text = "";
+                        return;     // from lambda
+                    }
 
-                if (false == _vm.CheckDriveLetter(strChar[0]))
-                    return;
+                    if (false == _vm.CheckDriveLetter(strChar[0]))
+                        return;     // from lambda
 
-                UC_VolumeEdit.DriveLetterPreviewKeyDown(args.EventArgs);
+                    UC_VolumeEdit.DriveLetterPreviewKeyDown(args.EventArgs);
+                });
+
+                // one way to source binding isn't disabling/enabling the Back up button in concert
+                _vm.DriveLetter = formEdit_DriveLetter.Text;
+                Util.UIthread(99579, () => CommandManager.InvalidateRequerySuggested());
             });
         }
 

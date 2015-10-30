@@ -19,12 +19,11 @@ namespace DoubleFile
 
         public ICommand Icmd_Pick { get; }
         public ICommand Icmd_Remove { get; } 
-        public ICommand Icmd_SourceVolume { get; }
         public ICommand Icmd_DestVolume { get; }
         public ICommand Icmd_Backup { get; }
 
-        public string SourceVolume => "SourceVolume";
-        public string DestVolume => "DestVolume";
+        public string DestVolume { get; private set; }
+        public string DriveLetter { private get; set; }
 
         public Visibility ProgressbarVisibility { get; private set; } = Visibility.Visible;
 
@@ -42,6 +41,19 @@ namespace DoubleFile
             Icmd_Remove = new RelayCommand(() => { Items.Remove(_selectedItem); Update(); }, () => null != _selectedItem);
             LV_Files = new LV_FilesVM_Compare();
             _folderSel = LocalTV.TreeSelect_FolderDetail?.treeNode;
+
+            Icmd_DestVolume = new RelayCommand(() =>
+            {
+                var dlg = new FolderBrowserDialog { Description = "Destination to back up to." };
+
+                if (false == ModalThread.Go(darkWindow => dlg.ShowDialog((Window)darkWindow)))
+                    return;     // from lambda
+
+                DestVolume = dlg.SelectedPath;
+                RaisePropertyChanged("DestVolume");
+            });
+
+            Icmd_Backup = new RelayCommand(() => { }, () => (false == (string.IsNullOrEmpty(DestVolume) || string.IsNullOrEmpty(DriveLetter))));
 
             Util.ThreadMake(() =>
             {

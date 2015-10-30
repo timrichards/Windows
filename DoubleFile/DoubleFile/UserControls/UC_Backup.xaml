@@ -96,10 +96,9 @@
                     </Expander>
                     <Expander IsExpanded="True" Header="Backup">
                         <StackPanel Margin="0, 5" Visibility="{Binding VisibilityOnItems}">
-                            <StackPanel Orientation="Horizontal" Margin="0, 1">
-                                <Button Command="{Binding Icmd_SourceVolume}" Content="Set"/>
-                                <TextBlock Text="Source:" VerticalAlignment="Center" Margin="10, 0"/>
-                                <TextBox Name="formEdit_DriveLetter" Width="30" HorizontalAlignment="Left" ToolTip="Enter source drive letter." CharacterCasing="Upper" Style="{x:Null}"/>
+                            <StackPanel Orientation="Horizontal" Margin="0, 1" ToolTip="Won't appear unless valid.">
+                                <TextBox Name="formEdit_DriveLetter" Width="30" HorizontalAlignment="Left" CharacterCasing="Upper" Style="{x:Null}"/>
+                                <TextBlock Text="Enter source drive letter." VerticalAlignment="Center" Margin="10, 0"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0, 1">
                                 <Button Command="{Binding Icmd_DestVolume}" Content="Set"/>

@@ -14,7 +14,7 @@
                     <Style TargetType="Expander" BasedOn="{StaticResource {x:Type Expander}}">
                         <Setter Property="Margin" Value="0,10,0,0"/>
                     </Style>
-                    <Style TargetType="TextBox" BasedOn="{StaticResource StandardTextBox}">
+                    <Style TargetType="TextBox" x:Key="ReadOnly" BasedOn="{StaticResource StandardTextBox}">
                         <Setter Property="Background" Value="Transparent"/>
                         <Setter Property="BorderThickness" Value="0"/>
                         <Setter Property="IsReadOnly" Value="True"/>
@@ -62,7 +62,7 @@
                             <Button Command="{Binding Icmd_Pick}" Content="Add" Style="{StaticResource Pick}"/>
                             <TextBlock Text="Current folder:" />
                         </StackPanel>
-                        <TextBox Text="{Binding FolderSel, Mode=OneWay}" Grid.Row="0" Grid.Column="1"/>
+                        <TextBox Text="{Binding FolderSel, Mode=OneWay}" Style="{StaticResource ReadOnly}" Grid.Row="0" Grid.Column="1"/>
                         <Border Grid.Row="1"/>
                     </Grid>
                     <Expander IsExpanded="True" Header="Files that are unique or all on the same volume that are in the selected folders">
@@ -96,8 +96,8 @@
                     </Expander>
                     <Expander IsExpanded="True" Header="Backup">
                         <StackPanel Margin="0, 5" Visibility="{Binding VisibilityOnItems}">
-                            <StackPanel Orientation="Horizontal" Margin="0, 1" ToolTip="Won't appear unless valid.">
-                                <Grid>
+                            <StackPanel Orientation="Horizontal" Margin="0, 1" ToolTip="Mounted volume must match the archived volume selected to back up.">
+                                <Grid Background="{StaticResource InputBackground}">
                                     <Rectangle Fill="Red" Opacity="0" x:Name="form_RectDriveLetterError">
                                         <Rectangle.Resources>
                                             <Storyboard x:Name="DriveLetterError" x:Key="DriveLetterError">
@@ -107,8 +107,8 @@
                                             </Storyboard>
                                         </Rectangle.Resources>
                                     </Rectangle>
-                                    <TextBox Name="formEdit_DriveLetter" HorizontalAlignment="Center" CharacterCasing="Upper"
-                                         BorderThickness="1" IsReadOnly="False" CaretBrush="LightBlue" Background="Transparent"
+                                    <TextBox Name="formEdit_DriveLetter" HorizontalContentAlignment="Center"
+                                         Background="Transparent" CharacterCasing="Upper"
                                          Width="{Binding Path=ActualWidth, ElementName=formBtn_DestVolume}"/>
                                 </Grid>
                                 <TextBlock Text="Enter source drive letter." VerticalAlignment="Center" Margin="10, 0"/>
@@ -116,7 +116,7 @@
                             <StackPanel Orientation="Horizontal" Margin="0, 1">
                                 <Button Command="{Binding Icmd_DestVolume}" Content="Set" x:Name="formBtn_DestVolume"/>
                                 <TextBlock Text="Backup to:" VerticalAlignment="Center" Margin="10, 0"/>
-                                <TextBox Text="{Binding DestVolume, Mode=OneWay}"/>
+                                <TextBox Text="{Binding DestVolume, Mode=OneWay}" Style="{StaticResource ReadOnly}"/>
                             </StackPanel>
                             <Button Command="{Binding Icmd_Backup}" Content="Back up" Margin="0, 1"/>
                         </StackPanel>

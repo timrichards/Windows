@@ -36,12 +36,11 @@ namespace DoubleFile
                     UC_VolumeEdit.DriveLetterPreviewKeyDown(args.EventArgs);
                 });
 
-                // one way to source binding isn't disabling/enabling the Back up button in concert
-                _vm.DriveLetter = formEdit_DriveLetter.Text;
-
                 if (string.IsNullOrEmpty(formEdit_DriveLetter.Text))
                     BeginStoryboard((Storyboard)form_RectDriveLetterError.FindResource("DriveLetterError"));
 
+                // one way to source binding isn't disabling/enabling the Back up button in concert
+                _vm.DriveLetter = formEdit_DriveLetter.Text;
                 Util.UIthread(99579, () => CommandManager.InvalidateRequerySuggested());
             });
         }

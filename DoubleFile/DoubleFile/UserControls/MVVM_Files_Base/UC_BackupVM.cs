@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -69,6 +70,11 @@ namespace DoubleFile
             Icmd_Nicknames = new RelayCommand(RaisePathFull);
             return this;
         }
+
+        internal bool
+            CheckDriveLetter(char driveLetter) =>
+            ItemsCast.Select(lvItem => lvItem.TreeNode)
+            .All(treeNode => Directory.Exists(driveLetter + treeNode.PathFullGet(false).Substring(1)));
 
         void RaisePathFull()
         {

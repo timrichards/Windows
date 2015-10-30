@@ -27,6 +27,9 @@ namespace DoubleFile
                     return;
                 }
 
+                if (false == _vm.CheckDriveLetter(strChar[0]))
+                    return;
+
                 UC_VolumeEdit.DriveLetterPreviewKeyDown(args.EventArgs);
             });
         }

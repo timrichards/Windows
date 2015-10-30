@@ -33,7 +33,7 @@ namespace DoubleFile
 
         internal const int knColLength = 7;
         internal const int knColLength01 = 5;
-        internal const int knColLengthLV = 4;
+        internal const int knColLengthLV = knColLength - 3;
 
         internal const string ksLineType_Version = "V";
         internal const string ksLineType_Nickname = "N";

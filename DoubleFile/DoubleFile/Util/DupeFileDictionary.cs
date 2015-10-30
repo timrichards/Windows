@@ -235,7 +235,7 @@ namespace DoubleFile
 
             Util.Assert(99896, _dictDuplicateFiles.Count == nFolderCount - 1, bIfDefDebug: true);
             stopwatch.Stop();
-            Util.WriteLine("_DictFiles " + stopwatch.ElapsedMilliseconds + " ms");   // 650 ms 
+            Util.WriteLine("_dictDuplicateFiles " + stopwatch.ElapsedMilliseconds + " ms");   // 650 ms 
             StatusCallback(bDone: true);
             _callbackWR = null;
             _LVprojectVM = null;

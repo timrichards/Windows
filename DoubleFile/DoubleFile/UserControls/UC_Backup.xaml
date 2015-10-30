@@ -66,7 +66,16 @@
                         <Border Grid.Row="1"/>
                     </Grid>
                     <Expander IsExpanded="True" Header="Files that are unique or all on the same volume that are in the selected folders">
-                        <local:UC_Files DataContext="{Binding LV_Files}" Visibility="{Binding VisibilityOnItems}"/>
+                        <StackPanel Visibility="{Binding VisibilityOnItems}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Total # files to back up:" VerticalAlignment="Center" Margin="10, 0"/>
+                                <TextBox Text="{Binding FileCount, Mode=OneWay}" Style="{StaticResource ReadOnly}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Total size:" VerticalAlignment="Center" Margin="10, 0"/>
+                                <TextBox Text="{Binding BackupSize, Mode=OneWay}" Style="{StaticResource ReadOnly}"/>
+                            </StackPanel>
+                        </StackPanel>
                     </Expander>
                     <Expander IsExpanded="True" Header="Folders selected to back up">
                         <DataGrid Visibility="{Binding VisibilityOnItems}">

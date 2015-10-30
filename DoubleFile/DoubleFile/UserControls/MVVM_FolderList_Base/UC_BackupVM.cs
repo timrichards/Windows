@@ -22,6 +22,9 @@ namespace DoubleFile
         public ICommand Icmd_DestVolume { get; }
         public ICommand Icmd_Backup { get; }
 
+        public string FileCount { get; private set; }
+        public string BackupSize { get; private set; }
+
         public string DestVolume { get; private set; }
         internal string DriveLetter { private get; set; }
 
@@ -30,16 +33,32 @@ namespace DoubleFile
         public Visibility
             VisibilityOnItems => Items.Any() ? Visibility.Visible : Visibility.Collapsed;
 
-        public LV_FilesVM_Compare LV_Files { get; }
-
-        bool CanPick { set { _bCanPick = value; Util.UIthread(99913, () => CommandManager.InvalidateRequerySuggested()); } }
+        bool CanPick
+        {
+            set
+            {
+                RaisePathFull();
+                ProgressbarVisibility = value ? Visibility.Hidden : Visibility.Visible;
+                RaisePropertyChanged("ProgressbarVisibility");
+                _bCanPick = value;
+                Util.UIthread(99913, () => CommandManager.InvalidateRequerySuggested());
+            }
+        }
         bool _bCanPick;
+
+        void RaisePathFull()
+        {
+            RaisePropertyChanged("FileCount");
+            RaisePropertyChanged("BackupSize");
+            RaisePropertyChanged("FolderSel");
+            RaisePropertyChanged("VisibilityOnItems");
+            _nicknameUpdater.UpdateViewport(UseNicknames);
+        }
 
         internal UC_BackupVM()
         {
             Icmd_Pick = new RelayCommand(Add, () => _bCanPick);
             Icmd_Remove = new RelayCommand(() => { Items.Remove(_selectedItem); Update(); }, () => null != _selectedItem);
-            LV_Files = new LV_FilesVM_Compare();
             _folderSel = LocalTV.TreeSelect_FolderDetail?.treeNode;
 
             Icmd_DestVolume = new RelayCommand(() =>
@@ -88,13 +107,6 @@ namespace DoubleFile
             ItemsCast.Select(lvItem => lvItem.TreeNode)
             .All(treeNode => Directory.Exists(driveLetter + treeNode.PathFullGet(false).Substring(1)));
 
-        void RaisePathFull()
-        {
-            RaisePropertyChanged("FolderSel");
-            RaisePropertyChanged("VisibilityOnItems");
-            _nicknameUpdater.UpdateViewport(UseNicknames);
-        }
-
         void Add()
         {
             Util.ThreadMake(() =>
@@ -123,11 +135,9 @@ namespace DoubleFile
         {
             Util.ThreadMake(() =>
             {
-                LV_Files.ClearItems();
-
+                FileCount = null;
+                BackupSize = null;
                 _selectedItem = null;
-                RaisePathFull();
-
                 CanPick = false;
 
                 IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>>
@@ -138,14 +148,31 @@ namespace DoubleFile
 
                 var lsFiles = LocalTreeNode.GetFileLines(ieHashesGrouped);
 
-                if (0 < lsFiles.Count)
+                FileCount = "" + lsFiles.Count;
+
+                ulong nLengthTotal = 0;
+                var nHashColumn = Statics.DupeFileDictionary.HashColumn - 3;
+
+                IDictionary<int, bool>
+                    dictDupeFileHit = new Dictionary<int, bool>();
+
+                foreach (var asLine in lsFiles.SelectMany(tuple => tuple.Item2, (tuple, x) => tuple.Item2))
                 {
-                    Util.UIthread(99581, () =>
-                        LV_Files.Add(lsFiles.Take(1 << 9).Select(asLine =>
-                        new LVitem_CompareVM { TreeNode = asLine.Item1, FileLine = asLine.Item2 })));
+                    var nLength = asLine[FileParse.knColLengthLV].ToUlong();
+                    var nFileID = HashTuple.FileIndexedIDfromString(asLine[nHashColumn], nLength);
+
+                    if (dictDupeFileHit.ContainsKey(nFileID))
+                        continue;
+
+                    dictDupeFileHit[nFileID] = true;
+
+                    if (FileParse.knColLengthLV >= asLine.Count)
+                        Util.Assert(0, false);
+
+                    nLengthTotal += nLength;
                 }
 
-                RaisePathFull();
+                BackupSize = nLengthTotal.FormatSize(bytes: true);
                 CanPick = true;
             });
         }

@@ -23,7 +23,7 @@ namespace DoubleFile
         public ICommand Icmd_Backup { get; }
 
         public string DestVolume { get; private set; }
-        public string DriveLetter { private get; set; }
+        internal string DriveLetter { private get; set; }
 
         public Visibility ProgressbarVisibility { get; private set; } = Visibility.Visible;
 

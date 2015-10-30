@@ -2,6 +2,7 @@
 using System.IO;
 using System.Reactive.Linq;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 
 namespace DoubleFile
 {
@@ -25,7 +26,7 @@ namespace DoubleFile
                 {
                     if (false == Directory.Exists(strChar))
                     {
-                        formEdit_DriveLetter.Text = "";
+                        formEdit_DriveLetter.Text = null;
                         return;     // from lambda
                     }
 
@@ -37,6 +38,10 @@ namespace DoubleFile
 
                 // one way to source binding isn't disabling/enabling the Back up button in concert
                 _vm.DriveLetter = formEdit_DriveLetter.Text;
+
+                if (string.IsNullOrEmpty(formEdit_DriveLetter.Text))
+                    BeginStoryboard((Storyboard)form_RectDriveLetterError.FindResource("DriveLetterError"));
+
                 Util.UIthread(99579, () => CommandManager.InvalidateRequerySuggested());
             });
         }

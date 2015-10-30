@@ -84,7 +84,7 @@
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock>
-                                                 <Run Text="{Binding PathShort, Mode=OneWay}" FontWeight="SemiBold"/>
+                                                <Run Text="{Binding PathShort, Mode=OneWay}" FontWeight="SemiBold"/>
                                                 <Run Text="{Binding In, Mode=OneWay}" FontWeight="ExtraLight"/>
                                                 <Run Text="{Binding Parent, Mode=OneWay}"/>
                                             </TextBlock>
@@ -97,11 +97,24 @@
                     <Expander IsExpanded="True" Header="Backup">
                         <StackPanel Margin="0, 5" Visibility="{Binding VisibilityOnItems}">
                             <StackPanel Orientation="Horizontal" Margin="0, 1" ToolTip="Won't appear unless valid.">
-                                <TextBox Name="formEdit_DriveLetter" Width="30" HorizontalAlignment="Left" CharacterCasing="Upper" Style="{x:Null}"/>
+                                <Grid>
+                                    <Rectangle Fill="Red" Opacity="0" x:Name="form_RectDriveLetterError">
+                                        <Rectangle.Resources>
+                                            <Storyboard x:Name="DriveLetterError" x:Key="DriveLetterError">
+                                                <DoubleAnimation Storyboard.TargetName="form_RectDriveLetterError"
+                                                                 Storyboard.TargetProperty="(Rectangle.Opacity)"
+                                                                 From="0" To="1" Duration="0:0:0.1" AutoReverse="True"/>
+                                            </Storyboard>
+                                        </Rectangle.Resources>
+                                    </Rectangle>
+                                    <TextBox Name="formEdit_DriveLetter" HorizontalAlignment="Center" CharacterCasing="Upper"
+                                         BorderThickness="1" IsReadOnly="False" CaretBrush="LightBlue" Background="Transparent"
+                                         Width="{Binding Path=ActualWidth, ElementName=formBtn_DestVolume}"/>
+                                </Grid>
                                 <TextBlock Text="Enter source drive letter." VerticalAlignment="Center" Margin="10, 0"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" Margin="0, 1">
-                                <Button Command="{Binding Icmd_DestVolume}" Content="Set"/>
+                                <Button Command="{Binding Icmd_DestVolume}" Content="Set" x:Name="formBtn_DestVolume"/>
                                 <TextBlock Text="Backup to:" VerticalAlignment="Center" Margin="10, 0"/>
                                 <TextBox Text="{Binding DestVolume, Mode=OneWay}"/>
                             </StackPanel>

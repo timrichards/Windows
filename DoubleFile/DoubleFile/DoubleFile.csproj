@@ -198,7 +198,7 @@
     <Compile Include="UserControls\BindingProxy.cs" />
     <Compile Include="UserControls\MVVM_Files_Base\LVitem_CompareVM.cs" />
     <Compile Include="UserControls\MVVM_Files_Base\LV_FilesVM_Compare.cs" />
-    <Compile Include="UserControls\MVVM_Files_Base\UC_BackupVM.cs" />
+    <Compile Include="UserControls\MVVM_FolderList_Base\UC_BackupVM.cs" />
     <Compile Include="UserControls\MVVM_Files_Base\UC_CompareVM.cs" />
     <Compile Include="UserControls\MVVM_FolderList_Base\UC_FolderListVM.cs" />
     <Compile Include="UserControls\MVVM_FolderList_Base\UC_ClonesHereVM.cs" />

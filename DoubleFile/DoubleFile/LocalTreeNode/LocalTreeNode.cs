@@ -201,6 +201,7 @@ namespace DoubleFile
                 .Select(tuple => Tuple.Create(tuple.Item1,
                 tuple.Item1
                 .GetFileList(ref nLineNo, iterator)
+                .AsParallel()
                 .Select(strLine => strLine.Split('\t'))
                 .Where(asLine => nHashColumn < asLine.Length)
                 .DistinctBy(asLine => asLine[nHashColumn])
@@ -210,6 +211,7 @@ namespace DoubleFile
                 .ToList()))
                 .Where(tuple => 0 < tuple.Item2.Count)
                 .SelectMany(tuple => tuple.Item2, (tuple, asLine) => Tuple.Create(tuple.Item1, asLine))
+                .OrderBy(tuple => tuple.Item1.PathFullGet(false) + tuple.Item2[0])
                 .ToList();
 
             iterator?.Close();

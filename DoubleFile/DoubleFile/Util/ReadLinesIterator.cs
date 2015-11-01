@@ -32,8 +32,26 @@ namespace DoubleFile
             return CreateIterator(_reader);
         }
 
+        internal ReadLinesIterator
+            StayOpen()
+        {
+            _stayOpen = true;
+            return this;
+        }
+        internal ReadLinesIterator
+            Close()
+        {
+            _stayOpen = false;
+            Dispose();
+            return this;
+        }
+        static bool _stayOpen = false;
+
         protected override void Dispose(bool disposing)
         {
+            if (_stayOpen)
+                return;
+
             if (0 < --nRefCount)
                 return;
 

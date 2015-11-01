@@ -199,13 +199,13 @@ namespace DoubleFile
             try
             {
                 retVal = treeNode.GetFileLines(GetHashesHere(treeNode, ref searchSet));
+                Util.Assert(99608, false == searchSet.Any());
             }
             catch (OutOfMemoryException)
             {
                 MBoxStatic.ShowOverlay("Out of memory exception."); //, owner: LocalOwner);
             }
 
-            Util.Assert(99608, false == searchSet.Any());
             return retVal;
         }
 

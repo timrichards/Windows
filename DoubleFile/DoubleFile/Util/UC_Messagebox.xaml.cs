@@ -68,7 +68,7 @@ namespace DoubleFile
             //if (null != strTitle)
             //    Title = strTitle;
 
-            Buttons = buttons ?? MessageBoxButton.OKCancel;
+            Buttons = buttons ?? MessageBoxButton.OK;
 
             switch (_buttons)
             {

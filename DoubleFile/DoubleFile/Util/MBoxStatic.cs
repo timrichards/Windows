@@ -55,7 +55,7 @@ namespace DoubleFile
             else
             {
                 FailUp = nLocation;
-                ShowOverlay(strErrorOut, "DoubleFile Assert", MessageBoxButton.OK);
+                ShowOverlay(strErrorOut, "DoubleFile Assert");
                 FailUp = null;
             }
 #if (DEBUG && LOCALMBOX)

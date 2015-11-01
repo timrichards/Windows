@@ -157,24 +157,30 @@ namespace DoubleFile
 
                 try
                 {
-                    _lsFiles =
-                        ItemsCast.Select(lvItem => lvItem.TreeNode).FirstOrDefault()?
-                        .GetFileLines(ieHashesGrouped)
-                        .DistinctBy(tuple => HashTuple.FileIndexedIDfromString(tuple.Item2[nHashColumn], tuple.Item2[FileParse.knColLengthLV]))
-                        .ToList();
+                    var treeNode = ItemsCast.Select(lvItem => lvItem.TreeNode).FirstOrDefault();
+
+                    if (null != treeNode)
+                    {
+                        _lsFiles =
+                            treeNode
+                            .GetFileLines(ieHashesGrouped)
+                            .DistinctBy(tuple => HashTuple.FileIndexedIDfromString(tuple.Item2[nHashColumn], tuple.Item2[FileParse.knColLengthLV]))
+                            .ToList();
+                    }
+
+                    ulong nLengthTotal = 0;
+
+                    foreach (var tuple in _lsFiles)
+                        nLengthTotal += tuple.Item2[FileParse.knColLengthLV].ToUlong();
+
+                    FileCount = "" + _lsFiles.Count;
+                    BackupSize = nLengthTotal.FormatSize(bytes: true);
                 }
                 catch (OutOfMemoryException)
                 {
                     MBoxStatic.ShowOverlay("Out of memory exception.", owner: LocalOwner);
                 }
 
-                ulong nLengthTotal = 0;
-
-                foreach (var tuple in _lsFiles)
-                    nLengthTotal += tuple.Item2[FileParse.knColLengthLV].ToUlong();
-
-                FileCount = "" + _lsFiles.Count;
-                BackupSize = nLengthTotal.FormatSize(bytes: true);
                 CanPick = true;
             });
         }

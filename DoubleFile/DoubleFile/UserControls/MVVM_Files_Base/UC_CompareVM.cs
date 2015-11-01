@@ -194,17 +194,10 @@ namespace DoubleFile
             if (false == searchSet.Any())
                 return new Tuple<LocalTreeNode, IReadOnlyList<string>>[] { };
 
-            var lsHashesGrouped =
-                GetHashesHere(treeNode, ref searchSet)
-                .OrderBy(tuple => tuple.Item1.NodeDatum.PrevLineNo)
-                .ToList();
+            var retVal = treeNode.GetFileLines(GetHashesHere(treeNode, ref searchSet));
 
             Util.Assert(99608, false == searchSet.Any());
-
-            if (0 == lsHashesGrouped.Count)
-                return new Tuple<LocalTreeNode, IReadOnlyList<string>>[] { };
-
-            return treeNode.GetFileLines(lsHashesGrouped);
+            return retVal;
         }
 
         IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>>

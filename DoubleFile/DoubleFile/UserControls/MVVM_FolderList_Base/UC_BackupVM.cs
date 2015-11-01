@@ -79,11 +79,10 @@ namespace DoubleFile
 
             Util.ThreadMake(() =>
             {
-                LocalTV.AllFileHashes_AddRef();
-
                 _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable
                     .LocalSubscribe(99591, tuple => { _folderSel = tuple.Item1.treeNode; RaisePropertyChanged("FolderSel"); }));
 
+                LocalTV.AllFileHashes_AddRef();
                 CanPick = true;
                 SettingUp = null;
                 RaisePropertyChanged("SettingUp");
@@ -143,7 +142,7 @@ namespace DoubleFile
                 FileCount = null;
                 BackupSize = null;
                 _selectedItem = null;
-                _lsFiles = new ConcurrentBag<Tuple<LocalTreeNode, IReadOnlyList<string>>> { };
+                _lsFiles = new List<Tuple<LocalTreeNode, IReadOnlyList<string>>> { };
                 CanPick = false;
 
                 IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>> ieHashesGrouped = new Tuple<LocalTreeNode, IReadOnlyList<int>>[] { };
@@ -151,44 +150,21 @@ namespace DoubleFile
 
                 foreach (var treeNode in ItemsCast.Select(lvItem => lvItem.TreeNode))
                     ieHashesGrouped = ieHashesGrouped.Concat(GetHashesHere(treeNode));
-#if (DEBUG)
-                var dictTest = new SortedDictionary<uint, bool>();
 
-                foreach (var tuple in ieHashesGrouped)
-                {
-                    var treeNode = tuple.Item1;
-
-                    Util.Assert(0, false == dictTest.ContainsKey(tuple.Item1.NodeDatum.PrevLineNo));
-                    dictTest[tuple.Item1.NodeDatum.PrevLineNo] = true;
-                    Util.Assert(0, 0 < tuple.Item2.Count);
-                }
-#endif
                 _dictDupeFileHit = null;
 
-                var lsFiles_in =
-                    ItemsCast.Select(lvItem => lvItem.TreeNode).FirstOrDefault()?
-                    .GetFileLines(ieHashesGrouped);
-
                 var nHashColumn = Statics.DupeFileDictionary.HashColumn - 3;
+
+                _lsFiles =
+                    ItemsCast.Select(lvItem => lvItem.TreeNode).FirstOrDefault()?
+                    .GetFileLines(ieHashesGrouped)
+                    .DistinctBy(tuple => HashTuple.FileIndexedIDfromString(tuple.Item2[nHashColumn], tuple.Item2[FileParse.knColLengthLV]))
+                    .ToList();
+
                 ulong nLengthTotal = 0;
 
-                //Util.ParallelForEach(0, lsFiles_in.SelectMany(tuple => tuple.Item2, (tuple, x) => tuple), tuple =>
-                //{
-                    //nLengthTotal += tuple.Item2[FileParse.knColLengthLV].ToUlong();
-                    //_lsFiles.Add(tuple);
-                //    var asLine = tuple.Item2;
-                //    var nLength = asLine[FileParse.knColLengthLV].ToUlong();
-                //    var nFileID = HashTuple.FileIndexedIDfromString(asLine[nHashColumn], nLength);
-
-                //    nLengthTotal += nLength;
-                //    _lsFiles.Add(tuple);
-                //});
-
-                foreach (var tuple in lsFiles_in.SelectMany(tuple => tuple.Item2, (tuple, x) => tuple).DistinctBy(tuple => tuple.Item2))
-                {
+                foreach (var tuple in _lsFiles)
                     nLengthTotal += tuple.Item2[FileParse.knColLengthLV].ToUlong();
-                    _lsFiles.Add(tuple);
-                }
 
                 FileCount = "" + _lsFiles.Count;
                 BackupSize = nLengthTotal.FormatSize(bytes: true);
@@ -228,7 +204,7 @@ namespace DoubleFile
 
         IDictionary<int, bool>
             _dictDupeFileHit = null;
-        ConcurrentBag<Tuple<LocalTreeNode, IReadOnlyList<string>>>
+        List<Tuple<LocalTreeNode, IReadOnlyList<string>>>
             _lsFiles = null;
     }
 }

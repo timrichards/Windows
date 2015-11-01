@@ -186,11 +186,11 @@ namespace DoubleFile
         internal IReadOnlyList<Tuple<LocalTreeNode, IReadOnlyList<string>>>
             GetFileLines(IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>> ieHashesGrouped)
         {
-            ReadLinesIterator
-                iterator =
+            var
+                iterator =      // null if file is not in Isolated Storage: no speedup
                 RootNodeDatum.LVitemProjectVM.ListingFile
-                .ReadLines(99596).As<ReadLinesIterator>()
-                ?.StayOpen();
+                .ReadLines(99596).As<ReadLinesIterator>()?
+                .StayOpen();
 
             var nLineNo = 0;
             var nHashColumn = Statics.DupeFileDictionary.HashColumn;
@@ -206,13 +206,11 @@ namespace DoubleFile
                 .Where(asLine => nHashColumn < asLine.Length)
                 .DistinctBy(asLine => asLine[nHashColumn])
                 .Select(asLine => new { a = HashTuple.FileIndexedIDfromString(asLine[nHashColumn], asLine[FileParse.knColLength]), b = asLine })
-                .Where(sel => tuple.Item2.Contains(sel.a))
-                .Select(sel => (IReadOnlyList<string>)sel.b.Skip(3).ToArray())
-                .ToList()))
-                .Where(tuple => 0 < tuple.Item2.Count)
+                .Where(sel => tuple.Item2.Contains(sel.a))  //   v----makes this an LV line: knColLengthLV
+                .Select(sel => (IReadOnlyList<string>)sel.b.Skip(3).ToArray())))
                 .SelectMany(tuple => tuple.Item2, (tuple, asLine) => Tuple.Create(tuple.Item1, asLine))
                 .OrderBy(tuple => tuple.Item1.PathFullGet(false) + tuple.Item2[0])
-                .ToList();
+                .ToList();      // reads the file once from the beginning
 
             iterator?.Close();
             return retVal;

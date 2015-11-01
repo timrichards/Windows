@@ -4,11 +4,11 @@ using System.Windows;
 
 namespace DoubleFile
 {
-    class LV_FilesVM_Base : ListViewVM_Base<LVitem_FilesVM>
+    class LV_FilesVM_Base : ListViewVM_Base<LVitem_FilesVM_Base>
     {
         public virtual Visibility DupColVisibility => LVitem_FilesVM.ShowDuplicatesA ? Visibility.Visible : Visibility.Collapsed;
 
-        public LVitem_FilesVM SelectedItem
+        public LVitem_FilesVM_Base SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -22,7 +22,7 @@ namespace DoubleFile
                     SelectedItem_AllTriggers(0);
             }
         }
-        internal void SelectedItem_Set(LVitem_FilesVM value, decimal nInitiator)
+        internal void SelectedItem_Set(LVitem_FilesVM_Base value, decimal nInitiator)
         {
             if (value == _selectedItem)
                 return;
@@ -35,9 +35,9 @@ namespace DoubleFile
         {
         }
 
-        protected LVitem_FilesVM _selectedItem = null;
+        protected LVitem_FilesVM_Base _selectedItem = null;
 
-        internal override IEnumerable<LVitem_FilesVM>
+        internal override IEnumerable<LVitem_FilesVM_Base>
             this[string s_in]
         {
             get
@@ -64,6 +64,6 @@ namespace DoubleFile
         public string WidthIn => SCW;
         public string WidthParent => SCW;
 
-        internal override int NumCols => LVitem_FilesVM.NumCols_;
+        internal override int NumCols => LVitem_FilesVM_Base.NumCols_;
     }
 }

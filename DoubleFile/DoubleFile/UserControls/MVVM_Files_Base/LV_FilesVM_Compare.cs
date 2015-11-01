@@ -12,7 +12,7 @@ namespace DoubleFile
         public Visibility
             VisibilityOnItems => Items.Any() ? Visibility.Visible : Visibility.Collapsed;
 
-        internal Action<LVitem_CompareVM>
+        internal Action<LVitem_FilesVM_Compare>
             SelectedItemChanged = null;
         internal void
             ClearSelection() => SelectedItem_Set(null, /* UI initiator */ 0);
@@ -36,7 +36,7 @@ namespace DoubleFile
             base.SelectedItem_AllTriggers(nInitiator);
 
             if (null != _selectedItem)
-                SelectedItemChanged?.Invoke((LVitem_CompareVM)_selectedItem);
+                SelectedItemChanged?.Invoke((LVitem_FilesVM_Compare)_selectedItem);
         }
     }
 }

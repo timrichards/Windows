@@ -55,22 +55,26 @@ namespace DoubleFile
 
             Util.ThreadMake(() => 
             {
+                var selectedItem = _selectedItem.As<LVitem_FilesVM>();
+
                 try
                 {
-                    _selectedItem.DupIndex = 0;
+                    selectedItem.DupIndex = 0;
                     TreeFileSelChanged();
                     _selectedItem.RaisePropertyChanged("Duplicate");
                     _selectedItem.RaisePropertyChanged("Parent");
                 }
                 catch (OperationCanceledException) { }
 
-                SelectedFileChangedOnNext(new SelectedFileChanged(_selectedItem.LSdupDirFileLines, _selectedItem.FileLine, _treeNode), nInitiator);
+                SelectedFileChangedOnNext(new SelectedFileChanged(selectedItem.LSdupDirFileLines, _selectedItem.FileLine, _treeNode), nInitiator);
             });
         }
 
         void TreeFileSelChanged()
         {
-            if (null != _selectedItem.LSdupDirFileLines)
+            var selectedItem = _selectedItem.As<LVitem_FilesVM>();
+
+            if (null != selectedItem.LSdupDirFileLines)
                 return;
 
             {
@@ -93,11 +97,11 @@ namespace DoubleFile
 
             var lsDupDirFileLines = new ConcurrentBag<Tuple<LVitemProject_Updater<bool>, IReadOnlyList<string>>>();
 
-            if (null == _selectedItem.LSduplicates)
+            if (null == selectedItem.LSduplicates)
                 return;
 
             var lsKeys =
-                _selectedItem.LSduplicates
+                selectedItem.LSduplicates
                 .GroupBy(duplicate => duplicate.LVitemProjectVM).ToList();
 
             Util.ParallelForEach(99656,
@@ -156,7 +160,7 @@ namespace DoubleFile
                 }
             });
 
-            _selectedItem.LSdupDirFileLines = lsDupDirFileLines.ToList();
+            selectedItem.LSdupDirFileLines = lsDupDirFileLines.ToList();
         }
 
         CancellationTokenSource

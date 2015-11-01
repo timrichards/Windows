@@ -137,14 +137,14 @@ namespace DoubleFile
         }
         UC_CompareVM Update_(LocalTreeNode folderSel)
         {
-            var lsFolder1 = _folder1.NodeDatum.Hashes_FilesHere.Union(_folder1.NodeDatum.Hashes_SubnodeFiles_Scratch).Distinct().ToList();
-            var lsFolder2 = _folder2.NodeDatum.Hashes_FilesHere.Union(_folder2.NodeDatum.Hashes_SubnodeFiles_Scratch).Distinct().ToList();
-            var lsIntersect_ = lsFolder1.Intersect(lsFolder2).Distinct().ToList();
-            const int kMax = 1 << 7;
+            var lsFolder1 = new HashSet<int>(_folder1.NodeDatum.Hashes_FilesHere.Union(_folder1.NodeDatum.Hashes_SubnodeFiles_Scratch).Distinct());
+            var lsFolder2 = new HashSet<int>(_folder2.NodeDatum.Hashes_FilesHere.Union(_folder2.NodeDatum.Hashes_SubnodeFiles_Scratch).Distinct());
+            var lsIntersect_ = new HashSet<int>(lsFolder1.Intersect(lsFolder2).Distinct());
+            const int kMax = 1 << 11;
             var lsDiff1_ = lsFolder1.Except(lsIntersect_).Take(kMax).ToList();
             var lsDiff2_ = lsFolder2.Except(lsIntersect_).Take(kMax).ToList();
 
-            lsIntersect_ = lsIntersect_.Take(kMax).ToList();
+            lsIntersect_ = new HashSet<int>(lsIntersect_.Take(kMax));
             lsFolder1 = null;
             lsFolder2 = null;
 
@@ -172,13 +172,13 @@ namespace DoubleFile
             Util.UIthread(99606, () =>
             {
                 if (0 < lsIntersect.Count)
-                    LV_Both.Add(lsIntersect.Select(asLine => new LVitem_CompareVM { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
+                    LV_Both.Add(lsIntersect.Select(asLine => new LVitem_FilesVM_Compare { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
 
                 if (0 < lsDiff1.Count)
-                    LV_First.Add(lsDiff1.Select(asLine => new LVitem_CompareVM { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
+                    LV_First.Add(lsDiff1.Select(asLine => new LVitem_FilesVM_Compare { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
 
                 if (0 < lsDiff2.Count)
-                    LV_Second.Add(lsDiff2.Select(asLine => new LVitem_CompareVM { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
+                    LV_Second.Add(lsDiff2.Select(asLine => new LVitem_FilesVM_Compare { TreeNode = asLine.Item1, FileLine = asLine.Item2 }));
             });
 
             NoResultsVisibility = Visibility.Collapsed;
@@ -253,7 +253,7 @@ namespace DoubleFile
             return ieFiles;
         }
 
-        LVitem_CompareVM
+        LVitem_FilesVM_Compare
             _selectedItem;
         readonly List<IDisposable>
             _lsDisposable = new List<IDisposable> { };

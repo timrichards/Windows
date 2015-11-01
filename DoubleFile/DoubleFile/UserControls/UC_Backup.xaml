@@ -135,7 +135,7 @@
         </ScrollViewer>
         <Grid Height="50" Visibility="{Binding ProgressbarVisibility}" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Stretch">
             <TextBlock TextAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">
-                <Run Text="setting up Backup view" FontWeight="SemiBold" Foreground="AntiqueWhite"/>
+                <Run Text="{Binding SettingUp, Mode=OneWay}" FontWeight="SemiBold" Foreground="AntiqueWhite"/>
             </TextBlock>
             <ProgressBar IsIndeterminate="True" VerticalAlignment="Bottom"/>
         </Grid>

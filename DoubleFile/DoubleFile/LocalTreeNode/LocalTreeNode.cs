@@ -157,7 +157,7 @@ namespace DoubleFile
         }
 
         int
-            ILocalTreeNode_SetLevel.Set(IEnumerable<LocalTreeNode> rootNodes) => SetLevel(rootNodes, null, 0); 
+            ILocalTreeNode_SetLevel.Set(IEnumerable<LocalTreeNode> rootNodes) => SetLevel(rootNodes, null, 0);
         static int SetLevel(IEnumerable<LocalTreeNode> nodes, LocalTreeNode nodeParent, int nLevel)
         {
             var nCount = 0;
@@ -183,32 +183,216 @@ namespace DoubleFile
             return this;
         }
 
-        static internal IReadOnlyList<Tuple<LocalTreeNode, IReadOnlyList<string>>>
-            GetFileLines(IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>> ieHashesGrouped)
+        internal IReadOnlyList<Tuple<LocalTreeNode, IReadOnlyList<string>>>
+            GetFileLinesA(IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>> ieHashesGrouped)
         {
-            IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<string>>> ieFiles = new Tuple<LocalTreeNode, IReadOnlyList<string>>[] { };
+            ReadLinesIterator
+                iterator = 
+                RootNodeDatum.LVitemProjectVM.ListingFile
+                .ReadLines(99596).As<ReadLinesIterator>();
+
+            var currentPos = 0;
             var nHashColumn = Statics.DupeFileDictionary.HashColumn;
 
-            foreach (var tuple in ieHashesGrouped)
+            var x =
+                ieHashesGrouped
+                .OrderBy(tuple => tuple.Item1.NodeDatum.PrevLineNo)
+                .Select(tuple => Tuple.Create(tuple.Item1,
+                tuple.Item1
+                .GetFileList(ref currentPos, iterator).ToList()
+                .Select(strLine => strLine.Split('\t'))
+                .Where(asLine => nHashColumn < asLine.Length)
+                .DistinctBy(asLine => asLine[nHashColumn])
+                .Select(asLine => new { a = HashTuple.FileIndexedIDfromString(asLine[nHashColumn], asLine[FileParse.knColLength]), b = asLine })
+                .Where(sel => tuple.Item2.Contains(sel.a))
+                .Select(sel => (IReadOnlyList<string>)sel.b.Skip(3).ToArray())))
+                .ToList();
+        }
+
+        internal IReadOnlyList<Tuple<LocalTreeNode, IReadOnlyList<string>>>
+            GetFileLines(IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>> ieHashesGrouped)
+        {
+            ReadLinesIterator
+                iterator = 
+                RootNodeDatum.LVitemProjectVM.ListingFile
+                .ReadLines(99596).As<ReadLinesIterator>();
+
+            var currentPos = 0;
+            var nHashColumn = Statics.DupeFileDictionary.HashColumn;
+
+            return
+                (IReadOnlyList<Tuple<LocalTreeNode, IReadOnlyList<string>>>)
+                ieHashesGrouped
+                .OrderBy(tuple => tuple.Item1.NodeDatum.PrevLineNo)
+                .Select(tuple => Tuple.Create(tuple.Item1, tuple.Item2,
+                tuple.Item1
+                .GetFileList(ref currentPos, iterator).ToList()
+                .Select(strLine => strLine.Split('\t'))
+                .Where(asLine => nHashColumn < asLine.Length)
+                .DistinctBy(asLine => asLine[nHashColumn])
+                .Select(asLine => new { a = HashTuple.FileIndexedIDfromString(asLine[nHashColumn], asLine[FileParse.knColLength]), b = asLine })
+                .Where(sel => tuple.Item2.Contains(sel.a))
+                .Select(sel => Tuple.Create(tuple.Item1, (IReadOnlyList<string>)sel.b.Skip(3).ToArray()))))
+                .ToList();
+
+            //IEnumerable<string>
+            //    ieFileLinesGrouped = new string[0];
+            //IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>, IEnumerable<string>>>
+            //    ieFileLinesGrouped = new Tuple<LocalTreeNode, IReadOnlyList<int>, IEnumerable<string>>[] { };
+            IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>, IEnumerable<string>>>
+                ieFileLinesGrouped = new Tuple<LocalTreeNode, IReadOnlyList<int>, IEnumerable<string>>[] { };
+            IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>, string>>
+                ieFileLinesGroupedA = new Tuple<LocalTreeNode, IReadOnlyList<int>, string>[] { };
+
+            ReadLinesIterator
+                iterator = 
+                RootNodeDatum.LVitemProjectVM.ListingFile
+                .ReadLines(99596).As<ReadLinesIterator>();
+
+            int currentPos = 0;
+
+            //foreach (var tuple in ieHashesGrouped.OrderBy(tuple => tuple.Item1.NodeDatum.PrevLineNo))
+            //    ieFileLinesGrouped = ieFileLinesGrouped.Concat(tuple.Item1.GetFileList(ref currentPos, iterator));
+            //foreach (var tuple in ieHashesGrouped.OrderBy(tuple => tuple.Item1.NodeDatum.PrevLineNo))
+            //    ieFileLinesGrouped = ieFileLinesGrouped.Concat(new[] { Tuple.Create(tuple.Item1, tuple.Item2, tuple.Item1.GetFileList(ref currentPos, iterator)) });
+
+
+            //var x =
+            //    ieHashesGrouped
+            //    .OrderBy(tuple => tuple.Item1.NodeDatum.PrevLineNo)
+            //    .Select(tuple => Tuple.Create(tuple.Item1, tuple.Item2,
+            //    tuple.Item1
+            //    .GetFileList(ref currentPos, iterator)))
+            //    .SelectMany(y => y.Item3)
+            //    .ToList();
+
+            //ieFileLinesGroupedA =
+            //    ieHashesGrouped
+            //    .OrderBy(tuple => tuple.Item1.NodeDatum.PrevLineNo)
+            //    .Select(tuple => Tuple.Create(tuple.Item1, tuple.Item2,
+            //    tuple.Item1
+            //    .GetFileList(ref currentPos, iterator)))
+            //    .SelectMany(tuple => tuple.Item3
+            //    .Select(strLine => Tuple.Create(tuple.Item1, tuple.Item2, strLine)));
+
+            //ieFileLinesGroupedA =
+            //    ieHashesGrouped
+            //    .OrderBy(tuple => tuple.Item1.NodeDatum.PrevLineNo)
+            //    .Select(tuple => Tuple.Create(tuple.Item1, tuple.Item2,
+            //    tuple.Item1
+            //    .GetFileList(ref currentPos, iterator)))
+            //    .SelectMany(tuple => tuple.Item3, (tuple, strLine) => Tuple.Create(tuple.Item1, tuple.Item2, strLine));
+
+            //ieFileLinesGrouped =
+            //    ieHashesGrouped
+            //    .OrderBy(tuple => tuple.Item1.NodeDatum.PrevLineNo)
+            //    .Select(tuple => Tuple.Create(tuple.Item1, tuple.Item2,
+            //    tuple.Item1
+            //    .GetFileList(ref currentPos, iterator)));
+
+            //ieFileLinesGroupedA =
+            //    ieHashesGrouped
+            //    .OrderBy(tuple => tuple.Item1.NodeDatum.PrevLineNo)
+            //    .Select(tuple =>
+            //    tuple.Item1
+            //    .GetFileList(ref currentPos, iterator)
+            //    .Select(strLine => Tuple.Create(tuple.Item1, tuple.Item2, strLine)))
+            //    .SelectMany(g => g, (g, a) => a);
+
+            //ieFileLinesGroupedA =
+            //    ieHashesGrouped
+            //    .OrderBy(tuple => tuple.Item1.NodeDatum.PrevLineNo)
+            //    .Select(tuple =>
+            //    tuple.Item1
+            //    .GetFileList(ref currentPos, iterator)
+            //    .Select(strLine => Tuple.Create(tuple.Item1, tuple.Item2, strLine)))
+            //    .SelectMany(g => g);
+
+            //foreach (var tuple in ieHashesGrouped.OrderBy(tuple => tuple.Item1.NodeDatum.PrevLineNo))
+            //{
+            //    ieFileLinesGroupedA = ieFileLinesGroupedA.Concat(
+            //        tuple.Item1
+            //        .GetFileList(ref currentPos, iterator)
+            //        .Select(strLine => Tuple.Create(tuple.Item1, tuple.Item2, strLine)));
+
+            //    ++nCount;
+            //}
+
+            //var ls = ieFileLinesGrouped.ToList();
+
+            //foreach (var tuple in ieFileLinesGrouped)
+            //{
+            //    ieFileLinesGroupedA = ieFileLinesGroupedA.Concat(
+            //        tuple.Item3
+            //        .Select(strLine => Tuple.Create(tuple.Item1, tuple.Item2, strLine)));
+            //}
+
+            var ls = ieFileLinesGroupedA.ToList();
+
+            //ieFileLinesGrouped
+                //.SelectMany(tuple => tuple.Item3, (tuple, strLine) => Tuple.Create(tuple.Item1, tuple.Item2, strLine))
+                //.ToList();    // ToList() enumerates: reads through the file exactly once then closes it
+
+            //IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>, IEnumerable<string[]>>>
+            //    ieFileLinesGroupedA = new Tuple<LocalTreeNode, IReadOnlyList<int>, IEnumerable<string[]>>[] { };
+
+            IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<string>>> ieFiles = new Tuple<LocalTreeNode, IReadOnlyList<string>>[] { };
+
+            // from:    IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>, IEnumerable<string>>>
+            // to:      IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<string>>>
+
+            //foreach (var tuple in lsFiles_in.SelectMany(tuple => tuple.Item2, (tuple, x) => tuple).DistinctBy(tuple => tuple.Item2))
+            //lsFileLinesGrouped.SelectMany(tuple => tuple.Item3, (tuple, x) => tuple)
+            //    .Select(strLine => strLine.Split('\t'))
+            //    .Where(asLine => nHashColumn < asLine.Length)
+            //    .DistinctBy(asLine => asLine[nHashColumn])
+            //    .Select(asLine => new { a = HashTuple.FileIndexedIDfromString(asLine[nHashColumn], asLine[FileParse.knColLength]), b = asLine })
+            //    .Where(sel => tuple.Item2.Contains(sel.a))
+            //    .Select(sel => Tuple.Create(tuple.Item1, (IReadOnlyList<string>)sel.b.Skip(3).ToArray())));
+
+            //foreach (var tuple in lsFileLinesGrouped)
             {
-                ieFiles =
-                    ieFiles.Concat(
-                    tuple.Item1.GetFileList(bReadAllLines: true)
-                    .Select(strLine => strLine.Split('\t'))
-                    .Where(asLine => nHashColumn < asLine.Length)
-                    .DistinctBy(asLine => asLine[nHashColumn])
-                    .Select(asLine => new { a = HashTuple.FileIndexedIDfromString(asLine[nHashColumn], asLine[FileParse.knColLength]), b = asLine })
-                    .Where(sel => tuple.Item2.Contains(sel.a))
-                    .Select(sel => Tuple.Create(tuple.Item1, (IReadOnlyList<string>)sel.b.Skip(3).ToArray())));
+                //ieFiles =
+                //    ieFiles.Concat(
+                //    tuple.Item3
+                //    .Select(strLine => strLine.Split('\t'))
+                //    .Where(asLine => nHashColumn < asLine.Length)
+                //    .DistinctBy(asLine => asLine[nHashColumn])
+                //    .Select(asLine => new { a = HashTuple.FileIndexedIDfromString(asLine[nHashColumn], asLine[FileParse.knColLength]), b = asLine })
+                //    .Where(sel => tuple.Item2.Contains(sel.a))
+                //    .Select(sel => Tuple.Create(tuple.Item1, (IReadOnlyList<string>)sel.b.Skip(3).ToArray())));
+
+                //ieFiles =
+                //    ieFiles.Concat(
+                //    tuple.Item3
+                //    .Select(strLine => strLine.Split('\t'))
+                //    .Where(asLine => nHashColumn < asLine.Length)
+                //    .DistinctBy(asLine => asLine[nHashColumn])
+                //    .Select(asLine => new { a = HashTuple.FileIndexedIDfromString(asLine[nHashColumn], asLine[FileParse.knColLength]), b = asLine })
+                //    .Where(sel => tuple.Item2.Contains(sel.a))
+                //    .Select(sel => Tuple.Create(tuple.Item1, (IReadOnlyList<string>)sel.b.Skip(3).ToArray())));
+
+                ////          tuple.Item3
+                ////           .AsParallel()
+                ////.Select(strLine => strLine.Split('\t'))
+                ////.Where(asLine => nHashColumn < asLine.Length)
+                ////.DistinctBy(asLine => asLine[nHashColumn])
+                ////.Select(asLine => new { a = 0/*HashTuple.FileIndexedIDfromString(asLine[nHashColumn], asLine[FileParse.knColLength])*/, b = 0/*asLine*/ })
+                ////  .Where(sel => tuple.Item2.Contains(sel.a))
+                ////     .Select(sel => 
+                //new[] { Tuple.Create(tuple.Item1, (IReadOnlyList<string>)new string[0]) })
+                //;//); //sel.b.Skip(3).ToArray())));
             }                                       // makes this an LV line: knColLengthLV----^
 
-            return ieFiles.OrderBy(tuple => tuple.Item2[0]).ToList();   // ToList() enumerates: reads through the file exactly once and closes it
+            var lsRet = ieFiles.OrderBy(tuple => tuple.Item2[0]).ToList();
+
+            return lsRet;
         }
 
         internal IEnumerable<string>
-            GetFileList() => GetFileList(bReadAllLines: false);
+            GetFileList() { int x = 0; return GetFileList(ref x); }
         IEnumerable<string>
-            GetFileList(bool bReadAllLines)
+            GetFileList(ref int currentPos, ReadLinesIterator iterator = null)
         {
             var nPrevDir = (int)NodeDatum.PrevLineNo;
 
@@ -218,30 +402,16 @@ namespace DoubleFile
             if (0 == NodeDatum.FileCountHere)
                 return new string[0];
 
-            if (bReadAllLines)
+            if (null != iterator)
             {
-                if (1 != _currentIterator?.state)
-                {
-                    _currentIterator =
-                        RootNodeDatum.LVitemProjectVM.ListingFile
-                        .ReadLines(99596).As<ReadLinesIterator>();
+                var ieRet =
+                    iterator
+                    .Skip(nPrevDir - currentPos)
+                    .Take(NodeDatum.FileCountHere);
 
-                    _currentPos = 0;
-                }
-
-                if (null != _currentIterator)   // null if not isolated storage file
-                {
-                    var ieRet =
-                        _currentIterator
-                        .Skip(nPrevDir - _currentPos)
-                        .Take(NodeDatum.FileCountHere);
-
-                    _currentPos = nPrevDir + NodeDatum.FileCountHere;
-                    return ieRet;
-                }
+                currentPos = nPrevDir + NodeDatum.FileCountHere;
+                return ieRet;
             }
-
-            _currentIterator = null;    // jic
 
             return
                 RootNodeDatum.LVitemProjectVM.ListingFile
@@ -264,9 +434,5 @@ namespace DoubleFile
             _strPathShort;
         static readonly uint
             _knDatum8bitMask = (1 << 16) - 1 - UtilColorcode.CLUT_Mask;
-        static ReadLinesIterator
-            _currentIterator;
-        static int
-            _currentPos;
     }
 }

@@ -204,7 +204,7 @@ namespace DoubleFile
             if (0 == lsHashesGrouped.Count)
                 return new Tuple<LocalTreeNode, IReadOnlyList<string>>[] { };
 
-            return LocalTreeNode.GetFileLines(lsHashesGrouped);
+            return treeNode.GetFileLines(lsHashesGrouped);
         }
 
         IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>>

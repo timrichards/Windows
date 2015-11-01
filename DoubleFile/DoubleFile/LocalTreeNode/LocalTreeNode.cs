@@ -190,7 +190,7 @@ namespace DoubleFile
                 iterator =
                 RootNodeDatum.LVitemProjectVM.ListingFile
                 .ReadLines(99596).As<ReadLinesIterator>()
-                .StayOpen();
+                ?.StayOpen();
 
             var nLineNo = 0;
             var nHashColumn = Statics.DupeFileDictionary.HashColumn;
@@ -209,10 +209,10 @@ namespace DoubleFile
                 .Select(sel => (IReadOnlyList<string>)sel.b.Skip(3).ToArray())
                 .ToList()))
                 .Where(tuple => 0 < tuple.Item2.Count)
-                .Select(tuple => Tuple.Create(tuple.Item1, tuple.Item2.First()))
+                .SelectMany(tuple => tuple.Item2, (tuple, asLine) => Tuple.Create(tuple.Item1, asLine))
                 .ToList();
 
-            iterator.Close();
+            iterator?.Close();
             return retVal;
         }
 

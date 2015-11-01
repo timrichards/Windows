@@ -194,7 +194,7 @@ namespace DoubleFile
             if (false == searchSet.Any())
                 return new Tuple<LocalTreeNode, IReadOnlyList<string>>[] { };
 
-            IReadOnlyList<Tuple<LocalTreeNode, IReadOnlyList<string>>> retVal = null;
+            IReadOnlyList<Tuple<LocalTreeNode, IReadOnlyList<string>>> retVal = new Tuple<LocalTreeNode, IReadOnlyList<string>>[0];
 
             try
             {

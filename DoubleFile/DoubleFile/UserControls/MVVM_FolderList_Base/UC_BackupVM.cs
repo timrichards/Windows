@@ -155,11 +155,18 @@ namespace DoubleFile
 
                 var nHashColumn = Statics.DupeFileDictionary.HashColumn - 3;
 
-                _lsFiles =
-                    ItemsCast.Select(lvItem => lvItem.TreeNode).FirstOrDefault()?
-                    .GetFileLines(ieHashesGrouped)
-                    .DistinctBy(tuple => HashTuple.FileIndexedIDfromString(tuple.Item2[nHashColumn], tuple.Item2[FileParse.knColLengthLV]))
-                    .ToList();
+                try
+                {
+                    _lsFiles =
+                        ItemsCast.Select(lvItem => lvItem.TreeNode).FirstOrDefault()?
+                        .GetFileLines(ieHashesGrouped)
+                        .DistinctBy(tuple => HashTuple.FileIndexedIDfromString(tuple.Item2[nHashColumn], tuple.Item2[FileParse.knColLengthLV]))
+                        .ToList();
+                }
+                catch (OutOfMemoryException)
+                {
+                    MBoxStatic.ShowOverlay("Out of memory exception.", owner: LocalOwner);
+                }
 
                 ulong nLengthTotal = 0;
 

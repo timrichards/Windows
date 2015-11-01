@@ -204,10 +204,10 @@ namespace DoubleFile
                 .AsParallel()
                 .Select(strLine => strLine.Split('\t'))
                 .Where(asLine => nHashColumn < asLine.Length)
-                .DistinctBy(asLine => asLine[nHashColumn])
-                .Select(asLine => new { a = HashTuple.FileIndexedIDfromString(asLine[nHashColumn], asLine[FileParse.knColLength]), b = asLine })
-                .Where(sel => tuple.Item2.Contains(sel.a))  //   v----makes this an LV line: knColLengthLV
-                .Select(sel => (IReadOnlyList<string>)sel.b.Skip(3).ToArray())))
+                .Select(asLine => new { nFileID = HashTuple.FileIndexedIDfromString(asLine[nHashColumn], asLine[FileParse.knColLength]), asLine = asLine })
+                .Where(sel => tuple.Item2.Contains(sel.nFileID))
+                .DistinctBy(sel => sel.nFileID)                 //    v----makes this an LV line: knColLengthLV
+                .Select(sel => (IReadOnlyList<string>)sel.asLine.Skip(3).ToArray())))
                 .SelectMany(tuple => tuple.Item2, (tuple, asLine) => Tuple.Create(tuple.Item1, asLine))
                 .OrderBy(tuple => tuple.Item1.PathFullGet(false) + tuple.Item2[0])
                 .ToList();      // reads the file once from the beginning

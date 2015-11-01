@@ -194,7 +194,16 @@ namespace DoubleFile
             if (false == searchSet.Any())
                 return new Tuple<LocalTreeNode, IReadOnlyList<string>>[] { };
 
-            var retVal = treeNode.GetFileLines(GetHashesHere(treeNode, ref searchSet));
+            IReadOnlyList<Tuple<LocalTreeNode, IReadOnlyList<string>>> retVal = null;
+
+            try
+            {
+                retVal = treeNode.GetFileLines(GetHashesHere(treeNode, ref searchSet));
+            }
+            catch (OutOfMemoryException)
+            {
+                MBoxStatic.ShowOverlay("Out of memory exception."); //, owner: LocalOwner);
+            }
 
             Util.Assert(99608, false == searchSet.Any());
             return retVal;

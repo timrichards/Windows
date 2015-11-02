@@ -199,7 +199,7 @@ namespace DoubleFile
                     try
                     {
                         bool? bIgnoreError = null;
-                        double nCompleted = 0;      // double preserves mantissa
+                        double nProgress = 0;      // double preserves mantissa
 
                         foreach (var tuple in _lsFiles)
                         {
@@ -208,34 +208,39 @@ namespace DoubleFile
 
                             var sourceFile = DriveLetter + tuple.Item1.PathFullGet(false).Substring(1) + "\\" + tuple.Item2[0];
 
+                            progress.SetProgress(strKey, ++nProgress / _lsFiles.Count);
+
                             if (false == File.Exists(sourceFile))
                             {
                                 if (null == bIgnoreError)
                                     bIgnoreError = MessageBoxResult.Yes == MBoxStatic.ShowOverlay(tuple.Item2[0] + " does not exist. Continue without further warnings?", buttons: MessageBoxButton.YesNo, owner: LocalOwner);
 
-                                if (false == bIgnoreError.Value)
+                                if (bIgnoreError.Value)
+                                    continue;
+                                else
                                     break;
                             }
 
                             int? nDupeFilename = null;
-                            Func<string> backupPath = () => BackupPath + "\\" + tuple.Item2[0] + nDupeFilename?.ToString("_000");
+
+                            Func<string>
+                                backupPath = () => BackupPath + "\\" +
+                                Path.GetFileNameWithoutExtension(tuple.Item2[0]) +
+                                nDupeFilename?.ToString("_000") +
+                                Path.GetExtension(tuple.Item2[0]);
 
                             while (File.Exists(backupPath()))
                                 nDupeFilename = (nDupeFilename ?? 0) + 1;
 
                             File.Copy(sourceFile, backupPath());
-                            progress.SetProgress(strKey, ++nCompleted / _lsFiles.Count);
                         }
 
                         if (false == _bCancel)
-                            MBoxStatic.ShowOverlay("Backup completed, with _000 numeric incrememt suffix on duplicate filenames.", owner: LocalOwner);
+                            progress.SetCompleted(strKey);
                     }
                     catch (Exception e)
                     {
                         MBoxStatic.ShowOverlay("Exception backing up: " + e.GetBaseException().Message, owner: LocalOwner);
-                    }
-                    finally
-                    {
                         ProgressOverlay.CloseForced();
                     }
                 });

@@ -242,6 +242,9 @@ namespace DoubleFile
                     return true;    // from lambda
                 }
 
+                if (_vm.ItemsCast.All(lvItemA => lvItemA.IsCompleted))
+                    return true;    // from lambda
+
                 return (null == windowClosing);     // from lambda
             });
 

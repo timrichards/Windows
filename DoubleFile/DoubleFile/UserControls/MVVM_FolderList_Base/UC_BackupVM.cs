@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace DoubleFile
 {
-    partial class UC_BackupVM : UC_FolderListVM_Base
+    partial class UC_BackupVM : UC_FolderListVM_Base, IProgressOverlayClosing
     {
         internal bool
             IsDisposed { get; private set; } = false;
@@ -27,7 +27,7 @@ namespace DoubleFile
         public string FileCount { get; private set; }
         public string BackupSize { get; private set; }
 
-        public string DestVolume { get; private set; }
+        public string BackupPath { get; private set; }
         internal string DriveLetter { private get; set; }
 
         public Visibility ProgressbarVisibility { get; private set; } = Visibility.Visible;
@@ -71,11 +71,11 @@ namespace DoubleFile
                 if (false == ModalThread.Go(darkWindow => dlg.ShowDialog((Window)darkWindow)))
                     return;     // from lambda
 
-                DestVolume = dlg.SelectedPath;
-                RaisePropertyChanged("DestVolume");
+                BackupPath = dlg.SelectedPath;
+                RaisePropertyChanged("BackupPath");
             });
 
-            Icmd_Backup = new RelayCommand(() => { }, () => (false == (string.IsNullOrEmpty(DestVolume) || string.IsNullOrEmpty(DriveLetter))));
+            Icmd_Backup = new RelayCommand(Go, () => (false == (string.IsNullOrEmpty(BackupPath) || string.IsNullOrEmpty(DriveLetter))));
 
             Util.ThreadMake(() =>
             {
@@ -185,6 +185,76 @@ namespace DoubleFile
             });
         }
 
+        void Go()
+        {
+            var strKey = "Backing up";
+
+            new ProgressOverlay(new[] { "" }, new[] { strKey }, progress =>
+            {
+                Util.ThreadMake(() =>
+                {
+                    progress.WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this);
+                    _bCancel = false;
+
+                    try
+                    {
+                        bool? bIgnoreError = null;
+                        double nCompleted = 0;      // double preserves mantissa
+
+                        foreach (var tuple in _lsFiles)
+                        {
+                            if (_bCancel)
+                                break;
+
+                            var sourceFile = DriveLetter + tuple.Item1.PathFullGet(false).Substring(1) + "\\" + tuple.Item2[0];
+
+                            if (false == File.Exists(sourceFile))
+                            {
+                                if (null == bIgnoreError)
+                                    bIgnoreError = MessageBoxResult.Yes == MBoxStatic.ShowOverlay(tuple.Item2[0] + " does not exist. Continue without further warnings?", buttons: MessageBoxButton.YesNo, owner: LocalOwner);
+
+                                if (false == bIgnoreError.Value)
+                                    break;
+                            }
+
+                            int? nDupeFilename = null;
+                            Func<string> backupPath = () => BackupPath + "\\" + tuple.Item2[0] + nDupeFilename?.ToString("_000");
+
+                            while (File.Exists(backupPath()))
+                                nDupeFilename = (nDupeFilename ?? 0) + 1;
+
+                            File.Copy(sourceFile, backupPath());
+                            progress.SetProgress(strKey, ++nCompleted / _lsFiles.Count);
+                        }
+
+                        if (false == _bCancel)
+                            MBoxStatic.ShowOverlay("Backup completed, with _000 numeric incrememt suffix on duplicate filenames.", owner: LocalOwner);
+                    }
+                    catch (Exception e)
+                    {
+                        MBoxStatic.ShowOverlay("Exception backing up: " + e.GetBaseException().Message, owner: LocalOwner);
+                    }
+                    finally
+                    {
+                        ProgressOverlay.CloseForced();
+                    }
+                });
+            })
+                .ShowOverlay();
+        }
+
+        bool IProgressOverlayClosing.ConfirmClose()
+        {
+            if (_bCancel)
+                return true;
+
+            _bCancel =
+                (MessageBoxResult.Yes == ProgressOverlay.WithProgressOverlay(w =>
+                MBoxStatic.AskToCancel(w.Title)));
+
+            return _bCancel;
+        }
+
         IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>>
             GetHashesHere(LocalTreeNode treeNode)
         {
@@ -215,6 +285,8 @@ namespace DoubleFile
             return ieFiles;
         }
 
+        bool
+            _bCancel = false;
         IDictionary<int, bool>
             _dictDupeFileHit = null;
         List<Tuple<LocalTreeNode, IReadOnlyList<string>>>

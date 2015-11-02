@@ -125,7 +125,7 @@
                             <StackPanel Orientation="Horizontal" Margin="0, 1">
                                 <Button Command="{Binding Icmd_DestVolume}" Content="Set" x:Name="formBtn_DestVolume"/>
                                 <TextBlock Text="Backup to:" VerticalAlignment="Center" Margin="10, 0"/>
-                                <TextBox Text="{Binding DestVolume, Mode=OneWay}" Style="{StaticResource ReadOnly}"/>
+                                <TextBox Text="{Binding BackupPath, Mode=OneWay}" Style="{StaticResource ReadOnly}"/>
                             </StackPanel>
                             <Button Command="{Binding Icmd_Backup}" Content="Back up" Margin="0, 1"/>
                         </StackPanel>

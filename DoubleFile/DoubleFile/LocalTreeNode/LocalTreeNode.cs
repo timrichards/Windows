@@ -186,8 +186,7 @@ namespace DoubleFile
         internal IReadOnlyList<Tuple<LocalTreeNode, IReadOnlyList<string>>>
             GetFileLines(IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>> ieHashesGrouped)
         {
-            var
-                iterator =      // null if file is not in Isolated Storage: no speedup
+            var iterator =      // null if file is not in Isolated Storage: no speedup
                 RootNodeDatum.LVitemProjectVM.ListingFile
                 .ReadLines(99596).As<ReadLinesIterator>()?
                 .StayOpen();

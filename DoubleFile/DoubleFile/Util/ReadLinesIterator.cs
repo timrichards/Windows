@@ -80,6 +80,9 @@ namespace DoubleFile
 
         static internal ReadLinesIterator CreateIterator(string strFile)
         {
+            if (_stayOpen)
+                Util.Assert(0, false);
+
             return CreateIterator(new StreamReader(strFile.OpenFile(FileMode.Open)));
         }
 

@@ -4,7 +4,7 @@ using System.Windows.Input;
 
 namespace DoubleFile
 {
-    class UC_FolderListVM_Base : ListViewVM_Base<LVitem_FolderListVM>, IDisposable
+    abstract class UC_FolderListVM_Base : ListViewVM_Base<LVitem_FolderListVM>, IDisposable
     {
         public ICommand Icmd_Nicknames { get; protected set; }
         public ICommand Icmd_GoTo { get; protected set; }

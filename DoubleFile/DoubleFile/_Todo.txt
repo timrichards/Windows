@@ -1,8 +1,9 @@
-﻿- All one volume yet has files all duped on multiple volumes
+﻿- option to store backups in a compressed archive with its own .DFL record
+	- function to explore archives and saved a .DFL for each one
+- restore a lost drive's original folder structure given that all its files are duped in various locations
+- All one volume yet has files all duped on multiple volumes
 - Project sort by nickname then by drive letter
 - Save project with four new listings: can't find lising files. Works second time.
-- Closing New hides app
-- Very few files < 2.0 exactly KiB archive, and several others don't too.
 - Progress in task bar
 - Tree list slider does not always go to root; and skips to root: try a search to subfolder then nav up. It also loses the deep node.
 - Clones don't sync to folder detail updated in extra window.
@@ -127,6 +128,7 @@
 - Aggregate returns seed on empty enumerable
 - C# has this overload/override problem: the parameter can be optional here so who do you call?
 - C# has this base override is null problem: (null != base.Nodes) is always true even when null
+- good: string concat still occurs after nullable type is null: a + b?.ToString() + c still gives a + c		11/3/15
 - directory listings preserve display case, which is irrespective: NTFS usage is always case insensitive.
 	Regex is case sensitive because the regex iteself might be: user can inline case-insensitve.
 - Rename set methods to MethodSet(): hard to find: e.g. AbortSet() in WinProgress

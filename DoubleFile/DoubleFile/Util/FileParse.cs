@@ -383,7 +383,7 @@ namespace DoubleFile
                 .FirstOnlyAssert(s => lvItem.DriveSerial = ReadAttribute(s));
 
             lvItem.HashV2 =
-                ksHeader != asLines.FirstOrDefault().Split('\t').Skip(2).FirstOrDefault()
+                (ksHeader != asLines.FirstOrDefault().Split('\t').Skip(2).FirstOrDefault())
                 ? false
                 : asLines
                 .Where(strLine => strLine.StartsWith(ksLineType_File))

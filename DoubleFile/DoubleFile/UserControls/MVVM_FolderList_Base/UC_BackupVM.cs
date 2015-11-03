@@ -203,7 +203,6 @@ namespace DoubleFile
             {
                 Util.ThreadMake(() =>
                 {
-                    progress.WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this);
                     _bCancel = false;
 
                     try
@@ -242,7 +241,7 @@ namespace DoubleFile
                                 backupPath = () => BackupPath + "\\" +
                                 Path.GetFileNameWithoutExtension(tuple.Item2[0]) +
                                 nDupeFilename?.ToString("_000") +
-                                Path.GetExtension(tuple.Item2[0]);
+                                Path.GetExtension(tuple.Item2[0]);          // string concat still occurs after nullable type is null
 
                             while (File.Exists(backupPath()))
                                 nDupeFilename = (nDupeFilename ?? 0) + 1;
@@ -259,6 +258,9 @@ namespace DoubleFile
                     }
                 });
             })
+            {
+                WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this)
+            }
                 .ShowOverlay();
         }
 

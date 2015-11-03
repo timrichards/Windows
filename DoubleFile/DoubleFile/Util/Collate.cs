@@ -97,7 +97,7 @@ namespace DoubleFile
 
 
             foreach (var kvp in _dictSolitary)
-                Step4_SolitAllDupes(kvp);                                       //Step4_SolitAllDupes
+                Step4_SolitOrAllOneVolAllDupes(kvp.Value);                      //Step4_SolitOrAllOneVolAllDupes
 
 
             #region AllNodes _lsLVsameVol                                       //#region AllNodes _lsLVsameVol
@@ -109,6 +109,10 @@ namespace DoubleFile
                 Util.Assert(99975, AllNodes.Count == nCount);
 
                 lsSameVol.Sort((y, x) => x.NodeDatum.LengthTotal.CompareTo(y.NodeDatum.LengthTotal));
+
+                foreach (var treeNode in lsSameVol)
+                    Step4_SolitOrAllOneVolAllDupes(treeNode.Clones);            //Step4_SolitOrAllOneVolAllDupes
+
                 nProgressDenominator += lsSameVol.Count;
                 ++nProgressItem;
 
@@ -237,7 +241,7 @@ namespace DoubleFile
             foreach (var treeNode in lsNodes)
                 treeNode.ColorcodeFG = Solitary;
 
-            lsNodes.Sort((x, y) => x.Level.CompareTo(y.Level));
+            lsNodes.Sort((x, y) => x.Level.CompareTo(y.Level));      // matrushka
             _dictSolitary.Add(kvp.Key, lsNodes);
         }
 
@@ -321,9 +325,9 @@ namespace DoubleFile
             _dictSolitary.Remove(kvp.Key);
         }
 
-        void Step4_SolitAllDupes(KeyValuePair<int, List<LocalTreeNode>> kvp)
+        void Step4_SolitOrAllOneVolAllDupes(List<LocalTreeNode> lsTreeNodes)
         {
-            var testNode = kvp.Value.Last();
+            var testNode = lsTreeNodes.Last();      // solitary: innermost matrushka
             var nodeDatum = testNode.NodeDatum;
 
             if (false == (nodeDatum.Hashes_SubnodeFiles_IsComplete && nodeDatum.Hashes_FilesHere_IsComplete))
@@ -339,15 +343,23 @@ namespace DoubleFile
             if (null == isAllDupSepVol)
                 return;
 
-            var color =
-                isAllDupSepVol.Value &&
-                (false ==
-                (testNode.Nodes?.Any(subNode => (subNode.IsSolitary && (subNode.NodeDatum.Hash_AllFiles != nodeDatum.Hash_AllFiles))) ?? false))
-                ? SolitAllDupesSepVol
-                : SolitAllDupesOneVol;
+            if (testNode.IsSolitary)
+            {
+                var color =
+                    isAllDupSepVol.Value &&
+                    (false ==
+                    (testNode.Nodes?.Any(subNode => (subNode.IsSolitary && (subNode.NodeDatum.Hash_AllFiles != nodeDatum.Hash_AllFiles))) ?? false))
+                    ? SolitAllDupesSepVol
+                    : SolitAllDupesOneVol;
 
-            foreach (var treeNode in kvp.Value)
-                treeNode.ColorcodeFG = color;
+                foreach (var treeNode in lsTreeNodes)
+                    treeNode.ColorcodeFG = color;
+            }
+            else if (isAllDupSepVol.Value)
+            {
+                foreach (var treeNode in lsTreeNodes)
+                    treeNode.ColorcodeFG = OneVolumeDupesSepVol;
+            }
         }
 
         void Step5_SolitAllDupes()
@@ -420,7 +432,8 @@ namespace DoubleFile
 
                     if (testNode.Nodes.All(treeNodeA => new[]
                     {
-                        ZeroLengthFolder, OneCloneSepVolume, ManyClonesSepVolume, SolitAllDupesSepVol, SolitAllClonesSepVol
+                        ZeroLengthFolder, OneCloneSepVolume, ManyClonesSepVolume, SolitAllDupesSepVol, SolitAllClonesSepVol,
+                        OneVolumeDupesSepVol
                     }
                         .Contains(treeNodeA.ColorcodeFG)))
                     {

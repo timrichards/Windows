@@ -16,6 +16,7 @@ namespace DoubleFile
             { ManyClonesSepVolume,  "This folder has multiple copies on at least two separate volumes." },
             { OneCloneSepVolume,    "This folder has a copy on a separate volume." },
             { AllOnOneVolume,       "All copies of this folder reside on one volume." },
+            { OneVolumeDupesSepVol, "All  files are on multiple volumes though all copies of this folder are on one volume." },
             { Solitary,             "This folder has no exact copy." },
             { SolitAllDupesOneVol,  "This folder has no exact copy, yet all its files are duplicated, at least one on one volume." },
             { SolitAllDupesSepVol,  "This folder has no exact copy, yet all its files are duplicated, on more than one volume." },
@@ -60,23 +61,24 @@ namespace DoubleFile
         internal const int ManyClonesSepVolume  = unchecked((int)0xFFA4D4E4);   // => Colors.LightBlue.ToArgb();                // LightBlue
         internal const int OneCloneSepVolume    = unchecked((int)0xFF4585B5);   // => Colors.SteelBlue.ToArgb();                // SteelBlue
         internal const int AllOnOneVolume       = unchecked((int)0xFFB62626);   // => Colors.Firebrick.ToArgb();                // Firebrick
-        internal const int Solitary             = unchecked((int)0xFFC70707);   // => Color.FromArgb(255, 192, 0, 0).ToArgb();  // Red
-        internal const int SolitAllDupesOneVol  = unchecked((int)0xFFF8C8D8);
-        internal const int SolitAllDupesSepVol  = unchecked((int)0xFF7959D9);
-        internal const int SolitaryHasClones    = unchecked((int)0xFFCA2A2A);
-        internal const int SolitAllClonesOneVol = unchecked((int)0xFFDBCBDB);
-        internal const int SolitAllClonesSepVol = unchecked((int)0xFFACCCDC);
-        internal const int SolitaryClonedParent = unchecked((int)0xFF4D7DAD);
-        internal const int SolitaryOneVolParent = unchecked((int)0xFFBE3E3E);
-        internal const int ContainsSolitaryBG   =                0x404F0F0F;    // => Color.FromArgb(64, 64, 0, 0).ToArgb();    // DarkRedBG
-        internal const int FolderHasNoHashes    = unchecked((int)0xFFA00000);
-        internal const int ZeroLengthFolder     = unchecked((int)0xFFD1D1D1);   // => Colors.LightGray.ToArgb();                // LightGray
-        internal const int TreemapFolder        = unchecked((int)0xFF62A242);
-        internal const int TreemapFreespace     = unchecked((int)0xFF03F393);   // => Colors.MediumSpringGreen.ToArgb();        // MediumSpringGreen
-        internal const int TreemapUnreadspace   = unchecked((int)0xFFC41484);   // => Colors.MediumVioletRed.ToArgb();          // MediumVioletRed
-        internal const int TreemapDupeSepVol    = unchecked((int)0xFF658505);   // => Colors.OliveDrab.ToArgb();                // OliveDrab
-        internal const int TreemapDupeOneVol    = unchecked((int)0xFFE62626);
-        internal const int TreemapUniqueFile    = unchecked((int)0xFFC71717);
+        internal const int OneVolumeDupesSepVol = unchecked((int)0xFF4787B7);   // => Colors.SteelBlue.ToArgb();                // SteelBlue
+        internal const int Solitary             = unchecked((int)0xFFC80808);   // => Color.FromArgb(255, 192, 0, 0).ToArgb();  // Red
+        internal const int SolitAllDupesOneVol  = unchecked((int)0xFFF9C9D9);
+        internal const int SolitAllDupesSepVol  = unchecked((int)0xFF7A5ADA);
+        internal const int SolitaryHasClones    = unchecked((int)0xFFCB2B2B);
+        internal const int SolitAllClonesOneVol = unchecked((int)0xFFDCCCDC);
+        internal const int SolitAllClonesSepVol = unchecked((int)0xFFADCDDD);
+        internal const int SolitaryClonedParent = unchecked((int)0xFF4E7EAE);
+        internal const int SolitaryOneVolParent = unchecked((int)0xFFBF3F3F);
+        internal const int ContainsSolitaryBG   =                0x40400000;    // => Color.FromArgb(64, 64, 0, 0).ToArgb();    // DarkRedBG
+        internal const int FolderHasNoHashes    = unchecked((int)0xFFA10101);
+        internal const int ZeroLengthFolder     = unchecked((int)0xFFD2D2D2);   // => Colors.LightGray.ToArgb();                // LightGray
+        internal const int TreemapFolder        = unchecked((int)0xFF63A343);
+        internal const int TreemapFreespace     = unchecked((int)0xFF04F494);   // => Colors.MediumSpringGreen.ToArgb();        // MediumSpringGreen
+        internal const int TreemapUnreadspace   = unchecked((int)0xFFC51585);   // => Colors.MediumVioletRed.ToArgb();          // MediumVioletRed
+        internal const int TreemapDupeSepVol    = unchecked((int)0xFF668606);   // => Colors.OliveDrab.ToArgb();                // OliveDrab
+        internal const int TreemapDupeOneVol    = unchecked((int)0xFFE72727);
+        internal const int TreemapUniqueFile    = unchecked((int)0xFFC81818);
 
         internal const int
             CLUT_Mask = (1 << CLUT_Shift) - 1;
@@ -106,7 +108,7 @@ namespace DoubleFile
             AllOnOneVolume, ParentClonedBG, ParentCloned, ZeroLengthFolder, TreemapFreespace, TreemapUnreadspace,
             TreemapDupeSepVol, Solitary, SolitaryClonedParent, SolitaryOneVolParent, OneCloneSepVolume,
             TreemapUniqueFile, SolitAllDupesOneVol, ChildClonedSepVolume, ChildAllOnOneVolume, FolderHasNoHashes,
-            SolitAllClonesOneVol, SolitAllDupesSepVol, TreemapDupeOneVol, SolitAllClonesSepVol
+            SolitAllClonesOneVol, SolitAllDupesSepVol, TreemapDupeOneVol, SolitAllClonesSepVol, OneVolumeDupesSepVol
         };
 
         static UtilColorcode()
@@ -141,13 +143,14 @@ namespace DoubleFile
             revClut[SolitAllDupesSepVol] = nIx++;
             revClut[TreemapDupeOneVol] = nIx++;
             revClut[SolitAllClonesSepVol] = nIx++;
+            revClut[OneVolumeDupesSepVol] = nIx++;
             _revCLUT = revClut;
             Util.Assert(99957, nIx == _knNumColors);
             Util.Assert(99910, 0 == CLUT_Shift >> 4);          // 16 bits, not _knNumColors
         }
 
         const int
-            _knNumColors = 25;
+            _knNumColors = 26;
         const uint
             _knCLUT_FGmask = (1 << (CLUT_Shift >> 1)) - 1;
         static readonly uint

@@ -373,7 +373,7 @@ namespace DoubleFile
                             if (lsRet[0].Length > nBufLen)
                             {
                                 _bufferManager.ReturnBuffer(lsRet[0]);
-                                lsRet[0] = _bufferManager.TakeBuffer(nBufLen);
+                                lsRet[0] = _bufferManager.TakeBuffer(1 << 12);  // 0.1 compatibility
                             }
 
                             Array.Copy(lsRet[1], lsRet[0], nBufLen);

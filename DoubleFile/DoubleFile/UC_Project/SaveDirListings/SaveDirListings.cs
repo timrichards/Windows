@@ -71,6 +71,7 @@ namespace DoubleFile
             foreach (var worker in _cbagWorkers)
                 worker.Join();
 
+            bufferManager.Clear();
             stopwatch.Stop();
             Util.WriteLine(string.Format("Finished saving directory listings in {0} seconds.",
                 ((int)stopwatch.ElapsedMilliseconds / 100) / 10d));

@@ -73,7 +73,6 @@
                 <DataGridTextColumn Header="File name" Binding="{Binding Filename}" Width="{Binding WidthFilename}"/>
                 <DataGridTextColumn Header="Duplicates" Binding="{Binding Duplicates}" SortMemberPath="DuplicatesRaw" Width="{Binding WidthDuplicates}" Visibility="{Binding Value.DupColVisibility, Source={StaticResource proxy}}"/>
                 <DataGridTextColumn Header="Length" Binding="{Binding Length}" SortMemberPath="LengthRaw" Width="{Binding WidthLength}"/>
-                <DataGridTextColumn Header="Length" Binding="{Binding Length}" SortMemberPath="LengthRaw" Width="{Binding WidthLength}"/>
                 <DataGridTextColumn Header="Created" Binding="{Binding Created}" SortMemberPath="CreatedRaw" Width="{Binding WidthCreated}"/>
                 <DataGridTextColumn Header="Modified" Binding="{Binding Modified}" SortMemberPath="ModifiedRaw" Width="{Binding WidthModified}"/>
                 <DataGridTextColumn Header="Attributes" Binding="{Binding Attributes}" Width="{Binding WidthAttributes}"/>

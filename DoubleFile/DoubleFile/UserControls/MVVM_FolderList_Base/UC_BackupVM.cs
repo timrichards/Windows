@@ -51,9 +51,10 @@ namespace DoubleFile
 
         void RaisePathFull()
         {
+            RaisePropertyChanged("FolderSel");
             RaisePropertyChanged("FileCount");
             RaisePropertyChanged("BackupSize");
-            RaisePropertyChanged("FolderSel");
+            RaisePropertyChanged("BackupPath");
             RaisePropertyChanged("VisibilityOnItems");
             _nicknameUpdater.UpdateViewport(UseNicknames);
         }
@@ -91,19 +92,22 @@ namespace DoubleFile
             });
         }
 
-        public override void Dispose()
-        {
-            IsDisposed = true;
-            LocalTV.AllFileHashes_DropRef();
-            base.Dispose();
-        }
-
         internal UC_BackupVM
             Init()
         {
             Icmd_GoTo = new RelayCommand(() => _selectedItem.TreeNode.GoToFile(null), () => null != _selectedItem);
             Icmd_Nicknames = new RelayCommand(RaisePathFull);
+            BackupPath = null;
+            DriveLetter = null;
+            RaisePathFull();
             return this;
+        }
+
+        public override void Dispose()
+        {
+            IsDisposed = true;
+            LocalTV.AllFileHashes_DropRef();
+            base.Dispose();
         }
 
         internal bool
@@ -173,7 +177,7 @@ namespace DoubleFile
                     foreach (var tuple in _lsFiles)
                         nLengthTotal += tuple.Item2[FileParse.knColLengthLV].ToUlong();
 
-                    FileCount = "" + _lsFiles.Count;
+                    FileCount = _lsFiles.Count.ToString("###,###,###");
                     BackupSize = nLengthTotal.FormatSize(bytes: true);
                 }
                 catch (OutOfMemoryException)
@@ -204,7 +208,7 @@ namespace DoubleFile
                         foreach (var tuple in _lsFiles)
                         {
                             if (_bCancel)
-                                break;
+                                return;     // from lambda
 
                             var sourceFile = DriveLetter + tuple.Item1.PathFullGet(false).Substring(1) + "\\" + tuple.Item2[0];
 
@@ -216,9 +220,14 @@ namespace DoubleFile
                                     bIgnoreError = MessageBoxResult.Yes == MBoxStatic.ShowOverlay(tuple.Item2[0] + " does not exist. Continue without further warnings?", buttons: MessageBoxButton.YesNo, owner: LocalOwner);
 
                                 if (bIgnoreError.Value)
+                                {
                                     continue;
+                                }
                                 else
-                                    break;
+                                {
+                                    ProgressOverlay.CloseForced();
+                                    return;     // from lambda
+                                }
                             }
 
                             int? nDupeFilename = null;
@@ -235,8 +244,7 @@ namespace DoubleFile
                             File.Copy(sourceFile, backupPath());
                         }
 
-                        if (false == _bCancel)
-                            progress.SetCompleted(strKey);
+                        progress.SetCompleted(strKey);
                     }
                     catch (Exception e)
                     {

@@ -317,6 +317,7 @@ namespace DoubleFile
                 _blockingFrame.PushFrameTrue();
             }
 
+            Application.Current.MainWindow.Activate();
             return LocalDialogResult;
         }
 

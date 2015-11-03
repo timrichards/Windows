@@ -39,10 +39,8 @@ namespace DoubleFile
                 return this;
             }
 
-            internal void Join()
-            {
-                _thread.Join();
-            }
+            internal void
+                Join() => _thread.Join();
 
             internal void Abort()
             {
@@ -290,6 +288,12 @@ namespace DoubleFile
                                     dictException_FileRead[strFile] = tuple.Item3;
                                 
                                 dictHash[strFile] = HashFile(tuple);
+#if (DEBUG && FOOBAR)
+                                var check = HashFile(tuple);
+                                var hash = dictHash[strFile];
+                                Util.Assert(99578, "" + check.Item1 == "" + hash.Item1);
+                                Util.Assert(99577, "" + check.Item2 == "" + hash.Item2);
+#endif
                             });
 
                             nProgressNumerator += lsFileBuffers_Dequeue.Count;
@@ -358,16 +362,25 @@ namespace DoubleFile
                     Util.Closure(() =>
                     {
                         lsRet.Add(_bufferManager.TakeBuffer(1 << 12));          // happens to be block size
-                        var bFilled = FillBuffer(fs, (1 << 19), lsRet);
+
+                        var bFilled = FillBuffer(fs, lsRet);
 
                         if (0 < lsRet[1].Length)
                         {
                             // virtually always: all non-empty files
-                            Array.Copy(lsRet[1], lsRet[0], Math.Min(lsRet[1].Length, lsRet[0].Length));
+                            var nBufLen = Math.Min(lsRet[1].Length, lsRet[0].Length);
+
+                            if (lsRet[0].Length > nBufLen)
+                            {
+                                _bufferManager.ReturnBuffer(lsRet[0]);
+                                lsRet[0] = _bufferManager.TakeBuffer(nBufLen);
+                            }
+
+                            Array.Copy(lsRet[1], lsRet[0], nBufLen);
 
                             if (lsRet[1].Length <= lsRet[0].Length)
                             {
-                                _bufferManager.ReturnBuffer(lsRet[1]);
+              //                  _bufferManager.ReturnBuffer(lsRet[1]);        // ----------------------------- dupes bad
                                 lsRet.RemoveAt(1);
                             }
                         }
@@ -391,7 +404,7 @@ namespace DoubleFile
                             fs.Position = desiredPos;
                         }
 
-                        if (false == FillBuffer(fs, (1 << 19), lsRet))
+                        if (false == FillBuffer(fs, lsRet))
                             return;     // from lambda
                     });
 
@@ -399,8 +412,9 @@ namespace DoubleFile
                 }
             }
 
-            bool FillBuffer(FileStream fs, int nBufferSize, IList<byte[]> lsBuffer)
+            bool FillBuffer(FileStream fs, IList<byte[]> lsBuffer)
             {
+                const int nBufferSize = 1 << 19;
                 var readBuffer = _bufferManager.TakeBuffer(nBufferSize);
                 var nRead = fs.Read(readBuffer, 0, nBufferSize);
 
@@ -452,7 +466,7 @@ namespace DoubleFile
                     var buffer0 = (byte[])lsBuffer[0];
                     var hash1pt0 = HashTuple.FactoryCreate(md5.ComputeHash(buffer0));
 
-                    _bufferManager.ReturnBuffer(buffer0);
+    //                _bufferManager.ReturnBuffer(buffer0);                 // ----------------------------- dupes bad
                     retval = Tuple.Create(hash1pt0, hash1pt0);
 
                     if (1 == nCount)
@@ -472,13 +486,13 @@ namespace DoubleFile
                     {
                         Array.Copy(buffer, 0, hashArray, nIx, buffer.Length);
                         nIx += buffer.Length;
-                        _bufferManager.ReturnBuffer(buffer);
+  //  99577                    _bufferManager.ReturnBuffer(buffer);
                     }
 
                     var retVal = Tuple.Create(hash1pt0,
                         HashTuple.FactoryCreate(md5.ComputeHash(hashArray)));
 
-                    _bufferManager.ReturnBuffer(hashArray);
+ //   99577                _bufferManager.ReturnBuffer(hashArray);
                     return retVal;
                 }
             }

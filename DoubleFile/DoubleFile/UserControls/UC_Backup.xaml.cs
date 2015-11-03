@@ -19,16 +19,14 @@ namespace DoubleFile
                 .LocalSubscribe(99580, args =>
             {
                 args.EventArgs.Handled = true;
+                formEdit_DriveLetter.Text = null;
 
                 var strChar = (new KeyConverter().ConvertToString(args.EventArgs.Key) + "\0")[0] + @":\";
 
                 Util.Closure(() =>
                 {
                     if (false == Directory.Exists(strChar))
-                    {
-                        formEdit_DriveLetter.Text = null;
                         return;     // from lambda
-                    }
 
                     if (false == _vm.CheckDriveLetter(strChar[0]))
                         return;     // from lambda

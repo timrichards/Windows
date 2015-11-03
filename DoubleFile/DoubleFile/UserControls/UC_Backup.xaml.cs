@@ -58,6 +58,7 @@ namespace DoubleFile
             _vm.UseNicknames = _bNicknames;
             _vm.LocalOwner = LocalOwner;
             _vm.Init();
+            formEdit_DriveLetter.Text = null;
         }
 
         protected override void LocalNavigatedFrom()

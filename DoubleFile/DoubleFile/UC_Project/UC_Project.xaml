@@ -47,8 +47,8 @@
                 <TextBlock>project</TextBlock>
                 <Button Content="  OPEN" Command="{Binding Icmd_OpenProject}" ToolTip="Open project. Use shift key to append project" Tag="/DoubleFile;component/Assets/ic_folder_open_white_18dp.png" />
                 <Grid>
-                    <ProgressBar Visibility="{Binding SaveProjectProgressVisibility}" IsIndeterminate="True" VerticalAlignment="Top"/>
                     <Button Content="  SAVE" Command="{Binding Icmd_SaveProject}" ToolTip="Save project" Tag="/DoubleFile;component/Assets/ic_save_white_18dp.png" />
+                    <Button Content="  SAVE" ContentTemplate="{x:Null}" Foreground="{StaticResource Accent}" Visibility="{Binding SaveProjectProgressVisibility}" />
                     <ProgressBar Visibility="{Binding SaveProjectProgressVisibility}" IsIndeterminate="True" VerticalAlignment="Bottom"/>
                 </Grid>
                 <TextBlock>volume</TextBlock>

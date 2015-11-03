@@ -383,7 +383,9 @@ namespace DoubleFile
                 .FirstOnlyAssert(s => lvItem.DriveSerial = ReadAttribute(s));
 
             lvItem.HashV2 =
-                asLines
+                ksHeader != asLines.FirstOrDefault().Split('\t').Skip(2).FirstOrDefault()
+                ? false
+                : asLines
                 .Where(strLine => strLine.StartsWith(ksLineType_File))
                 .Select(strLine => strLine.Split('\t'))
                 .Any(asLine => 11 < asLine.Length);
@@ -437,7 +439,7 @@ namespace DoubleFile
                 bConvertFile = true;
             }
 
-            switch(
+            switch (
                 strFile.ReadLines(99646)
                 .FirstOrDefault()
                 .Split('\t')
@@ -450,8 +452,8 @@ namespace DoubleFile
                     {
                         Interlocked.Increment(ref _bWarned02);      // has to come before message due to parallel
 
-                        if (1 == _bWarned02)
-                            MBoxStatic.ShowOverlay("Accuracy is increased if you re-scan drives using this build.");
+                        //if (1 == _bWarned02)
+                        //    MBoxStatic.ShowOverlay("Accuracy is increased if you re-scan drives using this build.");
                     }
 
                     break;
@@ -499,6 +501,8 @@ namespace DoubleFile
             return Tuple.Create(true, nScannedLength, nLinesTotal);
         }
 
+        static internal bool
+            IsAnyVolumeV2_BadHash => 0 < _bWarned02;
         static int
             _bWarned02 = 0;
     }

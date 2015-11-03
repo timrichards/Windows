@@ -90,6 +90,12 @@ namespace DoubleFile
                 ProgressbarVisibility = Visibility.Collapsed;
                 RaisePropertyChanged("ProgressbarVisibility");
             });
+
+            if (FileParse.IsAnyVolumeV2_BadHash && (false == _bWarned02))
+            {
+                _bWarned02 = true;
+                MBoxStatic.ShowOverlay("Accuracy is increased if you re-scan drives using this build.", owner: LocalOwner);
+            }
         }
 
         internal UC_BackupVM
@@ -298,6 +304,8 @@ namespace DoubleFile
             return ieFiles;
         }
 
+        static bool
+            _bWarned02 = false;
         bool
             _bCancel = false;
         IDictionary<int, bool>

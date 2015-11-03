@@ -30,7 +30,7 @@ namespace DoubleFile
                 : base(volStrings)
             {
                 _saveDirListingsStatus = saveDirListingsStatus;
-                _bufferManager = bufferManager;
+ //               _bufferManager = bufferManager;
             }
 
             internal SaveDirListing DoThreadFactory()
@@ -361,7 +361,7 @@ namespace DoubleFile
                     using (var fs = new FileStream(fileHandle, FileAccess.Read))
                     Util.Closure(() =>
                     {
-                        lsRet.Add(_bufferManager.TakeBuffer(1 << 12));          // happens to be block size
+                        lsRet.Add(new byte[1 << 12]);          // happens to be block size
 
                         var bFilled = FillBuffer(fs, lsRet);
 
@@ -372,8 +372,8 @@ namespace DoubleFile
 
                             if (lsRet[0].Length > nBufLen)
                             {
-                                _bufferManager.ReturnBuffer(lsRet[0]);
-                                lsRet[0] = _bufferManager.TakeBuffer(1 << 12);  // 0.1 compatibility
+              //                  _bufferManager.ReturnBuffer(lsRet[0]);
+                                lsRet[0] = new byte[1 << 12];  // 0.1 compatibility
                             }
 
                             Array.Copy(lsRet[1], lsRet[0], nBufLen);
@@ -415,16 +415,16 @@ namespace DoubleFile
             bool FillBuffer(FileStream fs, IList<byte[]> lsBuffer)
             {
                 const int nBufferSize = 1 << 19;
-                var readBuffer = _bufferManager.TakeBuffer(nBufferSize);
+                var readBuffer = new byte[nBufferSize];
                 var nRead = fs.Read(readBuffer, 0, nBufferSize);
 
                 if (nRead < nBufferSize)
                 {
                     // works fine with 0 == nRead
-                    var truncBuffer = _bufferManager.TakeBuffer(nRead);
+                    var truncBuffer = new byte[nRead];
 
                     Array.Copy(readBuffer, truncBuffer, nRead);
-                    _bufferManager.ReturnBuffer(readBuffer);
+  //                  _bufferManager.ReturnBuffer(readBuffer);
                     readBuffer = truncBuffer;
                 }
 
@@ -479,7 +479,7 @@ namespace DoubleFile
 
                     Util.Assert(99909, (1 << 20) >= nSize);
 
-                    var hashArray = _bufferManager.TakeBuffer(nSize);
+                    var hashArray = new byte[nSize];
                     var nIx = 0;
 
                     foreach (byte[] buffer in lsBuffer.Skip(1))
@@ -501,8 +501,8 @@ namespace DoubleFile
                 _saveDirListingsStatus = null;
             Thread
                 _thread = new Thread(() => { });
-            BufferManager
-                _bufferManager = null;
+            //BufferManager
+            //    _bufferManager = null;
         }
     }
 }

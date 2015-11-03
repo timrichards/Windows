@@ -437,23 +437,35 @@ namespace DoubleFile
                 bConvertFile = true;
             }
 
-            var strVer =
+            switch(
                 strFile.ReadLines(99646)
                 .FirstOrDefault()
                 .Split('\t')
                 .Skip(2)
-                .FirstOrDefault();
-
-            if ((0 == _bWarned02) && (ksHeader02 == strVer))
+                .FirstOrDefault())
             {
-                Interlocked.Increment(ref _bWarned02);      // has to come before message due to parallel
+                case ksHeader02:
+                {
+                    if (0 == _bWarned02)
+                    {
+                        Interlocked.Increment(ref _bWarned02);      // has to come before message due to parallel
 
-                if (1 == _bWarned02)
-                    MBoxStatic.ShowOverlay("Accuracy is increased if you re-scan drives using this build.");
-            }
-            else if (ksHeader != strVer)
-            {
-                return retVal;
+                        if (1 == _bWarned02)
+                            MBoxStatic.ShowOverlay("Accuracy is increased if you re-scan drives using this build.");
+                    }
+
+                    break;
+                }
+
+                case ksHeader:
+                {
+                    break;
+                }
+
+                default:
+                {
+                    return retVal;
+                }
             }
 
             var bRet = false;

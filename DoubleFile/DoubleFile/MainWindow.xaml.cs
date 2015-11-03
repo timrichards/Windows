@@ -90,6 +90,9 @@ namespace DoubleFile
 
         static internal void UpdateTitleLinks()
         {
+            if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
+                return;
+
             var mainWindow = (LocalModernWindowBase)Application.Current.MainWindow;
 
             mainWindow.TitleLinks = new LinkCollection();

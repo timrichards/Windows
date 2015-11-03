@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace DoubleFile
 {
@@ -15,15 +16,16 @@ namespace DoubleFile
         internal const string ksDrive01 = ksHeader01 + " DRIVE";
         internal const string ksVolListHeader01 = ksHeader01 + " VOLUME LIST";
 
-        internal const string ksHeader = "SearchDirLists 0.2";
-        internal const string ksStart = ksHeader + " START";
-        internal const string ksEnd = ksHeader + " END";
-        internal const string ksErrorsLoc = ksHeader + " ERRORS";
-        internal const string ksTotalLengthLoc = ksHeader + " LENGTH";
-        internal const string ksVolume = ksHeader + " VOLUME";
-        internal const string ksProjectHeader = ksHeader + " PROJECT";
-        internal const string ksCopyScratchpadHeader = ksHeader + " COPYDIRS LIST";
-        internal const string ksIgnoreListHeader = ksHeader + " IGNORE LIST";
+        internal const string ksHeader = "SearchDirLists 0.2A";
+        internal const string ksHeader02 = "SearchDirLists 0.2";
+        internal const string ksStart = ksHeader02 + " START";
+        internal const string ksEnd = ksHeader02 + " END";
+        internal const string ksErrorsLoc = ksHeader02 + " ERRORS";
+        internal const string ksTotalLengthLoc = ksHeader02 + " LENGTH";
+        internal const string ksVolume = ksHeader02 + " VOLUME";
+        internal const string ksProjectHeader = ksHeader02 + " PROJECT";
+        internal const string ksCopyScratchpadHeader = ksHeader02 + " COPYDIRS LIST";
+        internal const string ksIgnoreListHeader = ksHeader02 + " IGNORE LIST";
         static internal readonly string ksUsingFile = Util.Localized("Status_UsingFile");
         internal const string ksSaved = "Saved.";
         static internal readonly string ksNotSaved = Util.Localized("Status_NotSaved");
@@ -435,12 +437,21 @@ namespace DoubleFile
                 bConvertFile = true;
             }
 
-            if (false ==
+            var strVer =
                 strFile.ReadLines(99646)
-                .Take(1)
-                .Select(strLine => strLine.Split('\t'))
-                .Select(asLine => ((3 < asLine.Length) && (ksHeader == asLine[2])))
-                .Any())
+                .FirstOrDefault()
+                .Split('\t')
+                .Skip(2)
+                .FirstOrDefault();
+
+            if ((0 == _bWarned02) && (ksHeader02 == strVer))
+            {
+                Interlocked.Increment(ref _bWarned02);      // has to come before message due to parallel
+
+                if (1 == _bWarned02)
+                    MBoxStatic.ShowOverlay("Accuracy is increased if you re-scan drives using this build.");
+            }
+            else if (ksHeader != strVer)
             {
                 return retVal;
             }
@@ -475,5 +486,8 @@ namespace DoubleFile
 
             return Tuple.Create(true, nScannedLength, nLinesTotal);
         }
+
+        static int
+            _bWarned02 = 0;
     }
 }

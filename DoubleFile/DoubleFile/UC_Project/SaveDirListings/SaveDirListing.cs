@@ -86,7 +86,7 @@ namespace DoubleFile
 
                 try
                 {
-                    _bDowngradeto4K_Slow1MH = true;
+                    _bDowngrade4K_Slow = true;
                     var hash = Hash ? HashAllFiles(GetFileList()) : null;
 
                     Util.WriteLine("hashed " + LVitemProjectVM.SourcePath);
@@ -214,7 +214,7 @@ namespace DoubleFile
                     var dictHash = new ConcurrentDictionary<string, Tuple<HashTuple, HashTuple>> { };
                     var dictException_FileRead = new ConcurrentDictionary<string, string> { };
                     var blockWhileHashingPreviousBatch = new LocalDispatcherFrame(99872) { Continue = false };
-                    var dtDowngradeto4K_Slow1MH = DateTime.MinValue;
+                    var dtDowngrade4K_Slow = DateTime.MinValue;
 
                     // The above ThreadMake will be busy pumping out new file handles while the below processes will
                     // read those files' buffers and simultaneously hash them in batches until all files have been opened.
@@ -261,12 +261,12 @@ namespace DoubleFile
                             return null;
                         }
 
-                        var bSetDowngradeto4K_Slow1MH = false;
+                        var bSetDowngrade4K_Slow = false;
 
-                        if ((false == _bDowngradeto4K_Slow1MH) &&
-                            (1 < (DateTime.Now - dtDowngradeto4K_Slow1MH).Minutes))
+                        if ((false == _bDowngrade4K_Slow) &&
+                            (1 < (DateTime.Now - dtDowngrade4K_Slow).Minutes))
                         {
-                            bSetDowngradeto4K_Slow1MH = true;
+                            bSetDowngrade4K_Slow = true;
                         }
 
                         // Expect block to be false: reading buffers from disk is The limiting factor. Opening files is
@@ -275,7 +275,6 @@ namespace DoubleFile
                             blockWhileHashingPreviousBatch.PushFrameTrue();
 
                         blockWhileHashingPreviousBatch.Continue = true;
-                        dtDowngradeto4K_Slow1MH = DateTime.Now;
 
                         // in C# this copy occurs every iteration. A closure is created each time in ThreadMake.
                         // The closure along with the block being false should make the copy unnecessary but just in case.
@@ -283,12 +282,17 @@ namespace DoubleFile
                             lsFileBuffers_Enqueue
                             .ToList();
 
-                        if (bSetDowngradeto4K_Slow1MH)
+                        if (bSetDowngrade4K_Slow)
                         {
-                            _bDowngradeto4K_Slow1MH = true;
+                            // null 1M hash signals entire project to downgrade when building view
+                            _bDowngrade4K_Slow = true;
 
                             foreach (var kvp in dictHash)
-                                dictHash[kvp.Key] = Tuple.Create(kvp.Value.Item1, kvp.Value.Item1);
+                                dictHash[kvp.Key] = Tuple.Create(kvp.Value.Item1, (HashTuple)null);
+                        }
+                        else
+                        {
+                            dtDowngrade4K_Slow = DateTime.Now;
                         }
 
                         // While reading in the next batch of buffers, hash this batch. Three processes are occurring
@@ -368,7 +372,7 @@ namespace DoubleFile
                 {
                     var lsRet = new List<byte[]> { };
 
-                    var retval = Tuple.Create(tuple.Item1, tuple.Item2, tuple.Item4,
+                    var retVal = Tuple.Create(tuple.Item1, tuple.Item2, tuple.Item4,
                         (IReadOnlyList<IReadOnlyList<byte>>)lsRet);
 
                     var fileHandle = tuple.Item3;
@@ -376,7 +380,7 @@ namespace DoubleFile
                     if (fileHandle.IsInvalid)
                     {
                         fileHandle.Dispose();
-                        yield return retval;
+                        yield return retVal;
                         continue;
                     }
 
@@ -391,21 +395,10 @@ namespace DoubleFile
                         if (0 < lsRet[1].Length)
                         {
                             // virtually always: all non-empty files
-                            var nBufLen = Math.Min(lsRet[1].Length, lsRet[0].Length);
-
-                            if (lsRet[0].Length > nBufLen)
-                            {
-              //                  _bufferManager.ReturnBuffer(lsRet[0]);
-                                lsRet[0] = new byte[1 << 12];  // 0.1 compatibility
-                            }
-
-                            Array.Copy(lsRet[1], lsRet[0], nBufLen);
+                            Array.Copy(lsRet[1], lsRet[0], Math.Min(lsRet[1].Length, lsRet[0].Length));
 
                             if (lsRet[1].Length <= lsRet[0].Length)
-                            {
-              //                  _bufferManager.ReturnBuffer(lsRet[1]);        // ----------------------------- dupes bad
                                 lsRet.RemoveAt(1);
-                            }
                         }
                         else
                         {
@@ -415,7 +408,7 @@ namespace DoubleFile
                         }
 
                         if ((false == bFilled) ||
-                            _bDowngradeto4K_Slow1MH)
+                            _bDowngrade4K_Slow)
                         {
                             return;     // from lambda
                         }
@@ -434,13 +427,13 @@ namespace DoubleFile
                             return;     // from lambda
                     });
 
-                    yield return retval;
+                    yield return retVal;
                 }
             }
 
             bool FillBuffer(FileStream fs, IList<byte[]> lsBuffer)
             {
-                const int nBufferSize = 1 << 19;
+                int nBufferSize = 1 << (_bDowngrade4K_Slow ? 12 : 19);
                 var readBuffer = new byte[nBufferSize];
                 var nRead = fs.Read(readBuffer, 0, nBufferSize);
 
@@ -450,7 +443,6 @@ namespace DoubleFile
                     var truncBuffer = new byte[nRead];
 
                     Array.Copy(readBuffer, truncBuffer, nRead);
-  //                  _bufferManager.ReturnBuffer(readBuffer);
                     readBuffer = truncBuffer;
                 }
 
@@ -470,7 +462,6 @@ namespace DoubleFile
             Tuple<HashTuple, HashTuple>
                 HashFile(Tuple<string, ulong, string, IReadOnlyList<IReadOnlyList<byte>>> tuple)
             {
-                var retval = Tuple.Create((HashTuple)null, (HashTuple)null);
                 var lsBuffer = tuple.Item4;
                 var nCount = lsBuffer.Count;
 
@@ -478,13 +469,13 @@ namespace DoubleFile
                     (null != tuple.Item3))      // bad file handle, with error string
                 {
                     Util.Assert(99911, 0 == nCount);
-                    return retval;
+                    return Tuple.Create((HashTuple)null, (HashTuple)null);
                 }
 
                 if (0 == nCount)
                 {
                     Util.Assert(99932, false);
-                    return retval;
+                    return Tuple.Create((HashTuple)null, (HashTuple)null);
                 }
 
                 using (var md5 = MD5.Create())
@@ -492,14 +483,13 @@ namespace DoubleFile
                     var buffer0 = (byte[])lsBuffer[0];
                     var hash1pt0 = HashTuple.FactoryCreate(md5.ComputeHash(buffer0));
 
-    //                _bufferManager.ReturnBuffer(buffer0);                 // ----------------------------- dupes bad
-                    retval = Tuple.Create(hash1pt0, hash1pt0);
+                    // null 1M hash signals entire project to downgrade when building view
+                    // has to come before 1 == nCount since small files are valid for all 1M hashes
+                    if (_bDowngrade4K_Slow)
+                        return Tuple.Create(hash1pt0, (HashTuple)null);
 
-                    if ((1 == nCount) ||
-                        _bDowngradeto4K_Slow1MH)
-                    {
-                        return retval;
-                    }
+                    if (1 == nCount)
+                        return Tuple.Create(hash1pt0, hash1pt0);
 
                     var nSize = 0;
 
@@ -515,25 +505,19 @@ namespace DoubleFile
                     {
                         Array.Copy(buffer, 0, hashArray, nIx, buffer.Length);
                         nIx += buffer.Length;
-  //  99577                    _bufferManager.ReturnBuffer(buffer);
                     }
 
-                    var retVal = Tuple.Create(hash1pt0,
+                    return Tuple.Create(hash1pt0,
                         HashTuple.FactoryCreate(md5.ComputeHash(hashArray)));
-
- //   99577                _bufferManager.ReturnBuffer(hashArray);
-                    return retVal;
                 }
             }
 
             bool
-                _bDowngradeto4K_Slow1MH = false;
+                _bDowngrade4K_Slow = false;
             readonly ISaveDirListingsStatus
                 _saveDirListingsStatus = null;
             Thread
                 _thread = new Thread(() => { });
-            //BufferManager
-            //    _bufferManager = null;
         }
     }
 }

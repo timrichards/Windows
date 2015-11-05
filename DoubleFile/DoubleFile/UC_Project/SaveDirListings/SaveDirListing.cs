@@ -86,6 +86,7 @@ namespace DoubleFile
 
                 try
                 {
+                    _bDowngradeto4K_Slow1MH = true;
                     var hash = Hash ? HashAllFiles(GetFileList()) : null;
 
                     Util.WriteLine("hashed " + LVitemProjectVM.SourcePath);
@@ -187,7 +188,11 @@ namespace DoubleFile
                 double nProgressDenominator = lsFilePaths.Count;  // double preserves mantissa
 
                 using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
-                    .LocalSubscribe(99721, x => StatusCallback(LVitemProjectVM, nProgress: nProgressNumerator/nProgressDenominator)))
+                    .LocalSubscribe(99721, x =>
+                {
+                    StatusCallback(LVitemProjectVM, nProgress: nProgressNumerator / nProgressDenominator);
+                    Util.WriteLine("" + nProgressNumerator);
+                }))
                 {
                     var lsFileHandles = new ConcurrentBag<Tuple<string, ulong, SafeFileHandle, string>>();
                     var cts = new CancellationTokenSource();
@@ -196,10 +201,10 @@ namespace DoubleFile
                     {
                         Util.ParallelForEach(99658, lsFilePaths,
                             new ParallelOptions
-                            {
-                                MaxDegreeOfParallelism = Environment.ProcessorCount,
-                                CancellationToken = cts.Token
-                            },
+                        {
+                            MaxDegreeOfParallelism = Environment.ProcessorCount,
+                            CancellationToken = cts.Token
+                        },
                             tuple =>
                         {
                             lsFileHandles.Add(OpenFile(tuple));
@@ -209,6 +214,7 @@ namespace DoubleFile
                     var dictHash = new ConcurrentDictionary<string, Tuple<HashTuple, HashTuple>> { };
                     var dictException_FileRead = new ConcurrentDictionary<string, string> { };
                     var blockWhileHashingPreviousBatch = new LocalDispatcherFrame(99872) { Continue = false };
+                    var dtDowngradeto4K_Slow1MH = DateTime.MinValue;
 
                     // The above ThreadMake will be busy pumping out new file handles while the below processes will
                     // read those files' buffers and simultaneously hash them in batches until all files have been opened.
@@ -219,7 +225,7 @@ namespace DoubleFile
 
                         var lsOpenedFiles = new List<Tuple<string, ulong, SafeFileHandle, string>> { };
 
-                        for (int i = 0; i < (1 << 9); ++i)
+                        for (int i = 0; (1 << 9) > i; ++i)
                         {
                             Tuple<string, ulong, SafeFileHandle, string>
                                 tupleA = null;
@@ -255,18 +261,35 @@ namespace DoubleFile
                             return null;
                         }
 
+                        var bSetDowngradeto4K_Slow1MH = false;
+
+                        if ((false == _bDowngradeto4K_Slow1MH) &&
+                            (1 < (DateTime.Now - dtDowngradeto4K_Slow1MH).Minutes))
+                        {
+                            bSetDowngradeto4K_Slow1MH = true;
+                        }
+
                         // Expect block to be false: reading buffers from disk is The limiting factor. Opening files is
                         // slow too, which makes it even less likely to block. Allow block. It does get hit a handful of times.
                         if (blockWhileHashingPreviousBatch.Continue)
                             blockWhileHashingPreviousBatch.PushFrameTrue();
 
                         blockWhileHashingPreviousBatch.Continue = true;
+                        dtDowngradeto4K_Slow1MH = DateTime.Now;
 
                         // in C# this copy occurs every iteration. A closure is created each time in ThreadMake.
                         // The closure along with the block being false should make the copy unnecessary but just in case.
                         var lsFileBuffers_Dequeue =
                             lsFileBuffers_Enqueue
                             .ToList();
+
+                        if (bSetDowngradeto4K_Slow1MH)
+                        {
+                            _bDowngradeto4K_Slow1MH = true;
+
+                            foreach (var kvp in dictHash)
+                                dictHash[kvp.Key] = Tuple.Create(kvp.Value.Item1, kvp.Value.Item1);
+                        }
 
                         // While reading in the next batch of buffers, hash this batch. Three processes are occurring
                         // simultaneously: opening all files on disk; reading in all buffers from files; hashing all buffers.
@@ -391,8 +414,11 @@ namespace DoubleFile
                             Util.Assert(99945, false == bFilled);
                         }
 
-                        if (false == bFilled)
+                        if ((false == bFilled) ||
+                            _bDowngradeto4K_Slow1MH)
+                        {
                             return;     // from lambda
+                        }
 
                         var desiredPos = fs.Length - (1 << 19);
 
@@ -469,8 +495,11 @@ namespace DoubleFile
     //                _bufferManager.ReturnBuffer(buffer0);                 // ----------------------------- dupes bad
                     retval = Tuple.Create(hash1pt0, hash1pt0);
 
-                    if (1 == nCount)
+                    if ((1 == nCount) ||
+                        _bDowngradeto4K_Slow1MH)
+                    {
                         return retval;
+                    }
 
                     var nSize = 0;
 
@@ -497,6 +526,8 @@ namespace DoubleFile
                 }
             }
 
+            bool
+                _bDowngradeto4K_Slow1MH = false;
             readonly ISaveDirListingsStatus
                 _saveDirListingsStatus = null;
             Thread

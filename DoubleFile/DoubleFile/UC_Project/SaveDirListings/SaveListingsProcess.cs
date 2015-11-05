@@ -51,7 +51,7 @@ namespace DoubleFile
             var sdl = Statics.SaveDirListings;
             var winProgress = ProgressOverlay.WithProgressOverlay(w => w);
 
-            if (winProgress.LocalIsClosed)
+            if (winProgress?.LocalIsClosed ?? true)
             {
                 Util.Assert(99804,
                     (Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||

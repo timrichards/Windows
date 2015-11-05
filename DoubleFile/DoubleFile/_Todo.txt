@@ -1,7 +1,11 @@
-﻿- option to store backups in a compressed archive with its own .DFL record
+﻿- Does SDL conflict with antivirus the same way DoubleFile does?
+- Allow copy text in edit listing file dialog for dimmed source path
+- A folder is near to being a clone: restore it using dupe files found in the would-be clones
+- If I were to remove all but three or four dupes from all non-clones, how much space would I recoup on this volume?
+- folder browser in backup start at selected folder; allow text entry
+- option to store backups in a compressed archive with its own .DFL record
 	- function to explore archives and saved a .DFL for each one
 - restore a lost drive's original folder structure given that all its files are duped in various locations
-- All one volume yet has files all duped on multiple volumes
 - Project sort by nickname then by drive letter
 - Save project with four new listings: can't find lising files. Works second time.
 - Progress in task bar
@@ -223,4 +227,4 @@ Specific code areas:
 - Source repository: http://github.com/timrichards/Windows
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
-99576 next low assert
+99575 next low assert

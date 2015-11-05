@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Input;
 
 namespace DoubleFile
 {
@@ -18,14 +19,28 @@ namespace DoubleFile
             if ((_nLastAssertLoc == nLocation) &&
                 (1 > (DateTime.Now - _dtLastAssert).Seconds))
             {
-                if ((null != owner) && (FailUp == nLocation))           // bombarded
+                if ((null != owner) && (FailUp == nLocation))   // bombarded
                     Win32Screen.FlashWindow(owner);
 
                 return false;
             }
 
-            if ((null != owner) && (FailUp == nLocation))               // hit again while up
+            if ((null != owner) && (FailUp == nLocation))       // hit again while up
                 return false;
+
+            if ((_nLastAssertLoc == nLocation) &&               // keeps getting hit: allow user to roll through them
+                (15 > (DateTime.Now - _dtLastAssert).Seconds))  // except if it's still occurring 15 seconds later
+            {
+                var bKeyDown = false;
+
+                Util.UIthread(99576, () => bKeyDown = Keyboard.IsKeyDown(Key.LeftCtrl));
+
+                if (bKeyDown)
+                {
+                    Win32Screen.FlashWindow(owner);
+                    return false;
+                }
+            }
 
             var strError = "Assertion failed at location " + nLocation + ".";
 

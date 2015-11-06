@@ -42,6 +42,7 @@ namespace DoubleFile
             internal void Abort()
             {
                 _bThreadAbort = true;
+                _thread.Join();
             }
 
             void StatusCallback(LVitem_ProjectVM lvItemProjectVM, string strError = null, bool bDone = false, double nProgress = double.NaN)
@@ -354,14 +355,17 @@ namespace DoubleFile
                     nAverage /= lsProgress.Count;
                     Util.WriteLine("\n--- " + nAverage);
 
-                    if (_bThreadAbort)
+                    Util.ThreadMake(() =>
                     {
-                        StatusCallback(LVitemProjectVM, "Canceled");
-                        return null;
-                    }
+                        if (_bThreadAbort)
+                            StatusCallback(LVitemProjectVM, "Canceled");
+                        else
+                            StatusCallback(LVitemProjectVM, nProgress: 1);
+                    });
 
-                    StatusCallback(LVitemProjectVM, nProgress: 1);
-                    
+                    if (_bThreadAbort)
+                        return null;
+
                     return Tuple.Create(
                         (IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>>)
                             dictHash.ToDictionary(kvp => kvp.Key, kvp => kvp.Value),

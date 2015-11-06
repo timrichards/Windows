@@ -176,7 +176,7 @@ namespace DoubleFile
             {
                 lvItem.SetCompleted();
 
-                if (_vm.ItemsCast.All(lvItemA => lvItemA.IsCompleted))
+                if (_vm?.ItemsCast.All(lvItemA => lvItemA.IsCompleted) ?? false)
                 {
                     Util.UIthread(99827, () => _window.ProgressCtl.formBtn_Cancel.ToolTip = "Process completed. You may now close the window");
                     StopShowingConfirmMessage();
@@ -195,7 +195,7 @@ namespace DoubleFile
         internal ProgressOverlay
             SetError(string strSmallKeyLabel, string strError)
         {
-            if (false == _vm[strSmallKeyLabel].FirstOnlyAssert(lvItem => lvItem.SetError(strError)))
+            if (false == _vm?[strSmallKeyLabel].FirstOnlyAssert(lvItem => lvItem.SetError(strError)))
                 Util.Assert(99956, false);
 
             return this;

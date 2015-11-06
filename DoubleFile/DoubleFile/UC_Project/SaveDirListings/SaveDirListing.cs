@@ -83,7 +83,6 @@ namespace DoubleFile
 
                 try
                 {
-                    _bDowngrade4K_Slow = false;
                     var hash = Hash ? HashAllFiles(GetFileList()) : null;
 
                     Util.WriteLine("hashed " + LVitemProjectVM.SourcePath);
@@ -186,6 +185,7 @@ namespace DoubleFile
                 long nPrevProgress = 0;
                 var lsProgress = new List<long> { };
                 var bCompleted = false;
+                var nLastDownGradeBlock = 0;
 
                 using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                     .LocalSubscribe(99721, x =>
@@ -194,13 +194,32 @@ namespace DoubleFile
 
                     var nDiff = nProgressNumerator - nPrevProgress;
 
-                    lsProgress.Add(nDiff);
-                    Util.Write(" " + nDiff);
                     nPrevProgress = nProgressNumerator;
+                    lsProgress.Add(nDiff);
+
+                    var nDownGrade = nLastDownGradeBlock;
+
+                    nLastDownGradeBlock = 0;
+
+                    if (0 < nDownGrade)
+                    {
+                        if (0 < nDiff)
+                            Util.Write(" " + nDiff);
+
+                        Util.Write("-" + nDownGrade);
+
+                        return;     // from lambda
+                    }
+
+                    if (0 == nDiff)
+                        Util.Write(".");
+                    else
+                        Util.Write(" " + nDiff);
                 }))
                 {
                     var lsFileHandles = new ConcurrentBag<Tuple<string, ulong, SafeFileHandle, string>>();
                     var cts = new CancellationTokenSource();
+                    var bSetDowngrade4K_Slow = 0;
 
                     Util.ThreadMake(() =>
                     {
@@ -214,10 +233,13 @@ namespace DoubleFile
                         {
                             lsFileHandles.Add(OpenFile(tuple));
 
-                            if (_bDowngrade4K_Slow)
+                            if (1 < bSetDowngrade4K_Slow)
                             {
                                 while (0 < lsFileHandles.Count)
-                                    Util.Block(1);
+                                {
+                                    Interlocked.Increment(ref nLastDownGradeBlock);
+                                    Util.Block(100);
+                                }
                             }
 
                             if (_bThreadAbort)
@@ -230,7 +252,6 @@ namespace DoubleFile
                     var dictHash = new ConcurrentDictionary<string, Tuple<HashTuple, HashTuple>> { };
                     var dictException_FileRead = new ConcurrentDictionary<string, string> { };
                     var dtDowngrade4K_Slow = DateTime.MinValue;
-                    var bSetDowngrade4K_Slow = 0;
                     var blockWhileHashingPreviousBatch = new LocalDispatcherFrame(99872) { Continue = false };
 
                     // The above ThreadMake will be busy pumping out new file handles while the below processes will

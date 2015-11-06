@@ -168,6 +168,9 @@ namespace DoubleFile
         }
 
         internal ProgressOverlay
+            ResetEstimate() => _vm.All(lvItem => { lvItem.Status = null; return true; }) ? this : this;     // icky code yum
+
+        internal ProgressOverlay
             SetCompleted(string strPath)
         {
             if (false ==

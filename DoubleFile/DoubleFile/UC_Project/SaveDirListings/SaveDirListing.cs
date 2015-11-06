@@ -231,19 +231,23 @@ namespace DoubleFile
                         },
                             tuple =>
                         {
+                            if (_bThreadAbort)
+                            {
+                                cts.Cancel();
+                                return;     // from lambda
+                            }
+
                             lsFileHandles.Add(OpenFile(tuple));
 
                             if (1 < bSetDowngrade4K_Slow)
                             {
-                                while (0 < lsFileHandles.Count)
+                                while ((0 < lsFileHandles.Count) &&
+                                    (false == cts.IsCancellationRequested))
                                 {
                                     Interlocked.Increment(ref nLastDownGradeBlock);
                                     Util.Block(100);
                                 }
                             }
-
-                            if (_bThreadAbort)
-                                cts.Cancel();
                         });
 
                         bCompleted = true;
@@ -253,6 +257,7 @@ namespace DoubleFile
                     var dictException_FileRead = new ConcurrentDictionary<string, string> { };
                     var dtDowngrade4K_Slow = DateTime.MinValue;
                     var blockWhileHashingPreviousBatch = new LocalDispatcherFrame(99872) { Continue = false };
+                    var bUserAllowsDowngrade = true;
 
                     // The above ThreadMake will be busy pumping out new file handles while the below processes will
                     // read those files' buffers and simultaneously hash them in batches until all files have been opened.
@@ -323,19 +328,39 @@ namespace DoubleFile
                             .ToList();
 
                         if ((false == _bDowngrade4K_Slow) &&
-                            (3 < bSetDowngrade4K_Slow))
+                            bUserAllowsDowngrade)
                         {
-                            Util.WriteLine("\nbSetDowngrade4K_Slow = true;");
+                            if (3 < bSetDowngrade4K_Slow)
+                            {
+                                bUserAllowsDowngrade = (.1 > nProgressNumerator / nProgressDenominator);
 
-                            // null 1M hash signals entire project to downgrade when building view
-                            _bDowngrade4K_Slow = true;
+                                if (bUserAllowsDowngrade)
+                                {
+                                    bUserAllowsDowngrade =
+                                        MessageBoxResult.Yes ==
+                                        MBoxStatic.ShowOverlay("Saving listing files for this drive is slow. " +
+                                        "Would you like to use a faster and less accurate method? " +
+                                        "It will temporarily downgrade the whole project, but only when included.",
+                                        buttons: MessageBoxButton.YesNo);
 
-                            foreach (var kvp in dictHash)
-                                dictHash[kvp.Key] = Tuple.Create(kvp.Value.Item1, (HashTuple)null);
-                        }
-                        else
-                        {
-                            dtDowngrade4K_Slow = DateTime.Now;
+                                    ProgressOverlay.WithProgressOverlay(w => w.ResetEstimate());
+                                }
+
+                                if (bUserAllowsDowngrade)
+                                {
+                                    Util.WriteLine("\nbSetDowngrade4K_Slow = true;");
+
+                                    // null 1M hash signals entire project to downgrade when building view
+                                    _bDowngrade4K_Slow = true;
+
+                                    foreach (var kvp in dictHash)
+                                        dictHash[kvp.Key] = Tuple.Create(kvp.Value.Item1, (HashTuple)null);
+                                }
+                            }
+                            else
+                            {
+                                dtDowngrade4K_Slow = DateTime.Now;
+                            }
                         }
 
                         // While reading in the next batch of buffers, hash this batch. Three processes are occurring

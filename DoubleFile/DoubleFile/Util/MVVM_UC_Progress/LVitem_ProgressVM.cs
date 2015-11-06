@@ -13,7 +13,7 @@ namespace DoubleFile
         public string
             SmallKeyLabel { get { return SubItems[1]; } private set { SetProperty(1, value); } }
         public string
-            Status { get { return SubItems[2]; } private set { SetProperty(2, value); } }
+            Status { get { return SubItems[2]; } internal set { SetProperty(2, value); } }
 
         enum
             ProgressStates { Indeterminate, Determinate, Completed, Error };    // order is int cast as array indices

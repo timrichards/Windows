@@ -29,8 +29,8 @@ namespace DoubleFile
 
             if (false == (Statics.SaveDirListings?.IsAborted ?? true))
             {
-                Util.Assert(99940, false);
                 Statics.SaveDirListings.EndThread();
+                Util.Assert(99940, false);
             }
 
             new ProgressOverlay(listNicknames, listSourcePaths, x =>

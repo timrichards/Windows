@@ -12,7 +12,6 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Microsoft.Win32.SafeHandles;
 using System.Windows;
-using System.ServiceModel.Channels;
 
 namespace DoubleFile
 {
@@ -25,12 +24,10 @@ namespace DoubleFile
             internal
                 SaveDirListing(
                 LVitem_ProjectVM volStrings,
-                ISaveDirListingsStatus saveDirListingsStatus,
-                BufferManager bufferManager)
+                ISaveDirListingsStatus saveDirListingsStatus)
                 : base(volStrings)
             {
                 _saveDirListingsStatus = saveDirListingsStatus;
- //               _bufferManager = bufferManager;
             }
 
             internal SaveDirListing DoThreadFactory()
@@ -45,7 +42,6 @@ namespace DoubleFile
             internal void Abort()
             {
                 _bThreadAbort = true;
-                _thread.Abort();
             }
 
             void StatusCallback(LVitem_ProjectVM lvItemProjectVM, string strError = null, bool bDone = false, double nProgress = double.NaN)
@@ -86,7 +82,6 @@ namespace DoubleFile
 
                 try
                 {
-                    _bDowngrade4K_Slow = true;
                     var hash = Hash ? HashAllFiles(GetFileList()) : null;
 
                     Util.WriteLine("hashed " + LVitemProjectVM.SourcePath);
@@ -186,16 +181,24 @@ namespace DoubleFile
                 // Maximize hash buffers while reducing CreateFile() and fs.Read() calls.
                 long nProgressNumerator = 0;
                 double nProgressDenominator = lsFilePaths.Count;  // double preserves mantissa
+                long nPrevProgress = 0;
+                var lsProgress = new List<long> { };
 
                 using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                     .LocalSubscribe(99721, x =>
                 {
                     StatusCallback(LVitemProjectVM, nProgress: nProgressNumerator / nProgressDenominator);
-                    Util.WriteLine("" + nProgressNumerator);
+
+                    var nDiff = nProgressNumerator - nPrevProgress;
+
+                    lsProgress.Add(nDiff);
+                    Util.Write(" " + nDiff);
+                    nPrevProgress = nProgressNumerator;
                 }))
                 {
                     var lsFileHandles = new ConcurrentBag<Tuple<string, ulong, SafeFileHandle, string>>();
                     var cts = new CancellationTokenSource();
+                    var blockWhileHashingPreviousBatch = new LocalDispatcherFrame(99872) { Continue = false };
 
                     Util.ThreadMake(() =>
                     {
@@ -208,20 +211,31 @@ namespace DoubleFile
                             tuple =>
                         {
                             lsFileHandles.Add(OpenFile(tuple));
+
+                            if (_bDowngrade4K_Slow)
+                                blockWhileHashingPreviousBatch.Continue = false;
+
+                            if (_bThreadAbort)
+                                cts.Cancel();
                         });
+
+                        blockWhileHashingPreviousBatch.Continue = false;
                     });
 
                     var dictHash = new ConcurrentDictionary<string, Tuple<HashTuple, HashTuple>> { };
                     var dictException_FileRead = new ConcurrentDictionary<string, string> { };
-                    var blockWhileHashingPreviousBatch = new LocalDispatcherFrame(99872) { Continue = false };
                     var dtDowngrade4K_Slow = DateTime.MinValue;
+                    var bSetDowngrade4K_Slow = 0;
 
                     // The above ThreadMake will be busy pumping out new file handles while the below processes will
                     // read those files' buffers and simultaneously hash them in batches until all files have been opened.
                     while (nProgressNumerator < nProgressDenominator)
                     {
-                        // Avoid spinning too quickly while waiting for new file handles.
-                        Util.Block(100);
+                        if (_bThreadAbort)
+                            break;
+
+                        if (_bDowngrade4K_Slow)
+                            Util.Block(1);
 
                         var lsOpenedFiles = new List<Tuple<string, ulong, SafeFileHandle, string>> { };
 
@@ -255,18 +269,17 @@ namespace DoubleFile
                         {
 #if (DEBUG)
                             Util.Assert(99677, false, e.GetBaseException().Message);
-#else
-                            StatusCallback(LVitemProjectVM, strError: e.GetBaseException().Message);
 #endif
-                            return null;
+                            StatusCallback(LVitemProjectVM, strError: e.GetBaseException().Message);
+                            break;
                         }
 
-                        var bSetDowngrade4K_Slow = false;
-
-                        if ((false == _bDowngrade4K_Slow) &&
-                            (1 < (DateTime.Now - dtDowngrade4K_Slow).Minutes))
+                        if (false == _bDowngrade4K_Slow)
                         {
-                            bSetDowngrade4K_Slow = true;
+                            if (10 < (DateTime.Now - dtDowngrade4K_Slow).Seconds)
+                                ++bSetDowngrade4K_Slow;
+                            else
+                                bSetDowngrade4K_Slow = 0;
                         }
 
                         // Expect block to be false: reading buffers from disk is The limiting factor. Opening files is
@@ -282,8 +295,11 @@ namespace DoubleFile
                             lsFileBuffers_Enqueue
                             .ToList();
 
-                        if (bSetDowngrade4K_Slow)
+                        if ((false == _bDowngrade4K_Slow) &&
+                            (3 < bSetDowngrade4K_Slow))
                         {
+                            Util.WriteLine("\nbSetDowngrade4K_Slow = true;");
+
                             // null 1M hash signals entire project to downgrade when building view
                             _bDowngrade4K_Slow = true;
 
@@ -303,12 +319,6 @@ namespace DoubleFile
                         {
                             Util.ParallelForEach(99657, lsFileBuffers_Dequeue, new ParallelOptions { CancellationToken = cts.Token }, tuple =>
                             {
-                                if (_bThreadAbort)
-                                {
-                                    cts.Cancel();
-                                    return;     // from lambda Util.ParallelForEach
-                                }
-
                                 var strFile = tuple.Item1;
 
                                 if (null != tuple.Item3)
@@ -321,6 +331,8 @@ namespace DoubleFile
                                 Util.Assert(99578, "" + check.Item1 == "" + hash.Item1);
                                 Util.Assert(99577, "" + check.Item2 == "" + hash.Item2);
 #endif
+                                if (_bThreadAbort)
+                                    cts.Cancel();
                             });
 
                             nProgressNumerator += lsFileBuffers_Dequeue.Count;
@@ -329,6 +341,18 @@ namespace DoubleFile
 
                         if (cts.IsCancellationRequested)
                             break;
+                    }
+
+                    double nAverage = 0;
+
+                    foreach (var n in lsProgress) nAverage += n;
+                    nAverage /= lsProgress.Count;
+                    Util.WriteLine("\n--- " + nAverage);
+
+                    if (_bThreadAbort)
+                    {
+                        StatusCallback(LVitemProjectVM, "Canceled");
+                        return null;
                     }
 
                     StatusCallback(LVitemProjectVM, nProgress: 1);
@@ -433,7 +457,7 @@ namespace DoubleFile
 
             bool FillBuffer(FileStream fs, IList<byte[]> lsBuffer)
             {
-                int nBufferSize = 1 << (_bDowngrade4K_Slow ? 12 : 19);
+                var nBufferSize = 1 << (_bDowngrade4K_Slow ? 12 : 19);
                 var readBuffer = new byte[nBufferSize];
                 var nRead = fs.Read(readBuffer, 0, nBufferSize);
 

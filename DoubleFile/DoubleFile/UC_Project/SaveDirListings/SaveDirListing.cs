@@ -82,6 +82,7 @@ namespace DoubleFile
 
                 try
                 {
+                    _bDowngrade4K_Slow = false;
                     var hash = Hash ? HashAllFiles(GetFileList()) : null;
 
                     Util.WriteLine("hashed " + LVitemProjectVM.SourcePath);
@@ -183,6 +184,7 @@ namespace DoubleFile
                 double nProgressDenominator = lsFilePaths.Count;  // double preserves mantissa
                 long nPrevProgress = 0;
                 var lsProgress = new List<long> { };
+                var bCompleted = false;
 
                 using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                     .LocalSubscribe(99721, x =>
@@ -198,7 +200,6 @@ namespace DoubleFile
                 {
                     var lsFileHandles = new ConcurrentBag<Tuple<string, ulong, SafeFileHandle, string>>();
                     var cts = new CancellationTokenSource();
-                    var blockWhileHashingPreviousBatch = new LocalDispatcherFrame(99872) { Continue = false };
 
                     Util.ThreadMake(() =>
                     {
@@ -213,19 +214,23 @@ namespace DoubleFile
                             lsFileHandles.Add(OpenFile(tuple));
 
                             if (_bDowngrade4K_Slow)
-                                blockWhileHashingPreviousBatch.Continue = false;
+                            {
+                                while (0 < lsFileHandles.Count)
+                                    Util.Block(1);
+                            }
 
                             if (_bThreadAbort)
                                 cts.Cancel();
                         });
 
-                        blockWhileHashingPreviousBatch.Continue = false;
+                        bCompleted = true;
                     });
 
                     var dictHash = new ConcurrentDictionary<string, Tuple<HashTuple, HashTuple>> { };
                     var dictException_FileRead = new ConcurrentDictionary<string, string> { };
                     var dtDowngrade4K_Slow = DateTime.MinValue;
                     var bSetDowngrade4K_Slow = 0;
+                    var blockWhileHashingPreviousBatch = new LocalDispatcherFrame(99872) { Continue = false };
 
                     // The above ThreadMake will be busy pumping out new file handles while the below processes will
                     // read those files' buffers and simultaneously hash them in batches until all files have been opened.
@@ -234,8 +239,8 @@ namespace DoubleFile
                         if (_bThreadAbort)
                             break;
 
-                        if (_bDowngrade4K_Slow)
-                            Util.Block(1);
+                        if (bCompleted)
+                            Util.Block(100);
 
                         var lsOpenedFiles = new List<Tuple<string, ulong, SafeFileHandle, string>> { };
 

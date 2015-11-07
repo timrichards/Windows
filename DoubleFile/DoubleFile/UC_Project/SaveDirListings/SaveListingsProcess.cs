@@ -63,7 +63,7 @@ namespace DoubleFile
             }
 
             if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
-                sdl.IsAborted)
+                (sdl?.IsAborted ?? true))
             {
                 if (false == _bKeepShowingError)
                     ProgressOverlay.CloseForced();

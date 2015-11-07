@@ -42,6 +42,7 @@ namespace DoubleFile
             internal void Abort()
             {
                 _cts.Cancel();
+                _blockingFrame?.With(b => b.Continue = false);
                 _threadAbortUI.Abort();
                 _threadWrite.Abort();
 
@@ -133,7 +134,10 @@ namespace DoubleFile
                         }
 
                         StatusCallback(bDone: true);
+                        _blockingFrame?.With(b => b.Continue = false);
                     });
+
+                    BlockingFrameSet().PushFrameTrue();
                 }
                 catch (OutOfMemoryException)
                 {
@@ -201,14 +205,18 @@ namespace DoubleFile
                 long nProgressNumerator = 0;
                 double nProgressDenominator = lsFilePaths.Count;  // double preserves mantissa
                 var lsProgress = new List<long> { };
-                var bCompleted = false;
                 var nLastDownGradeBlock = 0;
+                var blockWhileHashingPreviousBatch = new LocalDispatcherFrame(99872) { Continue = false };
+                var lsFileBuffers_Dequeue = new List<Tuple<string, ulong, string, IReadOnlyList<IReadOnlyList<byte>>>> { };
 #if (DEBUG)
                 long nPrevProgress = 0;
 #endif
                 using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                     .LocalSubscribe(99721, x =>
                 {
+                    if (0 == lsFileBuffers_Dequeue.Count)
+                        blockWhileHashingPreviousBatch.Continue = false;
+
                     StatusCallback(nProgress: nProgressNumerator / nProgressDenominator);
 #if (DEBUG)
                     var nDiff = nProgressNumerator - nPrevProgress;
@@ -264,15 +272,13 @@ namespace DoubleFile
                                 }
                             }
                         });
-
-                        bCompleted = true;
                     });
 
                     var dictHash = new ConcurrentDictionary<string, Tuple<HashTuple, HashTuple>> { };
                     var dictException_FileRead = new ConcurrentDictionary<string, string> { };
-                    var blockWhileHashingPreviousBatch = new LocalDispatcherFrame(99872) { Continue = false };
                     var dtDowngrade4K_Slow = DateTime.MinValue;
                     var bUserAllowsDowngrade = true;
+                    var bAskedToDowngrade = false;
 
                     // The above ThreadMake will be busy pumping out new file handles while the below processes will
                     // read those files' buffers and simultaneously hash them in batches until all files have been opened.
@@ -280,9 +286,6 @@ namespace DoubleFile
                     {
                         if (_cts.IsCancellationRequested)
                             break;
-
-                        if (bCompleted)
-                            Util.Block(100);
 
                         var lsOpenedFiles = new List<Tuple<string, ulong, SafeFileHandle, string>> { };
 
@@ -317,7 +320,6 @@ namespace DoubleFile
                         catch (Exception e)
                         {
                             _cts.Cancel();
-                            blockWhileHashingPreviousBatch.Continue = false;
 
                             if (e is OutOfMemoryException)
                             {
@@ -354,50 +356,57 @@ namespace DoubleFile
 
                         // in C# this copy occurs every iteration. A closure is created each time in ThreadMake.
                         // The closure along with the block being false should make the copy unnecessary but just in case.
-                        var lsFileBuffers_Dequeue =
+                        lsFileBuffers_Dequeue =
                             lsFileBuffers_Enqueue
                             .ToList();
+
+                        blockWhileHashingPreviousBatch.Continue = true;
 
                         if (_cts.IsCancellationRequested)
                             break;
 
-                        if ((false == _bDowngrade4K_Slow) &&
+                        if ((false == bAskedToDowngrade) &&
+                            (false == _bDowngrade4K_Slow) &&
                             bUserAllowsDowngrade)
                         {
                             if (3 < bSetDowngrade4K_Slow)
                             {
-                                bUserAllowsDowngrade = (.1 > nProgressNumerator / nProgressDenominator);
+                                bAskedToDowngrade = true;
 
-                                if (bUserAllowsDowngrade)
+                                Util.ThreadMake(() =>
                                 {
-                                    var blockingFrame = new LocalDispatcherFrame(99577);
+                                    bUserAllowsDowngrade = (.1 > nProgressNumerator / nProgressDenominator);
 
-                                    _threadAbortUI = Util.ThreadMake(() =>
+                                    if (bUserAllowsDowngrade)
                                     {
-                                        bUserAllowsDowngrade =
-                                            MessageBoxResult.Yes ==
-                                            MBoxStatic.ShowOverlay("Saving listing files is slow for " + LVitemProjectVM.SourcePath + ". " +
-                                            "Would you like to use a faster and less accurate method? " +
-                                            "It will temporarily decrease accuracy for the whole project, but only when included.",
-                                            buttons: MessageBoxButton.YesNo);
+                                        _threadAbortUI = Util.ThreadMake(() =>
+                                        {
+                                            bUserAllowsDowngrade =
+                                                MessageBoxResult.Yes ==
+                                                MBoxStatic.ShowOverlay("Saving listing files is slow for " + LVitemProjectVM.SourcePath + ". " +
+                                                "Would you like to use a faster and less accurate method? " +
+                                                "It will temporarily decrease accuracy for the whole project, but only when included.",
+                                                buttons: MessageBoxButton.YesNo);
 
-                                        blockingFrame.Continue = false;
-                                    });
+                                            _blockingFrame?.With(b => b.Continue = false);
+                                        });
 
-                                    blockingFrame.PushFrameTrue();
-                                    ProgressOverlay.WithProgressOverlay(w => w.ResetEstimate());
-                                }
+                                        BlockingFrameSet().PushFrameTrue();
+                                        ProgressOverlay.WithProgressOverlay(w => w.ResetEstimate());
+                                    }
 
-                                if (bUserAllowsDowngrade)
-                                {
-                                    Util.WriteLine("\nbSetDowngrade4K_Slow = true;");
+                                    if (bUserAllowsDowngrade)
+                                    {
+                                        Util.WriteLine("\nbSetDowngrade4K_Slow = true;");
 
-                                    // null 1M hash signals entire project to downgrade when building view
-                                    _bDowngrade4K_Slow = true;
+                                        // null 1M hash signals entire project to downgrade when building view
+                                        _bDowngrade4K_Slow = true;
+                                        Util.Block(100);    // jic any existing parallel operations write 1M hash though only the first is checked
 
-                                    foreach (var kvp in dictHash)
-                                        dictHash[kvp.Key] = Tuple.Create(kvp.Value.Item1, (HashTuple)null);
-                                }
+                                        foreach (var kvp in dictHash)
+                                            dictHash[kvp.Key] = Tuple.Create(kvp.Value.Item1, (HashTuple)null);
+                                    }
+                                });
                             }
                             else
                             {
@@ -442,6 +451,7 @@ namespace DoubleFile
                             });
 
                             nProgressNumerator += lsFileBuffers_Dequeue.Count;
+                            lsFileBuffers_Dequeue = new List<Tuple<string, ulong, string, IReadOnlyList<IReadOnlyList<byte>>>> { };
                             blockWhileHashingPreviousBatch.Continue = false;
                         });
                     }
@@ -654,6 +664,11 @@ namespace DoubleFile
                 _threadWrite = new Thread(() => { });
             Thread
                 _threadAbortUI = new Thread(() => { });
+
+            LocalDispatcherFrame
+                BlockingFrameSet() => _blockingFrame = new LocalDispatcherFrame(99571);     // caller creates it on its thread
+            LocalDispatcherFrame
+                _blockingFrame = null;
         }
     }
 }

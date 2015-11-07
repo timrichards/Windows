@@ -44,10 +44,20 @@ namespace DoubleFile
                 _cts.Cancel();
                 _threadAbortUI.Abort();
                 _threadWrite.Abort();
-                _thread.Join();
+
+                var blockingFrame = new LocalDispatcherFrame(99574);
+
+                Util.ThreadMake(() =>
+                {
+                    StatusCallback("Canceling...");
+                    _thread.Join();
+                    blockingFrame.Continue = false;
+                });
+
+                blockingFrame.PushFrameTrue();
             }
 
-            void StatusCallback(LVitem_ProjectVM lvItemProjectVM, string strError = null, bool bDone = false, double nProgress = double.NaN)
+            void StatusCallback(string strError = null, bool bDone = false, double nProgress = double.NaN)
             {
                 if (null == _saveDirListingsStatus)
                 {
@@ -55,20 +65,20 @@ namespace DoubleFile
                     return;
                 }
 
-                _saveDirListingsStatus.Status(lvItemProjectVM, strError, bDone, nProgress);
+                _saveDirListingsStatus.Status(LVitemProjectVM, strError, bDone, nProgress);
             }
 
             void Go()
             {
                 if (false == IsGoodDriveSyntax(LVitemProjectVM.SourcePath))
                 {
-                    StatusCallback(LVitemProjectVM, strError: "Bad drive syntax.");
+                    StatusCallback(strError: "Bad drive syntax.");
                     return;
                 }
 
                 if (false == Directory.Exists(LVitemProjectVM.SourcePath))
                 {
-                    StatusCallback(LVitemProjectVM, strError: "Source Path does not exist.");
+                    StatusCallback(strError: "Source Path does not exist.");
                     return;
                 }
 
@@ -122,7 +132,7 @@ namespace DoubleFile
                             return;
                         }
 
-                        StatusCallback(LVitemProjectVM, bDone: true);
+                        StatusCallback(bDone: true);
                     });
                 }
                 catch (OutOfMemoryException)
@@ -132,7 +142,7 @@ namespace DoubleFile
 #if DEBUG == false
                 catch (Exception e)
                 {
-                    StatusCallback(LVitemProjectVM, strError: e.GetBaseException().Message, bDone: true);
+                    StatusCallback(strError: e.GetBaseException().Message, bDone: true);
                 }
 #endif
             }
@@ -190,16 +200,17 @@ namespace DoubleFile
                 // Maximize hash buffers while reducing CreateFile() and fs.Read() calls.
                 long nProgressNumerator = 0;
                 double nProgressDenominator = lsFilePaths.Count;  // double preserves mantissa
-                long nPrevProgress = 0;
                 var lsProgress = new List<long> { };
                 var bCompleted = false;
                 var nLastDownGradeBlock = 0;
-
+#if (DEBUG)
+                long nPrevProgress = 0;
+#endif
                 using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
                     .LocalSubscribe(99721, x =>
                 {
-                    StatusCallback(LVitemProjectVM, nProgress: nProgressNumerator / nProgressDenominator);
-
+                    StatusCallback(nProgress: nProgressNumerator / nProgressDenominator);
+#if (DEBUG)
                     var nDiff = nProgressNumerator - nPrevProgress;
 
                     nPrevProgress = nProgressNumerator;
@@ -222,6 +233,7 @@ namespace DoubleFile
                         Util.Write(".");
                     else
                         Util.Write(" " + nDiff);
+#endif
                 }))
                 {
                     var lsFileHandles = new ConcurrentBag<Tuple<string, ulong, SafeFileHandle, string>>();
@@ -290,6 +302,9 @@ namespace DoubleFile
                         IReadOnlyList<Tuple<string, ulong, string, IReadOnlyList<IReadOnlyList<byte>>>>
                             lsFileBuffers_Enqueue = null;
 
+                        if (_cts.IsCancellationRequested)
+                            break;
+
                         try
                         {
                             // ToList() enumerates ReadBuffers() sequentially, reading disk I/O buffers one at a time.
@@ -313,7 +328,7 @@ namespace DoubleFile
 #if (DEBUG)
                                 Util.Assert(99677, false, e.GetBaseException().Message);
 #endif
-                                StatusCallback(LVitemProjectVM, strError: e.GetBaseException().Message);
+                                StatusCallback(strError: e.GetBaseException().Message);
                             }
 
                             break;
@@ -327,6 +342,9 @@ namespace DoubleFile
                                 bSetDowngrade4K_Slow = 0;
                         }
 
+                        if (_cts.IsCancellationRequested)
+                            break;
+
                         // Expect block to be false: reading buffers from disk is The limiting factor. Opening files is
                         // slow too, which makes it even less likely to block. Allow block. It does get hit a handful of times.
                         if (blockWhileHashingPreviousBatch.Continue)
@@ -339,6 +357,9 @@ namespace DoubleFile
                         var lsFileBuffers_Dequeue =
                             lsFileBuffers_Enqueue
                             .ToList();
+
+                        if (_cts.IsCancellationRequested)
+                            break;
 
                         if ((false == _bDowngrade4K_Slow) &&
                             bUserAllowsDowngrade)
@@ -384,6 +405,9 @@ namespace DoubleFile
                             }
                         }
 
+                        if (_cts.IsCancellationRequested)
+                            break;
+
                         // While reading in the next batch of buffers, hash this batch. Three processes are occurring
                         // simultaneously: opening all files on disk; reading in all buffers from files; hashing all buffers.
                         // So the time it takes to complete saving listings should just be the sum of reading buffers from disk.
@@ -420,9 +444,6 @@ namespace DoubleFile
                             nProgressNumerator += lsFileBuffers_Dequeue.Count;
                             blockWhileHashingPreviousBatch.Continue = false;
                         });
-
-                        if (_cts.IsCancellationRequested)
-                            break;
                     }
 
                     double nAverage = 0;
@@ -434,9 +455,9 @@ namespace DoubleFile
                     _threadAbortUI = Util.ThreadMake(() =>
                     {
                         if (_cts.IsCancellationRequested)
-                            StatusCallback(LVitemProjectVM, "Canceled");
+                            StatusCallback("Canceled");
                         else
-                            StatusCallback(LVitemProjectVM, nProgress: 1);
+                            StatusCallback(nProgress: 1);
                     });
 
                     if (_cts.IsCancellationRequested)

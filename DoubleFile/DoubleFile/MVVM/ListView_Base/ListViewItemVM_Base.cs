@@ -143,8 +143,12 @@ namespace DoubleFile
 
             _subItems[nCol] = s;
             Util.AssertNotNull(99937, propertyName);
-            RaisePropertyChanged(propertyName);
-            RaiseColumnWidth(propertyName);
+
+            Util.ThreadMake(() =>
+            {
+                RaisePropertyChanged(propertyName);
+                RaiseColumnWidth(propertyName);
+            });
         }
 
         internal ListViewVM_Base

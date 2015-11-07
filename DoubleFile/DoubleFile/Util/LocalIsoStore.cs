@@ -54,9 +54,17 @@ namespace DoubleFile
             };
 
             IDisposable lockFile = null;
+            var i = 0;
+            const int kMax = 50;
 
-            while (null == (lockFile = checkLockFile()))
+            for (; (i < kMax) && (null == (lockFile = checkLockFile())); ++i)
                 Util.Block(100);
+
+            if (i >= kMax)
+            {
+                Util.Assert(99573, false);
+                return default(T);
+            }
 
             try
             {

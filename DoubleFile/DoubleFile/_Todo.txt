@@ -1,5 +1,4 @@
-﻿- Message box showed up behind progress
-- Message box on progress does not darken progress
+﻿- fix 99637
 - Does SDL conflict with antivirus the same way DoubleFile does?
 - Allow copy text in edit listing file dialog for dimmed source path
 - A folder is near to being a clone: restore it using dupe files found in the would-be clones
@@ -229,4 +228,4 @@ Specific code areas:
 - Source repository: http://github.com/timrichards/Windows
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
-99574 next low assert
+99572 next low assert

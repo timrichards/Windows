@@ -64,7 +64,7 @@ namespace DoubleFile
         internal void SetError(string strError)
         {
             _progressState = ProgressStates.Error;
-            Status = "Error. " + strError;
+            Status = strError;
             Progress_RaisePropertyChanged();
         }
 

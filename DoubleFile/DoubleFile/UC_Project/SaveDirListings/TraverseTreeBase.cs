@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Windows;
 
 namespace DoubleFile
@@ -16,8 +17,8 @@ namespace DoubleFile
                 ErrorList => _errorList;
             readonly List<string> _errorList = new List<string> { };
 
-            protected bool
-                _bThreadAbort = false;
+            protected CancellationTokenSource
+                _cts = new CancellationTokenSource();
 
             protected readonly LVitem_ProjectVM
                 LVitemProjectVM = null;
@@ -27,16 +28,13 @@ namespace DoubleFile
                 LVitemProjectVM = lvProjectVM;
             }
 
-            protected IReadOnlyList<Tuple<string, ulong>> GetFileList()
-            {
-                return ImplementationDetails();
-            }
+            protected IReadOnlyList<Tuple<string, ulong>> 
+                GetFileList() => ImplementationDetails();
 
-            protected void WriteDirectoryListing(TextWriter fs,
-                Tuple<IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>>, IReadOnlyDictionary<string, string>> tuple)
-            {
+            protected void
+                WriteDirectoryListing(TextWriter fs,
+                Tuple<IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>>, IReadOnlyDictionary<string, string>> tuple) =>
                 ImplementationDetails(fs, tuple);
-            }
 
             /// <summary>
             /// Two-pass private implementation. First to get file list; second to write to file.
@@ -44,7 +42,8 @@ namespace DoubleFile
             /// <param name="fs">If omitted then tuple is ignored (no params) and it returns the file list.</param>
             /// <param name="tuple">Item 1: hash dictionary; Item2: read errors dictionary</param>
             /// <returns>File list if first pass</returns>
-            IReadOnlyList<Tuple<string, ulong>> ImplementationDetails(
+            IReadOnlyList<Tuple<string, ulong>>
+                ImplementationDetails(
                 TextWriter fs = null,
                 Tuple<IReadOnlyDictionary<string, Tuple<HashTuple, HashTuple>>, IReadOnlyDictionary<string, string>> tuple = null)
             {
@@ -60,7 +59,7 @@ namespace DoubleFile
                 while (0 < stackDirs.Count)
                 {
                     if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
-                        _bThreadAbort)
+                        _cts.IsCancellationRequested)
                     {
                         return null;
                     }
@@ -90,7 +89,7 @@ namespace DoubleFile
                     foreach (var winFile in ieFiles)
                     {
                         if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
-                            _bThreadAbort)
+                            _cts.IsCancellationRequested)
                         {
                             return null;
                         }

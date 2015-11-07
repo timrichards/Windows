@@ -13,6 +13,11 @@ namespace DoubleFile
         bool ConfirmClose();
     }
 
+    interface IDimForMessagebox
+    {
+        ProgressOverlay Go(Action showMessagebox);
+    }
+
     public partial class UC_Progress
     {
         public UC_Progress()
@@ -23,8 +28,8 @@ namespace DoubleFile
 
     // Window_Closed() calls Dispose() on the LV_ProgressVM member.
     [SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
-    partial class
-        ProgressOverlay
+    class
+        ProgressOverlay : IDimForMessagebox
     {
         internal string
             Title { get; set; }
@@ -55,7 +60,7 @@ namespace DoubleFile
                     return w;   // from lambda
                 }
 
-   //             Util.Assert(99792, false);
+                //             Util.Assert(99792, false);
 
                 return
                     w           // from lambda
@@ -104,6 +109,15 @@ namespace DoubleFile
                 _window.ProgressCtl.DataContext = null;
             });
 
+            return this;
+        }
+
+        ProgressOverlay
+            IDimForMessagebox.Go(Action showMessagebox)
+        {
+            _window.ProgressCtl.LocalHide(99637);
+            showMessagebox();
+            _window.ProgressCtl.LocalShow(99637);
             return this;
         }
 

@@ -256,12 +256,12 @@ namespace DoubleFile
         }
 
         static internal void
-            UIthread(decimal nLocation, Action action, bool block = true)
+            UIthread(decimal nLocation, Action action)
         {
             if (Application.Current?.Dispatcher.HasShutdownStarted ?? true)
                 return;
 
-            var blockingFrame = new LocalDispatcherFrame(nLocation) { Continue = block };
+            var blockingFrame = new LocalDispatcherFrame(nLocation);
 
             try
             {

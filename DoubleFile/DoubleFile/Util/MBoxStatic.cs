@@ -75,7 +75,14 @@ namespace DoubleFile
             }
 #if (DEBUG && LOCALMBOX)
             if (Debugger.IsAttached)
-                Debugger.Break();
+            {
+                var bDebuggerBreak = true;
+
+                Util.UIthread(99575, () => bDebuggerBreak = false == Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.LeftShift));
+
+                if (bDebuggerBreak)
+                    Debugger.Break();
+            }
 #endif
             return false;
 #endif

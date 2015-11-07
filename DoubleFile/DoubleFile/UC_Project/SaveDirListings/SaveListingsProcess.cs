@@ -43,6 +43,8 @@ namespace DoubleFile
             }
                 .AllowSubsequentProcess()
                 .ShowOverlay();
+
+            Statics.SaveDirListings?.EndThread();
         }
 
         void ISaveDirListingsStatus.Status(LVitem_ProjectVM lvItemProjectVM,
@@ -55,7 +57,7 @@ namespace DoubleFile
             {
                 Util.Assert(99804,
                     (Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
-                    (sdl?.IsAborted ?? true));
+                    (sdl?.IsAborted ?? true), bIfDefDebug: true);
 
                 return;
             }

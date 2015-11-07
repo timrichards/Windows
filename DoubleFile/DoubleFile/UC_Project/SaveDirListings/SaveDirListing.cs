@@ -41,7 +41,9 @@ namespace DoubleFile
 
             internal void Abort()
             {
-                _bThreadAbort = true;
+                _cts.Cancel();
+                _threadAbortUI.Abort();
+                _threadWrite.Abort();
                 _thread.Join();
             }
 
@@ -87,38 +89,45 @@ namespace DoubleFile
 
                     Util.WriteLine("hashed " + LVitemProjectVM.SourcePath);
 
-                    using (var sw = new StreamWriter(LocalIsoStore.CreateFile(LVitemProjectVM.ListingFile)))
+                    _threadWrite = Util.ThreadMake(() =>
                     {
-                        WriteHeader(sw);
-                        sw.WriteLine();
-                        sw.WriteLine(FormatString(nHeader: 0));
-                        sw.WriteLine(FormatString(nHeader: 1));
-                        sw.WriteLine(ksStart01 + " " + DateTime.Now);
-                        WriteDirectoryListing(sw, hash);
-                        sw.WriteLine(ksEnd01 + " " + DateTime.Now);
-                        sw.WriteLine();
-                        sw.WriteLine(ksErrorsLoc01);
+                        using (var sw = new StreamWriter(LocalIsoStore.CreateFile(LVitemProjectVM.ListingFile)))
+                        {
+                            WriteHeader(sw);
+                            sw.WriteLine();
+                            sw.WriteLine(FormatString(nHeader: 0));
+                            sw.WriteLine(FormatString(nHeader: 1));
+                            sw.WriteLine(ksStart01 + " " + DateTime.Now);
+                            WriteDirectoryListing(sw, hash);
+                            sw.WriteLine(ksEnd01 + " " + DateTime.Now);
+                            sw.WriteLine();
+                            sw.WriteLine(ksErrorsLoc01);
 
-                        // Unit test metrix on non-system volume
-                        //MBox.Assert(99893, nProgressDenominator >= nProgressNumerator);       file creation/deletion between times
-                        //MBox.Assert(99892, nProgressDenominator == m_nFilesDiff);             ditto
-                        //MBox.Assert(99891, nProgressDenominator == dictHash.Count);           ditto
+                            // Unit test metrix on non-system volume
+                            //MBox.Assert(99893, nProgressDenominator >= nProgressNumerator);       file creation/deletion between times
+                            //MBox.Assert(99892, nProgressDenominator == m_nFilesDiff);             ditto
+                            //MBox.Assert(99891, nProgressDenominator == dictHash.Count);           ditto
 
-                        foreach (var strError in ErrorList)
-                            sw.WriteLine(strError);
+                            foreach (var strError in ErrorList)
+                                sw.WriteLine(strError);
 
-                        sw.WriteLine();
-                        sw.WriteLine(FormatString(strDir: ksTotalLengthLoc01, nLength: LengthRead));
-                    }
+                            sw.WriteLine();
+                            sw.WriteLine(FormatString(strDir: ksTotalLengthLoc01, nLength: LengthRead));
+                        }
 
-                    if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
-                        _bThreadAbort)
-                    {
-                        LocalIsoStore.DeleteFile(LVitemProjectVM.ListingFile);
-                        return;
-                    }
+                        if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
+                            _cts.IsCancellationRequested)
+                        {
+                            LocalIsoStore.DeleteFile(LVitemProjectVM.ListingFile);
+                            return;
+                        }
 
-                    StatusCallback(LVitemProjectVM, bDone: true);
+                        StatusCallback(LVitemProjectVM, bDone: true);
+                    });
+                }
+                catch (OutOfMemoryException)
+                {
+                    ShowMemoryError();
                 }
 #if DEBUG == false
                 catch (Exception e)
@@ -126,7 +135,6 @@ namespace DoubleFile
                     StatusCallback(LVitemProjectVM, strError: e.GetBaseException().Message, bDone: true);
                 }
 #endif
-                finally { }
             }
 
             void WriteHeader(TextWriter fs)
@@ -207,7 +215,6 @@ namespace DoubleFile
                             Util.Write(" " + nDiff);
 
                         Util.Write("-" + nDownGrade);
-
                         return;     // from lambda
                     }
 
@@ -218,7 +225,6 @@ namespace DoubleFile
                 }))
                 {
                     var lsFileHandles = new ConcurrentBag<Tuple<string, ulong, SafeFileHandle, string>>();
-                    var cts = new CancellationTokenSource();
                     var bSetDowngrade4K_Slow = 0;
 
                     Util.ThreadMake(() =>
@@ -227,22 +233,19 @@ namespace DoubleFile
                             new ParallelOptions
                         {
                             MaxDegreeOfParallelism = Environment.ProcessorCount,
-                            CancellationToken = cts.Token
+                            CancellationToken = _cts.Token
                         },
                             tuple =>
                         {
-                            if (_bThreadAbort)
-                            {
-                                cts.Cancel();
+                            if (_cts.IsCancellationRequested)
                                 return;     // from lambda
-                            }
 
                             lsFileHandles.Add(OpenFile(tuple));
 
                             if (1 < bSetDowngrade4K_Slow)
                             {
                                 while ((0 < lsFileHandles.Count) &&
-                                    (false == cts.IsCancellationRequested))
+                                    (false == _cts.IsCancellationRequested))
                                 {
                                     Interlocked.Increment(ref nLastDownGradeBlock);
                                     Util.Block(100);
@@ -255,15 +258,15 @@ namespace DoubleFile
 
                     var dictHash = new ConcurrentDictionary<string, Tuple<HashTuple, HashTuple>> { };
                     var dictException_FileRead = new ConcurrentDictionary<string, string> { };
-                    var dtDowngrade4K_Slow = DateTime.MinValue;
                     var blockWhileHashingPreviousBatch = new LocalDispatcherFrame(99872) { Continue = false };
+                    var dtDowngrade4K_Slow = DateTime.MinValue;
                     var bUserAllowsDowngrade = true;
 
                     // The above ThreadMake will be busy pumping out new file handles while the below processes will
                     // read those files' buffers and simultaneously hash them in batches until all files have been opened.
                     while (nProgressNumerator < nProgressDenominator)
                     {
-                        if (_bThreadAbort)
+                        if (_cts.IsCancellationRequested)
                             break;
 
                         if (bCompleted)
@@ -296,13 +299,23 @@ namespace DoubleFile
                                 ReadBuffers(lsOpenedFiles)
                                 .ToList();
                         }
-                        catch (ThreadAbortException) { }
                         catch (Exception e)
                         {
+                            _cts.Cancel();
+                            blockWhileHashingPreviousBatch.Continue = false;
+
+                            if (e is OutOfMemoryException)
+                            {
+                                ShowMemoryError();
+                            }
+                            else if (false == (e is ThreadAbortException))
+                            {
 #if (DEBUG)
-                            Util.Assert(99677, false, e.GetBaseException().Message);
+                                Util.Assert(99677, false, e.GetBaseException().Message);
 #endif
-                            StatusCallback(LVitemProjectVM, strError: e.GetBaseException().Message);
+                                StatusCallback(LVitemProjectVM, strError: e.GetBaseException().Message);
+                            }
+
                             break;
                         }
 
@@ -336,13 +349,21 @@ namespace DoubleFile
 
                                 if (bUserAllowsDowngrade)
                                 {
-                                    bUserAllowsDowngrade =
-                                        MessageBoxResult.Yes ==
-                                        MBoxStatic.ShowOverlay("Saving listing files for this drive is slow. " +
-                                        "Would you like to use a faster and less accurate method? " +
-                                        "It will temporarily downgrade the whole project, but only when included.",
-                                        buttons: MessageBoxButton.YesNo);
+                                    var blockingFrame = new LocalDispatcherFrame(99577);
 
+                                    _threadAbortUI = Util.ThreadMake(() =>
+                                    {
+                                        bUserAllowsDowngrade =
+                                            MessageBoxResult.Yes ==
+                                            MBoxStatic.ShowOverlay("Saving listing files is slow for " + LVitemProjectVM.SourcePath + ". " +
+                                            "Would you like to use a faster and less accurate method? " +
+                                            "It will temporarily decrease accuracy for the whole project, but only when included.",
+                                            buttons: MessageBoxButton.YesNo);
+
+                                        blockingFrame.Continue = false;
+                                    });
+
+                                    blockingFrame.PushFrameTrue();
                                     ProgressOverlay.WithProgressOverlay(w => w.ResetEstimate());
                                 }
 
@@ -369,29 +390,38 @@ namespace DoubleFile
                         // There is a miniscule start-up time, and a larger wind-down time, which is saving the listings to file.
                         Util.ThreadMake(() =>
                         {
-                            Util.ParallelForEach(99657, lsFileBuffers_Dequeue, new ParallelOptions { CancellationToken = cts.Token }, tuple =>
+                            Util.ParallelForEach(99657, lsFileBuffers_Dequeue, new ParallelOptions { CancellationToken = _cts.Token }, tuple =>
                             {
+                                if (_cts.IsCancellationRequested)
+                                    return; // from lambda
+
                                 var strFile = tuple.Item1;
 
                                 if (null != tuple.Item3)
                                     dictException_FileRead[strFile] = tuple.Item3;
-                                
-                                dictHash[strFile] = HashFile(tuple);
+
+                                try
+                                {
+                                    dictHash[strFile] = HashFile(tuple);
 #if (DEBUG && FOOBAR)
-                                var check = HashFile(tuple);
-                                var hash = dictHash[strFile];
-                                Util.Assert(99578, "" + check.Item1 == "" + hash.Item1);
-                                Util.Assert(99577, "" + check.Item2 == "" + hash.Item2);
+                                    var check = HashFile(tuple);
+                                    var hash = dictHash[strFile];
+                                    Util.Assert(99578, "" + check.Item1 == "" + hash.Item1);
+                                    Util.Assert(99577, "" + check.Item2 == "" + hash.Item2);
 #endif
-                                if (_bThreadAbort)
-                                    cts.Cancel();
+                                }
+                                catch (OutOfMemoryException)
+                                {
+                                    _cts.Cancel();
+                                    ShowMemoryError();
+                                }
                             });
 
                             nProgressNumerator += lsFileBuffers_Dequeue.Count;
                             blockWhileHashingPreviousBatch.Continue = false;
                         });
 
-                        if (cts.IsCancellationRequested)
+                        if (_cts.IsCancellationRequested)
                             break;
                     }
 
@@ -401,15 +431,15 @@ namespace DoubleFile
                     nAverage /= lsProgress.Count;
                     Util.WriteLine("\n--- " + nAverage);
 
-                    Util.ThreadMake(() =>
+                    _threadAbortUI = Util.ThreadMake(() =>
                     {
-                        if (_bThreadAbort)
+                        if (_cts.IsCancellationRequested)
                             StatusCallback(LVitemProjectVM, "Canceled");
                         else
                             StatusCallback(LVitemProjectVM, nProgress: 1);
                     });
 
-                    if (_bThreadAbort)
+                    if (_cts.IsCancellationRequested)
                         return null;
 
                     return Tuple.Create(
@@ -591,12 +621,18 @@ namespace DoubleFile
                 }
             }
 
+            void ShowMemoryError() => MBoxStatic.ShowOverlay("Out of memory exception saving listings for " + LVitemProjectVM.SourcePath + ".");
+
             bool
                 _bDowngrade4K_Slow = false;
             readonly ISaveDirListingsStatus
                 _saveDirListingsStatus = null;
             Thread
                 _thread = new Thread(() => { });
+            Thread
+                _threadWrite = new Thread(() => { });
+            Thread
+                _threadAbortUI = new Thread(() => { });
         }
     }
 }

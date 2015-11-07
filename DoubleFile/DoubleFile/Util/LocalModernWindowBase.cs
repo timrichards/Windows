@@ -21,12 +21,13 @@ namespace DoubleFile
             var retVal = MessageBoxResult.None;
             var locMessagebox = 99692;
             Exception e = null;
+            var bUndarken = false;
 
             try
             {
                 Util.UIthread(99789, () =>
                 {
-                    Darken(locMessagebox);
+                    bUndarken = Darken(locMessagebox);
                     ucMessagebox.LocalShow(locMessagebox);
                     retVal = ucMessagebox.ShowMessagebox(strMessage, strTitle, buttons);
                 });
@@ -37,17 +38,20 @@ namespace DoubleFile
             }
             finally
             {
-                Util.UIthread(99609, () =>
+                if (bUndarken)
                 {
-                    Undarken(locMessagebox);
-                    ucMessagebox.LocalHide(locMessagebox);
-                });
+                    Util.UIthread(99609, () =>
+                    {
+                        Undarken(locMessagebox);
+                        ucMessagebox.LocalHide(locMessagebox);
+                    });
 
-                if (null != e)
-                {
-                    LocalDispatcherFrame.ClearFrames();
-                    strMessage = strMessage.Insert(0, "LocalModernWindowBase: exception occurred showing MessageboxCtl.\n" + e.GetBaseException().Message + "\n\nOriginal message:\n");
-                    MessageBox.Show(this, strMessage + "\n(LocalModernWindowBase: failed to show MessageboxCtl.)", strTitle, buttons ?? MessageBoxButton.OK);
+                    if (null != e)
+                    {
+                        LocalDispatcherFrame.ClearFrames();
+                        strMessage = strMessage.Insert(0, "LocalModernWindowBase: exception occurred showing MessageboxCtl.\n" + e.GetBaseException().Message + "\n\nOriginal message:\n");
+                        MessageBox.Show(this, strMessage + "\n(LocalModernWindowBase: failed to show MessageboxCtl.)", strTitle, buttons ?? MessageBoxButton.OK);
+                    }
                 }
             }
 
@@ -57,22 +61,27 @@ namespace DoubleFile
         internal LocalModernWindowBase
             Progress_Darken()
         {
-            Darken(_locProgress);
-            ProgressCtl.LocalShow(_locProgress);
+            Darken(_kLocProgress);
+            ProgressCtl.LocalShow(_kLocProgress);
             return this;
         }
         internal LocalModernWindowBase
             Progress_Undarken()
         {
-            Undarken(_locProgress);
-            ProgressCtl.LocalHide(_locProgress);
+            Undarken(_kLocProgress);
+            ProgressCtl.LocalHide(_kLocProgress);
             return this;
         }
-        decimal _locProgress = 99637;
+        const decimal _kLocProgress = 99637;
 
-        internal LocalModernWindowBase
+        internal bool
             Darken(decimal loc)
         {
+            if (loc == _locDarken)
+                return false;
+
+            _locDarken = loc;
+
             Util.UIthread(99727, () =>
             {
                 Application.Current.Windows.OfType<LocalModernWindowBase>()
@@ -80,7 +89,7 @@ namespace DoubleFile
                     .ForEach(w => w.DarkenCtl.LocalShow(loc));
             });
 
-            return this;
+            return true;
         }
         internal LocalModernWindowBase
             Undarken(decimal loc, bool bForce = false)
@@ -92,8 +101,10 @@ namespace DoubleFile
                     .ForEach(w => w.DarkenCtl.LocalHide(loc, bForce));
             });
 
+            _locDarken = 0;
             return this;
         }
+        decimal _locDarken = 0;
 
         internal bool LocalIsClosing { get; private set; }
         public bool LocalIsClosed { get; private set; } = true;

@@ -95,22 +95,31 @@ namespace DoubleFile
             var loc = 99627;
 
             if (Showing)
-                return MessageBox.Show(strMessage + "\nUC_Messagebox: there is a message already up", strTitle, buttons ?? MessageBoxButton.OK);
+                return MessageBox.Show(strMessage + "\nMessagebox: there is a message already up", strTitle, buttons ?? MessageBoxButton.OK);
 
-            try
+            Action show = () =>
             {
-                Showing = true;
-                form_Message.Text = strMessage;
-                LocalShow(loc);
-                _shown = this;
-                _dispatcherFrame.PushFrameTrue();
-            }
-            finally
+                try
+                {
+                    Showing = true;
+                    form_Message.Text = strMessage;
+                    LocalShow(loc);
+                    _shown = this;
+                    _dispatcherFrame.PushFrameTrue();
+                }
+                finally
+                {
+                    _shown = null;
+                    LocalHide(loc);
+                    Util.LocalDispose(_lsDisposable);
+                    Showing = false;
+                }
+            };
+
+            if (null == ProgressOverlay.WithProgressOverlay(w => ((IDimForMessagebox)w).Go(show)))
             {
-                _shown = null;
-                LocalHide(loc);
-                Util.LocalDispose(_lsDisposable);
-                Showing = false;
+                show();
+                LocalHide(-1, bForce: true);
             }
 
             return _Result;

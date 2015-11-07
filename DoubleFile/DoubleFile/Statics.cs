@@ -114,7 +114,7 @@ namespace DoubleFile
             Observable.FromEventPattern<UnhandledExceptionEventArgs>(AppDomain.CurrentDomain, "UnhandledException")
                 .LocalSubscribe(99663, args =>
             {
-                var o = args.EventArgs.ExceptionObject?.As<Exception>()?.GetBaseException();
+                var o = args?.EventArgs.ExceptionObject?.As<Exception>()?.GetBaseException();
                 var t = o?.GetType();
                 var s = "" + o;
 

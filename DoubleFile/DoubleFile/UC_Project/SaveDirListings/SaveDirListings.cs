@@ -36,8 +36,8 @@ namespace DoubleFile
 
         internal void EndThread()
         {
-            foreach (var worker in _cbagWorkers)
-                worker.Abort();
+            Util.ParallelForEach(99572, _cbagWorkers, worker =>
+                worker.Abort());
 
             _cbagWorkers = new ConcurrentBag<SaveDirListing>();
             IsAborted = true;

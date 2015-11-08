@@ -363,6 +363,8 @@ namespace DoubleFile
                             lsFileBuffers_Enqueue
                             .ToList();
 
+                        blockWhileHashingPreviousBatch.Continue = true;     // jic
+
                         if (_cts.IsCancellationRequested)
                             break;
 

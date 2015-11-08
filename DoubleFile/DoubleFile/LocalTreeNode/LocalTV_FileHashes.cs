@@ -198,7 +198,7 @@ namespace DoubleFile
 
                 var ieHashes =
                     treeNode.NodeDatum.Hashes_FilesHere
-                    .Union(treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch)
+                    .Concat(treeNode.NodeDatum.Hashes_SubnodeFiles_Scratch)     // Union gives OutOfMemoryException
                     .OrderBy(n => n)
                     .Distinct();
 

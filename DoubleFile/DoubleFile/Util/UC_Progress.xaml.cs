@@ -193,7 +193,7 @@ namespace DoubleFile
             {
                 lvItem.SetCompleted();
 
-                if (_vm?.ItemsCast.All(lvItemA => lvItemA.IsCompleted) ?? false)
+                if (_vm?.ItemsCast.All(lvItemA => false == lvItemA.IsRunning) ?? false)
                 {
                     Util.UIthread(99827, () => _window.ProgressCtl.formBtn_Cancel.ToolTip = "Process completed. You may now close the window");
                     StopShowingConfirmMessage();
@@ -259,7 +259,7 @@ namespace DoubleFile
                     return true;    // from lambda
                 }
 
-                if (_vm.ItemsCast.All(lvItemA => lvItemA.IsCompleted))
+                if (_vm.ItemsCast.All(lvItemA => false == lvItemA.IsRunning))
                     return true;    // from lambda
 
                 return (null == windowClosing);     // from lambda

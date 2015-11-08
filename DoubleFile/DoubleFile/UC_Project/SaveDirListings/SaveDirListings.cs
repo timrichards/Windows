@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Windows;
 using System.Diagnostics;
+using System.ServiceModel.Channels;
 
 namespace DoubleFile
 {

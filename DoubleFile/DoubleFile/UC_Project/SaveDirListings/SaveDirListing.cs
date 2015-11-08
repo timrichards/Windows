@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using Microsoft.Win32.SafeHandles;
 using System.Windows;
+using System.ServiceModel.Channels;
 
 namespace DoubleFile
 {
@@ -28,6 +29,7 @@ namespace DoubleFile
                 : base(volStrings)
             {
                 _saveDirListingsStatus = saveDirListingsStatus;
+                _bufferManager = BufferManager.CreateBufferManager(long.MaxValue, int.MaxValue);
             }
 
             internal SaveDirListing DoThreadFactory()
@@ -42,7 +44,6 @@ namespace DoubleFile
             internal void Abort()
             {
                 _cts.Cancel();
-                _blockingFrame?.With(b => b.Continue = false);
                 _threadAbortUI.Abort();
                 _threadWrite.Abort();
 
@@ -55,6 +56,7 @@ namespace DoubleFile
                     blockingFrame.Continue = false;
                 });
 
+                _blockingFrame?.With(b => b.Continue = false);
                 blockingFrame.PushFrameTrue();
             }
 
@@ -274,8 +276,8 @@ namespace DoubleFile
                         });
                     });
 
-                    var dictHash = new ConcurrentDictionary<string, Tuple<HashTuple, HashTuple>> { };
-                    var dictException_FileRead = new ConcurrentDictionary<string, string> { };
+                    var dictHash = new ConcurrentDictionary<string, Tuple<HashTuple, HashTuple>>(Environment.ProcessorCount, LVitemProjectVM.LinesTotal);
+                    var dictException_FileRead = new ConcurrentDictionary<string, string>();
                     var dtDowngrade4K_Slow = DateTime.MinValue;
                     var bUserAllowsDowngrade = true;
                     var bAskedToDowngrade = false;
@@ -423,7 +425,12 @@ namespace DoubleFile
                         // There is a miniscule start-up time, and a larger wind-down time, which is saving the listings to file.
                         Util.ThreadMake(() =>
                         {
-                            Util.ParallelForEach(99657, lsFileBuffers_Dequeue, new ParallelOptions { CancellationToken = _cts.Token }, tuple =>
+                            Util.ParallelForEach(99657, lsFileBuffers_Dequeue, new ParallelOptions
+                            {
+                                CancellationToken = _cts.Token,
+                                MaxDegreeOfParallelism = Environment.ProcessorCount
+                            },
+                                tuple =>
                             {
                                 if (_cts.IsCancellationRequested)
                                     return; // from lambda
@@ -528,7 +535,10 @@ namespace DoubleFile
                     using (var fs = new FileStream(fileHandle, FileAccess.Read))
                     Util.Closure(() =>
                     {
-                        lsRet.Add(new byte[1 << 12]);          // happens to be block size
+                        var buffer = _bufferManager.TakeBuffer(1 << 12);
+
+                        Array.Clear(buffer, 0, buffer.Length);
+                        lsRet.Add(buffer);          // happens to be block size
 
                         var bFilled = FillBuffer(fs, lsRet);
 
@@ -538,7 +548,12 @@ namespace DoubleFile
                             Array.Copy(lsRet[1], lsRet[0], Math.Min(lsRet[1].Length, lsRet[0].Length));
 
                             if (lsRet[1].Length <= lsRet[0].Length)
+                            {
+                                var bufferA = lsRet[1];
+
                                 lsRet.RemoveAt(1);
+                                _bufferManager.ReturnBuffer(bufferA);
+                            }
                         }
                         else
                         {
@@ -574,15 +589,20 @@ namespace DoubleFile
             bool FillBuffer(FileStream fs, IList<byte[]> lsBuffer)
             {
                 var nBufferSize = 1 << (_bDowngrade4K_Slow ? 12 : 19);
-                var readBuffer = new byte[nBufferSize];
+                var readBuffer = _bufferManager.TakeBuffer(nBufferSize);
+
+                Array.Clear(readBuffer, 0, readBuffer.Length);
+
                 var nRead = fs.Read(readBuffer, 0, nBufferSize);
 
                 if (nRead < nBufferSize)
                 {
                     // works fine with 0 == nRead
-                    var truncBuffer = new byte[nRead];
+                    var truncBuffer = _bufferManager.TakeBuffer(nRead);
 
+                    Array.Clear(truncBuffer, 0, truncBuffer.Length);
                     Array.Copy(readBuffer, truncBuffer, nRead);
+                    _bufferManager.ReturnBuffer(readBuffer);
                     readBuffer = truncBuffer;
                 }
 
@@ -638,8 +658,10 @@ namespace DoubleFile
 
                     Util.Assert(99909, (1 << 20) >= nSize);
 
-                    var hashArray = new byte[nSize];
+                    var hashArray = _bufferManager.TakeBuffer(nSize);
                     var nIx = 0;
+
+                    Array.Clear(hashArray, 0, hashArray.Length);
 
                     foreach (byte[] buffer in lsBuffer.Skip(1))
                     {
@@ -647,8 +669,13 @@ namespace DoubleFile
                         nIx += buffer.Length;
                     }
 
-                    return Tuple.Create(hash1pt0,
+                    var retVal = Tuple.Create(hash1pt0,
                         HashTuple.FactoryCreate(md5.ComputeHash(hashArray)));
+
+                    foreach (byte[] buffer in lsBuffer)
+                        _bufferManager.ReturnBuffer(buffer);
+
+                    return retVal;
                 }
             }
 
@@ -664,7 +691,8 @@ namespace DoubleFile
                 _threadWrite = new Thread(() => { });
             Thread
                 _threadAbortUI = new Thread(() => { });
-
+            BufferManager
+                _bufferManager = null;
             LocalDispatcherFrame
                 BlockingFrameSet() => _blockingFrame = new LocalDispatcherFrame(99571);     // caller creates it on its thread
             LocalDispatcherFrame

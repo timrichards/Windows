@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace DoubleFile
 {
+    using System.Linq;
     using static Brushes;
 
     class LVitem_ProgressVM : ListViewItemVM_Base
@@ -19,7 +20,7 @@ namespace DoubleFile
             ProgressStates { Indeterminate, Determinate, Completed, Error };    // order is int cast as array indices
         ProgressStates _progressState = ProgressStates.Indeterminate;
         internal bool
-            IsCompleted => ProgressStates.Completed == _progressState;
+            IsRunning => new[] { ProgressStates.Indeterminate, ProgressStates.Determinate }.Contains(_progressState);
 
         public double
             Progress

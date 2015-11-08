@@ -388,6 +388,7 @@ namespace DoubleFile
                 : asLines
                 .Where(strLine => strLine.StartsWith(ksLineType_File))
                 .Select(strLine => strLine.Split('\t'))
+                .Where(asLine => 10 < asLine.Length)    // needs to be a hash line (could have been an empty file or one that couldn't be hashed)
                 .Any(asLine => 11 < asLine.Length);
 
             lvItem.ScannedLength = "" + tupleValidate.Item2;

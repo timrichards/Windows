@@ -35,8 +35,8 @@ namespace DoubleFile
 
             new ProgressOverlay(listNicknames, listSourcePaths, x =>
                 Statics.SaveDirListings =
-                    new SaveDirListings(lvProjectVM, this)
-                    .DoThreadFactory())
+                new SaveDirListings(lvProjectVM, this)
+                .DoThreadFactory())
             {
                 Title = "Saving Directory Listings",
                 WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this),

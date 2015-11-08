@@ -18,14 +18,15 @@ namespace DoubleFile
             readonly List<string> _errorList = new List<string> { };
 
             protected CancellationTokenSource
-                _cts = new CancellationTokenSource();
+                _cts = null;
 
             protected readonly LVitem_ProjectVM
                 LVitemProjectVM = null;
 
-            protected TraverseTreeBase(LVitem_ProjectVM lvProjectVM)
+            protected TraverseTreeBase(LVitem_ProjectVM lvProjectVM, CancellationTokenSource cts)
             {
                 LVitemProjectVM = lvProjectVM;
+                _cts = cts;
             }
 
             protected IReadOnlyList<Tuple<string, ulong>> 

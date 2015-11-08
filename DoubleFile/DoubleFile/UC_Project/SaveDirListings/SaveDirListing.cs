@@ -25,24 +25,17 @@ namespace DoubleFile
             internal
                 SaveDirListing(
                 LVitem_ProjectVM volStrings,
-                ISaveDirListingsStatus saveDirListingsStatus)
-                : base(volStrings)
+                ISaveDirListingsStatus saveDirListingsStatus,
+                CancellationTokenSource cts)
+                : base(volStrings, cts)
             {
                 _saveDirListingsStatus = saveDirListingsStatus;
                 _bufferManager = BufferManager.CreateBufferManager(long.MaxValue, int.MaxValue);
             }
 
-            internal SaveDirListing DoThreadFactory()
-            {
-                _thread = Util.ThreadMake(() => Go());
-                return this;
-            }
-
-            internal void
-                Join() => _thread.Join();
-
             internal void Abort()
             {
+                StatusCallback("Canceling...");
                 _cts.Cancel();
                 _threadAbortUI.Abort();
                 _threadWrite.Abort();
@@ -51,8 +44,8 @@ namespace DoubleFile
 
                 Util.ThreadMake(() =>
                 {
-                    StatusCallback("Canceling...");
-                    _thread.Join();
+                    _threadAbortUI.Join();
+                    _threadWrite.Join();
                     blockingFrame.Continue = false;
                 });
 
@@ -71,7 +64,7 @@ namespace DoubleFile
                 _saveDirListingsStatus.Status(LVitemProjectVM, strError, bDone, nProgress);
             }
 
-            void Go()
+            internal void Go()
             {
                 if (false == IsGoodDriveSyntax(LVitemProjectVM.SourcePath))
                 {
@@ -688,8 +681,6 @@ namespace DoubleFile
                 _bDowngrade4K_Slow = false;
             readonly ISaveDirListingsStatus
                 _saveDirListingsStatus = null;
-            Thread
-                _thread = new Thread(() => { });
             Thread
                 _threadWrite = new Thread(() => { });
             Thread

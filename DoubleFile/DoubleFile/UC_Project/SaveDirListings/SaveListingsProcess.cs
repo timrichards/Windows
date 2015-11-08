@@ -44,6 +44,7 @@ namespace DoubleFile
                 .AllowSubsequentProcess()
                 .ShowOverlay();
 
+            Util.Block(50);     // user cancel: allow progress window to close
             Statics.SaveDirListings?.EndThread();
         }
 
@@ -102,7 +103,6 @@ namespace DoubleFile
                 return false;
             }
 
-            Statics.SaveDirListings?.EndThread();
             return true;
         }
 

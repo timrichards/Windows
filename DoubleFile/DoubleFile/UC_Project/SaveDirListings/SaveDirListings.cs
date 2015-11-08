@@ -4,6 +4,8 @@ using System.Linq;
 using System.Windows;
 using System.Diagnostics;
 using System.ServiceModel.Channels;
+using System.Threading.Tasks;
+using System;
 
 namespace DoubleFile
 {
@@ -16,7 +18,8 @@ namespace DoubleFile
     partial class SaveDirListings
     {
         internal bool
-            IsAborted { get; private set; }
+            IsAborted => _cts.IsCancellationRequested;
+
         internal int
             FilesWritten = 0;
 
@@ -29,18 +32,13 @@ namespace DoubleFile
 
         internal SaveDirListings(LV_ProjectVM lvProjectVM, ISaveDirListingsStatus saveDirListingsStatus)
         {
-            IsAborted = false;
             _lvProjectVM = lvProjectVM;
             _saveDirListingsStatus = saveDirListingsStatus;
         }
 
         internal void EndThread()
         {
-            Util.ParallelForEach(99572, _cbagWorkers, worker =>
-                worker.Abort());
-
-            _cbagWorkers = new ConcurrentBag<SaveDirListing>();
-            IsAborted = true;
+            _cts.Cancel();
             _thread = null;
         }
 
@@ -57,19 +55,17 @@ namespace DoubleFile
 
             var stopwatch = Stopwatch.StartNew();
 
-            foreach (var lvItemProjectVM
-                in _lvProjectVM.ItemsCast
-                .Where(lvItemProjectVM => lvItemProjectVM.WouldSave))
+            Util.ParallelForEach(99857,
+                _lvProjectVM.ItemsCast.Where(lvItemProjectVM => lvItemProjectVM.WouldSave),
+                new ParallelOptions
             {
-                _cbagWorkers
-                    .Add(new SaveDirListing(lvItemProjectVM, _saveDirListingsStatus)
-                    .DoThreadFactory());
-            }
-
-            foreach (var worker in _cbagWorkers)
-                worker.Join();
+                CancellationToken = _cts.Token,
+                MaxDegreeOfParallelism = Environment.ProcessorCount
+            },
+                lvItemProjectVM => new SaveDirListing(lvItemProjectVM, _saveDirListingsStatus, _cts).Go());
 
             stopwatch.Stop();
+
             Util.WriteLine(string.Format("Finished saving directory listings in {0} seconds.",
                 ((int)stopwatch.ElapsedMilliseconds / 100) / 10d));
 
@@ -90,10 +86,10 @@ namespace DoubleFile
 
         readonly ISaveDirListingsStatus
             _saveDirListingsStatus = null;
+        CancellationTokenSource
+            _cts = new CancellationTokenSource();
         Thread
             _thread = null;
-        ConcurrentBag<SaveDirListing>
-            _cbagWorkers = new ConcurrentBag<SaveDirListing>();
         LV_ProjectVM
             _lvProjectVM = null;
     }

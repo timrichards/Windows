@@ -354,6 +354,7 @@ namespace DoubleFile
                         if (blockWhileHashingPreviousBatch.Continue)
                             blockWhileHashingPreviousBatch.PushFrameTrue();
 
+                        lsFileBuffers_Dequeue.Add(null);    // lock out cross-thread blockWhileHashingPreviousBatch
                         blockWhileHashingPreviousBatch.Continue = true;
 
                         // in C# this copy occurs every iteration. A closure is created each time in ThreadMake.
@@ -361,8 +362,6 @@ namespace DoubleFile
                         lsFileBuffers_Dequeue =
                             lsFileBuffers_Enqueue
                             .ToList();
-
-                        blockWhileHashingPreviousBatch.Continue = true;
 
                         if (_cts.IsCancellationRequested)
                             break;

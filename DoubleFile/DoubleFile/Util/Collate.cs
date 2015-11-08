@@ -265,6 +265,14 @@ namespace DoubleFile
 
                     Util.Assert(99977, new[] { Solitary, Transparent }.Contains(parent.ColorcodeFG), bIfDefDebug: true);
 
+                    if (false == (parent.NodeDatum.Hashes_FilesHere_IsComplete))
+                        return;
+
+                    var isAllDupSepVol = parent.NodeDatum.Hashes_FilesHere.AsParallel().Aggregate<int, bool?>(true, IsDupeSepVolume);
+
+                    if (false == (isAllDupSepVol ?? false))
+                        return;
+
                     var bSet = SolitaryHasClones;
 
                     if (bCheck && 

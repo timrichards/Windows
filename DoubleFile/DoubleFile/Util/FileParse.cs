@@ -349,13 +349,26 @@ namespace DoubleFile
                 Include = lvItem_out?.Include ?? true
             };
 
-            const int knLinesDesired = 4 + knDriveInfoItems;
-            const int knLinesGrabFile = 10;
+            var bFoundHashedFile = false;
 
-            var asLines = strFile.ReadLines(99648).Take(knLinesDesired + knLinesGrabFile)
+            var asLines = strFile.ReadLines(99648).TakeWhile(
+                strLine =>
+            {
+                if (bFoundHashedFile)
+                    return false;
+
+                if (false == strLine.StartsWith(ksLineType_File))
+                    return true;
+
+                if (10 >= strLine.Split('\t').Length)
+                    return true;
+
+                bFoundHashedFile = true;
+                return true;
+            })
                 .ToArray();
 
-            if (knLinesDesired > asLines.Length)
+            if (false == asLines.Any(strLine => strLine.StartsWith(ksLineType_Start)))
                 return false;
 
             if (false == asLines[1].StartsWith(ksLineType_Nickname))

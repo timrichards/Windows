@@ -672,6 +672,8 @@ namespace DoubleFile
                     var retVal = Tuple.Create(hash1pt0,
                         HashTuple.FactoryCreate(md5.ComputeHash(hashArray)));
 
+                    _bufferManager.ReturnBuffer(hashArray);
+
                     foreach (byte[] buffer in lsBuffer)
                         _bufferManager.ReturnBuffer(buffer);
 

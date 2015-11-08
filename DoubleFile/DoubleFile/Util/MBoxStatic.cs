@@ -78,7 +78,7 @@ namespace DoubleFile
             {
                 var bDebuggerBreak = true;
 
-                Util.UIthread(99575, () => bDebuggerBreak = false == Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.LeftShift));
+                Util.UIthread(99575, () => bDebuggerBreak = false == (Keyboard.IsKeyDown(Key.LeftCtrl) && Keyboard.IsKeyDown(Key.LeftShift)));
 
                 if (bDebuggerBreak)
                     Debugger.Break();

@@ -70,7 +70,7 @@ namespace DoubleFile
                 {
                     var lvItemProjectVM = new LVitem_ProjectVM(strLine.Split('\t'));
 
-                    Util.Assert(99857, FileParse.ksNotSaved == lvItemProjectVM.Status);
+                    // could be appended so could have a using file status or a not saved status
                     // can't seem to add the unsaved listing to the project LV
                 }
             }

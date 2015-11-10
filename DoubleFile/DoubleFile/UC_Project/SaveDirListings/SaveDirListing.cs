@@ -20,23 +20,19 @@ namespace DoubleFile
     {
         static internal bool Hash = true;   // use-case: VolTreemap project
 
-        class SaveDirListing : TraverseTreeBase
+        class SaveDirListing : TraverseTreeBase, IDisposable
         {
             internal
                 SaveDirListing(
                 LVitem_ProjectVM volStrings,
-                ISaveDirListingsStatus saveDirListingsStatus,
                 CancellationTokenSource cts)
                 : base(volStrings, cts)
             {
-                _saveDirListingsStatus = saveDirListingsStatus;
                 _bufferManager = BufferManager.CreateBufferManager(long.MaxValue, int.MaxValue);
             }
 
-            internal void Abort()
+            public void Dispose()
             {
-                StatusCallback("Canceling...");
-                _cts.Cancel();
                 _threadAbortUI.Abort();
                 _threadWrite.Abort();
 
@@ -44,38 +40,33 @@ namespace DoubleFile
 
                 Util.ThreadMake(() =>
                 {
-                    _threadAbortUI.Join();
-                    _threadWrite.Join();
+                    if (_threadAbortUI.IsAlive)
+                        _threadAbortUI.Join();
+
+                    if (_threadWrite.IsAlive)
+                        _threadWrite.Join();
+
                     blockingFrame.Continue = false;
                 });
 
                 _blockingFrame?.With(b => b.Continue = false);
                 blockingFrame.PushFrameTrue();
+                _bufferManager.Clear();
             }
 
-            void StatusCallback(string strError = null, bool bDone = false, double nProgress = double.NaN)
-            {
-                if (null == _saveDirListingsStatus)
-                {
-                    Util.Assert(99870, false);
-                    return;
-                }
-
-                _saveDirListingsStatus.Status(LVitemProjectVM, strError, bDone, nProgress);
-            }
-
-            internal void Go()
+            internal SaveDirListing
+                Go()
             {
                 if (false == IsGoodDriveSyntax(LVitemProjectVM.SourcePath))
                 {
                     StatusCallback(strError: "Bad drive syntax.");
-                    return;
+                    return this;
                 }
 
                 if (false == Directory.Exists(LVitemProjectVM.SourcePath))
                 {
                     StatusCallback(strError: "Source Path does not exist.");
-                    return;
+                    return this;
                 }
 
                 if (string.IsNullOrWhiteSpace(LVitemProjectVM.ListingFile))
@@ -93,6 +84,12 @@ namespace DoubleFile
                 {
                     var hash = Hash ? HashAllFiles(GetFileList()) : null;
 
+                    if (_cts.IsCancellationRequested)
+                    {
+                        StatusCallback(_ksCanceled);
+                        return this;
+                    }
+
                     Util.WriteLine("hashed " + LVitemProjectVM.SourcePath);
 
                     _threadWrite = Util.ThreadMake(() =>
@@ -109,23 +106,11 @@ namespace DoubleFile
                             sw.WriteLine();
                             sw.WriteLine(ksErrorsLoc01);
 
-                            // Unit test metrix on non-system volume
-                            //MBox.Assert(99893, nProgressDenominator >= nProgressNumerator);       file creation/deletion between times
-                            //MBox.Assert(99892, nProgressDenominator == m_nFilesDiff);             ditto
-                            //MBox.Assert(99891, nProgressDenominator == dictHash.Count);           ditto
-
                             foreach (var strError in ErrorList)
                                 sw.WriteLine(strError);
 
                             sw.WriteLine();
                             sw.WriteLine(FormatString(strDir: ksTotalLengthLoc01, nLength: LengthRead));
-                        }
-
-                        if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
-                            _cts.IsCancellationRequested)
-                        {
-                            LocalIsoStore.DeleteFile(LVitemProjectVM.ListingFile);
-                            return;
                         }
 
                         StatusCallback(bDone: true);
@@ -144,6 +129,7 @@ namespace DoubleFile
                     StatusCallback(strError: e.GetBaseException().Message, bDone: true);
                 }
 #endif
+                return this;
             }
 
             void WriteHeader(TextWriter fs)
@@ -388,7 +374,7 @@ namespace DoubleFile
                                         });
 
                                         BlockingFrameSet().PushFrameTrue();
-                                        ProgressOverlay.WithProgressOverlay(w => w.ResetEstimate());
+                                        ProgressOverlay.WithProgressOverlay(w => w.ResetEstimate(LVitemProjectVM.SourcePath));
                                     }
 
                                     if (bUserAllowsDowngrade)
@@ -463,13 +449,10 @@ namespace DoubleFile
                     nAverage /= lsProgress.Count;
                     Util.WriteLine("\n--- " + nAverage);
 
-                    _threadAbortUI = Util.ThreadMake(() =>
-                    {
-                        if (_cts.IsCancellationRequested)
-                            StatusCallback("Canceled");
-                        else
-                            StatusCallback(nProgress: 1);
-                    });
+                    if (_cts.IsCancellationRequested)
+                        StatusCallback(_ksCanceled);
+                    else
+                        StatusCallback(nProgress: 1);
 
                     if (_cts.IsCancellationRequested)
                         return null;
@@ -675,12 +658,41 @@ namespace DoubleFile
                 }
             }
 
+            void StatusCallback(string strError = null, bool bDone = false, double nProgress = double.NaN)
+            {
+                var winProgress = ProgressOverlay.WithProgressOverlay(w => w);
+
+                if (winProgress?.LocalIsClosed ?? true)
+                {
+                    Util.Assert(99804,
+                        (Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
+                        _cts.IsCancellationRequested, bIfDefDebug: true);
+
+                    return;
+                }
+
+                if ((null != strError) && (LVitemProjectVM.WouldSave))
+                {
+                    LVitemProjectVM.Status = ksError;
+                    winProgress.SetError(LVitemProjectVM.SourcePath, strError);
+                }
+                else if (bDone)
+                {
+                    LVitemProjectVM.SetSaved();
+                    winProgress.SetCompleted(LVitemProjectVM.SourcePath);
+                }
+                else if (0 <= nProgress)
+                {
+                    winProgress.SetProgress(LVitemProjectVM.SourcePath, nProgress);
+                }
+            }
+
             void ShowMemoryError() => MBoxStatic.ShowOverlay("Out of memory exception saving listings for " + LVitemProjectVM.SourcePath + ".");
 
+            const string
+                _ksCanceled = "Canceled";
             bool
                 _bDowngrade4K_Slow = false;
-            readonly ISaveDirListingsStatus
-                _saveDirListingsStatus = null;
             Thread
                 _threadWrite = new Thread(() => { });
             Thread

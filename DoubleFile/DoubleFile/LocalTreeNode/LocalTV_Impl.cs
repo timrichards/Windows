@@ -49,28 +49,31 @@ namespace DoubleFile
 
             (new ProgressOverlay(new string[lsProgressItems.Count], lsProgressItems, x =>
             {
-                if (false == _bFileDictDone)
-                    Statics.DupeFileDictionary.DoThreadFactory(_lvProjectVM, new WeakReference<ICreateDupeFileDictStatus>(this));
+                Util.ThreadMake(() =>
+                {
+                    if (false == _bFileDictDone)
+                        Statics.DupeFileDictionary.DoThreadFactory(_lvProjectVM, new WeakReference<ICreateDupeFileDictStatus>(this));
 
-                TabledString<TabledStringType_Folders>.GenerationStarting();
+                    TabledString<TabledStringType_Folders>.GenerationStarting();
 
-                if (Statics.DupeFileDictionary.IsAborted)
-                    return;     // from lambda
+                    if (Statics.DupeFileDictionary.IsAborted)
+                        return;     // from lambda
 
-                _tree =
-                    new Tree(
-                    _lvProjectVM,
-                    new TreeBase(_dictVolumeInfo, new WeakReference<ITreeStatus>(this)))
-                    .DoThreadFactory();
+                    _tree =
+                        new Tree(
+                        _lvProjectVM,
+                        new TreeBase(_dictVolumeInfo, new WeakReference<ITreeStatus>(this)))
+                        .Go();
+
+                    if (null == _topNode)
+                        TabledString<TabledStringType_Folders>.GenerationEnded();
+                });
             })
             {
                 Title = "Initializing Explorer",
                 WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this)
             })
                 .ShowOverlay();
-
-            if (null == _topNode)
-                TabledString<TabledStringType_Folders>.GenerationEnded();
 
             return _bTreeDone;
         }

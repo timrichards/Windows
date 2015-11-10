@@ -14,7 +14,7 @@ namespace DoubleFile
         public string
             SmallKeyLabel { get { return SubItems[1]; } private set { SetProperty(1, value); } }
         public string
-            Status { get { return SubItems[2]; } internal set { SetProperty(2, value); } }
+            Status { get { return SubItems[2]; } private set { SetProperty(2, value); } }
 
         enum
             ProgressStates { Indeterminate, Determinate, Completed, Error };    // order is int cast as array indices
@@ -55,29 +55,43 @@ namespace DoubleFile
             RaisePropertyChanged("Foreground");
         }
 
-        internal void SetCompleted()
+        internal LVitem_ProgressVM
+            SetCompleted()
         {
             _progressState = ProgressStates.Completed;
             Status = "Completed.";
             Progress_RaisePropertyChanged();
+            return this;
         }
 
-        internal void SetError(string strError)
+        internal LVitem_ProgressVM
+            SetError(string strError)
         {
             _progressState = ProgressStates.Error;
             Status = strError;
             Progress_RaisePropertyChanged();
+            return this;
         }
 
-        internal void TimerTick()
+        internal LVitem_ProgressVM
+            ResetEstimate()
+        {
+            _dtRollingProgress = DateTime.MinValue;
+            _nRollingProgress = 0;
+            _nLastProgress = 0;
+            return this;
+        }
+
+        internal LVitem_ProgressVM
+            TimerTick()
         {
             var nProgress = _nProgress;     // do not use the Progress property in TimerTick()
 
             if (_nLastProgress.Equals(nProgress))
-                return;
+                return this;
 
             if (double.IsNaN(nProgress))
-                return;
+                return this;
 
             if (ProgressStates.Indeterminate == _progressState)
                 _progressState = ProgressStates.Determinate;
@@ -124,11 +138,11 @@ namespace DoubleFile
 
             Progress_RaisePropertyChanged();
             _nLastProgress = nProgress;
+            return this;
         }
 
         const int
             _knRollingMinutes = 2;
-
         DateTime
             _dtRollingProgress = DateTime.MinValue;
         double

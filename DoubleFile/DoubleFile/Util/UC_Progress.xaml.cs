@@ -96,9 +96,15 @@ namespace DoubleFile
             Util.ThreadMake(() => _initClient?.Invoke(this));
             _dispatcherFrame.PushFrameTrue();
 
-            if (_bWentModeless)
-                return this;
+            if (false == _bWentModeless)
+                LocalDispose();
 
+            return this;
+        }
+
+        ProgressOverlay
+            LocalDispose()
+        {
             Util.LocalDispose(_lsDisposable);
             _wr.SetTarget(null);
             _vm = null;
@@ -130,6 +136,9 @@ namespace DoubleFile
 
             if (false == cancelEventArgs.Cancel)
                 _dispatcherFrame.Continue = false;
+
+            if (_bWentModeless)
+                LocalDispose();
 
             return this;
         }
@@ -169,10 +178,10 @@ namespace DoubleFile
         }
 
         internal ProgressOverlay
-            SetProgress(string strPath, double nProgress)
+            SetProgress(string strSmallKeyLabel, double nProgress)
         {
             if (false ==
-                _vm[strPath]
+                _vm[strSmallKeyLabel]
                 .FirstOnlyAssert(lvItem => lvItem.Progress = nProgress))
             {
                 Util.Assert(99969, false);
@@ -182,25 +191,27 @@ namespace DoubleFile
         }
 
         internal ProgressOverlay
-            ResetEstimate() => _vm.All(lvItem => { lvItem.Status = null; return true; }) ? this : this;     // icky code yum
-
-        internal ProgressOverlay
-            SetCompleted(string strPath)
+            ResetEstimate(string strSmallKeyLabel)
         {
             if (false ==
-                _vm[strPath]
+                _vm[strSmallKeyLabel]
+                .FirstOnlyAssert(lvItem => lvItem.ResetEstimate()))
+            {
+                Util.Assert(99873, false);
+            }
+
+            return this;
+        }
+
+        internal ProgressOverlay
+            SetCompleted(string strSmallKeyLabel)
+        {
+            if (false ==
+                _vm[strSmallKeyLabel]
                 .FirstOnlyAssert(lvItem =>
             {
                 lvItem.SetCompleted();
-
-                if (_vm?.ItemsCast.All(lvItemA => false == lvItemA.IsRunning) ?? false)
-                {
-                    Util.UIthread(99827, () => _window.ProgressCtl.formBtn_Cancel.ToolTip = "Process completed. You may now close the window");
-                    StopShowingConfirmMessage();
-
-                    if (_bAllowSubsequentProcess)
-                        GoModeless();
-                }
+                GoModelessIfNotRunning();
             }))
             {
                 Util.Assert(99968, false);
@@ -212,10 +223,28 @@ namespace DoubleFile
         internal ProgressOverlay
             SetError(string strSmallKeyLabel, string strError)
         {
-            if (false == _vm?[strSmallKeyLabel].FirstOnlyAssert(lvItem => lvItem.SetError(strError)))
+            if (false == _vm?[strSmallKeyLabel].FirstOnlyAssert(lvItem =>
+            {
+                lvItem.SetError(strError);
+                GoModelessIfNotRunning();
+            }))
+            {
                 Util.Assert(99956, false);
+            }
 
             return this;
+        }
+
+        void GoModelessIfNotRunning()
+        {
+            if (_vm?.ItemsCast.All(lvItemA => false == lvItemA.IsRunning) ?? false)
+            {
+                Util.UIthread(99827, () => _window.ProgressCtl.formBtn_Cancel.ToolTip = "Process completed. You may now close the window");
+                StopShowingConfirmMessage();
+
+                if (_bAllowSubsequentProcess)
+                    GoModeless();
+            }
         }
 
         ProgressOverlay

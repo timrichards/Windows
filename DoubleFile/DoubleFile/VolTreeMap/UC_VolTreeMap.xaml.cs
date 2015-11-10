@@ -31,7 +31,7 @@ namespace DoubleFile
             var lvProjectVM = new LV_ProjectVM { new LVitem_ProjectVM { SourcePath = dlg.SelectedPath } };
 
             SaveDirListings.Hash = false;
-            SaveListingsProcess.Go(lvProjectVM);
+            SaveDirListings.Go(lvProjectVM);
 
             if (0 == lvProjectVM.CanLoadCount)
             {

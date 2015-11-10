@@ -51,10 +51,6 @@ namespace DoubleFile
             DupeFileDictionary { get { return _wr.Get(s => s._fileDictionary); } set { _wr.Get(s => s._fileDictionary = value); } }
         DupeFileDictionary _fileDictionary = new DupeFileDictionary();
 
-        static internal SaveDirListings
-            SaveDirListings { get { return _wr.Get(s => s._saveDirListings); } set { _wr.Get(s => s._saveDirListings = value); } }
-        SaveDirListings _saveDirListings;
-
         static internal ILocalWindow
             TopWindow
         {

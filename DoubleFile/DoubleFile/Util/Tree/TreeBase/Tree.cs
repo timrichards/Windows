@@ -1,14 +1,15 @@
 ﻿using System.Threading;
-using System.Collections.Concurrent;
 using System.Linq;
 using System.Windows;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using System;
 
 namespace DoubleFile
 {
     partial class Tree : TreeBase
     {
-        internal bool IsAborted { get; private set; }
+        internal bool IsAborted => _cts.IsCancellationRequested;
 
         internal Tree(
             LV_ProjectVM lvProjectVM,
@@ -18,55 +19,36 @@ namespace DoubleFile
             LVprojectVM = lvProjectVM;
         }
 
-        internal void EndThread()     // bJoin is not used because it induces lag.
-        {
-            IsAborted = true;
+        internal void
+            EndThread() => _cts.Cancel();
 
-            if (_thread != null)
-            {
-                _thread.Abort();
-                _thread = null;
-            }
-
-            foreach (var worker in _cbagWorkers)
-                worker.Abort();
-
-            _cbagWorkers = new ConcurrentBag<TreeRootNodeBuilder>();
-        }
-
-        internal Tree DoThreadFactory()
-        {
-            _thread = Util.ThreadMake(Go);
-            return this;
-        }
-
-        void Go()
+        internal Tree Go()
         {
             Util.WriteLine();
             Util.WriteLine("Creating tree.");
             
             var stopwatch = Stopwatch.StartNew();
 
-            foreach (var treeRoot
-                in from lvItemProjectVM
+            Util.ParallelForEach(99940,
+                from lvItemProjectVM
                 in LVprojectVM.Items.Cast<LVitemProject_Explorer>()
                 where lvItemProjectVM.CanLoad
-                select new TreeRootNodeBuilder(lvItemProjectVM, this))
-            {
-                _cbagWorkers.Add(treeRoot.DoThreadFactory());
-            }
-
-            foreach (var worker in _cbagWorkers)
-                worker.Join();
+                select new TreeRootNodeBuilder(lvItemProjectVM, this),
+             new ParallelOptions
+             {
+                 CancellationToken = _cts.Token,
+                 MaxDegreeOfParallelism = Environment.ProcessorCount
+             }, treeRoot => treeRoot.Go(_cts));
 
             stopwatch.Stop();
+
             Util.WriteLine(string.Format("Completed tree in {0} seconds.",
                 ((int)stopwatch.ElapsedMilliseconds / 10) / 100d));
 
             if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                 IsAborted)
             {
-                return;
+                return this;
             }
 
             var treeStatus = _callbackWR?.Get(w => w);
@@ -74,17 +56,16 @@ namespace DoubleFile
             if (null == treeStatus)
             {
                 Util.Assert(99864, false);
-                return;
+                return this;
             }
 
             treeStatus.Done();
+            return this;
         }
 
         LV_ProjectVM
             LVprojectVM { get; set; }
-        ConcurrentBag<TreeRootNodeBuilder>
-            _cbagWorkers = new ConcurrentBag<TreeRootNodeBuilder>();
-        Thread
-            _thread = null;
+        CancellationTokenSource
+            _cts = new CancellationTokenSource();
     }
 }

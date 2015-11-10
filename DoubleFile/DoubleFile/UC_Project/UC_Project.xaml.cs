@@ -66,7 +66,7 @@ namespace DoubleFile
                 }
 
                 if (0 < lvProjectVM.Items.Count)
-                    SaveListingsProcess.Go(lvProjectVM);
+                    SaveDirListings.Go(lvProjectVM);
             }
 
             var lvProjectVM_Copy = Statics.LVprojectVM_Copy;

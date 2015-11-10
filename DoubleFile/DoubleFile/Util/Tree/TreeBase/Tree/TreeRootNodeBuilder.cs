@@ -41,26 +41,11 @@ namespace DoubleFile
                 return datum;
             }
 
-            internal TreeRootNodeBuilder
-                DoThreadFactory()
-            {
-                _thread = Util.ThreadMake(Go);
-                return this;
-            }
-
             internal void
-                Join() => _thread.Join();
-
-            internal void
-                Abort()
+                Go(CancellationTokenSource cts)
             {
-                _bThreadAbort = true;
-                _thread.Abort();
-            }
+                _cts = cts;
 
-            void
-                Go()
-            {
                 var stopwatch = Stopwatch.StartNew();
 
                 if (_lvItemProjectVM.CanLoad == false)
@@ -195,7 +180,7 @@ namespace DoubleFile
                 foreach (var strLine in _lvItemProjectVM.ListingFile.ReadLines(99640))
                 {
                     if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
-                        _bThreadAbort)
+                        _cts.IsCancellationRequested)
                     {
                         return;
                     }
@@ -293,12 +278,10 @@ namespace DoubleFile
                 treeStatus.Status(volStrings, rootNode, bError);
             }
 
-            Thread
-                _thread = new Thread(() => { });
-            bool
-                _bThreadAbort = false;
             readonly LVitemProject_Explorer
                 _lvItemProjectVM = null;
+            CancellationTokenSource
+                _cts = null;
         }
     }
 }

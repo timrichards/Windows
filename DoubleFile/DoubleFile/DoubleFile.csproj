@@ -28,7 +28,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>264</ApplicationRevision>
+    <ApplicationRevision>265</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -364,9 +364,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UC_Project\SaveDirListings\SaveDirListings.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="UC_Project\SaveDirListings\SaveListingsProcess.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="UC_Project\SaveDirListings\TraverseTreeBase.cs">

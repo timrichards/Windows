@@ -47,7 +47,7 @@ namespace DoubleFile
             if (false == _bFileDictDone)
                 lsProgressItems.Insert(0, _ksDupeFileDictKey);
 
-            (new ProgressOverlay(new string[lsProgressItems.Count], lsProgressItems, x =>
+            new ProgressOverlay(new string[lsProgressItems.Count], lsProgressItems, x =>
             {
                 Util.ThreadMake(() =>
                 {
@@ -72,7 +72,7 @@ namespace DoubleFile
             {
                 Title = "Initializing Explorer",
                 WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this)
-            })
+            }
                 .ShowOverlay();
 
             return _bTreeDone;

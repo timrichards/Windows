@@ -68,7 +68,6 @@ namespace DoubleFile
                     .Close();
             });
 
-            _wr.SetTarget(this);
             _initClient = initClient;
             _ieStr = astrBigLabels.Zip(astrSmallKeyLabels, (a, b) => Tuple.Create(a, b));
         }
@@ -85,11 +84,13 @@ namespace DoubleFile
                 if (null == _window)
                     _window = (LocalModernWindowBase)Application.Current.MainWindow;
 
+                WithProgressOverlay(w => w.LocalDispose());
                 _window.ProgressCtl.DataContext = _vm;
                 _vm.Init();
                 _window.Progress_Darken();
             });
 
+            _wr.SetTarget(this);
             _lsDisposable.Add(Observable.FromEventPattern(_window.ProgressCtl.formBtn_Cancel, "Click")
                 .LocalSubscribe(99621, x => Close()));
 

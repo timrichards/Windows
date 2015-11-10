@@ -254,7 +254,7 @@ namespace DoubleFile
                 : LocalTV.AllNodes
                     .Where(treeNode => treeNode.PathShort.ToLower().Contains(SearchText));
 
-            (new ProgressOverlay(new[] { "" }, new[] { _ksSearchKey }, x =>
+            new ProgressOverlay(new[] { "" }, new[] { _ksSearchKey }, x =>
             {
                 var blockingFrame = new LocalDispatcherFrame(99860) { Continue = true };
                 IEnumerable<ListViewItemVM_Base> ieLVitems = null;
@@ -281,7 +281,7 @@ namespace DoubleFile
 
                 if (ieLVitems.Any())
                     Util.UIthread(99816, () => Add(ieLVitems));
-            }))
+            })
                 .ShowOverlay(LocalOwner);
         }
 
@@ -290,7 +290,7 @@ namespace DoubleFile
             if (GenerationStarting_And_FullPathFound(SearchText))
                 return;
 
-            (new ProgressOverlay(new[] { "" }, new[] { _ksSearchKey }, x =>
+            new ProgressOverlay(new[] { "" }, new[] { _ksSearchKey }, x =>
             {
                 _lsSearchResults = new List<SearchResults>();
 
@@ -309,7 +309,7 @@ namespace DoubleFile
             })
             {
                 WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this)
-            })
+            }
                 .ShowOverlay(LocalOwner);
         }
 

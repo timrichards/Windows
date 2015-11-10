@@ -277,14 +277,14 @@ namespace DoubleFile
             var bCouldStart = false;
             var status = (bClearItems ? "Opening" : "Appending") + " project";
 
-            (new ProgressOverlay(new[] { status }, new[] { strProjectFileNoPath }, x =>
+            new ProgressOverlay(new[] { status }, new[] { strProjectFileNoPath }, x =>
             {
                 bCouldStart = StartProcess(status,
                     strProjectFileNoPath,
                     "e \"" + strProjectFilename + "\" -y",
                     () => bRet = OpenProjectExited(openListingFilesWR, bClearItems));
             })
-            { WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this) })
+            { WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this) }
                 .ShowOverlay();
 
             if (false == bCouldStart)

@@ -79,6 +79,7 @@ namespace DoubleFile
             _dtRollingProgress = DateTime.MinValue;
             _nRollingProgress = 0;
             _nLastProgress = 0;
+            Status = null;
             return this;
         }
 

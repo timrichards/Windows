@@ -22,7 +22,7 @@ namespace DoubleFile
         internal void
             EndThread() => _cts.Cancel();
 
-        internal Tree Go()
+        internal void Go()
         {
             Util.WriteLine();
             Util.WriteLine("Creating tree.");
@@ -48,7 +48,7 @@ namespace DoubleFile
             if ((Application.Current?.Dispatcher.HasShutdownStarted ?? true) ||
                 IsAborted)
             {
-                return this;
+                return;
             }
 
             var treeStatus = _callbackWR?.Get(w => w);
@@ -56,11 +56,10 @@ namespace DoubleFile
             if (null == treeStatus)
             {
                 Util.Assert(99864, false);
-                return this;
+                return;
             }
 
             treeStatus.Done();
-            return this;
         }
 
         LV_ProjectVM

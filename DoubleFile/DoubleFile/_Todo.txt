@@ -1,4 +1,9 @@
 ﻿- fix 99637
+- folders like Recycle Bin get in the way. Should be able to exclude them.
+	- and rebuild with bindings just like the old days without resetting the view.
+- Backup progress should be on its window
+	- clear source and dest when all folders are removed
+	- list files and go to file
 - Project sort by nickname then by drive letter
 - Allow copy text in edit listing file dialog for dimmed source path
 - Progress in task bar
@@ -43,7 +48,6 @@
 		- Invert the exclusive principle. Start inclusive, not with an ignore list.
 	- Folders and files that are missing; or that are different.
 	- Invert the size matters principle: some of the most important files may go unnoticed: just a drop in the bucket.
-	- Restore the ignore list: nobody cares about the Windows or Program Files directories. Don't make moron reports.
 - checkbox and button on lists: turn off auto-sync to current treenode, sync now button
 	- Sync To button in tree view
 	- allow two different file windows to point to two different folders: each new folder window should have its own children

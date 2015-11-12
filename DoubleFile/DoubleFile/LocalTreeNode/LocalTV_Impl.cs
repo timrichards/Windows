@@ -59,10 +59,10 @@ namespace DoubleFile
                     if (Statics.DupeFileDictionary.IsAborted)
                         return;     // from lambda
 
-                    _tree =
+                    (_tree =
                         new Tree(
                         _lvProjectVM,
-                        new TreeBase(_dictVolumeInfo, new WeakReference<ITreeStatus>(this)))
+                        new TreeBase(_dictVolumeInfo, new WeakReference<ITreeStatus>(this))))
                         .Go();
 
                     if (null == _topNode)
@@ -259,7 +259,7 @@ namespace DoubleFile
 
             Statics.DupeFileDictionary
                 .Abort();
-                    
+
             _tree?.EndThread();
             _tree = null;
             return true;

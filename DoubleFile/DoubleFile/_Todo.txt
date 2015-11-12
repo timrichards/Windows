@@ -1,7 +1,6 @@
 ﻿- fix 99637
 - Project sort by nickname then by drive letter
 - Allow copy text in edit listing file dialog for dimmed source path
-- restore a lost drive's original folder structure given that all its files are duped in various locations
 - Progress in task bar
 - Clones don't sync to folder detail updated in extra window.
 - Clones col can sort: turn that off until sorting removes size labels and 3-mode sorting is enabled
@@ -11,6 +10,8 @@
 - folder browser in backup start at selected folder; allow text entry
 - Scrollviewer for detail view
 - Add folder name to suffix title Tree List: My Documents; Files in Folder: My Documents; Folders Here: My Documents; etc.
+- change drive letter did not change one line and screwed up culling, which is fixed. do a check for [A-Z}:\ when verifying the file.
+	- fix the file
 - Option to show drive label and model/serial in Volume text (Nickname)
 - binding errors only evidence on extra windows
 	- SelectedItem binding not found on Detail Datagrids: BindingExpression path error: 'SelectedItem' property not found on 'object' ''LV_VolumeDetailVM' (HashCode=47281521)'. BindingExpression:Path=SelectedItem; DataItem='LV_VolumeDetailVM' (HashCode=47281521); target element is 'DataGrid' (Name='formLV_Volume'); target property is 'SelectedItem' (type 'Object')
@@ -26,9 +27,8 @@
 - ditch duplicates view and expand files list for that
 	- duplicates view should have same fs info ("lv line knColLengthLV") as the Files view and col differences should be red
 - sort search results by result; breakout by path; etc.
+- restore a lost drive's original folder structure given that all its files are duped in various locations
 - A folder is near to being a clone: restore it using dupe files found in the would-be clones
-- change drive letter did not change one line and screwed up culling, which is fixed. do a check for [A-Z}:\ when verifying the file.
-	- fix the file
 - If I were to remove all but three or four dupes from all non-clones, how much space would I recoup on this volume?
 
 - option to store backups in a compressed archive with its own .DFL record

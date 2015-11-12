@@ -82,7 +82,7 @@ namespace DoubleFile
 
                 try
                 {
-                    var dt = DateTime.Now;
+                    var dtStart = DateTime.Now;
                     var hash = Hash ? HashAllFiles(GetFileList()) : null;
 
                     if (_cts.IsCancellationRequested)
@@ -103,7 +103,7 @@ namespace DoubleFile
                                 sw.WriteLine();
                                 sw.WriteLine(FormatString(nHeader: 0));
                                 sw.WriteLine(FormatString(nHeader: 1));
-                                sw.WriteLine(ksStart01 + " " + dt);
+                                sw.WriteLine(ksStart01 + " " + dtStart);
                                 WriteDirectoryListing(sw, hash);
                                 sw.WriteLine(ksEnd01 + " " + DateTime.Now);
                                 sw.WriteLine();

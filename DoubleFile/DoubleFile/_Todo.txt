@@ -1,9 +1,6 @@
 ﻿- fix 99637
 - folders like Recycle Bin get in the way. Should be able to exclude them.
 	- and rebuild with bindings just like the old days without resetting the view.
-- Backup progress should be on its window
-	- clear source and dest when all folders are removed
-	- list files and go to file
 - Project sort by nickname then by drive letter
 - Allow copy text in edit listing file dialog for dimmed source path
 - Progress in task bar
@@ -221,7 +218,6 @@ Specific code areas:
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
 
-99870
 99577
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down

@@ -11,6 +11,8 @@ namespace DoubleFile
 {
     partial class UC_BackupVM : UC_FolderListVM_Base, IProgressOverlayClosing
     {
+        internal Action Reset = null;
+
         internal bool
             IsDisposed { get; private set; } = false;
         internal LocalModernWindowBase
@@ -27,8 +29,8 @@ namespace DoubleFile
         public string FileCount { get; private set; }
         public string BackupSize { get; private set; }
 
-        public string BackupPath { get; private set; }
         internal string DriveLetter { private get; set; }
+        public string BackupPath { get; private set; }
 
         public Visibility ProgressbarVisibility { get; private set; } = Visibility.Visible;
         public string SettingUp { get; private set; } = "setting up Backup view";
@@ -153,6 +155,18 @@ namespace DoubleFile
                 BackupSize = null;
                 _selectedItem = null;
                 _lsFiles = new List<Tuple<LocalTreeNode, IReadOnlyList<string>>> { };
+
+                if (0 == Items.Count)
+                {
+                    DriveLetter = null;
+                    BackupPath = null;
+                    FileCount = null;
+                    BackupSize = null;
+                    RaisePathFull();
+                    Reset?.Invoke();
+                    return;     // from lambda
+                }
+
                 CanPick = false;
 
                 IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>> ieHashesGrouped = new Tuple<LocalTreeNode, IReadOnlyList<int>>[] { };
@@ -261,7 +275,7 @@ namespace DoubleFile
             {
                 WindowClosingCallback = new WeakReference<IProgressOverlayClosing>(this)
             }
-                .ShowOverlay();
+                .ShowOverlay(LocalOwner);
         }
 
         bool IProgressOverlayClosing.ConfirmClose()

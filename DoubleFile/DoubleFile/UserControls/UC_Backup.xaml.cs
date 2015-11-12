@@ -57,6 +57,7 @@ namespace DoubleFile
 
             _vm.UseNicknames = _bNicknames;
             _vm.LocalOwner = LocalOwner;
+            _vm.Reset = () => Util.UIthread(99870, () => formEdit_DriveLetter.Text = null);
             _vm.Init();
             formEdit_DriveLetter.Text = null;
         }

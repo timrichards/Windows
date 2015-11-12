@@ -122,7 +122,7 @@ namespace DoubleFile
 
                 foreach (var strLine
                     in lvItemProject_Updater.ListingFile
-                    .ReadLinesWait(99651))
+                    .ReadLines(99651))
                 {
                     if (_cts.IsCancellationRequested)
                         return;     // from lambda

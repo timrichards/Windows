@@ -30,7 +30,7 @@ namespace DoubleFile
 
             _cts = cts ?? new CancellationTokenSource();
             GC.Collect();
-            Util.WriteLine("Setup_AllFileHashes_Scratch GC.Collect" + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
+            Util.WriteLine("Setup_AllFileHashes_Scratch GC.Collect " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
             stopwatch.Reset();
             stopwatch.Start();
             Setup_AllFileHashes_Scratch(RootNodes, out isHashComplete_throwaway);

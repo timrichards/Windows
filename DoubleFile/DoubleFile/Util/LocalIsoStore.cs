@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.IsolatedStorage;
+using System.Threading;
 
 namespace DoubleFile
 {
@@ -30,8 +31,13 @@ namespace DoubleFile
             CopyFile(string sourceFileName, string destinationFileName) => WriteLock(() => _isoStore.CopyFile(sourceFileName, destinationFileName));
         static internal void
             CreateDirectory(string dir) => WriteLock(() => _isoStore.CreateDirectory(dir));
+
         static internal IsolatedStorageFileStream
             CreateFile(string path) => WriteLockA(() => _isoStore.CreateFile(path));
+        static internal void
+            CreateFile(string path, Action<IsolatedStorageFileStream> doSomethingWith) => WriteLock(() =>
+            doSomethingWith(_isoStore.CreateFile(path)));
+
         static internal void
             DeleteDirectory(string dir) => WriteLock(() => _isoStore.DeleteDirectory(dir));
         static internal void
@@ -39,7 +45,7 @@ namespace DoubleFile
         static internal void
             MoveFile(string sourceFileName, string destinationFileName) => WriteLock(() => _isoStore.MoveFile(sourceFileName, destinationFileName));
 
-        static readonly string _strLockFile = Path.GetTempPath() + Statics.Namespace + "_IsoLock";
+        static int _bIsoLock = 0;
 
         static void
             WriteLock(Action doSomething) => WriteLockA(() => { doSomething(); return false; });
@@ -47,17 +53,10 @@ namespace DoubleFile
         static T
             WriteLockA<T>(Func<T> doSomething)
         {
-            Func<IDisposable> checkLockFile = () =>
-            {
-                try { return File.Open(_strLockFile, FileMode.OpenOrCreate, FileAccess.Read, FileShare.None); }
-                catch (IOException) { return null; }
-            };
-
-            IDisposable lockFile = null;
             var i = 0;
             const int kMax = 50;
 
-            for (; (i < kMax) && (null == (lockFile = checkLockFile())); ++i)
+            for (; (i < kMax) && (0 < _bIsoLock); ++i)
                 Util.Block(100);
 
             if (i >= kMax)
@@ -66,14 +65,22 @@ namespace DoubleFile
                 return default(T);
             }
 
+            while (1 < _bIsoLock)
+                Util.Block(100);
+
+            var retVal = default(T);
+
             try
             {
-                return doSomething();
+                Interlocked.Increment(ref _bIsoLock);
+                retVal = doSomething();
             }
             finally
             {
-                lockFile.Dispose();
+                Interlocked.Decrement(ref _bIsoLock);
             }
+
+            return retVal;
         }
 
         // extension methods
@@ -132,44 +139,10 @@ namespace DoubleFile
         }
 
         static internal IEnumerable<string>
-            ReadLinesWait(this string strFile, decimal nLocation)
-        {
-            IOException eThrow = null;
-
-            for (int i = 0; i < 10; ++i)
-            {
-                try
-                {
-                    return strFile.ReadLines(nLocation);
-                }
-                catch (IOException e)
-                {
-                    eThrow = e;
-                    Util.WriteLine("ReadLinesWait " + strFile);
-                    Util.Block(50);
-                }
-            }
-
-            throw eThrow;
-        }
-
-        static internal IEnumerable<string>
             ReadLines(this string strFile, decimal nLocation)
         {
             if (string.IsNullOrWhiteSpace(strFile))
                 return new string[0];
-
-            //var a = new StreamReader(OpenFile(strFile, FileMode.Open));
-            //var b = ReadLinesIterator.CreateIterator(a, true);
-            //var c = ReadLinesIterator.CreateIterator(a, true);
-            //b.MoveNext();
-            //c.MoveNext();
-            //b.MoveNext();
-            //Util.WriteLine(b.current);
-            //Util.WriteLine(c.current);
-
-            //b.DeferredDispose();
-            //c.DeferredDispose();
 
             return (Path.IsPathRooted(strFile))
                 ? File.ReadLines(strFile)

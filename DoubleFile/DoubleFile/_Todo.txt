@@ -1,5 +1,5 @@
-﻿- fix 99637
-- Does SDL conflict with antivirus the same way DoubleFile does?
+﻿- Reproducible: Save project with four new listings: can't find listing files. Works second time.
+- fix 99637
 - Allow copy text in edit listing file dialog for dimmed source path
 - A folder is near to being a clone: restore it using dupe files found in the would-be clones
 - If I were to remove all but three or four dupes from all non-clones, how much space would I recoup on this volume?
@@ -8,7 +8,6 @@
 	- function to explore archives and saved a .DFL for each one
 - restore a lost drive's original folder structure given that all its files are duped in various locations
 - Project sort by nickname then by drive letter
-- Save project with four new listings: can't find lising files. Works second time.
 - Progress in task bar
 - Tree list slider does not always go to root; and skips to root: try a search to subfolder then nav up. It also loses the deep node.
 - Clones don't sync to folder detail updated in extra window.
@@ -227,9 +226,8 @@ Specific code areas:
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
 
-99870
 99577
-99572
+99573
 
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
 99570 next low assert

@@ -168,14 +168,6 @@ namespace DoubleFile
             return (0 < s.Length) ? s : null;
         }
 
-        static internal T With<T>(this T obj, Action<T> doSomething) where T : class
-        {
-            if (null != obj)
-                doSomething(obj);
-
-            return obj;
-        }
-
         static internal T2
             TryGetValue<T1, T2>(this IDictionary<T1, T2> dict, T1 key)
         {
@@ -271,5 +263,12 @@ namespace DoubleFile
         static internal double
             Area(this Rect r) => r.Width * r.Height;
 
+        static internal T With<T>(this T obj, Action<T> doSomethingWith) where T : class
+        {
+            if (null != obj)
+                doSomethingWith(obj);
+
+            return obj;
+        }
     }
 }

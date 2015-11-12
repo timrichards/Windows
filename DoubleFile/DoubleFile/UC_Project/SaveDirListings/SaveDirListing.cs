@@ -94,24 +94,27 @@ namespace DoubleFile
 
                     _threadWrite = Util.ThreadMake(() =>
                     {
-                        using (var sw = new StreamWriter(LocalIsoStore.CreateFile(LVitemProjectVM.ListingFile)))
+                        LocalIsoStore.CreateFile(LVitemProjectVM.ListingFile, sw_ =>
                         {
-                            WriteHeader(sw);
-                            sw.WriteLine();
-                            sw.WriteLine(FormatString(nHeader: 0));
-                            sw.WriteLine(FormatString(nHeader: 1));
-                            sw.WriteLine(ksStart01 + " " + DateTime.Now);
-                            WriteDirectoryListing(sw, hash);
-                            sw.WriteLine(ksEnd01 + " " + DateTime.Now);
-                            sw.WriteLine();
-                            sw.WriteLine(ksErrorsLoc01);
+                            using (var sw = new StreamWriter(sw_))
+                            {
+                                WriteHeader(sw);
+                                sw.WriteLine();
+                                sw.WriteLine(FormatString(nHeader: 0));
+                                sw.WriteLine(FormatString(nHeader: 1));
+                                sw.WriteLine(ksStart01 + " " + DateTime.Now);
+                                WriteDirectoryListing(sw, hash);
+                                sw.WriteLine(ksEnd01 + " " + DateTime.Now);
+                                sw.WriteLine();
+                                sw.WriteLine(ksErrorsLoc01);
 
-                            foreach (var strError in ErrorList)
-                                sw.WriteLine(strError);
+                                foreach (var strError in ErrorList)
+                                    sw.WriteLine(strError);
 
-                            sw.WriteLine();
-                            sw.WriteLine(FormatString(strDir: ksTotalLengthLoc01, nLength: LengthRead));
-                        }
+                                sw.WriteLine();
+                                sw.WriteLine(FormatString(strDir: ksTotalLengthLoc01, nLength: LengthRead));
+                            }
+                        });
 
                         StatusCallback(bDone: true);
                         _blockingFrame?.With(b => b.Continue = false);
@@ -378,6 +381,9 @@ namespace DoubleFile
                                     }
 
                                     if (bUserAllowsDowngrade)
+                                        bUserAllowsDowngrade = (.5 > nProgressNumerator / nProgressDenominator);
+
+                                    if (bUserAllowsDowngrade)
                                     {
                                         Util.WriteLine("\nbSetDowngrade4K_Slow = true;");
 
@@ -427,7 +433,7 @@ namespace DoubleFile
                                     var check = HashFile(tuple);
                                     var hash = dictHash[strFile];
                                     Util.Assert(99578, "" + check.Item1 == "" + hash.Item1);
-                                    Util.Assert(99577, "" + check.Item2 == "" + hash.Item2);
+                                    Util.Assert(99572, "" + check.Item2 == "" + hash.Item2);
 #endif
                                 }
                                 catch (OutOfMemoryException)
@@ -512,10 +518,10 @@ namespace DoubleFile
                     using (var fs = new FileStream(fileHandle, FileAccess.Read))
                     Util.Closure(() =>
                     {
-                        var buffer = _bufferManager.TakeBuffer(1 << 12);
+                        var buffer = _bufferManager.TakeBuffer(1 << 12);    // happens to be block size
 
                         Array.Clear(buffer, 0, buffer.Length);
-                        lsRet.Add(buffer);          // happens to be block size
+                        lsRet.Add(buffer);
 
                         var bFilled = FillBuffer(fs, lsRet);
 
@@ -651,9 +657,10 @@ namespace DoubleFile
 
                     _bufferManager.ReturnBuffer(hashArray);
 
+#if (false == (DEBUG && FOOBAR))
                     foreach (byte[] buffer in lsBuffer)
                         _bufferManager.ReturnBuffer(buffer);
-
+#endif
                     return retVal;
                 }
             }

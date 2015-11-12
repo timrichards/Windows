@@ -82,6 +82,7 @@ namespace DoubleFile
 
                 try
                 {
+                    var dt = DateTime.Now;
                     var hash = Hash ? HashAllFiles(GetFileList()) : null;
 
                     if (_cts.IsCancellationRequested)
@@ -94,15 +95,15 @@ namespace DoubleFile
 
                     _threadWrite = Util.ThreadMake(() =>
                     {
-                        LocalIsoStore.CreateFile(LVitemProjectVM.ListingFile, sw_ =>
+                        LocalIsoStore.CreateFile(LVitemProjectVM.ListingFile, fs =>
                         {
-                            using (var sw = new StreamWriter(sw_))
+                            using (var sw = new StreamWriter(fs))
                             {
                                 WriteHeader(sw);
                                 sw.WriteLine();
                                 sw.WriteLine(FormatString(nHeader: 0));
                                 sw.WriteLine(FormatString(nHeader: 1));
-                                sw.WriteLine(ksStart01 + " " + DateTime.Now);
+                                sw.WriteLine(ksStart01 + " " + dt);
                                 WriteDirectoryListing(sw, hash);
                                 sw.WriteLine(ksEnd01 + " " + DateTime.Now);
                                 sw.WriteLine();

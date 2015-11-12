@@ -1,7 +1,6 @@
 ﻿- fix 99637
 - folders like Recycle Bin get in the way. Should be able to exclude them.
 	- and rebuild with bindings just like the old days without resetting the view.
-- Project sort by nickname then by drive letter
 - Allow copy text in edit listing file dialog for dimmed source path
 - Progress in task bar
 - Clones don't sync to folder detail updated in extra window.

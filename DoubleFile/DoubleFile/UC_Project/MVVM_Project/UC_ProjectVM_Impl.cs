@@ -290,7 +290,8 @@ namespace DoubleFile
                 _lvVM.ClearItems();
 
                 bOpenedFiles = listItems
-                    .OrderBy(lvItem => lvItem.SourcePath)
+                    .OrderBy(lvItem => lvItem.Nickname)
+                    .ThenBy(lvItem => lvItem.SourcePath)
                     .Aggregate(false, (current, lvItem) =>
                 {
                     if (userCanceled?.Invoke() ?? false)

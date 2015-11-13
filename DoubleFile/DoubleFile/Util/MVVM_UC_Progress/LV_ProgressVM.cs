@@ -39,17 +39,22 @@ namespace DoubleFile
                 double nProgress = 0;
                 double nDenominator = 0;
 
-                ProgressState = TaskbarItemProgressState.Normal;
-
-                if (ItemsCast.Any(lvItem => lvItem.ProgressState == LVitem_ProgressVM.ProgressStates.Error))
-                    ProgressState = TaskbarItemProgressState.Error;
-                else if (ItemsCast.Any(lvItem => lvItem.ProgressState == LVitem_ProgressVM.ProgressStates.Indeterminate))
-                    ProgressState = TaskbarItemProgressState.Indeterminate;
+                ProgressState = TaskbarItemProgressState.Indeterminate;
 
                 foreach (var lvItem in ItemsCast.ToArray())
                 {
                     lvItem.TimerTick();
-                    nProgress += lvItem.Progress;
+
+                    if (lvItem.ProgressState == LVitem_ProgressVM.ProgressStates.Error)
+                        ProgressState = TaskbarItemProgressState.Error;
+                    else if (lvItem.ProgressState == LVitem_ProgressVM.ProgressStates.Normal)
+                    {
+                        if (ProgressState == TaskbarItemProgressState.Indeterminate)
+                            ProgressState = TaskbarItemProgressState.Normal;
+
+                        nProgress += lvItem.Progress;
+                    }
+
                     ++nDenominator;
                 }
 

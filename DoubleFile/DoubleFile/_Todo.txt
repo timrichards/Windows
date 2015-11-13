@@ -1,4 +1,5 @@
-﻿- folders like Recycle Bin get in the way. Should be able to exclude them.
+﻿- cancel voltreemap results in partial tree
+- folders like Recycle Bin get in the way. Should be able to exclude them.
 	- and rebuild with bindings just like the old days without resetting the view.
 - Allow copy text in edit listing file dialog for dimmed source path
 - Some/none of this folder's files are duplicated (to replace "This folder has no exact copy")

@@ -1,7 +1,6 @@
 ﻿- folders like Recycle Bin get in the way. Should be able to exclude them.
 	- and rebuild with bindings just like the old days without resetting the view.
 - Allow copy text in edit listing file dialog for dimmed source path
-- Progress in task bar
 - Some/none of this folder's files are duplicated (to replace "This folder has no exact copy")
 - Tree list slider does not always go to root; and skips to root: try a search to subfolder then nav up. It also loses the deep node.
 	slider is skipping desired location

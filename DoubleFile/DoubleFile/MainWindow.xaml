@@ -10,4 +10,7 @@
     <!--Not feasible to have content and also allow an extra window.-->
     <!--Grid allows a ContentRendered event handler. Handler sets Content = null-->
     <Grid/>
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo ProgressState="{Binding ProgressState}" ProgressValue="{Binding Progress}" />
+    </Window.TaskbarItemInfo>
 </local:LocalModernWindowBase>

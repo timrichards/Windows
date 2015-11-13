@@ -88,6 +88,7 @@ namespace DoubleFile
                 _window.ProgressCtl.DataContext = _vm;
                 _vm.Init();
                 _window.Progress_Darken();
+                MainWindow.WithMainWindow(w => w.DataContext = _vm);
             });
 
             _wr.SetTarget(this);
@@ -114,6 +115,7 @@ namespace DoubleFile
             {
                 _window.Progress_Undarken();
                 _window.ProgressCtl.DataContext = null;
+                MainWindow.WithMainWindow(w => w.DataContext = null);
             });
 
             return this;

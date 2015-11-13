@@ -16,24 +16,24 @@ namespace DoubleFile
         public string
             Status { get { return SubItems[2]; } private set { SetProperty(2, value); } }
 
-        enum
-            ProgressStates { Indeterminate, Determinate, Completed, Error };    // order is int cast as array indices
-        ProgressStates _progressState = ProgressStates.Indeterminate;
+        internal enum
+            ProgressStates { Indeterminate, Normal, Completed, Error };    // order is int cast as array indices
+        internal ProgressStates ProgressState = ProgressStates.Indeterminate;
         internal bool
-            IsRunning => new[] { ProgressStates.Indeterminate, ProgressStates.Determinate }.Contains(_progressState);
+            IsRunning => new[] { ProgressStates.Indeterminate, ProgressStates.Normal }.Contains(ProgressState);
 
         public double
             Progress
         {
-            get { return new double[] { 0, _nProgress, 1, 1 }[(int)_progressState]; }
+            get { return new double[] { 0, _nProgress, 1, 1 }[(int)ProgressState]; }
             internal set { _nProgress = value; }    // RaisePropertyChanged is in OnTimerTick()
         }
         double _nProgress = 0;
 
         public bool
-            Indeterminate => ProgressStates.Indeterminate == _progressState;
+            Indeterminate => ProgressStates.Indeterminate == ProgressState;
         public Brush
-            Foreground => new Brush[] { Navy, Navy, LimeGreen, Red }[(int)_progressState];
+            Foreground => new Brush[] { Navy, Navy, LimeGreen, Red }[(int)ProgressState];
 
         internal override int NumCols => NumCols_;
         internal const int NumCols_ = 3;
@@ -58,7 +58,7 @@ namespace DoubleFile
         internal LVitem_ProgressVM
             SetCompleted()
         {
-            _progressState = ProgressStates.Completed;
+            ProgressState = ProgressStates.Completed;
             Status = "Completed.";
             Progress_RaisePropertyChanged();
             return this;
@@ -67,7 +67,7 @@ namespace DoubleFile
         internal LVitem_ProgressVM
             SetError(string strError)
         {
-            _progressState = ProgressStates.Error;
+            ProgressState = ProgressStates.Error;
             Status = strError;
             Progress_RaisePropertyChanged();
             return this;
@@ -94,8 +94,8 @@ namespace DoubleFile
             if (double.IsNaN(nProgress))
                 return this;
 
-            if (ProgressStates.Indeterminate == _progressState)
-                _progressState = ProgressStates.Determinate;
+            if (ProgressStates.Indeterminate == ProgressState)
+                ProgressState = ProgressStates.Normal;
 
             if (_dtRollingProgress == DateTime.MinValue)
                 _dtRollingProgress = DateTime.Now;

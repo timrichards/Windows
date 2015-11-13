@@ -24,10 +24,13 @@ namespace DoubleFile
 
         internal void Go()
         {
-            Util.WriteLine();
-            Util.WriteLine("Creating tree.");
-            
             var stopwatch = Stopwatch.StartNew();
+
+            GC.Collect();
+            stopwatch.Stop();
+            Util.WriteLine("Tree.Go GC.Collect " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
+            stopwatch.Reset();
+            stopwatch.Start();
 
             Util.ParallelForEach(99940,
                 from lvItemProjectVM

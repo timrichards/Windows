@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Reactive.Linq;
 using System.Linq;
-using System.Windows.Input;
 using System.Windows.Shell;
 
 namespace DoubleFile
 {
+    using static LVitem_ProgressVM.ProgressStates;
+
     class LV_ProgressVM : ListViewVM_Base<LVitem_ProgressVM>, IDisposable
     {
         public TaskbarItemProgressState ProgressState { get; private set; } = TaskbarItemProgressState.Indeterminate;
@@ -37,7 +38,7 @@ namespace DoubleFile
                 .LocalSubscribe(99733, x =>
             {
                 double nProgress = 0;
-                double nDenominator = 0;
+                var nDenominator = 0;
 
                 ProgressState = TaskbarItemProgressState.Indeterminate;
 
@@ -45,11 +46,13 @@ namespace DoubleFile
                 {
                     lvItem.TimerTick();
 
-                    if (lvItem.ProgressState == LVitem_ProgressVM.ProgressStates.Error)
-                        ProgressState = TaskbarItemProgressState.Error;
-                    else if (lvItem.ProgressState == LVitem_ProgressVM.ProgressStates.Normal)
+                    if (Error == lvItem.ProgressState)
                     {
-                        if (ProgressState == TaskbarItemProgressState.Indeterminate)
+                        ProgressState = TaskbarItemProgressState.Error;
+                    }
+                    else if (new[] { Normal, Completed }.Contains(lvItem.ProgressState))
+                    {
+                        if (TaskbarItemProgressState.Indeterminate == ProgressState)
                             ProgressState = TaskbarItemProgressState.Normal;
 
                         nProgress += lvItem.Progress;

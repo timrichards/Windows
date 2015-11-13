@@ -122,9 +122,9 @@ namespace DoubleFile
         ProgressOverlay
             IDimForMessagebox.Go(Action showMessagebox)
         {
-            _window.ProgressCtl.LocalHide(99637);
+            _window.ProgressCtl.LocalHide(LocalModernWindowBase.LocProgress);
             showMessagebox();
-            _window.ProgressCtl.LocalShow(99637);
+            _window.ProgressCtl.LocalShow(LocalModernWindowBase.LocProgress);
             return this;
         }
 

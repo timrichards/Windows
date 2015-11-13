@@ -61,18 +61,18 @@ namespace DoubleFile
         internal LocalModernWindowBase
             Progress_Darken()
         {
-            Darken(_kLocProgress);
-            ProgressCtl.LocalShow(_kLocProgress);
+            Darken(LocProgress);
+            ProgressCtl.LocalShow(LocProgress);
             return this;
         }
         internal LocalModernWindowBase
             Progress_Undarken()
         {
-            Undarken(_kLocProgress);
-            ProgressCtl.LocalHide(_kLocProgress);
+            Undarken(LocProgress);
+            ProgressCtl.LocalHide(LocProgress);
             return this;
         }
-        const decimal _kLocProgress = 99637;
+        internal const decimal LocProgress = 99637;
 
         internal bool
             Darken(decimal loc)

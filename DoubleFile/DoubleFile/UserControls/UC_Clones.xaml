@@ -8,7 +8,7 @@
             <ColumnDefinition/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <DataGrid Grid.Column="0">
+        <DataGrid Grid.Column="0" CanUserSortColumns="False">
             <DataGrid.Resources>
                 <Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
                     <Setter Property="Foreground" Value="{Binding Foreground}" />

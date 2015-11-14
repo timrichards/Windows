@@ -117,7 +117,11 @@ namespace DoubleFile
                             }
                         });
 
-                        StatusCallback(bDone: true);
+                        if (_cts.IsCancellationRequested)
+                            StatusCallback(_ksCanceled);
+                        else
+                            StatusCallback(bDone: true);
+
                         _blockingFrame?.With(b => b.Continue = false);
                     });
 

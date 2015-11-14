@@ -152,6 +152,21 @@ namespace DoubleFile
             Step5_SolitAllDupes();                                              //Step5_SolitAllDupes
             Step6_SolitAllDupesSepVol();                                        //Step6_SolitAllDupesSepVol
 
+            foreach (var kvp in _dictSolitary)
+            {
+                var testNode = kvp.Value.Last();
+
+                if (Transparent != testNode.ColorcodeFG)
+                    continue;
+
+                var color = (false == testNode.NodeDatum.Hashes_FilesHere.Concat(testNode.NodeDatum.Hashes_SubnodeFiles_Scratch)
+                    .Any(nFileID => Statics.DupeFileDictionary.IsDupeSepVolume(nFileID) ?? false))
+                    ? SolitSomeFilesDuped
+                    : SolitNoFilesDuped;
+
+                foreach (var treeNode in kvp.Value)
+                    treeNode.ColorcodeFG = color;
+            }
 
 #if (DEBUG)
             foreach (var treeNode in AllNodes)
@@ -238,9 +253,6 @@ namespace DoubleFile
                 }
             }
 
-            foreach (var treeNode in lsNodes)
-                treeNode.ColorcodeFG = Solitary;
-
             lsNodes.Sort((x, y) => x.Level.CompareTo(y.Level));      // matrushka
             _dictSolitary.Add(kvp.Key, lsNodes);
         }
@@ -263,7 +275,7 @@ namespace DoubleFile
                         continue;
                     }
 
-                    Util.Assert(99977, new[] { Solitary, Transparent }.Contains(parent.ColorcodeFG), bIfDefDebug: true);
+                    Util.Assert(99977, Transparent == parent.ColorcodeFG, bIfDefDebug: true);
 
                     if (false == (parent.NodeDatum.Hashes_FilesHere_IsComplete))
                         return;

@@ -76,7 +76,8 @@ namespace DoubleFile
                     _brushes = new Dictionary<int, Brush>
                     {
                         { UtilColorcode.Transparent, new RadialGradientBrush(_kCenterColor, UtilColorcode.Dark(Colors.SandyBrown)) { RadiusX = 1, RadiusY = 1 } },
-                        { UtilColorcode.Solitary, Init(UtilColorcode.Solitary) },
+                        { UtilColorcode.SolitNoFilesDuped, Init(UtilColorcode.SolitNoFilesDuped) },
+                        { UtilColorcode.SolitSomeFilesDuped, Init(UtilColorcode.SolitSomeFilesDuped) },
                         { UtilColorcode.OneCloneSepVolume, Init(UtilColorcode.OneCloneSepVolume) },
                         { UtilColorcode.TreemapFolder, Init(UtilColorcode.TreemapFolder) },
                         { UtilColorcode.TreemapDupeSepVol, Init(UtilColorcode.TreemapDupeSepVol) },

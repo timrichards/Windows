@@ -92,6 +92,7 @@ namespace DoubleFile
             });
 
             _wr.SetTarget(this);
+
             _lsDisposable.Add(Observable.FromEventPattern(_window.ProgressCtl.formBtn_Cancel, "Click")
                 .LocalSubscribe(99621, x => Close()));
 
@@ -154,6 +155,7 @@ namespace DoubleFile
                 ? w
                 : w.Abort().Close();
         });
+
         internal ProgressOverlay
             Abort() { _bAborted = true; return this; }
         bool _bAborted = false;

@@ -44,7 +44,7 @@ namespace DoubleFile
                                 .Contains(treeNode.ColorcodeFG))
                             {
                                 var bExpected =
-                                    new[] { Solitary, Transparent,
+                                    new[] { Transparent,
                                     ChildAllOnOneVolume, ChildClonedSepVolume,
                                     OneCloneSepVolume,
                                     AllOnOneVolume }      // A Useful Find

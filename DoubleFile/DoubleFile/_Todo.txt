@@ -1,7 +1,6 @@
 ﻿- folders like Recycle Bin get in the way. Should be able to exclude them.
 	- and rebuild with bindings just like the old days without resetting the view.
 - Allow copy text in edit listing file dialog for dimmed source path
-- Some/none of this folder's files are duplicated (to replace "This folder has no exact copy")
 - Tree list slider does not always go to root; and skips to root: try a search to subfolder then nav up. It also loses the deep node.
 	slider is skipping desired location
 - folder browser in backup start at selected folder; allow text entry
@@ -152,7 +151,6 @@
 - minimize progress/messagebox to task bar?
 - Automatically add Width properties from LV base - not really worth making an expando out of it
 
-- vertical scrollbar: window height clips volumes lv
 - set hover bg same as bg in project lv for group etc
 - allow user toggle showing free space
 - UX tree map free space

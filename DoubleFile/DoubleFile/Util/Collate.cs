@@ -159,7 +159,7 @@ namespace DoubleFile
                 if (Transparent != testNode.ColorcodeFG)
                     continue;
 
-                var color = (false == testNode.NodeDatum.Hashes_FilesHere.Concat(testNode.NodeDatum.Hashes_SubnodeFiles_Scratch)
+                var color = (testNode.NodeDatum.Hashes_FilesHere.Concat(testNode.NodeDatum.Hashes_SubnodeFiles_Scratch)
                     .Any(nFileID => Statics.DupeFileDictionary.IsDupeSepVolume(nFileID) ?? false))
                     ? SolitSomeFilesDuped
                     : SolitNoFilesDuped;

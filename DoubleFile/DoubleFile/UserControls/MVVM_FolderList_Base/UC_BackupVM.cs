@@ -30,7 +30,7 @@ namespace DoubleFile
         public string BackupSize { get; private set; }
 
         internal string DriveLetter { private get; set; }
-        public string BackupPath { get; private set; }
+        public string BackupPath { get; set; }
 
         public Visibility ProgressbarVisibility { get; private set; } = Visibility.Visible;
         public string SettingUp { get; private set; } = "setting up Backup view";
@@ -69,7 +69,11 @@ namespace DoubleFile
 
             Icmd_DestVolume = new RelayCommand(() =>
             {
-                var dlg = new FolderBrowserDialog { Description = "Destination to back up to." };
+                var dlg = new FolderBrowserDialog
+                {
+                    Description = "Destination to back up to.",
+                    SelectedPath = BackupPath
+                };
 
                 if (false == ModalThread.Go(darkWindow => dlg.ShowDialog((Window)darkWindow)))
                     return;     // from lambda

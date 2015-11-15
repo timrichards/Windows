@@ -152,6 +152,8 @@ namespace DoubleFile
             Step5_SolitAllDupes();                                              //Step5_SolitAllDupes
             Step6_SolitAllDupesSepVol();                                        //Step6_SolitAllDupesSepVol
 
+
+            #region SolitSomeFilesDuped SolitNoFilesDuped                       //#region SolitSomeFilesDuped SolitNoFilesDuped
             foreach (var kvp in _dictSolitary)
             {
                 var testNode = kvp.Value.Last();
@@ -167,6 +169,8 @@ namespace DoubleFile
                 foreach (var treeNode in kvp.Value)
                     treeNode.ColorcodeFG = color;
             }
+            #endregion SolitSomeFilesDuped SolitNoFilesDuped
+
 
 #if (DEBUG)
             foreach (var treeNode in AllNodes)

@@ -26,12 +26,6 @@ namespace DoubleFile
         {
             var stopwatch = Stopwatch.StartNew();
 
-            GC.Collect();
-            stopwatch.Stop();
-            Util.WriteLine("Tree.Go GC.Collect " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
-            stopwatch.Reset();
-            stopwatch.Start();
-
             Util.ParallelForEach(99940,
                 from lvItemProjectVM
                 in LVprojectVM.Items.Cast<LVitemProject_Explorer>()

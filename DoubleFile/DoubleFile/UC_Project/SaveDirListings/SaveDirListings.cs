@@ -56,6 +56,13 @@ namespace DoubleFile
 
                 Util.WriteLine(string.Format("Finished saving directory listings in {0} seconds.",
                     ((int)stopwatch.ElapsedMilliseconds / 100) / 10d));
+
+                Util.Block(1000);
+                stopwatch.Reset();
+                stopwatch.Start();
+                GC.Collect();
+                stopwatch.Stop();
+                Util.WriteLine("SaveDirListings GC.Collect " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
             }))
             {
                 Title = "Saving Directory Listings",

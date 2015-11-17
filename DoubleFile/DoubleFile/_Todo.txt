@@ -1,11 +1,19 @@
-﻿- backup source nickname checkbox ignored on nav to
-- consistent out of memory error saving then building
-- restore a lost drive's original folder structure given that all its files are duped in various locations
+﻿- restore a lost drive's original folder structure given that all its files are duped in various locations
 - folders like Recycle Bin get in the way. Should be able to exclude them.
 	- and rebuild with bindings just like the old days without resetting the view.
 - Allow copy text in edit listing file dialog for dimmed source path
+- overlay
+	- put the AllowSubsequentProcess() functionality back in for when listings were saved
+	- main window needs to be in front
+	- remove modal thread dark window
+	- do not allow windows to maximize
+	- esc key doesn't close the msgbox when other window activated - good
+	- enter key doesn't do anything until you click on msg box itself. Good.
 - Tree list slider does not always go to root; and skips to root: try a search to subfolder then nav up. It also loses the deep node.
 	slider is skipping desired location
+- Clones don't sync to folder detail updated in extra window.
+- Clones sorting: remove size labels and enable 3-mode sorting
+	- 4-mode: sort by color code
 - Scrollviewer for detail view
 - Add folder name to suffix title Tree List: My Documents; Files in Folder: My Documents; Folders Here: My Documents; etc.
 - change drive letter did not change one line and screwed up culling, which is fixed. do a check for [A-Z}:\ when verifying the file.
@@ -15,16 +23,6 @@
 	- SelectedItem binding not found on Detail Datagrids: BindingExpression path error: 'SelectedItem' property not found on 'object' ''LV_VolumeDetailVM' (HashCode=47281521)'. BindingExpression:Path=SelectedItem; DataItem='LV_VolumeDetailVM' (HashCode=47281521); target element is 'DataGrid' (Name='formLV_Volume'); target property is 'SelectedItem' (type 'Object')
 - Application.Current.MainWindow is only accessible on the main UI thread
 - PresentationCore.dll: FormatException; InvalidCastException; ArgumentException (see output window)
-- overlay
-	- put the AllowSubsequentProcess() functionality back in for when listings were saved
-	- main window needs to be in front
-	- remove modal thread dark window
-	- do not allow windows to maximize
-	- esc key doesn't close the msgbox when other window activated - good
-	- enter key doesn't do anything until you click on msg box itself. Good.
-- Clones don't sync to folder detail updated in extra window.
-- Clones sorting: remove size labels and enable 3-mode sorting
-	- 4-mode: sort by color code
 - ditch duplicates view and expand files list for that
 	- duplicates view should have same fs info ("lv line knColLengthLV") as the Files view and col differences should be red
 - sort search results by result; breakout by path; etc.

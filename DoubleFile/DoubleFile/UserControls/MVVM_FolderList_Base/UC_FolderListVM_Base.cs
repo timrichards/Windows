@@ -9,7 +9,7 @@ namespace DoubleFile
         public ICommand Icmd_Nicknames { get; protected set; }
         public ICommand Icmd_GoTo { get; protected set; }
 
-        public bool UseNicknames { internal get; set; }
+        public bool UseNicknames { get; set; }
 
         public LVitem_FolderListVM SelectedItem
         {

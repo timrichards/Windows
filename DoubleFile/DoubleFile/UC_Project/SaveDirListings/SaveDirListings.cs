@@ -50,7 +50,7 @@ namespace DoubleFile
                     CancellationToken = _cts.Token,
                     MaxDegreeOfParallelism = Environment.ProcessorCount
                 },
-                    lvItemProjectVM =>{ using (new SaveDirListing(lvItemProjectVM, _cts).Go()) { }; });
+                    lvItemProjectVM => { using (new SaveDirListing(lvItemProjectVM, _cts).Go()) { } });
 
                 stopwatch.Stop();
 

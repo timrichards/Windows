@@ -102,16 +102,18 @@ namespace DoubleFile
                 _bWarned02 = true;
                 MBoxStatic.ShowOverlay("Accuracy is increased if you re-scan drives using this build.", owner: LocalOwner);
             }
+
+            Icmd_GoTo = new RelayCommand(() => _selectedItem.TreeNode.GoToFile(null), () => null != _selectedItem);
+            Icmd_Nicknames = new RelayCommand(RaisePathFull);
         }
 
         internal UC_BackupVM
             Init()
         {
-            Icmd_GoTo = new RelayCommand(() => _selectedItem.TreeNode.GoToFile(null), () => null != _selectedItem);
-            Icmd_Nicknames = new RelayCommand(RaisePathFull);
             BackupPath = null;
             DriveLetter = null;
             RaisePathFull();
+            RaisePropertyChanged("UseNicknames");
             return this;
         }
 

@@ -177,6 +177,7 @@ namespace DoubleFile
 
                 IEnumerable<Tuple<LocalTreeNode, IReadOnlyList<int>>> ieHashesGrouped = new Tuple<LocalTreeNode, IReadOnlyList<int>>[] { };
                 _dictDupeFileHit = new ConcurrentDictionary<int, bool>();
+                _nMyLVitemID = Statics.DupeFileDictionary.GetLVitemNumber(ItemsCast.First().TreeNode.RootNodeDatum.LVitemProjectVM);
 
                 foreach (var treeNode in ItemsCast.Select(lvItem => lvItem.TreeNode))
                     ieHashesGrouped = ieHashesGrouped.Concat(GetHashesHere(treeNode));
@@ -307,7 +308,7 @@ namespace DoubleFile
 
                 _dictDupeFileHit[nFileID] = true;
 
-                return false == (Statics.DupeFileDictionary.IsDupeExtra(nFileID, treeNode.RootNodeDatum.LVitemProjectVM) ?? false);     // from lambda
+                return false == (Statics.DupeFileDictionary.IsDupeExtra(nFileID, _nMyLVitemID) ?? false);     // from lambda
             })
                 .ToList();
 
@@ -326,6 +327,7 @@ namespace DoubleFile
             return ieFiles;
         }
 
+        int _nMyLVitemID = -1;
         static bool
             _bWarned02 = false;
         bool

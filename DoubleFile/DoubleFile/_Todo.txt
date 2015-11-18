@@ -1,4 +1,6 @@
 ﻿- I want to delete this volume. Please back up all files that have only one other copy or fewer.
+	- this drive died: what files did I lose?
+	- Colorcode folders that have files with one other copy
 	- warn if 4K
 	- warn faux checksum, noting the added certainty of cloned folders though
 - restore a lost drive's original folder structure given that all its files are duped in various locations
@@ -118,6 +120,7 @@
             ShowOverlay(LocalModernWindowBase window = null) { _window = window; return ShowOverlay(); }
         ProgressOverlay ShowOverlay()
 - The todo list is not read-only while debugging.
+	- You may be able to save an edit and continue source file even though locked and running.
 - You can set a breakpoint condition false == new System.Diagnostics.StackTrace().ToString().Contains("AddToTree")
 - You can go to type definition on var right-click
 - Use WinProgress as a model for simulating factory create: use a weak reference and assert in constructor
@@ -128,6 +131,7 @@
 - Abstract and base statics are not unique in each derived class. Generic base statics are.
 - Parameterless base constructors are automatically called, and first
 - Aggregate returns seed on empty enumerable
+- AsParallel can significantly slow down a query: e.g. IsDupeExtra()
 - good: string concat still occurs after nullable type is null: a + b?.ToString() + c still gives a + c		11/3/15
 
 - directory listings preserve display case, which is irrespective: NTFS usage is always case insensitive.

@@ -60,6 +60,25 @@ namespace DoubleFile
         internal bool?      // not null: dup; true: sep vol
             IsDupeSepVolume(int nFileID) => _dictDuplicateFiles.TryGetValue(nFileID)?.Item2;
 
+        internal bool?      // not null: dup; true: sep vol on 2 vols not on lvItem: i.e. I want to delete lvItem: still dup sep vol?
+            IsDupeExtra(int nFileID, LVitemProject_Explorer lvItem)
+        {
+            var tuple = _dictDuplicateFiles.TryGetValue(nFileID);
+
+            if (false == (tuple?.Item2 ?? false))
+                return tuple?.Item2;
+
+            var nMyLVitemID = _dictLVtoItemNumber[lvItem];
+
+            return
+                1 <
+                tuple.Item1.AsParallel()
+                .Select(lookup => GetLVitemProjectVM(lookup))
+                .Where(nLVItemID => nLVItemID != nMyLVitemID)
+                .Distinct()
+                .Count();
+        }
+
         internal IReadOnlyList<DuplicateStruct>
             GetDuplicates(string[] asFileLine, out bool isSepVol)
         {

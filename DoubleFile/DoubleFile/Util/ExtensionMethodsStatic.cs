@@ -270,5 +270,13 @@ namespace DoubleFile
 
             return obj;
         }
+
+        static internal U With<T, U>(this T obj, Func<T, U> doSomethingWith) where T : class
+        {
+            if (null != obj)
+                return doSomethingWith(obj);
+
+            return default(U);
+        }
     }
 }

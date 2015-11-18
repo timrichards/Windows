@@ -307,7 +307,7 @@ namespace DoubleFile
 
                 _dictDupeFileHit[nFileID] = true;
 
-                return false == (Statics.DupeFileDictionary.IsDupeSepVolume(nFileID) ?? false);     // from lambda
+                return false == (Statics.DupeFileDictionary.IsDupeExtra(nFileID, treeNode.RootNodeDatum.LVitemProjectVM) ?? false);     // from lambda
             })
                 .ToList();
 

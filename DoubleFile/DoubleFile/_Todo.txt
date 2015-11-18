@@ -1,4 +1,7 @@
-﻿- restore a lost drive's original folder structure given that all its files are duped in various locations
+﻿- I want to delete this volume. Please back up all files that have only one other copy or fewer.
+	- warn if 4K
+	- warn faux checksum, noting the added certainty of cloned folders though
+- restore a lost drive's original folder structure given that all its files are duped in various locations
 - folders like Recycle Bin get in the way. Should be able to exclude them.
 	- and rebuild with bindings just like the old days without resetting the view.
 - Allow copy text in edit listing file dialog for dimmed source path

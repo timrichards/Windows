@@ -266,7 +266,8 @@ namespace DoubleFile
             }},
             new LinkGroup { DisplayName="Backup", Links =
             {
-                new MyLink("Backup", "/UserControls/UC_Backup.xaml")
+                new MyLink("Backup", "/UserControls/UC_Backup.xaml"),
+                new MyLink("Delete Volume", "/UserControls/UC_Backup_DeleteVol.xaml")
             }},
             new LinkGroup { DisplayName="Search", Links =
             {

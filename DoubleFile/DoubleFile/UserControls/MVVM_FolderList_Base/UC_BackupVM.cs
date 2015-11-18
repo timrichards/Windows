@@ -11,6 +11,9 @@ namespace DoubleFile
 {
     partial class UC_BackupVM : UC_FolderListVM_Base, IProgressOverlayClosing
     {
+        internal bool IsDeleteVolVM = false;
+        public ICommand Icmd_DeleteVolumeView { get; }
+
         internal Action Reset = null;
 
         internal bool
@@ -63,6 +66,11 @@ namespace DoubleFile
 
         internal UC_BackupVM()
         {
+            Icmd_DeleteVolumeView = new RelayCommand(() =>
+            {
+
+            });
+
             Icmd_Pick = new RelayCommand(Add, () => _bCanPick);
             Icmd_Remove = new RelayCommand(() => { Items.Remove(_selectedItem); Update(); }, () => null != _selectedItem);
             _folderSel = LocalTV.TreeSelect_FolderDetail?.treeNode;
@@ -133,6 +141,14 @@ namespace DoubleFile
         {
             Util.ThreadMake(() =>
             {
+                if (IsDeleteVolVM)
+                {
+                    if (Items.Any())
+                        return;
+
+                    _folderSel = _folderSel.Root;
+                }
+
                 if (ItemsCast.Any(lvItem => _folderSel == lvItem.TreeNode))
                     return;
 
@@ -308,7 +324,11 @@ namespace DoubleFile
 
                 _dictDupeFileHit[nFileID] = true;
 
-                return false == (Statics.DupeFileDictionary.IsDupeExtra(nFileID, _nMyLVitemID) ?? false);     // from lambda
+                return false == (
+                    IsDeleteVolVM
+                    ? Statics.DupeFileDictionary.IsDupeExtra(nFileID, _nMyLVitemID)
+                    : Statics.DupeFileDictionary.IsDupeSepVolume(nFileID)
+                    ?? false);     // from lambda
             })
                 .ToList();
 

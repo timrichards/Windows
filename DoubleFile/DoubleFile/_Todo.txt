@@ -1,4 +1,5 @@
 ﻿- I want to delete this volume. Please back up all files that have only one other copy or fewer.
+	- pretend this drive died and color code all folders one less.
 	- this drive died: what files did I lose?
 	- Colorcode folders that have files with one other copy
 	- warn if 4K

@@ -16,6 +16,8 @@ namespace DoubleFile
     
     partial class DupeFileDictionary : IDisposable
     {
+        internal bool IsDeleteVolumeView = false;
+
         internal DupeFileDictionary()
         {
             // ProjectFile.OnSavingProject += Serialize;
@@ -240,16 +242,16 @@ namespace DoubleFile
                 Util.Assert(99958, kvp.Value.All(tuple => tuple.Item2 == nLength)); 
             }
 
+            var nSkip = IsDeleteVolumeView ? 2 : 1;
+
             _dictDuplicateFiles =
                 dict
                 .Where(kvp => 1 < kvp.Value.Count)
                 .ToDictionary(kvp => kvp.Key, kvp =>
             {
-                var firstVolume = _dictItemNumberToLV[GetLVitemProjectVM(kvp.Value.First().Item1)].Volume;
-
                 return Tuple.Create(
                 kvp.Value.Select(tuple => tuple.Item1),
-                kvp.Value.Any(tuple => firstVolume != _dictItemNumberToLV[GetLVitemProjectVM(tuple.Item1)].Volume));
+                kvp.Value.Select(tuple => GetLVitemProjectVM(tuple.Item1)).Distinct().Skip(nSkip).Any());
             });
 
             Util.Assert(99896, _dictDuplicateFiles.Count == nFolderCount - 1, bIfDefDebug: true);

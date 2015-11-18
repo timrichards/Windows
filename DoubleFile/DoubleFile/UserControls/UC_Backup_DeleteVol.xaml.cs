@@ -9,9 +9,9 @@ namespace DoubleFile
     /// <summary>
     /// Interaction logic for UC_SolitaryHere.xaml
     /// </summary>
-    public partial class UC_Backup
+    public partial class UC_Backup_DeleteVol
     {
-        public UC_Backup()
+        public UC_Backup_DeleteVol()
         {
             InitializeComponent();
 
@@ -55,7 +55,7 @@ namespace DoubleFile
             DataContext =
                 _vm =
                 (vm?.IsDisposed ?? true)
-                ? new UC_BackupVM()
+                ? new UC_BackupVM { IsDeleteVolVM = true }
                 : vm;
 
             _vm.UseNicknames = _bNicknames;

@@ -81,7 +81,7 @@ namespace DoubleFile
             return (null != winProject._vm);
         }
 
-        static internal bool OKtoNavigate_UpdateSaveListingsLink(bool bSaveListings = false)
+        static internal bool OKtoNavigate_UpdateSaveListingsLink(bool bSaveListings = false, bool bResetNav = false)
         {
             var bListingsToSave = Statics.WithLVprojectVM(p => p?.ItemsCast.Any(lvItem => lvItem.WouldSave) ?? false);
 
@@ -89,7 +89,11 @@ namespace DoubleFile
                 bListingsToSave = false;
 
             MainWindow.UpdateTitleLinks(bListingsToSave);
-            return (false == bSaveListings);
+
+            if (bResetNav)
+                Statics.WithLVprojectVM(p => { p.SetModified(); return false; });
+
+            return (false == (bSaveListings || bResetNav));
         }
 
         static void Reset()

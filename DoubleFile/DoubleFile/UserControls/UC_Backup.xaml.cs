@@ -73,10 +73,10 @@ namespace DoubleFile
 
             // One-shot: no need to dispose
             Observable.Timer(TimeSpan.FromMinutes(1)).Timestamp()
-                .LocalSubscribe(99615, x => Clear());
+                .LocalSubscribe(99570, x => Clear());
 
             LV_ProjectVM.Modified
-                .LocalSubscribe(99612, x => Clear());
+                .LocalSubscribe(99569, x => Clear());
         }
 
         void Clear()

@@ -16,7 +16,7 @@ namespace DoubleFile
     
     partial class DupeFileDictionary : IDisposable
     {
-        internal bool IsDeleteVolumeView = false;
+        static internal bool IsDeletedVolumeView = false;
 
         internal DupeFileDictionary()
         {
@@ -242,7 +242,7 @@ namespace DoubleFile
                 Util.Assert(99958, kvp.Value.All(tuple => tuple.Item2 == nLength)); 
             }
 
-            var nSkip = IsDeleteVolumeView ? 2 : 1;
+            var nSkip = IsDeletedVolumeView ? 2 : 1;
 
             _dictDuplicateFiles =
                 dict

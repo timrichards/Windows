@@ -204,8 +204,8 @@
     <Compile Include="UserControls\MVVM_FolderList_Base\UC_FolderListVM.cs" />
     <Compile Include="UserControls\MVVM_FolderList_Base\UC_ClonesHereVM.cs" />
     <Compile Include="UserControls\MVVM_FolderList_Base\UC_SolitaryHereVM.cs" />
-    <Compile Include="UserControls\UC_Backup_DeleteVol.xaml.cs">
-      <DependentUpon>UC_Backup_DeleteVol.xaml</DependentUpon>
+    <Compile Include="UserControls\UC_Backup_DeletedVol.xaml.cs">
+      <DependentUpon>UC_Backup_DeletedVol.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\UC_Backup.xaml.cs">
       <DependentUpon>UC_Backup.xaml</DependentUpon>
@@ -523,7 +523,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\UC_Backup_DeleteVol.xaml">
+    <Page Include="UserControls\UC_Backup_DeletedVol.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

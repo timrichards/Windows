@@ -47,6 +47,9 @@ namespace DoubleFile
             if (false == _bFileDictDone)
                 lsProgressItems.Insert(0, _ksDupeFileDictKey);
 
+            Util.Block(1000);
+            GC.Collect();
+
             new ProgressOverlay(new string[lsProgressItems.Count], lsProgressItems, x =>
             {
                 Util.ThreadMake(() =>

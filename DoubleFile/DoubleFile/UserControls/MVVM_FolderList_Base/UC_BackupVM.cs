@@ -11,8 +11,10 @@ namespace DoubleFile
 {
     partial class UC_BackupVM : UC_FolderListVM_Base, IProgressOverlayClosing
     {
-        internal bool IsDeleteVolVM = false;
-        public ICommand Icmd_DeleteVolumeView { get; }
+        internal bool IsDeletedVolVM = false;
+        public ICommand Icmd_DeletedVolumeView { get; }
+        public bool IsDeletedVolumeView { get; set; }
+        internal Action Navigate = null;
 
         internal Action Reset = null;
 
@@ -66,9 +68,29 @@ namespace DoubleFile
 
         internal UC_BackupVM()
         {
-            Icmd_DeleteVolumeView = new RelayCommand(() =>
-            {
+            IsDeletedVolumeView = DupeFileDictionary.IsDeletedVolumeView;
 
+            Icmd_DeletedVolumeView = new RelayCommand(() =>
+            {
+                if (MessageBoxResult.Yes !=
+                    MBoxStatic.ShowOverlay("This will rebuild the duplicate file dictionary and tree view. Continue?", buttons: MessageBoxButton.YesNo, owner: LocalOwner))
+                {
+                    IsDeletedVolumeView = DupeFileDictionary.IsDeletedVolumeView;
+                    RaisePropertyChanged("IsDeleteVolumeView");
+                    return;     // from lambda
+                }
+
+                if (DupeFileDictionary.IsDeletedVolumeView == IsDeletedVolumeView)
+                {
+                    Util.Assert(99577, false);
+                    return;     // from lambda
+                }
+
+                Dispose();
+                Util.Block(1000);
+                DupeFileDictionary.IsDeletedVolumeView = IsDeletedVolumeView;
+                UC_Project.OKtoNavigate_UpdateSaveListingsLink(bResetNav: true);
+                Navigate?.Invoke();
             });
 
             Icmd_Pick = new RelayCommand(Add, () => _bCanPick);
@@ -141,7 +163,7 @@ namespace DoubleFile
         {
             Util.ThreadMake(() =>
             {
-                if (IsDeleteVolVM)
+                if (IsDeletedVolVM)
                 {
                     if (Items.Any())
                         return;
@@ -325,7 +347,7 @@ namespace DoubleFile
                 _dictDupeFileHit[nFileID] = true;
 
                 return false == (
-                    IsDeleteVolVM
+                    IsDeletedVolVM
                     ? Statics.DupeFileDictionary.IsDupeExtra(nFileID, _nMyLVitemID)
                     : Statics.DupeFileDictionary.IsDupeSepVolume(nFileID)
                     ?? false);     // from lambda

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FirstFloor.ModernUI.Windows.Controls;
+using System;
 using System.IO;
 using System.Reactive.Linq;
 using System.Windows.Input;
@@ -55,7 +56,7 @@ namespace DoubleFile
             DataContext =
                 _vm =
                 (vm?.IsDisposed ?? true)
-                ? new UC_BackupVM { IsDeleteVolVM = true }
+                ? new UC_BackupVM { IsDeletedVolVM = true }
                 : vm;
 
             _vm.UseNicknames = _bNicknames;
@@ -63,6 +64,15 @@ namespace DoubleFile
             _vm.Reset = () => Util.UIthread(99870, () => formEdit_DriveLetter.Text = null);
             _vm.Init();
             formEdit_DriveLetter.Text = null;
+
+            _vm.Navigate = () =>
+            {
+                NavigationCommands.FirstPage.Execute(null, this);
+      //          new BBCodeBlock().LinkNavigator.Navigate(new Uri("/DoubleFile;component/UC_Project/UC_Project.xaml", UriKind.Relative), this);
+                Util.Block(250);
+                NavigationCommands.GoToPage.Execute("/DoubleFile;component/UserControls/UC_Backup_DeletedVol.xaml", this);
+      //          new BBCodeBlock().LinkNavigator.Navigate(new Uri("/DoubleFile;component/UserControls/UC_Backup_DeletedVol.xaml", UriKind.Relative), this);
+            };
         }
 
         protected override void LocalNavigatedFrom()
@@ -73,10 +83,10 @@ namespace DoubleFile
 
             // One-shot: no need to dispose
             Observable.Timer(TimeSpan.FromMinutes(1)).Timestamp()
-                .LocalSubscribe(99615, x => Clear());
+                .LocalSubscribe(99568, x => Clear());
 
             LV_ProjectVM.Modified
-                .LocalSubscribe(99612, x => Clear());
+                .LocalSubscribe(99567, x => Clear());
         }
 
         void Clear()

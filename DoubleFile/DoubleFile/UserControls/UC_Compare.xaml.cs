@@ -11,13 +11,15 @@ namespace DoubleFile
         public UC_Compare()
         {
             InitializeComponent();
+            CantDupeThisUsercontrol = true;
+
+            LV_ProjectVM.Modified
+                .LocalSubscribe(99612, x => Clear());
         }
 
         protected override void LocalNavigatedTo()
         {
-            var vm = _vmSave;
-
-            _vmSave = null;
+            var vm = _vm;
 
             DataContext =
                 _vm =
@@ -32,26 +34,20 @@ namespace DoubleFile
         {
             _bNicknames = formChk_Nicknames.IsChecked ?? false;
             DataContext = null;
-            _vmSave = _vm;
 
             // One-shot: no need to dispose
             Observable.Timer(TimeSpan.FromMinutes(1)).Timestamp()
                 .LocalSubscribe(99615, x => Clear());
-
-            LV_ProjectVM.Modified
-                .LocalSubscribe(99612, x => Clear());
         }
 
         void Clear()
         {
-            _vmSave?.Dispose();
-            _vmSave = null;
+            _vm?.Dispose();
+            _vm = null;
         }
 
-        UC_CompareVM
-            _vm = null;
         static UC_CompareVM
-            _vmSave = null;
+            _vm = null;
         bool
             _bNicknames = false;
     }

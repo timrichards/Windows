@@ -1,40 +1,43 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Media;
 
 namespace DoubleFile
 {
     static class UtilColorcode
     {
-        static internal readonly IReadOnlyDictionary<int, string>
-            Descriptions = new Dictionary<int, string>
+        static internal string 
+            SameVolumeText => DupeFileDictionary.IsDeletedVolumeView ? "two or fewer volumes" : "one volume";
+        static internal readonly IReadOnlyDictionary<int, Func<string>>
+            Descriptions = new Dictionary<int, Func<string>>
         {
-            { Transparent,          "" },
-            { ParentCloned,         "" },        // decription would look redundant in detailed info view
-            { ParentClonedBG,       "This folder and its parent have a copy on a separate volume." },
-            { ChildClonedSepVolume, "A child of this folder has one or more clones on a separate volume." },
-            { ChildAllOnOneVolume,  "All copies of a child of this folder reside on one volume." },
-            { ManyClonesSepVolume,  "This folder has multiple copies on at least two separate volumes." },
-            { OneCloneSepVolume,    "This folder has a copy on a separate volume." },
-            { AllOnOneVolume,       "All copies of this folder reside on one volume." },
-            { OneVolumeDupesSepVol, "All files are on multiple volumes though all copies of this folder are on one volume." },
-            { SolitNoFilesDuped,    "No file in this folder is duplicated, or all are on one volume." },
-            { SolitSomeFilesDuped,  "One or more file in this folder is duplicated on another volume." },
-            { SolitAllDupesOneVol,  "All files in this folder are duplicated, at least one on one volume." },
-            { SolitAllDupesSepVol,  "All files in this folder are duplicated, on more than one volume." },
-            { SolitaryHasClones,    "This folder has no exact copy, yet it contains folders that do." },
-            { SolitAllClonesOneVol, "All folders and any files here are duplicated, at least one on one volume." },
-            { SolitAllClonesSepVol, "All folders and any files here are duplicated, all on more than one volume." },
-            { SolitaryClonedParent, "This folder has no exact copy, yet its parent does." },
-            { SolitaryOneVolParent, "This folder has no exact copy, yet its parent does, on only one volume." },
-            { ContainsSolitaryBG,   "Contains folders that have no copy, or copies are on one volume." },
-            { FolderHasNoHashes,    "Couldn't create hashcodes for any file in this folder." },
-            { ZeroLengthFolder,     "This folder has no data." },
-            { TreemapFolder,        "" },						            // Treemap: Folder containing files
-            { TreemapFreespace,     "" },						            // Treemap: Free space
-            { TreemapUnreadspace,   "" },						            // Treemap: Unread space
-            { TreemapDupeOneVol,    "" },						            // Treemap: Duplicate File
-            { TreemapDupeSepVol,    "" },						            // Treemap: Duplicate File
-            { TreemapUniqueFile,    "" },						            // Treemap: Unique File
+            { Transparent,          () => "" },
+            { ParentCloned,         () => "" },        // decription would look redundant in detailed info view
+            { ParentClonedBG,       () => "This folder and its parent have a copy on a separate volume." },
+            { ChildClonedSepVolume, () => "A child of this folder has one or more clones on a separate volume." },
+            { ChildAllOnOneVolume,  () => "All copies of a child of this folder reside on " + SameVolumeText },
+            { ManyClonesSepVolume,  () => "This folder has multiple copies on at least two separate volumes." },
+            { OneCloneSepVolume,    () => "This folder has a copy on a separate volume." },
+            { AllOnOneVolume,       () => "All copies of this folder reside on " + SameVolumeText },
+            { OneVolumeDupesSepVol, () => "All files are on multiple volumes though all copies of this folder are on " + SameVolumeText },
+            { SolitNoFilesDuped,    () => "No file in this folder is duplicated, or all are on " + SameVolumeText },
+            { SolitSomeFilesDuped,  () => "One or more file in this folder is duplicated on another volume." },
+            { SolitAllDupesOneVol,  () => "All files in this folder are duplicated, at least one on " + SameVolumeText },
+            { SolitAllDupesSepVol,  () => "All files in this folder are duplicated, on more than one volume." },
+            { SolitaryHasClones,    () => "This folder has no exact copy, yet it contains folders that do." },
+            { SolitAllClonesOneVol, () => "All folders and any files here are duplicated, at least one on " + SameVolumeText },
+            { SolitAllClonesSepVol, () => "All folders and any files here are duplicated, all on more than one volume." },
+            { SolitaryClonedParent, () => "This folder has no exact copy, yet its parent does." },
+            { SolitaryOneVolParent, () => "This folder has no exact copy, yet its parent does, on only " + SameVolumeText },
+            { ContainsSolitaryBG,   () => "Contains folders that have no copy, or copies are on " + SameVolumeText },
+            { FolderHasNoHashes,    () => "Couldn't create hashcodes for any file in this folder." },
+            { ZeroLengthFolder,     () => "This folder has no data." },
+            { TreemapFolder,        () => "" },						            // Treemap: Folder containing files
+            { TreemapFreespace,     () => "" },						            // Treemap: Free space
+            { TreemapUnreadspace,   () => "" },						            // Treemap: Unread space
+            { TreemapDupeOneVol,    () => "" },						            // Treemap: Duplicate File
+            { TreemapDupeSepVol,    () => "" },						            // Treemap: Duplicate File
+            { TreemapUniqueFile,    () => "" },						            // Treemap: Unique File
         };
 
         static internal int

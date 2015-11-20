@@ -76,7 +76,7 @@ namespace DoubleFile
                     MBoxStatic.ShowOverlay("This will rebuild the duplicate file dictionary and tree view. Continue?", buttons: MessageBoxButton.YesNo, owner: LocalOwner))
                 {
                     IsDeletedVolumeView = DupeFileDictionary.IsDeletedVolumeView;
-                    RaisePropertyChanged("IsDeleteVolumeView");
+                    RaisePropertyChanged("IsDeletedVolumeView");
                     return;     // from lambda
                 }
 
@@ -86,11 +86,19 @@ namespace DoubleFile
                     return;     // from lambda
                 }
 
-                Dispose();
-                Util.Block(1000);
                 DupeFileDictionary.IsDeletedVolumeView = IsDeletedVolumeView;
-                UC_Project.OKtoNavigate_UpdateSaveListingsLink(bResetNav: true);
-                Navigate?.Invoke();
+                Util.ThreadMake(() =>
+                {
+                    Util.UIthread(99564, () =>
+                    {
+                        Dispose();
+                        //DupeFileDictionary.IsDeletedVolumeView = IsDeletedVolumeView;
+                        //Statics.WithLVprojectVM(p => { p.SetModified(); return false; });
+                        //UC_Project.OKtoNavigate_UpdateSaveListingsLink();
+                        //Util.Block(1000);
+                        //Navigate?.Invoke();
+                    });
+                });
             });
 
             Icmd_Pick = new RelayCommand(Add, () => _bCanPick);

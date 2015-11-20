@@ -33,7 +33,8 @@ namespace DoubleFile
                 (0 < ("" + SubItems[FileParse.knColLengthLV]).ToUlong()));
 
         public string
-            Duplicates => ((ShowDuplicates && (0 < DuplicatesRaw)) ? "" + DuplicatesRaw : "") + (_SameVolume ? " all on the same volume." : "");
+            Duplicates => ((ShowDuplicates && (0 < DuplicatesRaw)) ? "" + DuplicatesRaw : "") +
+            (_SameVolume ? " all on " + UtilColorcode.SameVolumeText : "");
         public int DuplicatesRaw { get; internal set; }
 
         public Visibility

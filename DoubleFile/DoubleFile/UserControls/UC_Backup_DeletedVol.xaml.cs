@@ -1,4 +1,5 @@
 ﻿using FirstFloor.ModernUI.Windows.Controls;
+using FirstFloor.ModernUI.Windows.Navigation;
 using System;
 using System.IO;
 using System.Reactive.Linq;
@@ -15,6 +16,10 @@ namespace DoubleFile
         public UC_Backup_DeleteVol()
         {
             InitializeComponent();
+            CantDupeThisUsercontrol = true;
+
+            LV_ProjectVM.Modified
+                .LocalSubscribe(99567, x => Clear());
 
             Observable.FromEventPattern<KeyEventArgs>(formEdit_DriveLetter, "PreviewKeyDown")
                 .LocalSubscribe(99580, args =>
@@ -49,9 +54,7 @@ namespace DoubleFile
 
         protected override void LocalNavigatedTo()
         {
-            var vm = _vmSave;
-
-            _vmSave = null;
+            var vm = _vm;
 
             DataContext =
                 _vm =
@@ -67,10 +70,12 @@ namespace DoubleFile
 
             _vm.Navigate = () =>
             {
-                NavigationCommands.FirstPage.Execute(null, this);
+                var top = NavigationHelper.FindFrame("_top", this);
+
+                NavigationCommands.FirstPage.Execute(null, top);
       //          new BBCodeBlock().LinkNavigator.Navigate(new Uri("/DoubleFile;component/UC_Project/UC_Project.xaml", UriKind.Relative), this);
                 Util.Block(250);
-                NavigationCommands.GoToPage.Execute("/DoubleFile;component/UserControls/UC_Backup_DeletedVol.xaml", this);
+                NavigationCommands.GoToPage.Execute("/DoubleFile;component/UserControls/UC_Backup_DeletedVol.xaml", top);
       //          new BBCodeBlock().LinkNavigator.Navigate(new Uri("/DoubleFile;component/UserControls/UC_Backup_DeletedVol.xaml", UriKind.Relative), this);
             };
         }
@@ -79,26 +84,20 @@ namespace DoubleFile
         {
             _bNicknames = formChk_Nicknames.IsChecked ?? false;
             DataContext = null;
-            _vmSave = _vm;
 
             // One-shot: no need to dispose
             Observable.Timer(TimeSpan.FromMinutes(1)).Timestamp()
                 .LocalSubscribe(99568, x => Clear());
-
-            LV_ProjectVM.Modified
-                .LocalSubscribe(99567, x => Clear());
         }
 
         void Clear()
         {
-            _vmSave?.Dispose();
-            _vmSave = null;
+            _vm?.Dispose();
+            _vm = null;
         }
 
-        UC_BackupVM
-            _vm = null;
         static UC_BackupVM
-            _vmSave = null;
+            _vm = null;
         bool
             _bNicknames = false;
     }

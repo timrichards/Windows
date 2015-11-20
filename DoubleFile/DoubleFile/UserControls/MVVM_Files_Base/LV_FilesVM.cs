@@ -79,11 +79,11 @@ namespace DoubleFile
 
                     lvItem.SameVolume = false == isSepVol;
 #if (DEBUG)
-                    Util.Assert(99970,
-                        lvItem.SameVolume ==
-                        lsDuplicates
-                        .GroupBy(duplicate => duplicate.LVitemProjectVM.Volume)
-                        .HasExactly(1));
+                    //Util.Assert(99970,
+                    //    lvItem.SameVolume ==
+                    //    lsDuplicates
+                    //    .GroupBy(duplicate => duplicate.LVitemProjectVM.Volume)
+                    //    .HasExactly(1));
 #endif
                 }
 

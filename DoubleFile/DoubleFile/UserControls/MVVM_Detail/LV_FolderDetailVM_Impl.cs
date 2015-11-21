@@ -35,8 +35,8 @@ namespace DoubleFile
 
                 if (Statics.Namespace == GetType().Namespace)     // VolTreemap assembly: skip it
                 {
-                    var strFG_Description = UtilColorcode.Descriptions[folderDetail.treeNode.ColorcodeFG];
-                    var strBG_Description = UtilColorcode.Descriptions[folderDetail.treeNode.ColorcodeBG];
+                    var strFG_Description = UtilColorcode.Descriptions[folderDetail.treeNode.ColorcodeFG]();
+                    var strBG_Description = UtilColorcode.Descriptions[folderDetail.treeNode.ColorcodeBG]();
 
                     if (false == string.IsNullOrWhiteSpace(strFG_Description))
                     {

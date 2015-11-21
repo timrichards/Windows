@@ -7,7 +7,8 @@ namespace DoubleFile
     static class UtilColorcode
     {
         static internal string 
-            SameVolumeText => DupeFileDictionary.IsDeletedVolumeView ? "two or fewer volumes" : "one volume";
+            SameVolumeText => DupeFileDictionary.IsDeletedVolumeView ? "two or fewer volumes." : "one volume.";
+        static string _diffVolText => DupeFileDictionary.IsDeletedVolumeView ? "two volumes." : "one volume.";
         static internal readonly IReadOnlyDictionary<int, Func<string>>
             Descriptions = new Dictionary<int, Func<string>>
         {
@@ -23,10 +24,10 @@ namespace DoubleFile
             { SolitNoFilesDuped,    () => "No file in this folder is duplicated, or all are on " + SameVolumeText },
             { SolitSomeFilesDuped,  () => "One or more file in this folder is duplicated on another volume." },
             { SolitAllDupesOneVol,  () => "All files in this folder are duplicated, at least one on " + SameVolumeText },
-            { SolitAllDupesSepVol,  () => "All files in this folder are duplicated, on more than one volume." },
+            { SolitAllDupesSepVol,  () => "All files in this folder are duplicated, on more than " + _diffVolText },
             { SolitaryHasClones,    () => "This folder has no exact copy, yet it contains folders that do." },
             { SolitAllClonesOneVol, () => "All folders and any files here are duplicated, at least one on " + SameVolumeText },
-            { SolitAllClonesSepVol, () => "All folders and any files here are duplicated, all on more than one volume." },
+            { SolitAllClonesSepVol, () => "All folders and any files here are duplicated, all on more than " + _diffVolText },
             { SolitaryClonedParent, () => "This folder has no exact copy, yet its parent does." },
             { SolitaryOneVolParent, () => "This folder has no exact copy, yet its parent does, on only " + SameVolumeText },
             { ContainsSolitaryBG,   () => "Contains folders that have no copy, or copies are on " + SameVolumeText },

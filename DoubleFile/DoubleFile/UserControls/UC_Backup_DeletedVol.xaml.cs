@@ -68,22 +68,31 @@ namespace DoubleFile
             _vm.Init();
             formEdit_DriveLetter.Text = null;
 
-            _vm.Navigate = () =>
+            _vm.Navigate = () => Util.ThreadMake(() =>
             {
-                var top = NavigationHelper.FindFrame("_top", this);
+                Util.UIthread(99564, () =>
+                {
+                    Clear();
+                    Statics.WithLVprojectVM(p => { p.SetModified(); return false; });
+                    UC_Project.OKtoNavigate_UpdateSaveListingsLink();
+                    Util.Block(1000);
+                    var top = NavigationHelper.FindFrame("_top", this);
 
-                NavigationCommands.FirstPage.Execute(null, top);
-      //          new BBCodeBlock().LinkNavigator.Navigate(new Uri("/DoubleFile;component/UC_Project/UC_Project.xaml", UriKind.Relative), this);
-                Util.Block(250);
-                NavigationCommands.GoToPage.Execute("/DoubleFile;component/UserControls/UC_Backup_DeletedVol.xaml", top);
-      //          new BBCodeBlock().LinkNavigator.Navigate(new Uri("/DoubleFile;component/UserControls/UC_Backup_DeletedVol.xaml", UriKind.Relative), this);
-            };
+                    NavigationCommands.FirstPage.Execute(null, top);
+                    //          new BBCodeBlock().LinkNavigator.Navigate(new Uri("/DoubleFile;component/UC_Project/UC_Project.xaml", UriKind.Relative), this);
+                    Util.Block(250);
+                    NavigationCommands.GoToPage.Execute("/DoubleFile;component/UserControls/UC_Backup_DeletedVol.xaml", top);
+                    //          new BBCodeBlock().LinkNavigator.Navigate(new Uri("/DoubleFile;component/UserControls/UC_Backup_DeletedVol.xaml", UriKind.Relative), this);
+                });
+            });
         }
 
         protected override void LocalNavigatedFrom()
         {
             _bNicknames = formChk_Nicknames.IsChecked ?? false;
             DataContext = null;
+            _vm?.With(vm => vm.Reset = null);
+            _vm?.With(vm => vm.Navigate = null);
 
             // One-shot: no need to dispose
             Observable.Timer(TimeSpan.FromMinutes(1)).Timestamp()

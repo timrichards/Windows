@@ -87,18 +87,7 @@ namespace DoubleFile
                 }
 
                 DupeFileDictionary.IsDeletedVolumeView = IsDeletedVolumeView;
-                Util.ThreadMake(() =>
-                {
-                    Util.UIthread(99564, () =>
-                    {
-                        Dispose();
-                        //DupeFileDictionary.IsDeletedVolumeView = IsDeletedVolumeView;
-                        //Statics.WithLVprojectVM(p => { p.SetModified(); return false; });
-                        //UC_Project.OKtoNavigate_UpdateSaveListingsLink();
-                        //Util.Block(1000);
-                        //Navigate?.Invoke();
-                    });
-                });
+                Navigate?.Invoke();
             });
 
             Icmd_Pick = new RelayCommand(Add, () => _bCanPick);

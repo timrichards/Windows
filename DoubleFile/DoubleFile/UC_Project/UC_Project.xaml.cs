@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
+using System.Windows.Input;
 
 namespace DoubleFile
 {
@@ -11,24 +12,34 @@ namespace DoubleFile
         {
             InitializeComponent();
 
-            var lvProjectVM =
-                new LV_ProjectVM(Statics.WithLVprojectVM(w => w))
+            _weakReference.Get(w =>
             {
-                SelectedOne = () => 1 == form_lv.SelectedItems.Count,
-                SelectedAny = () => 0 < form_lv.SelectedItems.Count,
-                SelectedItems = () => form_lv.SelectedItems.Cast<LVitem_ProjectVM>()
-            };
+                DataContext = w.DataContext;
+                form_lv.DataContext = w.form_lv.DataContext;                                        // A
+                Util.UIthread(99913, () => CommandManager.InvalidateRequerySuggested());
+            });
 
-            var winProjectVM = new UC_ProjectVM(lvProjectVM);
+            if (null == DataContext)
+            {
+                var lvProjectVM =
+                    new LV_ProjectVM(Statics.WithLVprojectVM(w => w))
+                {
+                    SelectedOne = () => 1 == form_lv.SelectedItems.Count,
+                    SelectedAny = () => 0 < form_lv.SelectedItems.Count,
+                    SelectedItems = () => form_lv.SelectedItems.Cast<LVitem_ProjectVM>()
+                };
 
-            Observable.FromEventPattern(Application.Current.Dispatcher, "ShutdownStarted")
-                .LocalSubscribe(99851, x => winProjectVM.Dispose());
+                var winProjectVM = new UC_ProjectVM(lvProjectVM);
 
-            DataContext = winProjectVM;
+                Observable.FromEventPattern(Application.Current.Dispatcher, "ShutdownStarted")      // TODO: add this to A
+                    .LocalSubscribe(99851, x => winProjectVM.Dispose());
 
-            form_lv.DataContext =
-                Statics.LVprojectVM =
-                lvProjectVM;
+                DataContext = winProjectVM;
+
+                form_lv.DataContext =
+                    Statics.LVprojectVM =
+                    lvProjectVM;
+            }
 
             LV_ProjectVM.Modified.LocalSubscribe(99720, x => Reset());
             _weakReference.SetTarget(this);

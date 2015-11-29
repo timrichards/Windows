@@ -71,7 +71,7 @@ namespace DoubleFile
         {
             _bNicknames = formChk_Nicknames.IsChecked ?? false;
             DataContext = null;
-            _vm.Reset = null;
+            _vm?.With(vm => vm.Reset = null);
 
             // One-shot: no need to dispose
             Observable.Timer(TimeSpan.FromMinutes(1)).Timestamp()

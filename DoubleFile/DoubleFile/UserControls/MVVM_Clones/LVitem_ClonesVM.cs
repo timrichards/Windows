@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -34,7 +35,8 @@ namespace DoubleFile
 
             return
                 ((null != folder.Parent)
-                ? folder.Parent : folder)
+                ? folder.Parent
+                : folder)
                 .PathFullGet(NicknameUpdater.Value);
         });
 
@@ -46,12 +48,12 @@ namespace DoubleFile
         internal override int NumCols => NumCols_;
         internal const int NumCols_ = 1;
 
-        internal IList<LocalTreeNode>
-            TreeNodes = new LocalTreeNode[0];
+        internal IList<WeakReference<LocalTreeNode>>
+            TreeNodes = new WeakReference<LocalTreeNode>[0];
 
         internal T
             WithLocalTreeNode<T>(Func<LocalTreeNode, T> doSomethingWith) =>
-            (0 < TreeNodes.Count) ? doSomethingWith(TreeNodes[_clonePathIndex % TreeNodes.Count]) : default(T);
+            (0 < TreeNodes.Count) ? doSomethingWith(TreeNodes[_clonePathIndex % TreeNodes.Count].Get(w => w)) : default(T);
 
         internal LVitem_ClonesVM(IList<string> asString)
             : base(null, asString)
@@ -60,7 +62,7 @@ namespace DoubleFile
 
         internal LVitem_ClonesVM(IList<LocalTreeNode> treeNodes, ListUpdater<bool> nicknameUpdater)
         {
-            TreeNodes = treeNodes;
+            TreeNodes = treeNodes.Select(treeNode => new WeakReference<LocalTreeNode>(treeNode)).ToList();
             NicknameUpdater = nicknameUpdater;
 
             Icmd_NextClonePath =

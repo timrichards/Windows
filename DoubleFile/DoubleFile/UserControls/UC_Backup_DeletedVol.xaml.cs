@@ -68,23 +68,36 @@ namespace DoubleFile
             _vm.Init();
             formEdit_DriveLetter.Text = null;
 
+            var bNavigated = false;
+
             _vm.Navigate = () => Util.ThreadMake(() =>
             {
-                Util.UIthread(99564, () =>
+                Util.UIthread(99563, () =>
                 {
                     Clear();
                     Statics.WithLVprojectVM(p => { p.SetModified(); return false; });
                     UC_Project.OKtoNavigate_UpdateSaveListingsLink();
                     Util.Block(1000);
-                    var top = NavigationHelper.FindFrame("_top", this);
-
-                    NavigationCommands.FirstPage.Execute(null, top);
-                    //          new BBCodeBlock().LinkNavigator.Navigate(new Uri("/DoubleFile;component/UC_Project/UC_Project.xaml", UriKind.Relative), this);
+                    //new BBCodeBlock().LinkNavigator.Navigate(new Uri("/DoubleFile;component/UC_Project/UC_Project.xaml", UriKind.Relative), this);
+                    NavigationCommands.BrowseBack.Execute(null, NavigationHelper.FindFrame("_top", this));
                     Util.Block(250);
-                    NavigationCommands.GoToPage.Execute("/DoubleFile;component/UserControls/UC_Backup_DeletedVol.xaml", top);
-                    //          new BBCodeBlock().LinkNavigator.Navigate(new Uri("/DoubleFile;component/UserControls/UC_Backup_DeletedVol.xaml", UriKind.Relative), this);
+                    GC.Collect();
+                    bNavigated = true;
+                    NavigationCommands.GoToPage.Execute("/DoubleFile;component/UserControls/UC_Backup_DeletedVol.xaml", NavigationHelper.FindFrame("_top", this));
                 });
             });
+
+            if (bNavigated)
+            {
+                Util.ThreadMake(() =>
+                {
+                    Util.UIthread(99564, () =>
+                    {
+                        Util.Block(250);
+                        GC.Collect();
+                    });
+                });
+            }
         }
 
         protected override void LocalNavigatedFrom()

@@ -15,7 +15,7 @@
 
         internal string
             Volume =>
-            (string.IsNullOrWhiteSpace(VolumeGroup))
+            string.IsNullOrWhiteSpace(VolumeGroup)
             ? RootText
             : VolumeGroup.Replace('\\', '/');
 
@@ -25,7 +25,7 @@
             get
             {
                 var strRet =
-                    (string.IsNullOrWhiteSpace(Nickname))
+                    string.IsNullOrWhiteSpace(Nickname)
                     ? CulledPath
                     : (Nickname +
                     ((Nickname.EndsWith(CulledPath)) ? "" : " (" + CulledPath.TrimEnd('\\') + ")"))

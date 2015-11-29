@@ -195,17 +195,22 @@ namespace DoubleFile
             var lsDisposable = ieDisposable.ToList();
             var cts = new CancellationTokenSource();
 
+            IDisposable timer1 = null;
+            IDisposable timer2 = null;
+
             var thread = ThreadMake(() =>
             {
                 ParallelForEach(99653, lsDisposable, new ParallelOptions { CancellationToken = cts.Token },
                     d => d.Dispose());
+
+                timer1?.Dispose();
+                timer2?.Dispose();
             });
 
-            // One-shot: no need to dispose
-            Observable.Timer(TimeSpan.FromMinutes(1)).Timestamp()
+            timer1 = Observable.Timer(TimeSpan.FromMinutes(1)).Timestamp()
                 .LocalSubscribe(99732, x => cts.Cancel());
 
-            Observable.Timer(TimeSpan.FromMinutes(2)).Timestamp()
+            timer2 = Observable.Timer(TimeSpan.FromMinutes(2)).Timestamp()
                 .LocalSubscribe(99731, x => thread.Abort());
         }
 

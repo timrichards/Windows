@@ -9,24 +9,21 @@ namespace DoubleFile
     static public class ExtensionMethodsStatic_Public
     {
         static public IDisposable
-            LocalSubscribe<T>(this IObservable<T> source, decimal nLocation, Action<T> onNext)
+            LocalSubscribe<T>(this IObservable<T> source, decimal nLocation, Action<T> onNext) =>
+            source.Subscribe(t =>
         {
-            return
-                source.Subscribe(t =>
+            try
             {
-                try
-                {
-                    onNext(t);  // Haven't found a way to make this non-blocking: all subscribers must return nicely by spawning if necessary
-                }
-                catch (Exception e)
-                {
-                    var b = e.GetBaseException();
+                onNext(t);  // Haven't found a way to make this non-blocking: all subscribers must return nicely by spawning if necessary
+            }
+            catch (Exception e)
+            {
+                var b = e.GetBaseException();
 
-                    Util.Assert(nLocation, false, b.GetType() + " in LocalSubscribe\n" +
-                        b.Message + "\n" + b.StackTrace);
-                }
-            });
-        }
+                Util.Assert(nLocation, false, b.GetType() + " in LocalSubscribe\n" +
+                    b.Message + "\n" + b.StackTrace);
+            }
+        });
 
         static public void
             LocalOnNext<T>(this LocalSubject<T> subject, T value, decimal nOnNextAssertLoc, decimal nInitiator = 0)

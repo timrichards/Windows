@@ -202,10 +202,10 @@ namespace DoubleFile
             });
 
             // One-shot: no need to dispose
-            Observable.Timer(TimeSpan.FromMilliseconds(250)).Timestamp()
+            Observable.Timer(TimeSpan.FromMinutes(1)).Timestamp()
                 .LocalSubscribe(99732, x => cts.Cancel());
 
-            Observable.Timer(TimeSpan.FromMilliseconds(500)).Timestamp()
+            Observable.Timer(TimeSpan.FromMinutes(2)).Timestamp()
                 .LocalSubscribe(99731, x => thread.Abort());
         }
 

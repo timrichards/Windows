@@ -86,7 +86,7 @@ namespace DoubleFile
                 }
 
                 DupeFileDictionary.IsDeletedVolumeView = IsDeletedVolumeView;
-                MainWindow.WithMainWindowA(w => w.Reset = true);
+                MainWindow.WithMainWindowA(w => w.Reset());
             });
 
             Icmd_Pick = new RelayCommand(Add, () => _bCanPick);

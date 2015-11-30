@@ -41,7 +41,7 @@ namespace DoubleFile
                     lvProjectVM;
             }
 
-            LV_ProjectVM.Modified.LocalSubscribe(99720, x => Reset());
+            LV_ProjectVM.Modified_Called.LocalSubscribe(99720, x => Reset());
             _weakReference.SetTarget(this);
         }
 

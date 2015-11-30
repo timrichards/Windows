@@ -16,7 +16,7 @@ namespace DoubleFile
         static readonly LocalSubject<bool> _modified = new LocalSubject<bool>();
         static readonly LocalSubject<bool> _modified_Called = new LocalSubject<bool>();
         internal void
-            SetModified() { _modified.LocalOnNext(false, 99838); _modified_Called.LocalOnNext(false, 99562); }
+            SetModified() { _modified.LocalOnNext(false, 99838); _modified_Called.LocalOnNext(false, 99563); }
 
         internal int
             CanLoadCount => ItemsCast.Where(item => item.CanLoad).Count();

@@ -7,6 +7,7 @@ using System.Diagnostics;           // DEBUG
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;                    // false == DEBUG
+using FirstFloor.ModernUI.Windows.Controls;
 
 namespace DoubleFile
 {
@@ -15,6 +16,8 @@ namespace DoubleFile
     /// </summary>
     public partial class MainWindow
     {
+        internal bool Reset = false;
+
         class MyLink : Link
         {
             internal MyLink(string strDisplayName, string strSource)
@@ -70,11 +73,51 @@ namespace DoubleFile
             Observable.FromEventPattern<CancelEventArgs>(this, "Closing")
                 .LocalSubscribe(99759, args => MainWindow_Closing(args.EventArgs));
 
-            MenuLinkGroups.Add(new LinkGroup { DisplayName="Welcome", Links =
+            MenuLinkGroups.Add(new LinkGroup { DisplayName = "Welcome", Links =
             {
-                new MyLink("View project", "/UC_Project/UC_Project.xaml"),
+                _projectPage,
                 new MyLink("Introduction", "/Introduction.xaml")
-            }});
+            } });
+
+            var bReset = false;
+
+            Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(250)).Timestamp()          // TODO: nice if disposed
+                .LocalSubscribe(99563, x =>
+            {
+                if (false == Reset)
+                    return;
+
+                Reset = false;
+
+                Util.UIthread(99564, () =>
+                {
+                    var mainMenu = (ModernMenu)GetTemplateChild("MainMenu");
+
+                    mainMenu.SelectedLink = _projectPage;
+                    //Util.Block(250);
+                    bReset = true;
+                    Statics.WithLVprojectVM(p => { p.SetModified(); return false; });
+                    //NavigationCommands.BrowseBack.Execute(null, NavigationHelper.FindFrame("_top", this));
+                    //Clear();
+                    //Util.Block(1000);
+                    ////new BBCodeBlock().LinkNavigator.Navigate(new Uri("/DoubleFile;component/UC_Project/UC_Project.xaml", UriKind.Relative), this);
+                    //NavigationCommands.BrowseBack.Execute(null, NavigationHelper.FindFrame("_top", this));
+                    //Util.Block(250);
+                    //GC.Collect();
+                    //bNavigated = true;
+                    //NavigationCommands.GoToPage.Execute("/DoubleFile;component/UserControls/UC_Backup_DeletedVol.xaml", NavigationHelper.FindFrame("_top", this));
+                });
+            });
+
+            LV_ProjectVM.Modified_Called.LocalSubscribe(99561, x =>
+            {
+                if (false == bReset)
+                    return;
+
+                bReset = false;
+                Util.Block(250);
+                Util.UIthread(99560, () => UC_Project.OKtoNavigate_UpdateSaveListingsLink());
+            });
         }
 
         static internal void UpdateTitleLinks(bool? bListingsToSave = null)
@@ -284,6 +327,8 @@ namespace DoubleFile
             }}
         };
 
+        Link
+            _projectPage = new MyLink("View project", "/UC_Project/UC_Project.xaml");
         bool
             _bListingsToSave = false;
         static readonly WeakReference<MainWindow>

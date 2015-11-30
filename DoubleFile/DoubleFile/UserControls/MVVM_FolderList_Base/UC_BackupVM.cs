@@ -14,7 +14,6 @@ namespace DoubleFile
         internal bool IsDeletedVolVM = false;
         public ICommand Icmd_DeletedVolumeView { get; }
         public bool IsDeletedVolumeView { get; set; }
-        internal Action Navigate = null;
 
         internal Action Reset = null;
 
@@ -87,7 +86,7 @@ namespace DoubleFile
                 }
 
                 DupeFileDictionary.IsDeletedVolumeView = IsDeletedVolumeView;
-                Navigate?.Invoke();
+                MainWindow.WithMainWindowA(w => w.Reset = true);
             });
 
             Icmd_Pick = new RelayCommand(Add, () => _bCanPick);

@@ -1,6 +1,4 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
-using FirstFloor.ModernUI.Windows.Navigation;
-using System;
+﻿using System;
 using System.IO;
 using System.Reactive.Linq;
 using System.Windows.Input;
@@ -67,37 +65,6 @@ namespace DoubleFile
             _vm.Reset = () => Util.UIthread(99870, () => formEdit_DriveLetter.Text = null);
             _vm.Init();
             formEdit_DriveLetter.Text = null;
-
-            var bNavigated = false;
-
-            _vm.Navigate = () => Util.ThreadMake(() =>
-            {
-                Util.UIthread(99563, () =>
-                {
-                    Clear();
-                    Statics.WithLVprojectVM(p => { p.SetModified(); return false; });
-                    UC_Project.OKtoNavigate_UpdateSaveListingsLink();
-                    Util.Block(1000);
-                    //new BBCodeBlock().LinkNavigator.Navigate(new Uri("/DoubleFile;component/UC_Project/UC_Project.xaml", UriKind.Relative), this);
-                    NavigationCommands.BrowseBack.Execute(null, NavigationHelper.FindFrame("_top", this));
-                    Util.Block(250);
-                    GC.Collect();
-                    bNavigated = true;
-                    NavigationCommands.GoToPage.Execute("/DoubleFile;component/UserControls/UC_Backup_DeletedVol.xaml", NavigationHelper.FindFrame("_top", this));
-                });
-            });
-
-            if (bNavigated)
-            {
-                Util.ThreadMake(() =>
-                {
-                    Util.UIthread(99564, () =>
-                    {
-                        Util.Block(250);
-                        GC.Collect();
-                    });
-                });
-            }
         }
 
         protected override void LocalNavigatedFrom()
@@ -105,7 +72,6 @@ namespace DoubleFile
             _bNicknames = formChk_Nicknames.IsChecked ?? false;
             DataContext = null;
             _vm?.With(vm => vm.Reset = null);
-            _vm?.With(vm => vm.Navigate = null);
 
             // One-shot: no need to dispose
             Observable.Timer(TimeSpan.FromMinutes(1)).Timestamp()

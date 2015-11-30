@@ -8,31 +8,34 @@ namespace DoubleFile
     {
         static internal string 
             SameVolumeText => DupeFileDictionary.IsDeletedVolumeView ? "two or fewer volumes." : "one volume.";
-        static string _diffVolText => DupeFileDictionary.IsDeletedVolumeView ? "two volumes." : "one volume.";
+        static string _fnStrNumVols => DupeFileDictionary.IsDeletedVolumeView ? "two volumes." : "one volume.";
+        static string _fnStrTwo => DupeFileDictionary.IsDeletedVolumeView ? "three" : "two";
+        static string _fnStrNoExactCopy => DupeFileDictionary.IsDeletedVolumeView ? "fewer than two copies" : "no exact copy";
+        static string _fnStrA => DupeFileDictionary.IsDeletedVolumeView ? "more than one" : "a";
         static internal readonly IReadOnlyDictionary<int, Func<string>>
             Descriptions = new Dictionary<int, Func<string>>
         {
             { Transparent,          () => "" },
             { ParentCloned,         () => "" },        // decription would look redundant in detailed info view
-            { ParentClonedBG,       () => "This folder and its parent have a copy on a separate volume." },
-            { ChildClonedSepVolume, () => "A child of this folder has one or more clones on a separate volume." },
+            { ParentClonedBG,       () => "This folder and its parent have a copy on " + _fnStrA + " separate volume." },
+            { ChildClonedSepVolume, () => "A child of this folder has one or more clones on " + _fnStrA + " separate volume." },
             { ChildAllOnOneVolume,  () => "All copies of a child of this folder reside on " + SameVolumeText },
-            { ManyClonesSepVolume,  () => "This folder has multiple copies on at least two separate volumes." },
-            { OneCloneSepVolume,    () => "This folder has a copy on a separate volume." },
+            { ManyClonesSepVolume,  () => "This folder has multiple copies on at least " + _fnStrTwo + " separate volumes." },
+            { OneCloneSepVolume,    () => "This folder has a copy on " + _fnStrA + " separate volume." },
             { AllOnOneVolume,       () => "All copies of this folder reside on " + SameVolumeText },
-            { OneVolumeDupesSepVol, () => "All files are on multiple volumes though all copies of this folder are on " + SameVolumeText },
+            { OneVolumeDupesSepVol, () => "All files are on " + _fnStrTwo + " or more volumes though all copies of this folder are on " + SameVolumeText },
             { SolitNoFilesDuped,    () => "No file in this folder is duplicated, or all are on " + SameVolumeText },
-            { SolitSomeFilesDuped,  () => "One or more file in this folder is duplicated on another volume." },
+            { SolitSomeFilesDuped,  () => "One or more file in this folder is duplicated on " + _fnStrA + " volume." },
             { SolitAllDupesOneVol,  () => "All files in this folder are duplicated, at least one on " + SameVolumeText },
-            { SolitAllDupesSepVol,  () => "All files in this folder are duplicated, on more than " + _diffVolText },
-            { SolitaryHasClones,    () => "This folder has no exact copy, yet it contains folders that do." },
+            { SolitAllDupesSepVol,  () => "All files in this folder are duplicated, on more than " + _fnStrNumVols },
+            { SolitaryHasClones,    () => "This folder has " + _fnStrNoExactCopy + ", yet it contains folders with more copies." },
             { SolitAllClonesOneVol, () => "All folders and any files here are duplicated, at least one on " + SameVolumeText },
-            { SolitAllClonesSepVol, () => "All folders and any files here are duplicated, all on more than " + _diffVolText },
-            { SolitaryClonedParent, () => "This folder has no exact copy, yet its parent does." },
-            { SolitaryOneVolParent, () => "This folder has no exact copy, yet its parent does, on only " + SameVolumeText },
+            { SolitAllClonesSepVol, () => "All folders and any files here are duplicated, all on more than " + _fnStrNumVols },
+            { SolitaryClonedParent, () => "This folder has " + _fnStrNoExactCopy + ", yet its parent does." },
+            { SolitaryOneVolParent, () => "This folder has " + _fnStrNoExactCopy + ", yet its parent does, on only " + SameVolumeText },
             { ContainsSolitaryBG,   () => "Contains folders that have no copy, or copies are on " + SameVolumeText },
-            { FolderHasNoHashes,    () => "Couldn't create hashcodes for any file in this folder." },
-            { ZeroLengthFolder,     () => "This folder has no data." },
+            { FolderHasNoHashes,    () => "Could not create hashcodes for any file in this folder." },
+            { ZeroLengthFolder,     () => "This folder has no files." },
             { TreemapFolder,        () => "" },						            // Treemap: Folder containing files
             { TreemapFreespace,     () => "" },						            // Treemap: Free space
             { TreemapUnreadspace,   () => "" },						            // Treemap: Unread space

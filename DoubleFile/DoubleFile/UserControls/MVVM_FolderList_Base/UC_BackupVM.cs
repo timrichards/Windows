@@ -72,7 +72,8 @@ namespace DoubleFile
             Icmd_DeletedVolumeView = new RelayCommand(() =>
             {
                 if (MessageBoxResult.Yes !=
-                    MBoxStatic.ShowOverlay("This will rebuild the duplicate file dictionary and tree view. Continue?", buttons: MessageBoxButton.YesNo, owner: LocalOwner))
+                    MBoxStatic.ShowOverlay("This will close any extra windows and rebuild the duplicate file dictionary and tree view. Continue?",
+                    buttons: MessageBoxButton.YesNo, owner: LocalOwner))
                 {
                     IsDeletedVolumeView = DupeFileDictionary.IsDeletedVolumeView;
                     RaisePropertyChanged("IsDeletedVolumeView");

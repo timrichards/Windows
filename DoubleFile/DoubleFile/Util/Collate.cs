@@ -33,10 +33,14 @@ namespace DoubleFile
             nProgressDenominator += DictNodes.Count;
             ++nProgressItem;
 
-            foreach (var kvp in DictNodes)
             {
-                reportProgress();
-                Step1_CreateDictSolitary_NodeDatum_DictClones(kvp);             //Step1_CreateDictSolitary_NodeDatum_DictClones
+                var nDupeThreshold = (DupeFileDictionary.IsDeletedVolumeView ? 2 : 1);
+
+                foreach (var kvp in DictNodes)
+                {
+                    reportProgress();
+                    Step1_CreateDictSolitary_NodeDatum_DictClones(kvp, nDupeThreshold);         //Step1_CreateDictSolitary_NodeDatum_DictClones
+                }
             }
 
 
@@ -46,15 +50,15 @@ namespace DoubleFile
             foreach (var rootNode in RootNodes)
             {
                 reportProgress();
-                Step2_SolitaryHasClones(rootNode);                              //Step2_SolitaryHasClones
+                Step2_SolitaryHasClones(rootNode);                                              //Step2_SolitaryHasClones
             }
 
 
             foreach (var kvp in _dictSolitary.ToList())
-                Step3_DictSolitaryRemove_ChildrenOfClones(kvp);                 //Step3_DictSolitaryRemove_ChildrenOfClones
+                Step3_DictSolitaryRemove_ChildrenOfClones(kvp);                                 //Step3_DictSolitaryRemove_ChildrenOfClones
 
 
-            #region _lsLVclones                                                 //#region _lsLVclones
+            #region _lsLVclones                                                                 //#region _lsLVclones
             nProgressDenominator += _dictClones.Count;
             ++nProgressItem;
 
@@ -76,7 +80,7 @@ namespace DoubleFile
             #endregion _lsLVclones
 
 
-            #region _lsLVsolitary                                               //#region _lsLVsolitary
+            #region _lsLVsolitary                                                               //#region _lsLVsolitary
             nProgressDenominator += _dictSolitary.Count;
             ++nProgressItem;
 
@@ -97,10 +101,10 @@ namespace DoubleFile
 
 
             foreach (var kvp in _dictSolitary)
-                Step4_SolitOrAllOneVolAllDupes(kvp.Value);                      //Step4_SolitOrAllOneVolAllDupes
+                Step4_SolitOrAllOneVolAllDupes(kvp.Value);                                      //Step4_SolitOrAllOneVolAllDupes
 
 
-            #region AllNodes _lsLVsameVol                                       //#region AllNodes _lsLVsameVol
+            #region AllNodes _lsLVsameVol                                                       //#region AllNodes _lsLVsameVol
             {
                 var lsSameVol = new List<LocalTreeNode> { };
                 var nCount = CountNodes(RootNodes);
@@ -111,7 +115,7 @@ namespace DoubleFile
                 lsSameVol.Sort((y, x) => x.NodeDatum.LengthTotal.CompareTo(y.NodeDatum.LengthTotal));
 
                 foreach (var treeNode in lsSameVol)
-                    Step4_SolitOrAllOneVolAllDupes(treeNode.Clones);            //Step4_SolitOrAllOneVolAllDupes
+                    Step4_SolitOrAllOneVolAllDupes(treeNode.Clones);                            //Step4_SolitOrAllOneVolAllDupes
 
                 nProgressDenominator += lsSameVol.Count;
                 ++nProgressItem;
@@ -131,7 +135,7 @@ namespace DoubleFile
             #endregion _lsLVsameVol
 
 
-            #region Transparent ZeroLengthFolder FolderHasNoHashes              //#region Transparent ZeroLengthFolder FolderHasNoHashes
+            #region Transparent ZeroLengthFolder FolderHasNoHashes                              //#region Transparent ZeroLengthFolder FolderHasNoHashes
             foreach (var treeNode in AllNodes)
             {
                 if (Transparent != treeNode.ColorcodeFG)
@@ -149,11 +153,11 @@ namespace DoubleFile
             #endregion Transparent ZeroLengthFolder FolderHasNoHashes
 
 
-            Step5_SolitAllDupes();                                              //Step5_SolitAllDupes
-            Step6_SolitAllDupesSepVol();                                        //Step6_SolitAllDupesSepVol
+            Step5_SolitAllDupes();                                                              //Step5_SolitAllDupes
+            Step6_SolitAllDupesSepVol();                                                        //Step6_SolitAllDupesSepVol
 
 
-            #region SolitSomeFilesDuped SolitNoFilesDuped                       //#region SolitSomeFilesDuped SolitNoFilesDuped
+            #region SolitSomeFilesDuped SolitNoFilesDuped                                       //#region SolitSomeFilesDuped SolitNoFilesDuped
             foreach (var kvp in _dictSolitary)
             {
                 var testNode = kvp.Value.Last();
@@ -174,7 +178,7 @@ namespace DoubleFile
 
 #if (DEBUG)
             foreach (var treeNode in AllNodes)
-                Step7_FauxUnitTest(treeNode);                                   //Step7_FauxUnitTest
+                Step7_FauxUnitTest(treeNode);                                                   //Step7_FauxUnitTest
 #endif
 
 
@@ -192,7 +196,7 @@ namespace DoubleFile
                 LVsameVol.Add(_lsLVsameVol);
         }
 
-        void Step1_CreateDictSolitary_NodeDatum_DictClones(KeyValuePair<int, List<LocalTreeNode>> kvp)
+        void Step1_CreateDictSolitary_NodeDatum_DictClones(KeyValuePair<int, List<LocalTreeNode>> kvp, int nDupeThreshold)
         {
             var lsNodes = kvp.Value;
 
@@ -231,7 +235,7 @@ namespace DoubleFile
                         if (firstRootNodeDatum.LVitemProjectVM.Volume == rootNodeDatum.LVitemProjectVM.Volume)
                             continue;
 
-                        lsKeep[0].ColorcodeFG = (2 < lsKeep.Count) ? ManyClonesSepVolume : OneCloneSepVolume;
+                        lsKeep[0].ColorcodeFG = (nDupeThreshold <= lsKeep.Count) ? ManyClonesSepVolume : OneCloneSepVolume;
                         break;
                     }
 
@@ -523,10 +527,9 @@ namespace DoubleFile
             if (0 == nCount)
                 return;
 
-            var bUnique = (1 == listLVitems.Count);
             var nInterval = (nCount < 100) ? 10 : (nCount < 1000) ? 25 : 50;
 
-            InsertSizeMarkerStatic.Go(listLVitems, nCount - 1, bUnique, bAdd: true);
+            InsertSizeMarkerStatic.Go(listLVitems, nCount - 1, bAdd: true);
 
             var nInitial = nCount % nInterval;
 
@@ -538,10 +541,10 @@ namespace DoubleFile
             if (nCount - nInitial > nHalf)
             {
                 for (var i = nCount - nInitial; i > nHalf; i -= nInterval)
-                    InsertSizeMarkerStatic.Go(listLVitems, i, bUnique);
+                    InsertSizeMarkerStatic.Go(listLVitems, i);
             }
 
-            InsertSizeMarkerStatic.Go(listLVitems, 0, bUnique);            // Enter the Zeroth
+            InsertSizeMarkerStatic.Go(listLVitems, 0);            // Enter the Zeroth
         }
 
         bool?

@@ -179,7 +179,7 @@ namespace DoubleFile
 
                     mainMenu.SelectedLink = _projectPage;
                     Statics.WithLVprojectVM(p => { p.SetModified(); return false; });
-                    Util.Block(50);
+                    Util.Block(500);    // allow extra windows time to close
                     mainMenu.SelectedLink = selectedLink;
                 });
             });

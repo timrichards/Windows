@@ -93,11 +93,15 @@ namespace DoubleFile
         internal LocalTV
             LocalDispose()
         {
+            if (null == _instance)
+                return this;
+
+            _wr.SetTarget(_instance = null);
+
             if (0 < (_lvProjectVM?.CanLoadCount ?? 0))
                 TabledString<TabledStringType_Folders>.DropRef();
 
             Util.LocalDispose(_lsDisposable);
-            _wr.SetTarget(_instance = null);
             return this;
         }
 

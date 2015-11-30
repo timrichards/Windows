@@ -7,10 +7,10 @@ namespace DoubleFile
     static class UtilColorcode
     {
         static internal string 
-            SameVolumeText => DupeFileDictionary.IsDeletedVolumeView ? "two or fewer volumes." : "one volume.";
-        static string _fnStrNumVols => DupeFileDictionary.IsDeletedVolumeView ? "two volumes." : "one volume.";
+            SameVolumeText => DupeFileDictionary.IsDeletedVolumeView ? "one or two volumes." : "one volume.";
+        static string _fnStrOnMoreThan => " on more than " + (DupeFileDictionary.IsDeletedVolumeView ? "two volumes." : "one volume.");
         static string _fnStrTwo => DupeFileDictionary.IsDeletedVolumeView ? "three" : "two";
-        static string _fnStrNoExactCopy => DupeFileDictionary.IsDeletedVolumeView ? "fewer than two copies" : "no exact copy";
+        static string _fnStrThisFolderHas => "This folder has " + (DupeFileDictionary.IsDeletedVolumeView ? "zero or one" : "no exact") + " copy";
         static string _fnStrA => DupeFileDictionary.IsDeletedVolumeView ? "more than one" : "a";
         static internal readonly IReadOnlyDictionary<int, Func<string>>
             Descriptions = new Dictionary<int, Func<string>>
@@ -27,12 +27,12 @@ namespace DoubleFile
             { SolitNoFilesDuped,    () => "No file in this folder is duplicated, or all are on " + SameVolumeText },
             { SolitSomeFilesDuped,  () => "One or more file in this folder is duplicated on " + _fnStrA + " volume." },
             { SolitAllDupesOneVol,  () => "All files in this folder are duplicated, at least one on " + SameVolumeText },
-            { SolitAllDupesSepVol,  () => "All files in this folder are duplicated, on more than " + _fnStrNumVols },
-            { SolitaryHasClones,    () => "This folder has " + _fnStrNoExactCopy + ", yet it contains folders with more copies." },
+            { SolitAllDupesSepVol,  () => "All files in this folder are duplicated," + _fnStrOnMoreThan },
+            { SolitaryHasClones,    () => _fnStrThisFolderHas + ", yet it contains folders with more copies." },
             { SolitAllClonesOneVol, () => "All folders and any files here are duplicated, at least one on " + SameVolumeText },
-            { SolitAllClonesSepVol, () => "All folders and any files here are duplicated, all on more than " + _fnStrNumVols },
-            { SolitaryClonedParent, () => "This folder has " + _fnStrNoExactCopy + ", yet its parent does." },
-            { SolitaryOneVolParent, () => "This folder has " + _fnStrNoExactCopy + ", yet its parent does, on only " + SameVolumeText },
+            { SolitAllClonesSepVol, () => "All folders and any files here are duplicated, all" + _fnStrOnMoreThan },
+            { SolitaryClonedParent, () => _fnStrThisFolderHas + ", yet its parent does." },
+            { SolitaryOneVolParent, () => _fnStrThisFolderHas + ", yet its parent does, on only " + SameVolumeText },
             { ContainsSolitaryBG,   () => "Contains folders that have no copy, or copies are on " + SameVolumeText },
             { FolderHasNoHashes,    () => "Could not create hashcodes for any file in this folder." },
             { ZeroLengthFolder,     () => "This folder has no files." },

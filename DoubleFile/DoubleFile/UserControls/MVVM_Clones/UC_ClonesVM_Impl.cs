@@ -4,8 +4,22 @@ using System.Linq;
 
 namespace DoubleFile
 {
-    partial class UC_ClonesVM : IDisposable
+    partial class UC_ClonesVM
     {
+        internal class VMPackage : IDisposable
+        {
+            internal ListUpdater<bool>
+                NicknameUpdater;
+            internal readonly IList<IDisposable>
+                Disposables = new List<IDisposable> { };
+
+            public void Dispose()
+            {
+                NicknameUpdater?.Clear();
+                Util.LocalDispose(Disposables);
+            }
+        }
+
         // The create/dispose model is different for this class than anywhere else.
         // The class is created 3x in LocalTV using this empty constructor, and held there statically.
         // WinClones.xaml.cs will call upon FactoryGetHolder on each LocalNavigatedTo(), and then
@@ -16,7 +30,7 @@ namespace DoubleFile
         }
 
         static internal UC_ClonesVM
-            FactoryGetHolder(string strFragment)
+            FactoryGetHolder(string strFragment, VMPackage vmPackage)
         {
             UC_ClonesVM localLVVM = null;
 
@@ -52,12 +66,12 @@ namespace DoubleFile
 
             return
                 localLVVM
-                .Init();
+                .Init(vmPackage);
         }
 
-        UC_ClonesVM Init()
+        UC_ClonesVM Init(VMPackage vmPackage)
         {
-            _lsDisposable.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99700, TreeSelect_FolderDetailUpdated));
+            vmPackage.Disposables.Add(TreeSelect.FolderDetailUpdated.Observable.LocalSubscribe(99700, TreeSelect_FolderDetailUpdated));
 
             var folderDetail = LocalTV.TreeSelect_FolderDetail;
 
@@ -66,13 +80,13 @@ namespace DoubleFile
 
             Icmd_GoTo = new RelayCommand(GoTo, () => null != _selectedItem);
 
-            _nicknameUpdater = ItemsCast.Skip(1 /* marker */).Select(lvItem => lvItem.NicknameUpdater).FirstOrDefault();
+            vmPackage.NicknameUpdater = ItemsCast.Skip(1 /* marker */).Select(lvItem => lvItem.NicknameUpdater).FirstOrDefault();
 
-            if (null != _nicknameUpdater)
+            if (null != vmPackage.NicknameUpdater)
             {
-                Icmd_Nicknames = new RelayCommand(() => _nicknameUpdater.UpdateViewport(UseNicknames));
-                _nicknameUpdater.Clear();
-                _nicknameUpdater.UpdateViewport(UseNicknames);
+                Icmd_Nicknames = new RelayCommand(() => vmPackage.NicknameUpdater.UpdateViewport(UseNicknames));
+                vmPackage.NicknameUpdater.Clear();
+                vmPackage.NicknameUpdater.UpdateViewport(UseNicknames);
             }
             else
             {
@@ -83,12 +97,6 @@ namespace DoubleFile
             return this;
         }
 
-        public void Dispose()
-        {
-            _nicknameUpdater?.Clear();
-            Util.LocalDispose(_lsDisposable);
-        }
-
         void TreeSelect_FolderDetailUpdated(Tuple<TreeSelect.FolderDetailUpdated, decimal> initiatorTuple)
         {
             var folderDetail = initiatorTuple.Item1;
@@ -96,9 +104,9 @@ namespace DoubleFile
             ItemsCast
                 .Where(lvItem =>
             {
-                foreach (var treeNode in lvItem.TreeNodes)
+                foreach (var wr in lvItem.TreeNodes)
                 {
-                    if (ReferenceEquals(treeNode, folderDetail.treeNode))
+                    if (ReferenceEquals(wr.Get(w => w), folderDetail.treeNode))
                         return true;
                 }
 
@@ -118,10 +126,5 @@ namespace DoubleFile
             _selectedItem.WithLocalTreeNode(t => t
                 .GoToFile(null));
         }
-
-        ListUpdater<bool>
-            _nicknameUpdater = null;
-        readonly IList<IDisposable>
-            _lsDisposable = new List<IDisposable> { };
     }
 }

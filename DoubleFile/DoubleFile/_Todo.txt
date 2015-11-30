@@ -1,5 +1,4 @@
-﻿- Treemap leaks memory
-- I want to delete this volume. Please back up all files that have only one other copy or fewer.
+﻿- I want to delete this volume. Please back up all files that have only one other copy or fewer.
 	- pretend this drive died and color code all folders one less.
 	- this drive died: what files did I lose?
 	- Colorcode folders that have files with one other copy
@@ -18,7 +17,6 @@
 	- enter key doesn't do anything until you click on msg box itself. Good.
 - Tree list slider does not always go to root; and skips to root: try a search to subfolder then nav up. It also loses the deep node.
 	slider is skipping desired location
-- Clones don't sync to folder detail updated in extra window.
 - Clones sorting: remove size labels and enable 3-mode sorting
 	- 4-mode: sort by color code
 - Scrollviewer for detail view

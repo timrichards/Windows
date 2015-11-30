@@ -11,9 +11,9 @@ namespace DoubleFile
         static internal readonly IReadOnlyDictionary<string, string>
             FolderListFragments = new Dictionary<string, string>
         {
-            {FolderListSolitary,    "Solitary"      },
-            {FolderListSameVol,     "Same volume"   },
-            {FolderListClones,      "Clones"        }
+            { FolderListSolitary,   "Solitary"      },
+            { FolderListSameVol,    "Same volume"   },
+            { FolderListClones,     "Clones"        }
         };
 
         internal const string FolderListSolitary = "solitary";
@@ -28,7 +28,7 @@ namespace DoubleFile
         protected override void LocalFragmentNavigation(string strFragment)
         {
             DataContext =
-                _vm = UC_ClonesVM.FactoryGetHolder(strFragment);
+                _vm = UC_ClonesVM.FactoryGetHolder(strFragment, _vmPackage = new UC_ClonesVM.VMPackage());
 
             LocalTitle =
                 new CultureInfo("en-US", false).TextInfo            // future proof to title case
@@ -37,13 +37,16 @@ namespace DoubleFile
 
         protected override void LocalNavigatedFrom()
         {
-            _vm?.Dispose();
+            _vmPackage.Dispose();
+            _vmPackage = null;
 
             DataContext =
                 _vm =
                 null;
         }
 
+        UC_ClonesVM.VMPackage
+            _vmPackage = null;
         UC_ClonesVM
             _vm = null;
     }

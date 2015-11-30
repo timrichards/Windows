@@ -11,21 +11,21 @@ namespace DoubleFile
         static string _fnStrOnMoreThan => " on more than " + (DupeFileDictionary.IsDeletedVolumeView ? "two volumes." : "one volume.");
         static string _fnStrTwo => DupeFileDictionary.IsDeletedVolumeView ? "three" : "two";
         static string _fnStrThisFolderHas => "This folder has " + (DupeFileDictionary.IsDeletedVolumeView ? "zero or one" : "no exact") + " copy";
-        static string _fnStrA => DupeFileDictionary.IsDeletedVolumeView ? "more than one" : "a";
+        static string _fnStrSepVol => (DupeFileDictionary.IsDeletedVolumeView ? "more than one" : "a") + " separate volume.";
         static internal readonly IReadOnlyDictionary<int, Func<string>>
             Descriptions = new Dictionary<int, Func<string>>
         {
             { Transparent,          () => "" },
             { ParentCloned,         () => "" },        // decription would look redundant in detailed info view
-            { ParentClonedBG,       () => "This folder and its parent have a copy on " + _fnStrA + " separate volume." },
-            { ChildClonedSepVolume, () => "A child of this folder has one or more clones on " + _fnStrA + " separate volume." },
+            { ParentClonedBG,       () => "This folder and its parent have a copy on " + _fnStrSepVol },
+            { ChildClonedSepVolume, () => "A child of this folder has one or more clones on " + _fnStrSepVol },
             { ChildAllOnOneVolume,  () => "All copies of a child of this folder reside on " + SameVolumeText },
             { ManyClonesSepVolume,  () => "This folder has multiple copies on at least " + _fnStrTwo + " separate volumes." },
-            { OneCloneSepVolume,    () => "This folder has a copy on " + _fnStrA + " separate volume." },
+            { OneCloneSepVolume,    () => "This folder has a copy on " + _fnStrSepVol },
             { AllOnOneVolume,       () => "All copies of this folder reside on " + SameVolumeText },
             { OneVolumeDupesSepVol, () => "All files are on " + _fnStrTwo + " or more volumes though all copies of this folder are on " + SameVolumeText },
             { SolitNoFilesDuped,    () => "No file in this folder is duplicated, or all are on " + SameVolumeText },
-            { SolitSomeFilesDuped,  () => "One or more file in this folder is duplicated on " + _fnStrA + " volume." },
+            { SolitSomeFilesDuped,  () => "One or more file in this folder is duplicated on " + _fnStrSepVol },
             { SolitAllDupesOneVol,  () => "All files in this folder are duplicated, at least one on " + SameVolumeText },
             { SolitAllDupesSepVol,  () => "All files in this folder are duplicated," + _fnStrOnMoreThan },
             { SolitaryHasClones,    () => _fnStrThisFolderHas + ", yet it contains folders with more copies." },

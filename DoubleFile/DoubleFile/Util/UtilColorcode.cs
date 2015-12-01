@@ -21,7 +21,7 @@ namespace DoubleFile
             { ChildClonedSepVolume, () => "A child of this folder has one or more clones on " + _fnStrSepVol },
             { ChildAllOnOneVolume,  () => "All copies of a child of this folder reside on " + SameVolumeText },
             { ManyClonesSepVolume,  () => "This folder has multiple copies on at least " + _fnStrTwo + " separate volumes." },
-            { OneCloneSepVolume,    () => "This folder has a copy on " + _fnStrSepVol },
+            { OneCloneSepVolume,    () => "This folder has a copy on a separate volume." },
             { AllOnOneVolume,       () => "All copies of this folder reside on " + SameVolumeText },
             { OneVolumeDupesSepVol, () => "All files are on " + _fnStrTwo + " or more volumes though all copies of this folder are on " + SameVolumeText },
             { SolitNoFilesDuped,    () => "No file in this folder is duplicated, or all are on " + SameVolumeText },

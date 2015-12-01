@@ -34,7 +34,7 @@ namespace DoubleFile
             ++nProgressItem;
 
             {
-                var nDupeThreshold = (DupeFileDictionary.IsDeletedVolumeView ? 2 : 1);
+                var nDupeThreshold = (DupeFileDictionary.IsDeletedVolumeView ? 3 : 2);
 
                 foreach (var kvp in DictNodes)
                 {

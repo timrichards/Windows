@@ -125,7 +125,7 @@ namespace DoubleFile
                     reportProgress();
 
                     if (null == treeNode.Clones)
-                        Util.Assert(99972, false);
+                        Util.Assert(99974, false);
 
                     _lsLVsameVol.Add(treeNode.LVitem = new LVitem_ClonesVM(treeNode.Clones, nicknameUpdater));
                 }

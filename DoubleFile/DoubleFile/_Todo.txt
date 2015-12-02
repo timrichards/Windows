@@ -1,7 +1,7 @@
-﻿- I want to delete this volume. Please back up all files that have only one other copy or fewer.
-	- pretend this drive died and color code all folders one less.
-	- this drive died: what files did I lose?
-	- Colorcode folders that have files with one other copy
+﻿- Deleted volume view current drive didn't work after first run
+	- hashes may have dropped to zero when left open awhile
+- If I were to remove all but three or four dupes from all non-clones, how much space would I recoup on this volume?
+- I want to delete this volume. Please back up all files that have only one other copy or fewer.
 	- warn if 4K
 	- warn faux checksum, noting the added certainty of cloned folders though
 - restore a lost drive's original folder structure given that all its files are duped in various locations
@@ -32,7 +32,6 @@
 	- duplicates view should have same fs info ("lv line knColLengthLV") as the Files view and col differences should be red
 - sort search results by result; breakout by path; etc.
 - A folder is near to being a clone: restore it using dupe files found in the would-be clones
-- If I were to remove all but three or four dupes from all non-clones, how much space would I recoup on this volume?
 
 - option to store backups in a compressed archive with its own .DFL record
 	- function to explore archives and saved a .DFL for each one
@@ -220,5 +219,39 @@ Specific code areas:
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
 
+99994
+99990
+99985
+99976
+99902
+99900
+99898
+99895
+99893
+99892
+99891
+99887
+99828
+99779
+99756
+99755
+99693
+99681
+99680
+99679
+99678
+99675
+99636
+99635
+99611
+99610
+99605
+99603
+99599
+99594
+99593
+99592
+99590
+
 99830 block is reserved: do not alert LocalOnNext. Next: 99837 on down
-99561 next low assert
+99562 next low assert

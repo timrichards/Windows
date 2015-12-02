@@ -20,7 +20,7 @@ namespace DoubleFile
                 .LocalSubscribe(99569, x => Clear());
 
             Observable.FromEventPattern<KeyEventArgs>(formEdit_DriveLetter, "PreviewKeyDown")
-                .LocalSubscribe(99580, args =>
+                .LocalSubscribe(99581, args =>
             {
                 if (Key.Tab == args.EventArgs.Key)
                     return;
@@ -46,7 +46,7 @@ namespace DoubleFile
 
                 // one way to source binding isn't disabling/enabling the Back up button in concert
                 _vm.DriveLetter = formEdit_DriveLetter.Text;
-                Util.UIthread(99579, () => CommandManager.InvalidateRequerySuggested());
+                Util.UIthread(99589, () => CommandManager.InvalidateRequerySuggested());
             });
         }
 
@@ -62,7 +62,7 @@ namespace DoubleFile
 
             _vm.UseNicknames = _bNicknames;
             _vm.LocalOwner = LocalOwner;
-            _vm.Reset = () => Util.UIthread(99870, () => formEdit_DriveLetter.Text = null);
+            _vm.Reset = () => Util.UIthread(99886, () => formEdit_DriveLetter.Text = null);
             _vm.Init();
             formEdit_DriveLetter.Text = null;
         }

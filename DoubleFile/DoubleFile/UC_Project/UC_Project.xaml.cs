@@ -16,7 +16,7 @@ namespace DoubleFile
             {
                 DataContext = w.DataContext;
                 form_lv.DataContext = w.form_lv.DataContext;                                        // A
-                Util.UIthread(99913, () => CommandManager.InvalidateRequerySuggested());
+                Util.UIthread(99965, () => CommandManager.InvalidateRequerySuggested());
             });
 
             if (null == DataContext)

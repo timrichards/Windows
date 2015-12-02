@@ -27,10 +27,8 @@ namespace DoubleFile
             return false;
         }
 
-        protected override Iterator<string> Clone()
-        {
-            return CreateIterator(_reader);
-        }
+        protected override Iterator<string>
+            Clone() => CreateIterator(_reader);
 
         internal ReadLinesIterator
             StayOpen()
@@ -73,12 +71,10 @@ namespace DoubleFile
             }
         }
 
-        static ReadLinesIterator CreateIterator(StreamReader reader)
-        {
-            return new ReadLinesIterator(reader);
-        }
-
-        static internal ReadLinesIterator CreateIterator(string strFile)
+        static ReadLinesIterator
+            CreateIterator(StreamReader reader) => new ReadLinesIterator(reader);
+        static internal ReadLinesIterator
+            CreateIterator(string strFile)
         {
             if (_stayOpen)
                 Util.Assert(0, false);

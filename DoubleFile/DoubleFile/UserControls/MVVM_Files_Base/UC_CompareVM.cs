@@ -39,7 +39,7 @@ namespace DoubleFile
         public LV_FilesVM_Compare LV_First { get; }
         public LV_FilesVM_Compare LV_Second { get; }
 
-        bool CanPick { set { _bCanPick = value; Util.UIthread(99777, () => CommandManager.InvalidateRequerySuggested()); } }
+        bool CanPick { set { _bCanPick = value; Util.UIthread(99777, CommandManager.InvalidateRequerySuggested); } }
         bool _bCanPick;
 
         internal UC_CompareVM()

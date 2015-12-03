@@ -1,6 +1,4 @@
-﻿- Deleted volume view current drive didn't work after first run
-	- hashes may have dropped to zero when left open awhile
-- If I were to remove all but three or four dupes from all non-clones, how much space would I recoup on this volume?
+﻿- If I were to remove all but three or four dupes from all non-clones, how much space would I recoup on this volume?
 - I want to delete this volume. Please back up all files that have only one other copy or fewer.
 	- warn if 4K
 	- warn faux checksum, noting the added certainty of cloned folders though

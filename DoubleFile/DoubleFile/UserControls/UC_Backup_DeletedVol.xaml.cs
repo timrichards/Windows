@@ -25,6 +25,9 @@ namespace DoubleFile
 
         protected override void LocalNavigatedTo()
         {
+            _clearTimer?.Dispose();
+            _clearTimer = null;
+
             var vm = _vm;
 
             DataContext =
@@ -46,8 +49,7 @@ namespace DoubleFile
             DataContext = null;
             _vm?.With(vm => vm.Reset = null);
 
-            // One-shot: no need to dispose
-            Observable.Timer(TimeSpan.FromMinutes(1)).Timestamp()
+            _clearTimer = Observable.Timer(TimeSpan.FromMinutes(1)).Timestamp()
                 .LocalSubscribe(99568, x => Clear());
         }
 
@@ -57,6 +59,8 @@ namespace DoubleFile
             _vm = null;
         }
 
+        static IDisposable
+            _clearTimer = null;
         static UC_BackupVM
             _vm = null;
         bool

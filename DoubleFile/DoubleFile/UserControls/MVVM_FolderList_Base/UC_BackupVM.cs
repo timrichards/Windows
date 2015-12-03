@@ -50,7 +50,7 @@ namespace DoubleFile
                 ProgressbarVisibility = value ? Visibility.Hidden : Visibility.Visible;
                 RaisePropertyChanged("ProgressbarVisibility");
                 _bCanPick = value;
-                Util.UIthread(99913, () => CommandManager.InvalidateRequerySuggested());
+                Util.UIthread(99913, CommandManager.InvalidateRequerySuggested);
             }
         }
         bool _bCanPick;

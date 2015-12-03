@@ -12,12 +12,13 @@ namespace DoubleFile
         static string _fnStrTwo => DupeFileDictionary.IsDeletedVolumeView ? "three" : "two";
         static string _fnStrThisFolderHas => "This folder has " + (DupeFileDictionary.IsDeletedVolumeView ? "zero or one" : "no exact") + " copy";
         static string _fnStrSepVol => (DupeFileDictionary.IsDeletedVolumeView ? "more than one" : "a") + " separate volume.";
+        static string _fnStrParent => (DupeFileDictionary.IsDeletedVolumeView ? "at least three" : "one or two");
         static internal readonly IReadOnlyDictionary<int, Func<string>>
             Descriptions = new Dictionary<int, Func<string>>
         {
             { Transparent,          () => "" },
             { ParentCloned,         () => "" },        // decription would look redundant in detailed info view
-            { ParentClonedBG,       () => "This folder and its parent have a copy on a separate volume." },
+            { ParentClonedBG,       () => "This folder and its parent have a copy on " + _fnStrParent + " separate volumes." },
             { ChildClonedSepVolume, () => "A child of this folder has one or more clones on a separate volume." },
             { ChildAllOnOneVolume,  () => "All copies of a child of this folder reside on " + SameVolumeText },
             { ManyClonesSepVolume,  () => "This folder has multiple copies on at least " + _fnStrTwo + " separate volumes." },

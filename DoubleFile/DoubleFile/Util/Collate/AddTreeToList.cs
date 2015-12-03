@@ -66,7 +66,7 @@ namespace DoubleFile
                     if (null != treeNode.Nodes)
                     {
                         Go(treeNode.Nodes, bCloneOK ||
-                            new[] { OneCloneSepVolume, OneOrTwoCloneSepVol, ManyClonesSepVolume }.Contains(treeNode.ColorcodeFG));
+                            new[] { OneCloneSepVolume, ManyClonesSepVolume }.Contains(treeNode.ColorcodeFG));
                     }
                 }
             }

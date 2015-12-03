@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reactive.Linq;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 
@@ -20,34 +21,8 @@ namespace DoubleFile
                 .LocalSubscribe(99569, x => Clear());
 
             Observable.FromEventPattern<KeyEventArgs>(formEdit_DriveLetter, "PreviewKeyDown")
-                .LocalSubscribe(99581, args =>
-            {
-                if (Key.Tab == args.EventArgs.Key)
-                    return;
-
-                args.EventArgs.Handled = true;
-                formEdit_DriveLetter.Text = null;
-
-                var strChar = (new KeyConverter().ConvertToString(args.EventArgs.Key) + "\0")[0] + @":\";
-
-                Util.Closure(() =>
-                {
-                    if (false == Directory.Exists(strChar))
-                        return;     // from lambda
-
-                    if (false == _vm.CheckDriveLetter(strChar[0]))
-                        return;     // from lambda
-
-                    UC_VolumeEdit.DriveLetterPreviewKeyDown(args.EventArgs);
-                });
-
-                if (string.IsNullOrEmpty(formEdit_DriveLetter.Text))
-                    BeginStoryboard((Storyboard)form_RectDriveLetterError.FindResource("DriveLetterError"));
-
-                // one way to source binding isn't disabling/enabling the Back up button in concert
-                _vm.DriveLetter = formEdit_DriveLetter.Text;
-                Util.UIthread(99589, () => CommandManager.InvalidateRequerySuggested());
-            });
+                .LocalSubscribe(99581, args => DriveLetterKeyDown(args.EventArgs, formEdit_DriveLetter,
+                () =>  BeginStoryboard((Storyboard)form_RectDriveLetterError.FindResource("DriveLetterError"))));
         }
 
         protected override void LocalNavigatedTo()
@@ -82,6 +57,36 @@ namespace DoubleFile
         {
             _vm?.Dispose();
             _vm = null;
+        }
+
+        static internal void
+            DriveLetterKeyDown(KeyEventArgs args, TextBox textBox, Action reportError)
+        {
+            if (Key.Tab == args.Key)
+                return;
+
+            args.Handled = true;
+            textBox.Text = null;
+
+            var strChar = (new KeyConverter().ConvertToString(args.Key) + "\0")[0] + @":\";
+
+            Util.Closure(() =>
+            {
+                if (false == Directory.Exists(strChar))
+                    return;     // from lambda
+
+                if (false == _vm.CheckDriveLetter(strChar[0]))
+                    return;     // from lambda
+
+                UC_VolumeEdit.DriveLetterPreviewKeyDown(args);
+            });
+
+            if (string.IsNullOrEmpty(textBox.Text))
+                reportError();
+
+            // one way to source binding isn't disabling/enabling the Back up button in concert
+            _vm.DriveLetter = textBox.Text;
+            Util.UIthread(99579, CommandManager.InvalidateRequerySuggested);
         }
 
         static UC_BackupVM

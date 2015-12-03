@@ -192,7 +192,7 @@ Coding purpose:
 - Built a reusable platform to rapidly create apps: focus on the business logic
 - Change-managed Windows.Forms.ListView app into WPF app with MVVM DataGrids
 - Implemented modal (does not use WinForms ShowDialog)
-- Implemented 340 release mode asserts (does not depend on Debug.Assert)
+- Implemented 400 release mode asserts (does not depend on Debug.Assert)
 - Optimized memory; DRY; standards; maintainability; speed O(1) where possible
 
 Skills used:

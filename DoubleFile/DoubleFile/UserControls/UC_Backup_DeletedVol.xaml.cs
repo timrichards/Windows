@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Reactive.Linq;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
@@ -20,34 +19,8 @@ namespace DoubleFile
                 .LocalSubscribe(99567, x => Clear());
 
             Observable.FromEventPattern<KeyEventArgs>(formEdit_DriveLetter, "PreviewKeyDown")
-                .LocalSubscribe(99580, args =>
-            {
-                if (Key.Tab == args.EventArgs.Key)
-                    return;
-
-                args.EventArgs.Handled = true;
-                formEdit_DriveLetter.Text = null;
-
-                var strChar = (new KeyConverter().ConvertToString(args.EventArgs.Key) + "\0")[0] + @":\";
-
-                Util.Closure(() =>
-                {
-                    if (false == Directory.Exists(strChar))
-                        return;     // from lambda
-
-                    if (false == _vm.CheckDriveLetter(strChar[0]))
-                        return;     // from lambda
-
-                    UC_VolumeEdit.DriveLetterPreviewKeyDown(args.EventArgs);
-                });
-
-                if (string.IsNullOrEmpty(formEdit_DriveLetter.Text))
-                    BeginStoryboard((Storyboard)form_RectDriveLetterError.FindResource("DriveLetterError"));
-
-                // one way to source binding isn't disabling/enabling the Back up button in concert
-                _vm.DriveLetter = formEdit_DriveLetter.Text;
-                Util.UIthread(99579, () => CommandManager.InvalidateRequerySuggested());
-            });
+                .LocalSubscribe(99580, args => UC_Backup.DriveLetterKeyDown(args.EventArgs, formEdit_DriveLetter,
+                () =>  BeginStoryboard((Storyboard)form_RectDriveLetterError.FindResource("DriveLetterError"))));
         }
 
         protected override void LocalNavigatedTo()

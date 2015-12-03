@@ -19,7 +19,7 @@ namespace DoubleFile
             { Transparent,          () => "" },
             { ParentCloned,         () => "" },        // decription would look redundant in detailed info view
             { ParentClonedBG,       () => "This folder and its parent have a copy on " + _fnStrParent + " other volumes." },
-            { ChildClonedSepVolume, () => "A child of this folder has one or more clones on a separate volume." },
+            { ChildClonedSepVolume, () => "A child of this folder has one or more clones on " + _fnStrSepVol },
             { ChildAllOnOneVolume,  () => "All copies of a child of this folder reside on " + SameVolumeText },
             { ManyClonesSepVolume,  () => "This folder has multiple copies on at least " + _fnStrTwo + " separate volumes." },
             { OneCloneSepVolume,    () => "This folder has a copy on a separate volume." },

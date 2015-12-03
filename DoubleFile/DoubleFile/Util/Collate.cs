@@ -235,6 +235,7 @@ namespace DoubleFile
                             DupeFileDictionary.IsDeletedVolumeView
                             ? ((3 <= lsKeep.Count) ? ManyClonesSepVolume : OneOrTwoCloneSepVol)
                             : ((2 <= lsKeep.Count) ? ManyClonesSepVolume : OneCloneSepVolume);
+
                         break;
                     }
 
@@ -242,7 +243,7 @@ namespace DoubleFile
                         treeNode.ColorcodeFG = lsKeep[0].ColorcodeFG;
 
                     var nColorParent =
-                        (AllOnOneVolume == lsKeep[0].ColorcodeFG)
+                        (new[] { AllOnOneVolume, OneOrTwoCloneSepVol }.Contains(lsKeep[0].ColorcodeFG))
                         ? ChildAllOnOneVolume
                         : ChildClonedSepVolume;
 

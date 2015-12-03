@@ -33,14 +33,10 @@ namespace DoubleFile
             nProgressDenominator += DictNodes.Count;
             ++nProgressItem;
 
+            foreach (var kvp in DictNodes)
             {
-                var nDupeThreshold = (DupeFileDictionary.IsDeletedVolumeView ? 3 : 2);
-
-                foreach (var kvp in DictNodes)
-                {
-                    reportProgress();
-                    Step1_CreateDictSolitary_NodeDatum_DictClones(kvp, nDupeThreshold);         //Step1_CreateDictSolitary_NodeDatum_DictClones
-                }
+                reportProgress();
+                Step1_CreateDictSolitary_NodeDatum_DictClones(kvp);         //Step1_CreateDictSolitary_NodeDatum_DictClones
             }
 
 
@@ -196,7 +192,7 @@ namespace DoubleFile
                 LVsameVol.Add(_lsLVsameVol);
         }
 
-        void Step1_CreateDictSolitary_NodeDatum_DictClones(KeyValuePair<int, List<LocalTreeNode>> kvp, int nDupeThreshold)
+        void Step1_CreateDictSolitary_NodeDatum_DictClones(KeyValuePair<int, List<LocalTreeNode>> kvp)
         {
             var lsNodes = kvp.Value;
 
@@ -235,7 +231,10 @@ namespace DoubleFile
                         if (firstRootNodeDatum.LVitemProjectVM.Volume == rootNodeDatum.LVitemProjectVM.Volume)
                             continue;
 
-                        lsKeep[0].ColorcodeFG = (nDupeThreshold <= lsKeep.Count) ? ManyClonesSepVolume : OneCloneSepVolume;
+                        lsKeep[0].ColorcodeFG = 
+                            DupeFileDictionary.IsDeletedVolumeView
+                            ? ((3 <= lsKeep.Count) ? ManyClonesSepVolume : OneOrTwoCloneSepVol)
+                            : ((2 <= lsKeep.Count) ? ManyClonesSepVolume : OneCloneSepVolume);
                         break;
                     }
 
@@ -416,7 +415,7 @@ namespace DoubleFile
                     if (testNode.Nodes.All(treeNodeA => new[]
                     {
                         ZeroLengthFolder, AllOnOneVolume, SolitAllDupesOneVol, SolitAllClonesOneVol,
-                        OneCloneSepVolume, ManyClonesSepVolume, SolitAllDupesSepVol, SolitAllClonesSepVol
+                        OneCloneSepVolume, OneOrTwoCloneSepVol, ManyClonesSepVolume, SolitAllDupesSepVol, SolitAllClonesSepVol
                     }
                         .Contains(treeNodeA.ColorcodeFG)))
                     {
@@ -460,8 +459,8 @@ namespace DoubleFile
 
                     if (testNode.Nodes.All(treeNodeA => new[]
                     {
-                        ZeroLengthFolder, OneCloneSepVolume, ManyClonesSepVolume, SolitAllDupesSepVol, SolitAllClonesSepVol,
-                        OneVolumeDupesSepVol
+                        ZeroLengthFolder, OneCloneSepVolume, OneOrTwoCloneSepVol, ManyClonesSepVolume,
+                        SolitAllDupesSepVol, SolitAllClonesSepVol, OneVolumeDupesSepVol
                     }
                         .Contains(treeNodeA.ColorcodeFG)))
                     {

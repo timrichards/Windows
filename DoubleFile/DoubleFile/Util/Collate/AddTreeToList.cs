@@ -46,7 +46,7 @@ namespace DoubleFile
                                 var bExpected =
                                     new[] { Transparent,
                                     ChildAllOnOneVolume, ChildClonedSepVolume,
-                                    OneCloneSepVolume,
+                                    OneCloneSepVolume, OneOrTwoCloneSepVol,
                                     AllOnOneVolume }      // A Useful Find
                                     .Contains(treeNode.ColorcodeFG);
 
@@ -64,7 +64,10 @@ namespace DoubleFile
                     }
 
                     if (null != treeNode.Nodes)
-                        Go(treeNode.Nodes, bCloneOK || new[] { OneCloneSepVolume, ManyClonesSepVolume }.Contains(treeNode.ColorcodeFG));
+                    {
+                        Go(treeNode.Nodes, bCloneOK ||
+                            new[] { OneCloneSepVolume, OneOrTwoCloneSepVol, ManyClonesSepVolume }.Contains(treeNode.ColorcodeFG));
+                    }
                 }
             }
 

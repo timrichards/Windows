@@ -12,7 +12,7 @@ namespace DoubleFile
         static string _fnStrTwo => DupeFileDictionary.IsDeletedVolumeView ? "three" : "two";
         static string _fnStrThisFolderHas => "This folder has " + (DupeFileDictionary.IsDeletedVolumeView ? "zero or one" : "no exact") + " copy";
         static string _fnStrSepVol => (DupeFileDictionary.IsDeletedVolumeView ? "more than one" : "a") + " separate volume.";
-        static string _fnStrParent => (DupeFileDictionary.IsDeletedVolumeView ? "at least three" : "one or two");
+        static string _fnStrParent => (DupeFileDictionary.IsDeletedVolumeView ? "at least three" : "one or more");
         static internal readonly IReadOnlyDictionary<int, Func<string>>
             Descriptions = new Dictionary<int, Func<string>>
         {

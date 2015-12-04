@@ -119,7 +119,7 @@ namespace DoubleFile
 
                     dlg.LVitemVolumeTemp = new LVitem_ProjectVM(lvItemTemp);
 
-                    if (false == (dlg.ShowDialog() ?? false))
+                    if (true != (dlg.ShowDialog() ?? false))
                         break;  // user canceled
 
                     lvItemTemp = new LVitem_ProjectVM(dlg.LVitemVolumeTemp);

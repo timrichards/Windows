@@ -59,7 +59,7 @@ namespace DoubleFile
 
         internal void Populate(LocalTreeNode treeNodeParent)
         {
-            if (false == (DeepNode?.IsChildOf(treeNodeParent) ?? false))
+            if (true != (DeepNode?.IsChildOf(treeNodeParent) ?? false))
                 DeepNode = treeNodeParent;
 
             ClearItems();

@@ -290,7 +290,7 @@ namespace DoubleFile
 
                     var isAllDupSepVol = parent.NodeDatum.Hashes_FilesHere.AsParallel().Aggregate<int, bool?>(true, IsDupeSepVolume);
 
-                    if (false == (isAllDupSepVol ?? false))
+                    if (true != (isAllDupSepVol ?? false))
                         return;
 
                     var bSet = SolitaryHasClones;
@@ -375,7 +375,7 @@ namespace DoubleFile
             {
                 var color =
                     isAllDupSepVol.Value &&
-                    (false ==
+                    (true !=
                     (testNode.Nodes?.Any(subNode => (subNode.IsSolitary && (subNode.NodeDatum.Hash_AllFiles != nodeDatum.Hash_AllFiles))) ?? false))
                     ? SolitAllDupesSepVol
                     : SolitAllDupesOneVol;

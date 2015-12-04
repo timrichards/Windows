@@ -437,7 +437,7 @@ namespace DoubleFile
                 return;
             }
 
-            if (false == (DeepNode?.IsChildOf(treeNode) ?? false))
+            if (true != (DeepNode?.IsChildOf(treeNode) ?? false))
                 DeepNode = treeNode;
 
             ClearSelection();

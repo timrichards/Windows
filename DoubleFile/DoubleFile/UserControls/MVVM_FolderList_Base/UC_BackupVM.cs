@@ -343,7 +343,7 @@ namespace DoubleFile
 
                 _dictDupeFileHit[nFileID] = true;
 
-                return false == (
+                return true != (
                     (IsDeletedVolVM
                     ? Statics.DupeFileDictionary.IsDupeExtra(nFileID, _nMyLVitemID)
                     : Statics.DupeFileDictionary.IsDupeSepVolume(nFileID))

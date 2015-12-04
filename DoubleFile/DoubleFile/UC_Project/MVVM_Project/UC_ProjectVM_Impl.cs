@@ -184,7 +184,7 @@ namespace DoubleFile
             {
                 var newVolume = new WinVolumeNew { LVitemVolumeTemp = new LVitem_ProjectVM(lvItemVolumeTemp) };
 
-                if (false == (newVolume.ShowDialog() ?? false))
+                if (true != (newVolume.ShowDialog() ?? false))
                     break;      // user canceled
 
                 lvItemVolumeTemp = new LVitem_ProjectVM(newVolume.LVitemVolumeTemp);
@@ -214,7 +214,7 @@ namespace DoubleFile
                 Multiselect = true
             };
 
-            if (false == (ModalThread.Go(darkWindow => dlg.ShowDialog((Window)darkWindow)) ?? false))
+            if (true != (ModalThread.Go(darkWindow => dlg.ShowDialog((Window)darkWindow)) ?? false))
                 return;
 
             var strPlural = (1 < dlg.FileNames.Length) ? "s" : "";

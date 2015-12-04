@@ -69,7 +69,7 @@ namespace DoubleFile
         {
             var tuple = _dictDuplicateFiles.TryGetValue(nFileID);
 
-            if (false == (tuple?.Item2 ?? false))
+            if (true != (tuple?.Item2 ?? false))
                 return tuple?.Item2;
 
             return

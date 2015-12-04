@@ -85,7 +85,7 @@ namespace DoubleFile
                 Filter = "Text file|*.txt",
             };
 
-            if (false == ModalThread.Go(darkWindow => dlg.ShowDialog((Window)darkWindow) ?? false))
+            if (true != ModalThread.Go(darkWindow => dlg.ShowDialog((Window)darkWindow) ?? false))
                 return;
 
             var strKey = "Exporting list";

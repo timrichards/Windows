@@ -7,7 +7,6 @@
 	- and rebuild with bindings just like the old days without resetting the view.
 - Allow copy text in edit listing file dialog for dimmed source path
 - overlay
-	- put the AllowSubsequentProcess() functionality back in for when listings were saved
 	- main window needs to be in front
 	- remove modal thread dark window
 	- do not allow windows to maximize
@@ -217,7 +216,6 @@ Specific code areas:
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
 
-99994
 99990
 99985
 99976

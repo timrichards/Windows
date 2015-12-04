@@ -44,6 +44,7 @@ namespace DoubleFile
         bool _bAllowSubsequentProcess = false;
         void GoModeless() { _bWentModeless = true; _dispatcherFrame.Continue = false; }
         bool _bWentModeless = false;
+        static readonly WeakReference<ProgressOverlay> _wrSubsequent = new WeakReference<ProgressOverlay>(null);
 
         static internal T
             WithProgressOverlay<T>(Func<ProgressOverlay, T> doSomethingWith) => _wr.Get(o => doSomethingWith(o));
@@ -52,7 +53,7 @@ namespace DoubleFile
         internal
             ProgressOverlay(IEnumerable<string> astrBigLabels, IEnumerable<string> astrSmallKeyLabels, Action<ProgressOverlay> initClient)
         {
-            WithProgressOverlay(w =>
+            _wr.Get(w =>
             {
                 if (w.LocalIsClosed ||
                     w._bAllowSubsequentProcess)
@@ -84,7 +85,7 @@ namespace DoubleFile
                 if (null == _window)
                     _window = (LocalModernWindowBase)Application.Current.MainWindow;
 
-                WithProgressOverlay(w => w.LocalDispose());
+                _wr.Get(p => _wrSubsequent.SetTarget(p));
                 _window.ProgressCtl.DataContext = _vm;
                 _vm.Init();
                 _window.Progress_Darken();
@@ -119,6 +120,19 @@ namespace DoubleFile
                 MainWindow.WithMainWindow(w => w.DataContext = null);
             });
 
+            _wrSubsequent.Get(p =>
+            {
+                _wr.SetTarget(p);
+                _wrSubsequent.SetTarget(null);
+
+                Util.UIthread(99994, () =>
+                {
+                    p._window.ProgressCtl.DataContext = p._vm;
+                    p._window.Progress_Darken();
+                    MainWindow.WithMainWindow(w => w.DataContext = _vm);
+                });
+            });
+
             return this;
         }
 
@@ -148,10 +162,10 @@ namespace DoubleFile
         }
 
         static internal ProgressOverlay
-            CloseForced() => WithProgressOverlay(w =>
+            CloseForced() => _wr.Get(w =>
         {
             return
-                (w.LocalIsClosed)
+                w.LocalIsClosed
                 ? w
                 : w.Abort().Close();
         });

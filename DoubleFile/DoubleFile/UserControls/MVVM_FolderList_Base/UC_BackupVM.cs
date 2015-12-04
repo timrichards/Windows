@@ -344,9 +344,9 @@ namespace DoubleFile
                 _dictDupeFileHit[nFileID] = true;
 
                 return false == (
-                    IsDeletedVolVM
+                    (IsDeletedVolVM
                     ? Statics.DupeFileDictionary.IsDupeExtra(nFileID, _nMyLVitemID)
-                    : Statics.DupeFileDictionary.IsDupeSepVolume(nFileID)
+                    : Statics.DupeFileDictionary.IsDupeSepVolume(nFileID))
                     ?? false);     // from lambda
             })
                 .ToList();

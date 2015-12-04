@@ -17,10 +17,6 @@ namespace DoubleFile
 
             LV_ProjectVM.Modified
                 .LocalSubscribe(99567, x => Clear());
-
-            Observable.FromEventPattern<KeyEventArgs>(formEdit_DriveLetter, "PreviewKeyDown")
-                .LocalSubscribe(99580, args => UC_Backup.DriveLetterKeyDown(args.EventArgs, formEdit_DriveLetter,
-                () =>  BeginStoryboard((Storyboard)form_RectDriveLetterError.FindResource("DriveLetterError"))));
         }
 
         protected override void LocalNavigatedTo()
@@ -41,6 +37,10 @@ namespace DoubleFile
             _vm.Reset = () => Util.UIthread(99870, () => formEdit_DriveLetter.Text = null);
             _vm.Init();
             formEdit_DriveLetter.Text = null;
+
+            _previewKeyDown = Observable.FromEventPattern<KeyEventArgs>(formEdit_DriveLetter, "PreviewKeyDown")
+                .LocalSubscribe(99581, args => UC_Backup.DriveLetterKeyDown(args.EventArgs, formEdit_DriveLetter, _vm,
+                () =>  BeginStoryboard((Storyboard)form_RectDriveLetterError.FindResource("DriveLetterError"))));
         }
 
         protected override void LocalNavigatedFrom()
@@ -48,6 +48,7 @@ namespace DoubleFile
             _bNicknames = formChk_Nicknames.IsChecked ?? false;
             DataContext = null;
             _vm?.With(vm => vm.Reset = null);
+            _previewKeyDown?.Dispose();
 
             _clearTimer = Observable.Timer(TimeSpan.FromMinutes(1)).Timestamp()
                 .LocalSubscribe(99568, x => Clear());
@@ -63,6 +64,8 @@ namespace DoubleFile
             _clearTimer = null;
         static UC_BackupVM
             _vm = null;
+        IDisposable
+            _previewKeyDown = null;
         bool
             _bNicknames = false;
     }

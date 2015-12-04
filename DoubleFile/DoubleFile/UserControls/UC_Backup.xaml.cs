@@ -19,10 +19,6 @@ namespace DoubleFile
 
             LV_ProjectVM.Modified
                 .LocalSubscribe(99569, x => Clear());
-
-            Observable.FromEventPattern<KeyEventArgs>(formEdit_DriveLetter, "PreviewKeyDown")
-                .LocalSubscribe(99581, args => DriveLetterKeyDown(args.EventArgs, formEdit_DriveLetter,
-                () =>  BeginStoryboard((Storyboard)form_RectDriveLetterError.FindResource("DriveLetterError"))));
         }
 
         protected override void LocalNavigatedTo()
@@ -43,6 +39,10 @@ namespace DoubleFile
             _vm.Reset = () => Util.UIthread(99886, () => formEdit_DriveLetter.Text = null);
             _vm.Init();
             formEdit_DriveLetter.Text = null;
+
+            _previewKeyDown = Observable.FromEventPattern<KeyEventArgs>(formEdit_DriveLetter, "PreviewKeyDown")
+                .LocalSubscribe(99581, args => DriveLetterKeyDown(args.EventArgs, formEdit_DriveLetter, _vm,
+                () =>  BeginStoryboard((Storyboard)form_RectDriveLetterError.FindResource("DriveLetterError"))));
         }
 
         protected override void LocalNavigatedFrom()
@@ -50,6 +50,7 @@ namespace DoubleFile
             _bNicknames = formChk_Nicknames.IsChecked ?? false;
             DataContext = null;
             _vm?.With(vm => vm.Reset = null);
+            _previewKeyDown?.Dispose();
 
             _clearTimer = Observable.Timer(TimeSpan.FromMinutes(1)).Timestamp()
                 .LocalSubscribe(99570, x => Clear());
@@ -62,7 +63,7 @@ namespace DoubleFile
         }
 
         static internal void
-            DriveLetterKeyDown(KeyEventArgs args, TextBox textBox, Action reportError)
+            DriveLetterKeyDown(KeyEventArgs args, TextBox textBox, UC_BackupVM vm, Action reportError)
         {
             if (Key.Tab == args.Key)
                 return;
@@ -77,7 +78,7 @@ namespace DoubleFile
                 if (false == Directory.Exists(strChar))
                     return;     // from lambda
 
-                if (false == _vm.CheckDriveLetter(strChar[0]))
+                if (false == vm.CheckDriveLetter(strChar[0]))
                     return;     // from lambda
 
                 UC_VolumeEdit.DriveLetterPreviewKeyDown(args);
@@ -87,7 +88,7 @@ namespace DoubleFile
                 reportError();
 
             // one way to source binding isn't disabling/enabling the Back up button in concert
-            _vm.DriveLetter = textBox.Text;
+            vm.DriveLetter = textBox.Text;
             Util.UIthread(99579, CommandManager.InvalidateRequerySuggested);
         }
 
@@ -95,6 +96,8 @@ namespace DoubleFile
             _clearTimer = null;
         static UC_BackupVM
             _vm = null;
+        IDisposable
+            _previewKeyDown = null;
         bool
             _bNicknames = false;
     }

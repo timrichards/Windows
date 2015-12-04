@@ -44,7 +44,7 @@ namespace DoubleFile
         bool _bAllowSubsequentProcess = false;
         void GoModeless() { _bWentModeless = true; _dispatcherFrame.Continue = false; }
         bool _bWentModeless = false;
-        static readonly WeakReference<ProgressOverlay> _wrSubsequent = new WeakReference<ProgressOverlay>(null);
+        static readonly WeakReference<ProgressOverlay> _wrWentModeless = new WeakReference<ProgressOverlay>(null);
 
         static internal T
             WithProgressOverlay<T>(Func<ProgressOverlay, T> doSomethingWith) => _wr.Get(o => doSomethingWith(o));
@@ -85,7 +85,7 @@ namespace DoubleFile
                 if (null == _window)
                     _window = (LocalModernWindowBase)Application.Current.MainWindow;
 
-                _wr.Get(p => _wrSubsequent.SetTarget(p));
+                _wr.Get(p => _wrWentModeless.SetTarget(p));
                 _window.ProgressCtl.DataContext = _vm;
                 _vm.Init();
                 _window.Progress_Darken();
@@ -120,16 +120,16 @@ namespace DoubleFile
                 MainWindow.WithMainWindow(w => w.DataContext = null);
             });
 
-            _wrSubsequent.Get(p =>
+            _wrWentModeless.Get(p =>
             {
                 _wr.SetTarget(p);
-                _wrSubsequent.SetTarget(null);
+                _wrWentModeless.SetTarget(null);
 
                 Util.UIthread(99994, () =>
                 {
                     p._window.ProgressCtl.DataContext = p._vm;
                     p._window.Progress_Darken();
-                    MainWindow.WithMainWindow(w => w.DataContext = _vm);
+                    MainWindow.WithMainWindow(w => w.DataContext = p._vm);
                 });
             });
 
@@ -200,7 +200,7 @@ namespace DoubleFile
             SetProgress(string strSmallKeyLabel, double nProgress)
         {
             if (false ==
-                _vm[strSmallKeyLabel]
+                _vm?[strSmallKeyLabel]
                 .FirstOnlyAssert(lvItem => lvItem.Progress = nProgress))
             {
                 Util.Assert(99969, false);

@@ -23,7 +23,7 @@ namespace DoubleFile
             { ManyClonesSepVolume,  () => "This folder has multiple copies on at least " + _fnStrTwo + " separate volumes." },
             { OneCloneSepVolume,    () => "This folder has a copy on a separate volume." },
             { OneCloneSepVolOnly,   () => "This folder has a copy on just one separate volume." },
-            { AllOnOneVolume,       () => "All copies of this folder reside on " + SameVolumeText },
+            { AllOnOneVolume,       () => "All copies of this folder reside on one volume." },
             { OneVolumeDupesSepVol, () => "All files are on " + _fnStrTwo + " or more volumes though all copies of this folder are on " + SameVolumeText },
             { SolitNoFilesDuped,    () => "No file in this folder is duplicated, or all are on " + SameVolumeText },
             { SolitSomeFilesDuped,  () => "One or more file in this folder is duplicated on " + _fnStrSepVol },

@@ -37,7 +37,7 @@ namespace DoubleFile
 
         protected override void LocalNavigatedFrom()
         {
-            _vmPackage.Dispose();
+            _vmPackage?.Dispose();
             _vmPackage = null;
 
             DataContext =

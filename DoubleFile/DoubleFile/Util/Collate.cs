@@ -161,8 +161,9 @@ namespace DoubleFile
                 if (Transparent != testNode.ColorcodeFG)
                     continue;
 
-                var color = (testNode.NodeDatum.Hashes_FilesHere.Concat(testNode.NodeDatum.Hashes_SubnodeFiles_Scratch)
-                    .Any(nFileID => Statics.DupeFileDictionary.IsDupeSepVolume(nFileID) ?? false))
+                var color =
+                    testNode.NodeDatum.Hashes_FilesHere.Concat(testNode.NodeDatum.Hashes_SubnodeFiles_Scratch)
+                    .Any(nFileID => Statics.DupeFileDictionary.IsDupeSepVolume(nFileID) ?? false)
                     ? SolitSomeFilesDuped
                     : SolitNoFilesDuped;
 
@@ -233,8 +234,8 @@ namespace DoubleFile
 
                         lsKeep[0].ColorcodeFG = 
                             DupeFileDictionary.IsDeletedVolumeView
-                            ? ((3 <= lsKeep.Count) ? ManyClonesSepVolume : OneOrTwoCloneSepVol)
-                            : ((2 <= lsKeep.Count) ? ManyClonesSepVolume : OneCloneSepVolume);
+                            ? ((3 < lsKeep.Count) ? ManyClonesSepVolume : OneOrTwoCloneSepVol)
+                            : ((2 < lsKeep.Count) ? ManyClonesSepVolume : OneCloneSepVolume);
 
                         break;
                     }

@@ -233,9 +233,11 @@ namespace DoubleFile
                             continue;
 
                         lsKeep[0].ColorcodeFG = 
-                            DupeFileDictionary.IsDeletedVolumeView
-                            ? ((3 < lsKeep.Count) ? ManyClonesSepVolume : OneOrTwoCloneSepVol)
-                            : ((2 < lsKeep.Count) ? ManyClonesSepVolume : OneCloneSepVolume);
+                            (2 < lsKeep.Count)
+                            ? ManyClonesSepVolume
+                            : DupeFileDictionary.IsDeletedVolumeView
+                            ? OneCloneSepVolOnly
+                            : OneCloneSepVolume;
 
                         break;
                     }
@@ -244,7 +246,7 @@ namespace DoubleFile
                         treeNode.ColorcodeFG = lsKeep[0].ColorcodeFG;
 
                     var nColorParent =
-                        (new[] { AllOnOneVolume, OneOrTwoCloneSepVol }.Contains(lsKeep[0].ColorcodeFG))
+                        (new[] { AllOnOneVolume, OneCloneSepVolOnly }.Contains(lsKeep[0].ColorcodeFG))
                         ? ChildAllOnOneVolume
                         : ChildClonedSepVolume;
 
@@ -417,7 +419,7 @@ namespace DoubleFile
                     if (testNode.Nodes.All(treeNodeA => new[]
                     {
                         ZeroLengthFolder, AllOnOneVolume, SolitAllDupesOneVol, SolitAllClonesOneVol,
-                        OneCloneSepVolume, OneOrTwoCloneSepVol, ManyClonesSepVolume, SolitAllDupesSepVol, SolitAllClonesSepVol
+                        OneCloneSepVolume, OneCloneSepVolOnly, ManyClonesSepVolume, SolitAllDupesSepVol, SolitAllClonesSepVol
                     }
                         .Contains(treeNodeA.ColorcodeFG)))
                     {
@@ -461,7 +463,7 @@ namespace DoubleFile
 
                     if (testNode.Nodes.All(treeNodeA => new[]
                     {
-                        ZeroLengthFolder, OneCloneSepVolume, OneOrTwoCloneSepVol, ManyClonesSepVolume,
+                        ZeroLengthFolder, OneCloneSepVolume, OneCloneSepVolOnly, ManyClonesSepVolume,
                         SolitAllDupesSepVol, SolitAllClonesSepVol, OneVolumeDupesSepVol
                     }
                         .Contains(treeNodeA.ColorcodeFG)))

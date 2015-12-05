@@ -10,7 +10,6 @@ namespace DoubleFile
             SameVolumeText => DupeFileDictionary.IsDeletedVolumeView ? "one or two volumes." : "one volume.";
         static string _fnStrOnMoreThan => " on more than " + (DupeFileDictionary.IsDeletedVolumeView ? "two volumes." : "one volume.");
         static string _fnStrTwo => DupeFileDictionary.IsDeletedVolumeView ? "three" : "two";
-        static string _fnStrThisFolderHas => "This folder has " + (DupeFileDictionary.IsDeletedVolumeView ? "zero or one" : "no exact") + " copy";
         static string _fnStrSepVol => (DupeFileDictionary.IsDeletedVolumeView ? "more than one" : "a") + " separate volume.";
         static string _fnStrParent => (DupeFileDictionary.IsDeletedVolumeView ? "at least two" : "one or more");
         static internal readonly IReadOnlyDictionary<int, Func<string>>
@@ -23,18 +22,18 @@ namespace DoubleFile
             { ChildAllOnOneVolume,  () => "All copies of a child of this folder reside on " + SameVolumeText },
             { ManyClonesSepVolume,  () => "This folder has multiple copies on at least " + _fnStrTwo + " separate volumes." },
             { OneCloneSepVolume,    () => "This folder has a copy on a separate volume." },
-            { OneOrTwoCloneSepVol,  () => "This folder has a copy on one or two separate volumes." },
+            { OneCloneSepVolOnly,   () => "This folder has a copy on just one separate volume." },
             { AllOnOneVolume,       () => "All copies of this folder reside on " + SameVolumeText },
             { OneVolumeDupesSepVol, () => "All files are on " + _fnStrTwo + " or more volumes though all copies of this folder are on " + SameVolumeText },
             { SolitNoFilesDuped,    () => "No file in this folder is duplicated, or all are on " + SameVolumeText },
             { SolitSomeFilesDuped,  () => "One or more file in this folder is duplicated on " + _fnStrSepVol },
             { SolitAllDupesOneVol,  () => "All files in this folder are duplicated, at least one on " + SameVolumeText },
             { SolitAllDupesSepVol,  () => "All files in this folder are duplicated," + _fnStrOnMoreThan },
-            { SolitaryHasClones,    () => _fnStrThisFolderHas + ", yet it contains folders with more copies." },
+            { SolitaryHasClones,    () => "This folder has no exact copy, yet it contains folders with more copies." },
             { SolitAllClonesOneVol, () => "All folders and any files here are duplicated, at least one on " + SameVolumeText },
             { SolitAllClonesSepVol, () => "All folders and any files here are duplicated, all" + _fnStrOnMoreThan },
-            { SolitaryClonedParent, () => _fnStrThisFolderHas + ", yet its parent does." },
-            { SolitaryOneVolParent, () => _fnStrThisFolderHas + ", yet its parent does, on only " + SameVolumeText },
+            { SolitaryClonedParent, () => "This folder has no exact copy, yet its parent does." },
+            { SolitaryOneVolParent, () => "This folder has no exact copy, yet its parent does, on only " + SameVolumeText },
             { ContainsSolitaryBG,   () => "Contains folders that have no copy, or copies are on " + SameVolumeText },
             { FolderHasNoHashes,    () => "Could not create hashcodes for any file in this folder." },
             { ZeroLengthFolder,     () => "This folder has no files." },
@@ -70,7 +69,7 @@ namespace DoubleFile
         internal const int ChildAllOnOneVolume  = unchecked((int)0xFFB34343);
         internal const int ManyClonesSepVolume  = unchecked((int)0xFFA4D4E4);   // => Colors.LightBlue.ToArgb();                // LightBlue
         internal const int OneCloneSepVolume    = unchecked((int)0xFF4585B5);   // => Colors.SteelBlue.ToArgb();                // SteelBlue
-        internal const int OneOrTwoCloneSepVol  = unchecked((int)0xFFC60606);
+        internal const int OneCloneSepVolOnly   = unchecked((int)0xFFC60606);
         internal const int AllOnOneVolume       = unchecked((int)0xFFB72727);   // => Colors.Firebrick.ToArgb();                // Firebrick
         internal const int OneVolumeDupesSepVol = unchecked((int)0xFF4888B8);   // => Colors.SteelBlue.ToArgb();                // SteelBlue
         internal const int SolitNoFilesDuped    = unchecked((int)0xFFC90909);   // => Color.FromArgb(255, 192, 0, 0).ToArgb();  // Red
@@ -121,7 +120,7 @@ namespace DoubleFile
             TreemapDupeSepVol, SolitNoFilesDuped, SolitaryClonedParent, SolitaryOneVolParent, OneCloneSepVolume,
             TreemapUniqueFile, SolitAllDupesOneVol, ChildClonedSepVolume, ChildAllOnOneVolume, FolderHasNoHashes,
             SolitAllClonesOneVol, SolitAllDupesSepVol, TreemapDupeOneVol, SolitAllClonesSepVol, OneVolumeDupesSepVol,
-            SolitSomeFilesDuped, OneOrTwoCloneSepVol
+            SolitSomeFilesDuped, OneCloneSepVolOnly
         };
 
         static UtilColorcode()
@@ -158,7 +157,7 @@ namespace DoubleFile
             revClut[SolitAllClonesSepVol] = nIx++;
             revClut[OneVolumeDupesSepVol] = nIx++;
             revClut[SolitSomeFilesDuped] = nIx++;
-            revClut[OneOrTwoCloneSepVol] = nIx++;
+            revClut[OneCloneSepVolOnly] = nIx++;
             _revCLUT = revClut;
             Util.Assert(99957, nIx == _knNumColors);
             Util.Assert(99910, 0 == CLUT_Shift >> 4);          // 16 bits, not _knNumColors

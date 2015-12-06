@@ -177,10 +177,12 @@ namespace DoubleFile
                     var mainMenu = (ModernMenu)GetTemplateChild("MainMenu");
                     var selectedLink = mainMenu.SelectedLink;
 
+                    IsEnabled = false;
                     mainMenu.SelectedLink = _projectPage;
                     Statics.WithLVprojectVM(p => { p.SetModified(); return false; });
                     Util.Block(500);    // allow extra windows time to close
                     mainMenu.SelectedLink = selectedLink;
+                    IsEnabled = true;
                 });
             });
         }

@@ -34,7 +34,6 @@ namespace DoubleFile
             { SolitAllClonesSepVol, () => "All folders and any files here are duplicated, all" + _fnStrOnMoreThan },
             { SolitaryClonedParent, () => "This folder has no exact copy, yet its parent does." },
             { SolitaryOneVolParent, () => "This folder has no exact copy, yet its parent does, on only " + SameVolumeText },
-            { ContainsSolitaryBG,   () => "Contains folders that have no copy, or copies are on " + SameVolumeText },
             { FolderHasNoHashes,    () => "Could not create hashcodes for any file in this folder." },
             { ZeroLengthFolder,     () => "This folder has no files." },
             { TreemapFolder,        () => "" },						            // Treemap: Folder containing files
@@ -81,7 +80,6 @@ namespace DoubleFile
         internal const int SolitAllClonesSepVol = unchecked((int)0xFFAFCFDF);
         internal const int SolitaryClonedParent = unchecked((int)0xFF4070A0);
         internal const int SolitaryOneVolParent = unchecked((int)0xFFB13131);
-        internal const int ContainsSolitaryBG   =                0x40420202;    // => Color.FromArgb(64, 64, 0, 0).ToArgb();    // DarkRedBG
         internal const int FolderHasNoHashes    = unchecked((int)0xFFA30303);
         internal const int ZeroLengthFolder     = unchecked((int)0xFFD4D4D4);   // => Colors.LightGray.ToArgb();                // LightGray
         internal const int TreemapFolder        = unchecked((int)0xFF65A545);
@@ -115,7 +113,7 @@ namespace DoubleFile
         readonly static IReadOnlyList<int>
             CLUT = new int[_knNumColors]
         {
-            Transparent, ManyClonesSepVolume, SolitaryHasClones, TreemapFolder, ContainsSolitaryBG,
+            Transparent, ManyClonesSepVolume, SolitaryHasClones, TreemapFolder,
             AllOnOneVolume, ParentClonedBG, ParentCloned, ZeroLengthFolder, TreemapFreespace, TreemapUnreadspace,
             TreemapDupeSepVol, SolitNoFilesDuped, SolitaryClonedParent, SolitaryOneVolParent, OneCloneSepVolume,
             TreemapUniqueFile, SolitAllDupesOneVol, ChildClonedSepVolume, ChildAllOnOneVolume, FolderHasNoHashes,
@@ -134,7 +132,6 @@ namespace DoubleFile
             revClut[ManyClonesSepVolume] = nIx++;
             revClut[SolitaryHasClones] = nIx++;
             revClut[TreemapFolder] = nIx++;
-            revClut[ContainsSolitaryBG] = nIx++;
             revClut[AllOnOneVolume] = nIx++;
             revClut[ParentClonedBG] = nIx++;
             revClut[ParentCloned] = nIx++;
@@ -164,7 +161,7 @@ namespace DoubleFile
         }
 
         const int
-            _knNumColors = 28;
+            _knNumColors = 27;
         const uint
             _knCLUT_FGmask = (1 << (CLUT_Shift >> 1)) - 1;
         static readonly uint

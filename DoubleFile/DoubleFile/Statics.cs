@@ -94,6 +94,7 @@ namespace DoubleFile
             _namespace = app.GetType().Namespace;
             app.ShutdownMode = ShutdownMode.OnMainWindowClose;
 
+#if (false == FOOBAR)
             Observable.FromEventPattern<DispatcherUnhandledExceptionEventArgs>(app, "DispatcherUnhandledException")
                 .LocalSubscribe(99664, args =>
             {
@@ -117,7 +118,7 @@ namespace DoubleFile
                 Util.Assert(99666, false, "UnhandledException\n" +
                     t + "\n" + o?.Message + "\n" + s + "\n" + o?.StackTrace);
             });
-
+#endif
             // ensure that Statics is created only once
 
             if (_wr.Get(s => true))

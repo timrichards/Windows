@@ -201,12 +201,7 @@ namespace DoubleFile
                     }
                     else if (strLine.StartsWith(ksLineType_Directory))
                     {
-                        rootNode.AddToTree(
-                            asLine[2],
-                            (uint)("" + asLine[1]).ToInt(),
-                            ("" + asLine[knColLength]).ToUlong(),
-                            lsFilesHereIndexedIDs, isHashComplete);
-
+                        rootNode.AddToTree(asLine, lsFilesHereIndexedIDs.OrderBy(n => n).Distinct().ToArray(), isHashComplete);
                         lsFilesHereIndexedIDs = new List<int> { };
                         isHashComplete = true;
                     }

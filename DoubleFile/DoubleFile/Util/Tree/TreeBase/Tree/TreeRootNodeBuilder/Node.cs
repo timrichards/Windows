@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 
@@ -6,11 +8,40 @@ namespace DoubleFile
 {
     partial class Tree
     {
+        internal class FolderDetails
+        {
+            internal uint
+                PrevLineNo = 0;
+            internal uint
+                LineNo = 0;
+            internal ulong
+                Length = 0;
+            internal IReadOnlyList<int>
+                FilesHereHashes = null;
+            internal bool
+                IsHashComplete = false;
+            internal DateTime
+                Created = DateTime.MinValue;
+            internal DateTime
+                Modified = DateTime.MinValue;
+            internal FileAttributes
+                Attributes = 0;
+        }
+
         partial class TreeRootNodeBuilder
         {
             // can't be struct because of object ==
             class Node
             {
+                internal
+                    Node(string strPath, string[] asLine, IReadOnlyList<int> lsFilesHereHashes, bool isHashComplete, RootNode rootNode)
+                    : this(strPath, (uint)("0" + asLine[1]).ToInt(), ("0" + asLine[knColLength]).ToUlong(), lsFilesHereHashes, isHashComplete, rootNode)
+                {
+                    _detailsDatum.Created = ("" + asLine[knColCreated]).ToDateTime(bFailOK: true);
+                    _detailsDatum.Modified = ("" + asLine[knColModified]).ToDateTime(bFailOK: true);
+                    _detailsDatum.Attributes = (FileAttributes)("0" + asLine[knColAttributes]).ToUlong();
+                }
+
                 internal
                     Node(string strPath, uint nLineNo, ulong nLength, IReadOnlyList<int> lsFilesHereHashes, bool isHashComplete, RootNode rootNode)
                 {
@@ -18,13 +49,13 @@ namespace DoubleFile
                         return;
 
                     _rootNode = rootNode;
-                    _nPrevLineNo = _rootNode.PrevLineNo;
+                    _detailsDatum.PrevLineNo = _rootNode.PrevLineNo;
                     _rootNode.PrevLineNo = nLineNo;
 
-                    _nLineNo = nLineNo;
-                    _nLength = nLength;
-                    _lsFilesHereHashes = lsFilesHereHashes ?? new int[0];
-                    _isHashComplete = isHashComplete;
+                    _detailsDatum.LineNo = nLineNo;
+                    _detailsDatum.Length = nLength;
+                    _detailsDatum.FilesHereHashes = lsFilesHereHashes ?? new int[0];
+                    _detailsDatum.IsHashComplete = isHashComplete;
 
                     // Path.GetDirectoryName() does not preserve filesystem root
 
@@ -48,7 +79,7 @@ namespace DoubleFile
 
                     if (null == nodeParent)
                     {
-                        nodeParent = new Node(strParent, _nLineNo, 0, null, _isHashComplete, _rootNode);
+                        nodeParent = new Node(strParent, _detailsDatum.LineNo, 0, null, _detailsDatum.IsHashComplete, _rootNode);
                         _rootNode.Nodes.Add(strParent, nodeParent);
                     }
 
@@ -80,9 +111,7 @@ namespace DoubleFile
                             {
                                 // pass the culled path back to TreeRootNodeBuilder; ultimately to LVitem_ProjectExplorer
                                 treeNode.NodeDatum =
-                                    new RootNodeDatum(new NodeDatum(
-                                    subNode._nPrevLineNo, subNode._nLineNo, subNode._nLength, subNode._lsFilesHereHashes, subNode._isHashComplete),
-                                    subNode._strPath);
+                                    new RootNodeDatum(new NodeDatum(subNode._detailsDatum), subNode._strPath);
                             }
 
                             return treeNode;
@@ -104,12 +133,12 @@ namespace DoubleFile
                         treeNode = new LocalTreeNode(strShortPath);
                     }
 
-                    treeNode.NodeDatum = new NodeDatum(
-                        _nPrevLineNo, _nLineNo, _nLength, _lsFilesHereHashes, _isHashComplete);  // this is almost but not quite always newly assigned here.
-
+                    treeNode.NodeDatum = new NodeDatum(_detailsDatum);  // this is almost but not quite always newly assigned here.
                     return treeNode;
                 }
 
+                FolderDetails
+                    _detailsDatum = new FolderDetails { };
                 RootNode
                     _rootNode = null;
                 bool
@@ -118,16 +147,6 @@ namespace DoubleFile
                     _subNodes = new SortedDictionary<string, Node>();
                 readonly string 
                     _strPath = null;
-                readonly uint
-                    _nPrevLineNo = 0;
-                readonly uint
-                    _nLineNo = 0;
-                readonly ulong
-                    _nLength = 0;
-                readonly IReadOnlyList<int>
-                    _lsFilesHereHashes = null;
-                readonly bool
-                    _isHashComplete = false;
             }
         }
     }

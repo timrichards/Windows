@@ -33,7 +33,10 @@ namespace DoubleFile
         static internal readonly string ksIncludeYes = Util.Localized("Include_Yes");
         static internal readonly string ksIncludeNo = Util.Localized("Include_No");
 
-        internal const int knColLength = 7;
+        internal const int knColCreated = 4;
+        internal const int knColModified = knColCreated + 1;
+        internal const int knColAttributes = knColCreated + 2;
+        internal const int knColLength = knColCreated + 3;
         internal const int knColLength01 = 5;
         internal const int knColLengthLV = knColLength - 3;
 
@@ -234,7 +237,7 @@ namespace DoubleFile
                 {
                     file_out.WriteLine(FormatLine(ksLineType_Length, nLineNo,
                         FormatString(strDir: ksTotalLengthLoc,
-                        nLength: ("" + strLine.Split('\t')[knColLength01]).ToUlong())));
+                        nLength: ("0" + strLine.Split('\t')[knColLength01]).ToUlong())));
 
                     continue;
                 }
@@ -297,8 +300,8 @@ namespace DoubleFile
                         "8" + '\t' + "9" + '\t' + "10" + '\t' + "11";
                 }
 
-                return "Dir" + '\t' + "File" + '\t' + "Created" + '\t' + "Modded" +'\t' +
-                    "Attrib" + '\t' + "Length" + '\t' +
+                return "Dir" + '\t' + "File" + '\t' + "Created" + '\t' + "Modified" +'\t' +
+                    "Attributes" + '\t' + "Length" + '\t' +
                     "Error1" + '\t' + "Error2" + '\t' +
                     "4K Hash" + '\t' + "1MB Hash";
             }
@@ -497,7 +500,6 @@ namespace DoubleFile
                 if ((3 < asLine.Length) && (ksTotalLengthLoc == asLine[2]))
                     try
                 {
-                    nScannedLength = ("" + asLine[knColLength]).ToUlong();
                     nLinesTotal = (asLine[1]).ToInt();
                     bRet = true;
                 }

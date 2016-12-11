@@ -15,7 +15,7 @@ namespace DoubleFile
     }
 
     [DebuggerDisplay("{NodeDatum.Hash_AllFiles} {PathShort} {Nodes?.Count}")]
-    class LocalTreeNode : ILocalTreeNode_SetLevel
+    partial class LocalTreeNode : ILocalTreeNode_SetLevel
     {
         internal NodeDatum
             NodeDatum;
@@ -196,7 +196,7 @@ namespace DoubleFile
 
             var retVal =
                 ieHashesGrouped
-                .OrderBy(tuple => tuple.Item1.NodeDatum.PrevLineNo)
+                .OrderBy(tuple => tuple.Item1.NodeDatum.FolderDetails.PrevLineNo)
                 .Select(tuple => Tuple.Create(tuple.Item1,
                 tuple.Item1
                 .GetFileList(ref nLineNo, iterator)
@@ -220,7 +220,7 @@ namespace DoubleFile
         IEnumerable<string>
             GetFileList(ref int currentPos, ReadLinesIterator iterator = null)
         {
-            var nPrevDir = (int)NodeDatum.PrevLineNo;
+            var nPrevDir = (int)NodeDatum.FolderDetails.PrevLineNo;
 
             if (0 == nPrevDir)
                 return new string[0];

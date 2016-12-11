@@ -19,9 +19,9 @@ namespace DoubleFile
                     DriveLetter = driveLetter;
                 }
 
-                internal void AddToTree(string strPath, uint nLineNo, ulong nLength, IReadOnlyList<int> lsFilesHereHashes, bool isHashComplete)
+                internal void AddToTree(string[] asLine, IReadOnlyList<int> lsFilesHereHashes, bool isHashComplete)
                 {
-                    strPath = strPath.TrimEnd('\\');
+                    var strPath = asLine[2].TrimEnd('\\');
                     Util.Assert(99630, ':' == strPath[1]);
 
                     if (strPath[0] != DriveLetter)
@@ -30,7 +30,7 @@ namespace DoubleFile
                         strPath = DriveLetter + strPath.Substring(1);
                     }
 
-                    Nodes.Add(strPath, new Node(strPath, nLineNo, nLength, lsFilesHereHashes, isHashComplete, this));
+                    Nodes.Add(strPath, new Node(strPath, asLine, lsFilesHereHashes, isHashComplete, this));
                 }
 
                 internal LocalTreeNode

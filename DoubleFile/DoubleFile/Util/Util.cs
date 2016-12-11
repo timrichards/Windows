@@ -221,13 +221,21 @@ namespace DoubleFile
         static internal void
             ParallelForEach<TSource>(decimal nLocation, IEnumerable<TSource> source, ParallelOptions options, Action<TSource> doSomething)
         {
+#if (false == FOOBAR)
             try
             {
                 Parallel.ForEach(source, options, s =>
+
+#else
+                foreach(var s in source)
+#endif
                 {
+#if (false == FOOBAR)
                     try
                     {
+#endif
                         doSomething(s);
+#if (false == FOOBAR)
                     }
                     catch (ThreadAbortException) { }
                     catch (Exception e)
@@ -237,7 +245,10 @@ namespace DoubleFile
                         Util.Assert(nLocation, false, b.GetType() + " in ParallelForEach\n" +
                             b.Message + "\n" + b.StackTrace);
                     }
-                });
+#endif
+                }
+#if (false == FOOBAR)
+                );
             }
             catch (AggregateException e)
             {
@@ -249,6 +260,7 @@ namespace DoubleFile
             catch (OperationCanceledException)
             {
             }
+#endif
         }
 
         static internal Thread

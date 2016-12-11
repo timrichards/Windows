@@ -12,9 +12,12 @@ namespace DoubleFile
             LocalSubscribe<T>(this IObservable<T> source, decimal nLocation, Action<T> onNext) =>
             source.Subscribe(t =>
         {
+#if (false == FOOBAR)
             try
             {
-                onNext(t);  // Haven't found a way to make this non-blocking: all subscribers must return nicely by spawning if necessary
+#endif
+            onNext(t);  // Haven't found a way to make this non-blocking: all subscribers must return nicely by spawning if necessary
+#if (false == FOOBAR)
             }
             catch (Exception e)
             {
@@ -23,6 +26,7 @@ namespace DoubleFile
                 Util.Assert(nLocation, false, b.GetType() + " in LocalSubscribe\n" +
                     b.Message + "\n" + b.StackTrace);
             }
+#endif
         });
 
         static public void
@@ -184,12 +188,15 @@ namespace DoubleFile
             TryGetValue<T1, T2>(this IReadOnlyDictionary<T1, T2> dict, T1 key) => TryGetValue((IDictionary<T1, T2>)dict, key);
 
         static internal DateTime
-            ToDateTime(this string str)
+            ToDateTime(this string str, bool bFailOK = false)
         {
             var nRet = DateTime.MinValue;
 
-            if (false == DateTime.TryParse(str, out nRet))
+            if ((false == DateTime.TryParse(str, out nRet)) &&
+                (false == bFailOK))
+            {
                 Util.Assert(99925, false);
+            }
 
             return nRet;
         }

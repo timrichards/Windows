@@ -90,6 +90,19 @@ namespace DoubleFile
                 Util.Assert(99920, false);
             }
 
+            var str = DecodeAttributes(nAttr);
+
+            if (0 == str.Length)
+                str = strAttr;
+            else
+                str += " (" + strAttr + ")";
+
+            return str;
+        }
+
+        static internal string
+            DecodeAttributes(FileAttributes nAttr)
+        {
             var str = "";
 
             if ((nAttr & FileAttributes.ReparsePoint) != 0) str += " ReparsePoint";
@@ -101,15 +114,7 @@ namespace DoubleFile
             if ((nAttr & FileAttributes.System) != 0) str += " System";
             if ((nAttr & FileAttributes.Temporary) != 0) str += " Tempfile";
             if ((nAttr & FileAttributes.Directory) != 0) str += " Directory";
-
-            str = str.TrimStart();
-
-            if (0 == str.Length)
-                str = strAttr;
-            else
-                str += " (" + strAttr + ")";
-
-            return str;
+            return str.TrimStart();
         }
 
         public static T

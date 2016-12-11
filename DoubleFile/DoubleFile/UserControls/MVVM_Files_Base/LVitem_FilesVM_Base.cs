@@ -12,7 +12,7 @@ namespace DoubleFile
         public string Modified => SubItems[2];
         public DateTime ModifiedRaw => ("" + Modified).ToDateTime();
         public string Attributes => Util.DecodeAttributes(SubItems[3]);
-        public ulong LengthRaw => 4 < SubItems.Count ? ("0" + SubItems[4]).ToUlong() : 0;
+        public ulong LengthRaw => 4 < SubItems.Count ? ("" + SubItems[4]).ToUlong() : 0;
         public string Length => LengthRaw.FormatSize();
         public string Error1 => 5 < SubItems.Count ? SubItems[5] : "";
         public string Error2 => 6 < SubItems.Count ? SubItems[6] : "";

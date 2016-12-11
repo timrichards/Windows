@@ -121,6 +121,19 @@ namespace DoubleFile
             }
 
             lieDetail.Add(new[] { "Total Size", nodeDatum.LengthTotal.FormatSize(bytes: true) });
+
+            Action<string, DateTime> addDateTime = (string label, DateTime dt) =>
+            {
+                if (DateTime.MinValue != dt)
+                    lieDetail.Add(new[] { label, dt.ToLongDateString() + " " + dt.ToLongTimeString() });
+            };
+
+            addDateTime("Created", nodeDatum.FolderDetails.Created);
+            addDateTime("Modified", nodeDatum.FolderDetails.Modified);
+
+            if (0 != nodeDatum.FolderDetails.Attributes)
+                lieDetail.Add(new[] { "Attributes", "" + Util.DecodeAttributes(nodeDatum.FolderDetails.Attributes) });
+
             FolderDetailUpdatedOnNext(new FolderDetailUpdated(lieDetail, treeNode), nInitiator);
         }
 

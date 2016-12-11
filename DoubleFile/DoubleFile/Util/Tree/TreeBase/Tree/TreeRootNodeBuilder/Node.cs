@@ -35,11 +35,11 @@ namespace DoubleFile
             {
                 internal
                     Node(string strPath, string[] asLine, IReadOnlyList<int> lsFilesHereHashes, bool isHashComplete, RootNode rootNode)
-                    : this(strPath, (uint)("0" + asLine[1]).ToInt(), ("0" + asLine[knColLength]).ToUlong(), lsFilesHereHashes, isHashComplete, rootNode)
+                    : this(strPath, (uint)("" + asLine[1]).ToInt(), ("" + asLine[knColLength]).ToUlong(), lsFilesHereHashes, isHashComplete, rootNode)
                 {
-                    _detailsDatum.Created = ("" + asLine[knColCreated]).ToDateTime(bFailOK: true);
-                    _detailsDatum.Modified = ("" + asLine[knColModified]).ToDateTime(bFailOK: true);
-                    _detailsDatum.Attributes = (FileAttributes)("0" + asLine[knColAttributes]).ToUlong();
+                    _detailsDatum.Created = ("" + asLine[knColCreated]).ToDateTime(bEmptyStringOK: true);
+                    _detailsDatum.Modified = ("" + asLine[knColModified]).ToDateTime(bEmptyStringOK: true);
+                    _detailsDatum.Attributes = (FileAttributes)Convert.ToInt32("0" + asLine[knColAttributes], /* from base */ 16);
                 }
 
                 internal

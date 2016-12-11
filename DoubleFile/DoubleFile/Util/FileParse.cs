@@ -237,7 +237,7 @@ namespace DoubleFile
                 {
                     file_out.WriteLine(FormatLine(ksLineType_Length, nLineNo,
                         FormatString(strDir: ksTotalLengthLoc,
-                        nLength: ("0" + strLine.Split('\t')[knColLength01]).ToUlong())));
+                        nLength: ("" + strLine.Split('\t')[knColLength01]).ToUlong())));
 
                     continue;
                 }

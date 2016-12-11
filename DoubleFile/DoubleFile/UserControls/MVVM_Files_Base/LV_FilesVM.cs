@@ -57,7 +57,7 @@ namespace DoubleFile
                     .Split('\t')
                     .ToArray();
 
-                var nLine = ("0" + asFileLine[1]).ToInt();
+                var nLine = ("" + asFileLine[1]).ToInt();
                 var isSepVol = false;
                 var lsDuplicates = Statics.DupeFileDictionary.GetDuplicates(asFileLine, out isSepVol);
 

@@ -188,14 +188,16 @@ namespace DoubleFile
             TryGetValue<T1, T2>(this IReadOnlyDictionary<T1, T2> dict, T1 key) => TryGetValue((IDictionary<T1, T2>)dict, key);
 
         static internal DateTime
-            ToDateTime(this string str, bool bFailOK = false)
+            ToDateTime(this string str, bool bEmptyStringOK = false)
         {
             var nRet = DateTime.MinValue;
 
-            if ((false == DateTime.TryParse(str, out nRet)) &&
-                (false == bFailOK))
+            if (false == DateTime.TryParse(str, out nRet))
             {
-                Util.Assert(99925, false);
+                if (false == (bEmptyStringOK && string.IsNullOrEmpty(str)))
+                {
+                    Util.Assert(99925, false);
+                }
             }
 
             return nRet;

@@ -4,6 +4,7 @@ using System.Windows;
 using System.Reactive.Linq;
 using System.Diagnostics;
 using System.Linq;
+using DokanNet;
 
 namespace DoubleFile
 {
@@ -230,6 +231,8 @@ namespace DoubleFile
                 .CloseIfNatural());
 
             TreeSelect.DoThreadFactory(TopNode, 99959);
+
+            Util.ThreadMake(() => { RootNodes[0].Mount("s:\\", DokanOptions.DebugMode | DokanOptions.StderrOutput); });
         }
 
         bool IProgressOverlayClosing.ConfirmClose()

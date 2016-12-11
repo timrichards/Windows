@@ -35,7 +35,7 @@ namespace DoubleFile
             Hashes_SubnodeFiles_IsComplete = false;
 
         internal ulong
-            LengthHere => FolderDetails.Length;
+            LengthHere => FolderDetails?.Length ?? 0;
         internal ulong
             LengthTotal { get; private set; }
 
@@ -45,6 +45,7 @@ namespace DoubleFile
         internal NodeDatum() { }
         internal NodeDatum(Tree.FolderDetails datum)
         {
+            FolderDetails = datum;
         }
         internal NodeDatum(ulong lengthTotal)
         {
@@ -76,13 +77,9 @@ namespace DoubleFile
                 FolderDetails = datum.FolderDetails;
             }
 
-            if (null != FolderDetails)
-            {
-                FolderDetails = new Tree.FolderDetails { };
-            }
-
             if (null == FolderDetails)
             {
+                Util.Assert(0, false, "NodeDatum SetDatum()\nnull != FolderDetails", bIfDefDebug: true);
                 FolderDetails = new Tree.FolderDetails { };
             }
 

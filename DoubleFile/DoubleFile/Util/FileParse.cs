@@ -500,6 +500,7 @@ namespace DoubleFile
                 if ((3 < asLine.Length) && (ksTotalLengthLoc == asLine[2]))
                     try
                 {
+                    nScannedLength = ("" + asLine[knColLength]).ToUlong();
                     nLinesTotal = (asLine[1]).ToInt();
                     bRet = true;
                 }

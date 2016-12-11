@@ -30,7 +30,7 @@ namespace DoubleFile
             ShowDuplicates && (0 == DuplicatesRaw) &&
                 ((SubItems.Count <= FileParse.knColLengthLV) ||                     // doesn't happen
                 string.IsNullOrWhiteSpace(SubItems[FileParse.knColLengthLV]) ||     // doesn't happen
-                (0 < ("" + SubItems[FileParse.knColLengthLV]).ToUlong()));
+                (0 < ("0" + SubItems[FileParse.knColLengthLV]).ToUlong()));
 
         public string
             Duplicates => ((ShowDuplicates && (0 < DuplicatesRaw)) ? "" + DuplicatesRaw : "") +

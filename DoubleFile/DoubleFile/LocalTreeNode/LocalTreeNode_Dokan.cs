@@ -47,17 +47,17 @@ namespace DoubleFile
             var rootPath = ConvertRootPath();
 
             Util.WriteLine($"private FindFiles {rootPath}");
-            files = new List<FileInformation> { };
+            var outFiles = files = new List<FileInformation> { };
 
-            foreach (var node in Nodes)
+            Nodes?.ForEach(node =>
             {
                 var fi = new FileInformation { FileName = node.PathShort };
 
                 node.GetFileInformation(ref fi);
-                files.Add(fi);
-            }
+                outFiles.Add(fi);
+            });
 
-            if (0 < NodeDatum.LengthHere)
+            if (0 < NodeDatum.FileCountHere)
             {
                 foreach (var strFileLine in GetFileList())
                 {

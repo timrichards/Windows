@@ -42,16 +42,18 @@ namespace DoubleFile
             return DokanResult.NotImplemented;
         }
 
-        internal NtStatus FindFiles(out IList<FileInformation> files)
+        void FindFiles(out IList<FileInformation> files)
         {
-            Util.WriteLine("internal FindFiles");
+            var rootPath = ConvertRootPath();
+
+            Util.WriteLine($"private FindFiles {rootPath}");
             files = new List<FileInformation> { };
 
             foreach (var node in Nodes)
             {
-                FileInformation fi;
+                var fi = new FileInformation { FileName = node.PathShort };
 
-                node.GetFileInformation(out fi);
+                node.GetFileInformation(ref fi);
                 files.Add(fi);
             }
 
@@ -67,23 +69,46 @@ namespace DoubleFile
                     var fi = new FileInformation
                     {
                         FileName = lvItem.Filename,
-                        Length = (long)lvItem.Length.ToUlong(),
+                        Length = (long)lvItem.LengthRaw,
                         CreationTime = lvItem.CreatedRaw,
                         LastWriteTime = lvItem.ModifiedRaw,
-                        Attributes = (FileAttributes)Convert.ToInt32(lvItem.Attributes, /* from base */ 16)
+                        Attributes = (FileAttributes)Convert.ToInt32(lvItem.SubItems[3], /* from base */ 16)
                     };
 
                     files.Add(fi);
                 }
             }
+        }
 
-            return DokanResult.Success;
+        string ConvertRootPath(string fileName = null)
+        {
+            const string colon_backslash = "`~";
+
+            if (null != fileName)
+            {
+                return fileName.TrimStart('\\').Replace(colon_backslash, @":\");
+            }
+            else
+            {
+                var ret = PathFullGet(false).Replace(@":\", colon_backslash);
+
+                if (false == ret.EndsWith(colon_backslash))
+                {
+                    ret = ret.Replace(colon_backslash, colon_backslash + @"\");
+                }
+
+                return ret;
+            }
+        }
+
+        LocalTreeNode GetOneNodeByRootPathA(string fileName)
+        {
+            return LocalTV.GetOneNodeByRootPathA(ConvertRootPath(fileName), null);
         }
 
         public NtStatus FindFiles(string fileName, out IList<FileInformation> files, DokanFileInfo info)
         {
-            Util.WriteLine("public FindFiles");
-            info.IsDirectory = true;
+            Util.WriteLine($"public FindFiles {fileName}");
 
             if ("\\" == fileName)
             {
@@ -91,26 +116,27 @@ namespace DoubleFile
 
                 foreach (var rootNode in LocalTV.RootNodes)
                 {
-                    FileInformation fi;
+                    var fi = new FileInformation { FileName = rootNode.ConvertRootPath() };
 
-                    rootNode.GetFileInformation(out fi);
+                    rootNode.GetFileInformation(ref fi);
                     files.Add(fi);
                 }
-
-                return DokanResult.Success;
             }
             else
             {
-                var treeNode = LocalTV.GetOneNodeByRootPathA(fileName, null);
+                var treeNode = GetOneNodeByRootPathA(fileName);
 
                 if (null == treeNode)
                 {
+                    Util.WriteLine($"public FindFiles {fileName} --null");
                     files = new List<FileInformation> { };
                     return DokanResult.Error;
                 }
 
-                return treeNode.FindFiles(out files);
+                treeNode.FindFiles(out files);
             }
+
+            return DokanResult.Success;
         }
 
         public NtStatus FindFilesWithPattern(string fileName, string searchPattern, out IList<FileInformation> files, DokanFileInfo info)
@@ -150,29 +176,20 @@ namespace DoubleFile
             return DokanResult.Success;
         }
 
-        internal NtStatus GetFileInformation(out FileInformation fileInfo)
+        void GetFileInformation(ref FileInformation fileInfo)
         {
-            Util.WriteLine("internal GetFileInformation");
-            fileInfo = new FileInformation
-            {
-                FileName = PathShort,
-                Attributes = NodeDatum.FolderDetails.Attributes,
-                CreationTime = NodeDatum.FolderDetails.Created,
-                LastWriteTime = NodeDatum.FolderDetails.Modified,
-                Length = (long)NodeDatum.LengthTotal                
-            };
-
-            Util.WriteLine(PathShort);
-            return DokanResult.Success;
+            //  FileName -- set by caller
+            fileInfo.Attributes = FileAttributes.Directory;
+            fileInfo.CreationTime = NodeDatum.FolderDetails.Created;
+            fileInfo.LastWriteTime = NodeDatum.FolderDetails.Modified;
+            fileInfo.Length = (long)NodeDatum.LengthTotal;
         }
 
         public NtStatus GetFileInformation(string fileName, out FileInformation fileInfo, DokanFileInfo info)
         {
-            Util.WriteLine("public GetFileInformation");
-            Util.WriteLine(fileName);
             if (fileName == "\\")
             {
-                fileInfo = new FileInformation {FileName = fileName};
+                fileInfo = new FileInformation { FileName = fileName };
 
                 fileInfo.Attributes = FileAttributes.Directory;
                 fileInfo.LastAccessTime = DateTime.Now;
@@ -182,16 +199,20 @@ namespace DoubleFile
                 return DokanResult.Success;
             }
 
-            var treeNode = LocalTV.GetOneNodeByRootPathA(fileName, null);
+            var treeNode = GetOneNodeByRootPathA(fileName);
+
+            Util.Write("public GetFileInformation ");
+            Util.WriteLine((null != treeNode) ? treeNode.PathFull : (fileName + " --null"));
+
+            fileInfo = new FileInformation { FileName = fileName };
 
             if (null == treeNode)
             {
-                fileInfo = new FileInformation { };
                 return DokanResult.Error;
             }
 
-            info.IsDirectory = true;
-            return treeNode.GetFileInformation(out fileInfo);
+            treeNode.GetFileInformation(ref fileInfo);
+            return DokanResult.Success;
         }
 
         public NtStatus GetFileSecurity(string fileName, out FileSystemSecurity security, AccessControlSections sections, DokanFileInfo info)
@@ -202,11 +223,9 @@ namespace DoubleFile
 
         public NtStatus GetVolumeInformation(out string volumeLabel, out FileSystemFeatures features, out string fileSystemName, DokanFileInfo info)
         {
-            Util.WriteLine("public GetVolumeInformation");
             volumeLabel = "test";
             features = FileSystemFeatures.None;
             fileSystemName = string.Empty;
-   //         info.IsDirectory = true;
             return DokanResult.Error;
         }
 

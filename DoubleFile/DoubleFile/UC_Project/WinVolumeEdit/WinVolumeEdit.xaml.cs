@@ -19,7 +19,7 @@
 
             set
             {
-                formUC_VolumeEdit.LVitemVolumeTemp = new LVitem_ProjectVM(value);
+                formUC_VolumeEdit.LVitemVolumeTemp = new LVitem_ProjectVM(value, accept_invalid_chars: true);
             }
         }
     }

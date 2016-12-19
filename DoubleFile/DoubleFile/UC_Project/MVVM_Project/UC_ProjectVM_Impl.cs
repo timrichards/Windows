@@ -191,10 +191,10 @@ namespace DoubleFile
                 {
                     lvItemVolumeTemp = new LVitem_ProjectVM(newVolume.LVitemVolumeTemp);
                 }
-                catch (LVitem_ProjectVM.InvalidPathCharException)
+                catch (LVitem_ProjectVM.InvalidNicknamePathCharException)
                 {
                     MBoxStatic.ShowOverlay("Invalid path character exception in Nickname. Can't contain any of " +
-                        LVitem_ProjectVM.InvalidPathCharException.test, "New Listing File");
+                        LVitem_ProjectVM.InvalidNicknamePathCharException.test, "New Listing File");
 
                     continue;
                 }

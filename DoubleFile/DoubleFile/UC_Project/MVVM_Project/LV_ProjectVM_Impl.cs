@@ -105,7 +105,7 @@ namespace DoubleFile
             SelectedItems()
                 .FirstOnlyAssert(lvItem =>
             {
-                var lvItemTemp = new LVitem_ProjectVM(lvItem);
+                LVitem_ProjectVM lvItemTemp = new LVitem_ProjectVM(lvItem, accept_invalid_chars: true);
 
                 if (FileParse.ksError == lvItemTemp.Status)
                     lvItemTemp.Status = FileParse.ksNotSaved;
@@ -117,7 +117,7 @@ namespace DoubleFile
                         ? new WinVolumeNew()
                         : (WinVolumeEditBase)new WinVolumeEdit();
 
-                    dlg.LVitemVolumeTemp = new LVitem_ProjectVM(lvItemTemp);
+                    dlg.LVitemVolumeTemp = new LVitem_ProjectVM(lvItemTemp, accept_invalid_chars: true);
 
                     if (true != (dlg.ShowDialog() ?? false))
                         break;  // user canceled
@@ -126,10 +126,10 @@ namespace DoubleFile
                     {
                         lvItemTemp = new LVitem_ProjectVM(dlg.LVitemVolumeTemp);
                     }
-                    catch (LVitem_ProjectVM.InvalidPathCharException)
+                    catch (LVitem_ProjectVM.InvalidNicknamePathCharException)
                     {
                         MBoxStatic.ShowOverlay("Invalid path character exception in Nickname. Can't contain any of " +
-                            LVitem_ProjectVM.InvalidPathCharException.test, "Edit Listing File");
+                            LVitem_ProjectVM.InvalidNicknamePathCharException.test, "Edit Listing File");
 
                         continue;
                     }

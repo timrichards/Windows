@@ -7,9 +7,23 @@ namespace DoubleFile
 {
     class LVitem_ProjectVM : ListViewItemVM_Base
     {
-        internal class InvalidPathCharException : Exception
+        internal class InvalidNicknamePathCharException : Exception
         {
             static internal string test = "\\/:*?\"<>|";
+
+            static internal IDictionary<string, string> translateInvalidChars = new Dictionary<string, string>
+            {
+                {"\\",  "⁄" },      // U + 2044
+                {"/",   "∕" },      // U + 2215
+                {":",   "꞉" },      // U + A789
+                {"*",   "ꜜ" },      // U + A71C
+                {"?",   "¿" },      // U + 00BF
+                {"\"",   "”" },     // U + 201D
+                {"<",   "‹" },      // U + 2039
+                {">",   "›" },      // U + 203A
+                {"|",   "│" },      // U + 2502
+            };
+
         }
 
         public string Nickname { get { return SubItems[0]; } internal set { SetProperty(0, value); } }
@@ -42,15 +56,15 @@ namespace DoubleFile
         }
 
         internal
-            LVitem_ProjectVM(LVitem_ProjectVM lvItemTemp)
+            LVitem_ProjectVM(LVitem_ProjectVM lvItemTemp, bool accept_invalid_chars = false)
             : this(lvItemTemp?.SubItems.ToList())
         {
             if (null == lvItemTemp)
                 return;
 
-            if (Nickname?.Select(c => InvalidPathCharException.test.Contains(c)).Any() ?? false)
+            if ((false == accept_invalid_chars) && (Nickname?.Intersect(InvalidNicknamePathCharException.test).Any() ?? false))
             {
-                throw new InvalidPathCharException();
+                throw new InvalidNicknamePathCharException();
             }
 
             LinesTotal = lvItemTemp.LinesTotal;

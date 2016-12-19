@@ -98,7 +98,7 @@ namespace DoubleFile
             }
             set
             {
-                _lvItemTemp = new LVitem_ProjectVM(value);
+                _lvItemTemp = new LVitem_ProjectVM(value, accept_invalid_chars: true);
 
                 if (null == value)
                     return;

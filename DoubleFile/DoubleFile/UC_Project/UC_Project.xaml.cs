@@ -80,7 +80,19 @@ namespace DoubleFile
                     SaveDirListings.Go(lvProjectVM);
             }
 
-            var lvProjectVM_Copy = Statics.LVprojectVM_Copy;
+            LV_ProjectVM lvProjectVM_Copy = null;
+
+            try
+            {
+                lvProjectVM_Copy = Statics.LVprojectVM_Copy;
+            }
+            catch (LVitem_ProjectVM.InvalidNicknamePathCharException)
+            {
+                MBoxStatic.ShowOverlay("Invalid path character exception in Nickname of one of the paths. Can't contain any of " +
+                    LVitem_ProjectVM.InvalidNicknamePathCharException.test, "Navigate and Build Explorer");
+
+                return false;
+            }
 
             if ((0 < lvProjectVM_Copy.CanLoadCount) &&
                 LocalTV.FactoryCreate(lvProjectVM_Copy))

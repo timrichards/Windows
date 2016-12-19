@@ -77,23 +77,13 @@ namespace DoubleFile
             }
         }
 
-        static Dictionary<string, string> translateInvalidChars = new Dictionary<string, string> { };
-
-        static LocalTreeNode()
-        {
-            int nEncode = 0;
-
-            LVitem_ProjectVM.InvalidPathCharException.test
-                .ForEach(c => translateInvalidChars["" + c] = "`" + (char)('A' + nEncode++));
-        }
-
         string ConvertRootPath(string fileName = null)
         {
             if (null != fileName)
             {
                 string ret = fileName.TrimStart('\\');
 
-                translateInvalidChars
+                LVitem_ProjectVM.InvalidNicknamePathCharException.translateInvalidChars
                     .ForEach(kvp => ret = ret.Replace(kvp.Value, kvp.Key));
 
                 return ret.Replace(@"\\", @"\");
@@ -103,7 +93,7 @@ namespace DoubleFile
                 var strRoot = Root.PathFull;
                 var ret = strRoot;
 
-                translateInvalidChars
+                LVitem_ProjectVM.InvalidNicknamePathCharException.translateInvalidChars
                     .ForEach(kvp => ret = ret.Replace(kvp.Key, kvp.Value));
 
                 return PathFull.Replace(strRoot, ret);

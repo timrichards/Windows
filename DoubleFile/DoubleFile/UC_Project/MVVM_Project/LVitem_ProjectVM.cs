@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -6,6 +7,11 @@ namespace DoubleFile
 {
     class LVitem_ProjectVM : ListViewItemVM_Base
     {
+        internal class InvalidPathCharException : Exception
+        {
+            static internal string test = "\\/:*?\"<>|";
+        }
+
         public string Nickname { get { return SubItems[0]; } internal set { SetProperty(0, value); } }
         public string SourcePath { get { return SubItems[1]; } internal set { SetProperty(1, value); } }
 
@@ -41,6 +47,11 @@ namespace DoubleFile
         {
             if (null == lvItemTemp)
                 return;
+
+            if (Nickname?.Select(c => InvalidPathCharException.test.Contains(c)).Any() ?? false)
+            {
+                throw new InvalidPathCharException();
+            }
 
             LinesTotal = lvItemTemp.LinesTotal;
             HashV2 = lvItemTemp.HashV2;

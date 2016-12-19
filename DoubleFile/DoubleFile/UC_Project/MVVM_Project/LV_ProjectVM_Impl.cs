@@ -122,7 +122,18 @@ namespace DoubleFile
                     if (true != (dlg.ShowDialog() ?? false))
                         break;  // user canceled
 
-                    lvItemTemp = new LVitem_ProjectVM(dlg.LVitemVolumeTemp);
+                    try
+                    {
+                        lvItemTemp = new LVitem_ProjectVM(dlg.LVitemVolumeTemp);
+                    }
+                    catch (LVitem_ProjectVM.InvalidPathCharException)
+                    {
+                        MBoxStatic.ShowOverlay("Invalid path character exception in Nickname. Can't contain any of " +
+                            LVitem_ProjectVM.InvalidPathCharException.test, "Edit Listing File");
+
+                        continue;
+                    }
+
 
                     if (AlreadyInProject(lvItemTemp.ListingFile, lvItem))
                         continue;

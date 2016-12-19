@@ -12,7 +12,7 @@ namespace DoubleFile
         {
             return
                 GoA(strPath, treeNodeCollection) 
-                ?? GoA(strPath, treeNodeCollection, toLower: true);
+                ?? GoA(strPath.ToLower(), treeNodeCollection, toLower: true);
         }
 
         static LocalTreeNode
@@ -34,7 +34,7 @@ namespace DoubleFile
                 if (path == nodePath)
                     return node;
 
-                if (path.Contains(nodePath) && path.Replace(nodePath, "").StartsWith(@"\"))
+                if (path.Contains(nodePath) && path.Replace(nodePath.TrimEnd('\\'), "").StartsWith(@"\"))
                     return GoA(path, node.Nodes, toLower);
             }
 

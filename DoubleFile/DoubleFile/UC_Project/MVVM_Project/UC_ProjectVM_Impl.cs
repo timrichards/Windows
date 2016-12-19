@@ -187,7 +187,17 @@ namespace DoubleFile
                 if (true != (newVolume.ShowDialog() ?? false))
                     break;      // user canceled
 
-                lvItemVolumeTemp = new LVitem_ProjectVM(newVolume.LVitemVolumeTemp);
+                try
+                {
+                    lvItemVolumeTemp = new LVitem_ProjectVM(newVolume.LVitemVolumeTemp);
+                }
+                catch (LVitem_ProjectVM.InvalidPathCharException)
+                {
+                    MBoxStatic.ShowOverlay("Invalid path character exception in Nickname. Can't contain any of " +
+                        LVitem_ProjectVM.InvalidPathCharException.test, "New Listing File");
+
+                    continue;
+                }
 
                 if (_lvVM.AlreadyInProject(lvItemVolumeTemp.ListingFile) ||
                     _lvVM.FileExists(lvItemVolumeTemp.ListingFile) ||

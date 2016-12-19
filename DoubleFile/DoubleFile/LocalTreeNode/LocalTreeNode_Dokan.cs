@@ -77,23 +77,36 @@ namespace DoubleFile
             }
         }
 
+        static Dictionary<string, string> translateInvalidChars = new Dictionary<string, string> { };
+
+        static LocalTreeNode()
+        {
+            int nEncode = 0;
+
+            LVitem_ProjectVM.InvalidPathCharException.test
+                .ForEach(c => translateInvalidChars["" + c] = "`" + (char)('A' + nEncode++));
+        }
+
         string ConvertRootPath(string fileName = null)
         {
-            const string colon = "`~";
-            const string backslash = "~`";
-
             if (null != fileName)
             {
-                return fileName.TrimStart('\\').Replace(colon, ":").Replace(backslash, @"\");
+                string ret = fileName.TrimStart('\\');
+
+                translateInvalidChars
+                    .ForEach(kvp => ret = ret.Replace(kvp.Value, kvp.Key));
+
+                return ret.Replace(@"\\", @"\");
             }
             else
             {
-                var strRoot = Root.PathFullGet(false);
+                var strRoot = Root.PathFull;
+                var ret = strRoot;
 
-                return PathFullGet(false).Replace(strRoot,
-                    strRoot
-                    .Replace(":", colon)
-                    .Replace(@"\", backslash));
+                translateInvalidChars
+                    .ForEach(kvp => ret = ret.Replace(kvp.Key, kvp.Value));
+
+                return PathFull.Replace(strRoot, ret);
             }
         }
 

@@ -152,6 +152,18 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Expression.Drawing, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAPICodePack-Core.1.1.2\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAPICodePack-Shell.1.1.1\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAPICodePack-ShellExtensions.1.1.1\lib\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Management" />
     <Reference Include="System.Reactive.Core, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -223,11 +235,17 @@
     <Compile Include="UserControls\UC_FolderList_Base.xaml.cs">
       <DependentUpon>UC_FolderList_Base.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\UC_Sinks.xaml.cs">
+      <DependentUpon>UC_Sinks.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\UC_Nearest.xaml.cs">
       <DependentUpon>UC_Nearest.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\UC_ClonesHere.xaml.cs">
       <DependentUpon>UC_ClonesHere.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\UC_Mounted.xaml.cs">
+      <DependentUpon>UC_Mounted.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\UC_SolitaryHere.xaml.cs">
       <DependentUpon>UC_SolitaryHere.xaml</DependentUpon>
@@ -296,7 +314,6 @@
     <Compile Include="UserControls\MVVM_Search\UC_SearchVM.cs" />
     <Compile Include="UserControls\MVVM_TreeList\LVitem_TreeListVM.cs" />
     <Compile Include="UserControls\MVVM_TreeList\LV_TreeListChildrenVM.cs" />
-    <Compile Include="Util\GetOneNodeByRootPath.cs" />
     <Compile Include="UserControls\SliderVM_Base.cs" />
     <Compile Include="UserControls\UC_Treemap.xaml.cs">
       <DependentUpon>UC_Treemap.xaml</DependentUpon>
@@ -545,11 +562,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UserControls\UC_Sinks.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UserControls\UC_Nearest.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\UC_ClonesHere.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\UC_Mounted.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

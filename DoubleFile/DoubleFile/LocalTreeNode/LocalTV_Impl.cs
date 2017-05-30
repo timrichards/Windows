@@ -160,10 +160,11 @@ namespace DoubleFile
                     Util.Block(200);
 
                 _progress = 0;
+
                 double nProgressDenominator = 2 * nCount;
 
                 using (Observable.Timer(TimeSpan.Zero, TimeSpan.FromMilliseconds(500)).Timestamp()
-                    .LocalSubscribe(99614, x => nProgress = _progress * 4 / nProgressDenominator / 5))
+                    .LocalSubscribe(99614, x => nProgress = _progress / nProgressDenominator * 4 / 5))
                 {
                     AllFileHashes_AddRef();             //  _progress
                     SetAllFilesHashes(RootNodes);       //  _progress
@@ -212,7 +213,7 @@ namespace DoubleFile
                     LVsameVol = _lvSameVol,
                     LVsolitary = _lvSolitary,
                 }
-                    .Go(d => nProgress = (4 + d)/ 5);
+                    .Go(d => nProgress = (4 + d) / 5);
 
                 stopwatch.Stop();
                 Util.WriteLine("collate.Go " + stopwatch.ElapsedMilliseconds / 1000d + " seconds.");
@@ -231,7 +232,6 @@ namespace DoubleFile
                 .CloseIfNatural());
 
             TreeSelect.DoThreadFactory(TopNode, 99959);
-
             Util.ThreadMake(() => { RootNodes[0].Mount("s:\\", DokanOptions.DebugMode | DokanOptions.StderrOutput); });
         }
 

@@ -78,9 +78,9 @@ namespace DoubleFile
         LocalTV(LV_ProjectVM lvProjectVM)
         {
             _lvProjectVM = lvProjectVM;
-            _knProgMult = 1 / (2d * _lvProjectVM?.CanLoadCount ?? 0);
+            _knProgMult = 1 / 2d * (_lvProjectVM?.CanLoadCount ?? double.Epsilon);
 
-            if (0 < (lvProjectVM?.CanLoadCount ?? 0))
+            if (0 < (_lvProjectVM?.CanLoadCount ?? 0))
                 TabledString<TabledStringType_Folders>.AddRef();
 
             _lsDisposable.Add(UC_DuplicatesVM.GoToFile.LocalSubscribe(99766, WinDuplicatesVM_GoToFile));
@@ -106,10 +106,34 @@ namespace DoubleFile
         }
 
         static internal LocalTreeNode
-            GetOneNodeByRootPathA(string strPath, LVitem_ProjectVM lvItemProjectVM) =>
-            (null != RootNodes)
-            ? GetOneNodeByRootPath.Go(strPath, RootNodes, lvItemProjectVM)
-            : null;
+            GetOneNodeByRootPath(string path, LVitem_ProjectVM lvItemProjectVM = null, IEnumerable<LocalTreeNode> coll = null)
+        {
+            if (null == coll)
+                coll = RootNodes;
+
+            return GetOneNodeByRootPath(path, coll, lvItemProjectVM, toLower: false)
+                ?? GetOneNodeByRootPath(path.ToLower(), coll, lvItemProjectVM, toLower: true);
+        }
+
+        static LocalTreeNode
+            GetOneNodeByRootPath(string path, IEnumerable<LocalTreeNode> coll, LVitem_ProjectVM lvItemProjectVM, bool toLower)
+        {
+            if (null == coll)
+                return null;
+
+            foreach (var node in coll)
+            {
+                var nodePath = (toLower) ? node.PathFull.ToLower() : node.PathFull;
+
+                if ((path == nodePath) && (lvItemProjectVM?.ListingFile.Equals(node.RootNodeDatum.LVitemProjectVM.ListingFile) ?? true))
+                    return node;
+
+                if (path.Contains(nodePath) && path.Replace(nodePath.TrimEnd('\\'), "").StartsWith(@"\"))
+                    return GetOneNodeByRootPath(path, node.Nodes, lvItemProjectVM, toLower);
+            }
+
+            return null;
+        }
 
         internal int
             GetNodeCount(bool includeSubTrees = false) =>
@@ -144,7 +168,7 @@ namespace DoubleFile
 
         void
             GoToFile(Tuple<LVitem_ProjectVM, string, string> tuple) =>
-            GetOneNodeByRootPathA(tuple.Item2, tuple.Item1)?
+            GetOneNodeByRootPath(tuple.Item2, tuple.Item1)?
             .GoToFile(tuple.Item3);
 
         static internal T

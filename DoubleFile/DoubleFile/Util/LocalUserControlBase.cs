@@ -73,7 +73,7 @@ namespace DoubleFile
 
             if (MainWindow.AdvancedFakeKey == strSource)
             {
-                CalculateAverageFileLength();
+                //CalculateAverageFileLength();
                 e.Cancel = true;
                 return;
             }

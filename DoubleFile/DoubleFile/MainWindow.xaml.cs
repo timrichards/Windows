@@ -280,6 +280,11 @@ namespace DoubleFile
                 new ClonesLink(UC_Clones.FolderListFragments.ElementAt(1)),
                 new ClonesLink(UC_Clones.FolderListFragments.ElementAt(2))
             }},
+            new LinkGroup { DisplayName="Mounted", Links =
+            {
+                new MyLink("Mounted", "/UserControls/UC_Mounted.xaml"),
+                new MyLink("Sinks", "/UserControls/UC_Sinks.xaml"),
+            }},
             new LinkGroup { DisplayName="Compare", Links =
             {
                 new MyLink("Compare", "/UserControls/UC_Compare.xaml")

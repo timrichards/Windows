@@ -17,6 +17,14 @@ namespace DoubleFile
             RootNodes => _wr.Get(o => o._rootNodes);
         List<LocalTreeNode> _rootNodes = new List<LocalTreeNode> { };
 
+        static internal IReadOnlyList<LocalTreeNode>
+            Mounted => _wr.Get(o => o._mounted);
+        List<LocalTreeNode> _mounted = new List<LocalTreeNode> { };
+
+        static internal IReadOnlyList<LocalTreeNode>
+            Sinks => _wr.Get(o => o._sinks);
+        List<LocalTreeNode> _sinks = new List<LocalTreeNode> { };
+
         static internal LocalTreeNode
             TopNode => _wr.Get(o => o._topNode);
         LocalTreeNode _topNode = null;

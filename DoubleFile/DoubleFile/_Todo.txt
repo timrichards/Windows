@@ -216,10 +216,6 @@ Specific code areas:
 - WinForms application: http://sourceforge.net/projects/searchdirlists/
 - Source repository: http://github.com/timrichards/Windows
 
-99990
-99985
-99976
-99902
 99900
 99898
 99895

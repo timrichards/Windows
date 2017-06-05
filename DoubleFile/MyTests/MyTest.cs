@@ -77,6 +77,11 @@ namespace MyTests
             List<test_struct> tests = new List<test_struct>
             {
                 new test_struct{ key = @"C:\_vs\DoubleFile", value = 1 },
+                new test_struct{ key = @"C:\_v s\Doubl eFile", value = 2 },
+                new test_struct{ key = @"\C:\/v s\Dou/bl eFile", value = 3 },
+                new test_struct{ key = @"/\C:\/v \\\s\D/ou/bl eF/il/e/", value = 4 },
+                new test_struct{ key = @"/\C:\/v \\\s\D/ou/bl eF/il/e/", value = 5 },
+                new test_struct{ key = @"/\C:\/v \\\s\D/ou/bl eF/il/e/", value = 6 },
             };
 
             Assert.AreEqual(trie.Get(@"a"), default(byte));
@@ -89,6 +94,7 @@ namespace MyTests
 
             foreach (var test in tests)
             {
+                TestContext.WriteLine($"Testing { test.key }");
                 trie.Put(test.key, test.value);
                 Assert.AreEqual(trie.Get(test.key), test.value);
             }

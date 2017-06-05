@@ -44,6 +44,14 @@ namespace DoubleFile
                 if (false == _dictStrings.TryGetValue(str, out retVal))                   
                     _dictStrings[str] = retVal = _nIndexGenerator++;
 
+                lock (_trie)
+                {
+                    int retVal_ = IndexGenerator_ + 1;
+
+                    if (retVal_ == _trie.Put(str, retVal_))
+                        IndexGenerator_ = retVal_;              
+                }
+
                 return retVal;
             }
         }
@@ -52,6 +60,8 @@ namespace DoubleFile
             IndexOf(string str) =>
             DictSortedStrings[str];
 
+        internal int IndexGenerator_ { get; private set;  } = default(int);
+
         internal int
             IndexGenerator => _nIndexGenerator;
         int _nIndexGenerator = 0;   // left as non-prop in case of Interlocked.Increment (non-atomic? speed issue?)
@@ -59,5 +69,6 @@ namespace DoubleFile
         internal IReadOnlyDictionary<string, int>
             DictSortedStrings => (IReadOnlyDictionary<string, int>)_dictStrings;
         IDictionary<string, int> _dictStrings = new SortedDictionary<string, int>();
+        TernarySearchTrie<int> _trie = new TernarySearchTrie<int>();
     }
 }

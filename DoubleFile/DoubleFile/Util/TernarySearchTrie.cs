@@ -33,9 +33,12 @@ namespace DoubleFile
         public bool Contains(string key)
             => Get(key) != null;
 
-        public void Put(string key, Value val)
+        public Value Put(string key, Value val_in)
         {
-            root = Put(root, Split(key), val, 0);
+            Value value = val_in;
+
+            root = Put(root, Split(key), ref value, 0);
+            return value;
         }
 
         public Value Get(string key)
@@ -111,7 +114,7 @@ namespace DoubleFile
                 return x;
         }
 
-        private Node Put(Node x, IList<string> split, Value val, int d)
+        private Node Put(Node x, IList<string> split, ref Value val, int d)
         {
             string str = split[d];
 
@@ -125,13 +128,15 @@ namespace DoubleFile
             int cmp = str.LocalCompare(x.str);
 
             if (0 > cmp)
-                x.left = Put(x.left, split, val, d);
+                x.left = Put(x.left, split, ref val, d);
             else if (0 < cmp)
-                x.right = Put(x.right, split, val, d);
+                x.right = Put(x.right, split, ref val, d);
             else if (d < split.Count - 1)
-                x.mid = Put(x.mid, split, val, d + 1);
+                x.mid = Put(x.mid, split, ref val, d + 1);
+            else if (EqualityComparer<Value>.Default.Equals(x.value, default(Value)))
+                x.value = val;      // only point to or modify value if default
             else
-                x.value = val;
+                val = x.value;      // pass back found value aka Get
 
             return x;
         }

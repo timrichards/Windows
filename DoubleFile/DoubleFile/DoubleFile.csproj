@@ -255,6 +255,7 @@
     <Compile Include="Util\FolderBrowserDialog\NativeMethods.cs" />
     <Compile Include="Util\FolderBrowserDialog\ShellComInterfaces.cs" />
     <Compile Include="Util\FolderBrowserDialog\FolderBrowserDialog.cs" />
+    <Compile Include="Util\TernarySearchTrie.cs" />
     <Compile Include="Util\Tree\TreeBase\Tree\TreeRootNodeBuilder\RootNode.cs" />
     <Compile Include="Util\UC_ContentPresenter.cs" />
     <Compile Include="Util\LocalIsoStore.cs" />

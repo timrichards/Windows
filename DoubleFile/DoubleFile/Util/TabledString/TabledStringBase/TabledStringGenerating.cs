@@ -21,16 +21,16 @@ namespace DoubleFile
         internal override int
             Set(string str_in)
         {
-            var split = str_in.Split('\\');
+            //var split = str_in.Split('\\');
 
-            if (1 < split.Length)
-            {
-                foreach (var str in str_in.Split('\\'))
-                {
-                    if (0 < str.Length)
-                        SetA(str);
-                }
-            }
+            //if (1 < split.Length)
+            //{
+            //    foreach (var str in split)
+            //    {
+            //        if (0 < str.Length)
+            //            SetA(str);
+            //    }
+            //}
 
             return SetA(str_in);
         }

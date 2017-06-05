@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DoubleFile", "DoubleFile\DoubleFile.csproj", "{CB92B8A5-9545-45D2-B5AF-8EA926A991E4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VolTreemap", "VolTreeMap\VolTreemap.csproj", "{66301E65-DBA9-4E1A-805D-5030C2FDD40D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTests", "MyTests\MyTests.csproj", "{6B8E9CEB-A3A5-4BAD-8AF0-C1D18480F08E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,22 @@ Global
 		{66301E65-DBA9-4E1A-805D-5030C2FDD40D}.Release (.NET 4.0)|Any CPU.Build.0 = Publish|Any CPU
 		{66301E65-DBA9-4E1A-805D-5030C2FDD40D}.Release|Any CPU.ActiveCfg = Publish|Any CPU
 		{66301E65-DBA9-4E1A-805D-5030C2FDD40D}.Release|Any CPU.Build.0 = Publish|Any CPU
+		{6B8E9CEB-A3A5-4BAD-8AF0-C1D18480F08E}.0. ShowOverlay Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B8E9CEB-A3A5-4BAD-8AF0-C1D18480F08E}.0. ShowOverlay Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B8E9CEB-A3A5-4BAD-8AF0-C1D18480F08E}.1. Publish|Any CPU.ActiveCfg = Release|Any CPU
+		{6B8E9CEB-A3A5-4BAD-8AF0-C1D18480F08E}.1. Publish|Any CPU.Build.0 = Release|Any CPU
+		{6B8E9CEB-A3A5-4BAD-8AF0-C1D18480F08E}.2. Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B8E9CEB-A3A5-4BAD-8AF0-C1D18480F08E}.2. Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B8E9CEB-A3A5-4BAD-8AF0-C1D18480F08E}.3. FOOBAR|Any CPU.ActiveCfg = Release|Any CPU
+		{6B8E9CEB-A3A5-4BAD-8AF0-C1D18480F08E}.3. FOOBAR|Any CPU.Build.0 = Release|Any CPU
+		{6B8E9CEB-A3A5-4BAD-8AF0-C1D18480F08E}.Debug (.NET 4.0)|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B8E9CEB-A3A5-4BAD-8AF0-C1D18480F08E}.Debug (.NET 4.0)|Any CPU.Build.0 = Debug|Any CPU
+		{6B8E9CEB-A3A5-4BAD-8AF0-C1D18480F08E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B8E9CEB-A3A5-4BAD-8AF0-C1D18480F08E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B8E9CEB-A3A5-4BAD-8AF0-C1D18480F08E}.Release (.NET 4.0)|Any CPU.ActiveCfg = Release|Any CPU
+		{6B8E9CEB-A3A5-4BAD-8AF0-C1D18480F08E}.Release (.NET 4.0)|Any CPU.Build.0 = Release|Any CPU
+		{6B8E9CEB-A3A5-4BAD-8AF0-C1D18480F08E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B8E9CEB-A3A5-4BAD-8AF0-C1D18480F08E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

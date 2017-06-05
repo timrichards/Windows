@@ -62,7 +62,10 @@ namespace MyTests
         struct test_struct
         {
             public string key;
-            public byte value;
+            public byte val;
+
+            public byte Expected { get { return expected != default(byte) ? expected : val; } set { expected = value; } }
+            private byte expected;
         };
 
         [TestMethod]
@@ -76,12 +79,12 @@ namespace MyTests
 
             List<test_struct> tests = new List<test_struct>
             {
-                new test_struct{ key = @"C:\_vs\DoubleFile", value = 1 },
-                new test_struct{ key = @"C:\_v s\Doubl eFile", value = 2 },
-                new test_struct{ key = @"\C:\/v s\Dou/bl eFile", value = 3 },
-                new test_struct{ key = @"/\C:\/v \\\s\D/ou/bl eF/il/e/", value = 4 },
-                new test_struct{ key = @"/\C:\/v \\\s\D/ou/bl eF/il/e/", value = 5 },
-                new test_struct{ key = @"/\C:\/v \\\s\D/ou/bl eF/il/e/", value = 6 },
+                new test_struct{ key = @"C:\_vs\DoubleFile", val = 1 },
+                new test_struct{ key = @"C:\_v s\Doubl eFile", val = 2 },
+                new test_struct{ key = @"\C:\/v s\Dou/bl eFile", val = 3 },
+                new test_struct{ key = @"/\C:\/v \\\s\D/ou/bl eF/il/e/", val = 4 },
+                new test_struct{ key = @"/\C:\/v \\\s\D/ou/bl eF/il/e/", Expected = 4, val = 5 },
+                new test_struct{ key = @"/\C:\/v \\\s\D/ou/bl eF/il/e/", Expected = 4, val = 6 },
             };
 
             Assert.AreEqual(trie.Get(@"a"), default(byte));
@@ -95,8 +98,8 @@ namespace MyTests
             foreach (var test in tests)
             {
                 TestContext.WriteLine($"Testing { test.key }");
-                trie.Put(test.key, test.value);
-                Assert.AreEqual(trie.Get(test.key), test.value);
+                trie.Put(test.key, test.val);
+                Assert.AreEqual(test.Expected, trie.Get(test.key));
             }
         }
     }
